@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:a="http://schemas.android.com/apk/res/android"
+    a:layout_width="match_parent"
+    a:layout_height="match_parent"
+    a:id="@+id/contenedorPrincipal">
+    <LinearLayout
+        a:orientation="vertical"
+        a:layout_width="match_parent"
+        a:layout_height="match_parent">
+        <TextClock
+            a:layout_width="match_parent"
+            a:layout_height="match_parent"
+            a:gravity="center"
+            a:format12Hour="hh:mm"
+            a:textSize="60dp" />
+    </LinearLayout>
+</RelativeLayout>
