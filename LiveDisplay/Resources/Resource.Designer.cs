@@ -47,6 +47,9 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f040000
 			public const int contenedorPrincipal = 2130968576;
 			
+			// aapt resource value: 0x7f040001
+			public const int textClock1 = 2130968577;
+			
 			static Id()
 			{
 				global::Android.Runtime.ResourceIdManager.UpdateIdValues();
@@ -61,7 +64,10 @@ namespace LiveDisplay
 		{
 			
 			// aapt resource value: 0x7f020000
-			public const int LockScreen = 2130837504;
+			public const int Configuracion = 2130837504;
+			
+			// aapt resource value: 0x7f020001
+			public const int LockScreen = 2130837505;
 			
 			static Layout()
 			{

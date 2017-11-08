@@ -7,11 +7,12 @@
         a:orientation="vertical"
         a:layout_width="match_parent"
         a:layout_height="match_parent">
-        <TextClock
+        <TextClock xmlns:p2="http://xamarin.com/mono/android/designer-default"
             a:layout_width="match_parent"
             a:layout_height="match_parent"
             a:gravity="center"
             a:format12Hour="hh:mm"
-            a:textSize="60dp" />
+            a:textSize="60dp"
+            a:id="@+id/textClock1" />
     </LinearLayout>
 </RelativeLayout>
