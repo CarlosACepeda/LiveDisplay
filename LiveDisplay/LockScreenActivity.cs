@@ -6,6 +6,7 @@ using Android.Widget;
 using Android.Graphics.Drawables;
 using Android;
 using Android.Views;
+using Java.Util;
 
 namespace LiveDisplay
 {
@@ -35,8 +36,8 @@ namespace LiveDisplay
             papelTapiz = wallpaperManager.Drawable;
 
             linearLayout = (RelativeLayout)FindViewById(Resource.Id.contenedorPrincipal);
-            linearLayout.SetBackgroundDrawable(papelTapiz);
-            
+            linearLayout.Background=papelTapiz;
+            ObtenerFecha();
 
         }
 
@@ -50,6 +51,19 @@ namespace LiveDisplay
             //Desactivar el listener para ahorrar batería.
             base.OnPause();           
         }
+
+        private void ObtenerFecha()
+        {
+            string dia, mes= null;
+
+            Calendar fecha = Calendar.GetInstance(Locale.Default);
+            dia = fecha.Get(CalendarField.DayOfMonth).ToString();
+            mes = fecha.GetDisplayName(2, 2, Locale.Default);
+
+            TextView tvFecha = (TextView)FindViewById(Resource.Id.txtFechaLock);
+            tvFecha.Text = string.Format(dia + ", " + mes);
+        }
+
     }
 }
 

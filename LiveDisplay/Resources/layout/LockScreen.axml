@@ -8,11 +8,19 @@
         a:layout_width="match_parent"
         a:layout_height="match_parent">
         <TextClock xmlns:p2="http://xamarin.com/mono/android/designer-default"
-            a:layout_width="match_parent"
+            a:layout_width="wrap_content"
             a:layout_height="match_parent"
-            a:gravity="center"
-            a:format12Hour="hh:mm"
             a:textSize="60dp"
-            a:id="@+id/textClock1" />
+            a:id="@+id/clockLock"
+            a:typeface="sans"
+            a:textStyle="normal"
+            a:layout_gravity="bottom"
+            a:gravity="bottom"
+            a:layout_weight="25" />
+        <TextView
+            a:layout_width="match_parent"
+            a:layout_height="wrap_content"
+            a:id="@+id/txtFechaLock"
+            a:layout_marginBottom="40dp" />
     </LinearLayout>
 </RelativeLayout>
