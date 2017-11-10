@@ -9,7 +9,7 @@ using Android.Views;
 
 namespace LiveDisplay
 {
-    [Activity(Label = "LockScreenActivity", MainLauncher = true)]
+    [Activity(Label = "LockScreenActivity", MainLauncher = false)]
 
     public class LockScreenActivity : Activity
     {
@@ -36,7 +36,7 @@ namespace LiveDisplay
 
             linearLayout = (RelativeLayout)FindViewById(Resource.Id.contenedorPrincipal);
             linearLayout.SetBackgroundDrawable(papelTapiz);
-            StartService(new Android.Content.Intent(this, typeof(AwakeService)));
+            
 
         }
 

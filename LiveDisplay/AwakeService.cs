@@ -13,8 +13,8 @@ using Android.Hardware;
 
 namespace LiveDisplay
 {
-    [Service(Name = "mono.samples.HelloService",
-        Label = "Service Label")]
+    [Service(Name = "undergrounddev.serv.AwakeService",
+        Label = "Awake Service")]
     class AwakeService : Service, ISensorEventListener
     {
         //administra los sensores de Android.
@@ -46,6 +46,7 @@ namespace LiveDisplay
             //Acá el servicio termina.
             //Desregistrar el Listener.
             sensorManager.UnregisterListener(this);
+            Toast.MakeText(this, "El servicio ha sido detenido", ToastLength.Short).Show();
         }
 
         public void OnAccuracyChanged(Sensor sensor, [GeneratedEnum] SensorStatus accuracy)
@@ -66,18 +67,18 @@ namespace LiveDisplay
             }
         }
 
-        //public void ToastService()
+        //public bool MiServicioCorre(Type cls)
         //{
-        //    if (estaProximo == true)
-        //    {
-                
-        //    }
-        //    else if (estaProximo == false)
-        //    {
-               
-        //    }
+        //    ActivityManager manager = (ActivityManager)GetSystemService(Context.ActivityService);
 
+        //    foreach (var service in manager.GetRunningServices(int.MaxValue))
+        //    {
+        //        if (service.Service.ClassName.Equals(Java.Lang.Class.FromType(cls).CanonicalName))
+        //        {
+        //            return true;
+        //        }
+        //    }
+        //    return false;
         //}
-
     }
 }
