@@ -9,7 +9,7 @@ using Android.Renderscripts;
 
 namespace LiveDisplay
 {
-    [Activity(Label = "LockScreenActivity", MainLauncher = true)]
+    [Activity(Label = "LockScreenActivity", MainLauncher = false)]
 
     public class LockScreenActivity : Activity
     {

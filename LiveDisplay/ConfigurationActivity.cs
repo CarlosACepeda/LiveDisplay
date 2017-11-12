@@ -12,7 +12,7 @@ using Android.Widget;
 
 namespace LiveDisplay
 {
-    [Activity(Label = "Configuración", MainLauncher = false)]
+    [Activity(Label = "Configuración", MainLauncher = true)]
     class ConfigurationActivity: Activity
     {
         //Android Lifecycle.

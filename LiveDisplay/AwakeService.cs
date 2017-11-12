@@ -21,6 +21,10 @@ namespace LiveDisplay
         SensorManager sensorManager = null;
         //Variable la cuál guardará la constante del Sensor de Proximidad.
         Sensor sProximidad;
+        //administra la Energia de Android.
+        PowerManager powerManager = null;
+        //Un Wakelock que servirá para prender y apagar la pantalla.
+        PowerManager.WakeLock wakeLock = null;
 
         public override IBinder OnBind(Intent intent)
         {
@@ -29,6 +33,12 @@ namespace LiveDisplay
         public override StartCommandResult OnStartCommand(Intent intent, [GeneratedEnum] StartCommandFlags flags, int startId)
         {
             //Cuando se inicia
+
+            //Asignación de variables, sensorManager al Servicio SensorService, sProximidad al sensor SensorType.Proximity
+            //powerManager al servicio PowerManager
+            powerManager = (PowerManager)GetSystemService(PowerService);
+            //Wakelock que apaga la pantalla.
+            wakeLock = powerManager.NewWakeLock(WakeLockFlags.ProximityScreenOff, "Mi Etiqueta");
             sensorManager = (SensorManager)GetSystemService(SensorService);
             sProximidad = sensorManager.GetDefaultSensor(SensorType.Proximity);
             //Registrar un Listener para Oir los eventos del Sensor sProximidad.
@@ -53,17 +63,21 @@ namespace LiveDisplay
         //..Cuando detecta un cambio en el sensor.
         public void OnSensorChanged(SensorEvent evento)
         {
-            ////Mientras el sensor esté cubierto haga:
+            //Mientras el sensor esté cubierto haga:
             while (evento.Values[0] > 1)
             {
-               //<Apagar la pantalla> TODO
+                //Si el wakelock no está sostenido, entonces adquirir el Wakelock que apaga la pantalla.
+                if (!wakeLock.IsHeld)
+                {
+                    wakeLock.Acquire();
+                }
             }
-            
+            //Si el wakelock está adquirido, entonces soltarlo cuando el sensor no esté cubierto.
+            if (wakeLock.IsHeld)
+            {
+                wakeLock.Release();
+            }
 
-        }
-        public void SetBright(float value)
-        {
-            //Este método se llama para apagar la pantalla.
         }
     }
 }
