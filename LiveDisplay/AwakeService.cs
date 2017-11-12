@@ -29,14 +29,10 @@ namespace LiveDisplay
         public override StartCommandResult OnStartCommand(Intent intent, [GeneratedEnum] StartCommandFlags flags, int startId)
         {
             //Cuando se inicia
-            //Asignación de variables, sensorManager al Servicio SensorService, sProximidad al sensor SensorType.Proximity
             sensorManager = (SensorManager)GetSystemService(SensorService);
             sProximidad = sensorManager.GetDefaultSensor(SensorType.Proximity);
             //Registrar un Listener para Oir los eventos del Sensor sProximidad.
             sensorManager.RegisterListener(this, sProximidad, SensorDelay.Fastest);
-            Toast.MakeText(this, "El servicio ha sido iniciado", ToastLength.Short).Show();
-         
-
             return StartCommandResult.Sticky;
         }
 
@@ -57,28 +53,17 @@ namespace LiveDisplay
         //..Cuando detecta un cambio en el sensor.
         public void OnSensorChanged(SensorEvent evento)
         {
-            if (evento.Values[0] > 1)
+            ////Mientras el sensor esté cubierto haga:
+            while (evento.Values[0] > 1)
             {
-                Toast.MakeText(this, "El sensor detecta proximidad", ToastLength.Short).Show();
+               //<Apagar la pantalla> TODO
             }
-            else if (evento.Values[0] <= 1)
-            {
-                Toast.MakeText(this, "Algo sucede...", ToastLength.Long).Show();
-            }
+            
+
         }
-
-        //public bool MiServicioCorre(Type cls)
-        //{
-        //    ActivityManager manager = (ActivityManager)GetSystemService(Context.ActivityService);
-
-        //    foreach (var service in manager.GetRunningServices(int.MaxValue))
-        //    {
-        //        if (service.Service.ClassName.Equals(Java.Lang.Class.FromType(cls).CanonicalName))
-        //        {
-        //            return true;
-        //        }
-        //    }
-        //    return false;
-        //}
+        public void SetBright(float value)
+        {
+            //Este método se llama para apagar la pantalla.
+        }
     }
 }

@@ -2,11 +2,13 @@
 <RelativeLayout xmlns:a="http://schemas.android.com/apk/res/android"
     a:layout_width="match_parent"
     a:layout_height="match_parent"
-    a:id="@+id/contenedorPrincipal">
+    a:id="@+id/contenedorPrincipal"
+    >
     <LinearLayout
         a:orientation="vertical"
         a:layout_width="match_parent"
-        a:layout_height="match_parent">
+        a:layout_height="match_parent"
+        a:alpha="1">
         <TextClock xmlns:p2="http://xamarin.com/mono/android/designer-default"
             a:layout_width="wrap_content"
             a:layout_height="match_parent"

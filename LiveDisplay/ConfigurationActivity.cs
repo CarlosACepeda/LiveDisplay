@@ -12,7 +12,7 @@ using Android.Widget;
 
 namespace LiveDisplay
 {
-    [Activity(Label = "Configuración", MainLauncher = true)]
+    [Activity(Label = "Configuración", MainLauncher = false)]
     class ConfigurationActivity: Activity
     {
         //Android Lifecycle.
@@ -44,8 +44,6 @@ namespace LiveDisplay
         {
             base.OnDestroy();
         }
-
-        //Acciones de los botones.
 
         
     }
