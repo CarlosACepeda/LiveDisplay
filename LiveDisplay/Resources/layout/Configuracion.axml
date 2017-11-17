@@ -13,14 +13,14 @@
         p1:layout_height="wrap_content"
         p1:id="@+id/linearLayout1">
         <TextView
-            p1:text="Configuración"
+            p1:text="@string/app_title"
             p1:layout_width="match_parent"
             p1:layout_height="wrap_content"
             p1:id="@+id/textView1"
             p1:textAllCaps="true" />
     </LinearLayout>
     <TextView
-        p1:text="Activar Awake"
+        p1:text="@string/activarawake"
         p1:layout_width="wrap_content"
         p1:layout_height="wrap_content"
         p1:layout_below="@id/linearLayout1"

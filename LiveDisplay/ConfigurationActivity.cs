@@ -34,8 +34,27 @@ namespace LiveDisplay
                     StopService(new Intent(this, typeof(AwakeService)));
                 }
             };
+
         }
-      
+        public override bool OnCreateOptionsMenu(IMenu menu)
+        {
+
+            var inflater = MenuInflater;
+            inflater.Inflate(Resource.Menu.menu_config, menu);
+            return true;
+        }
+
+        public override bool OnOptionsItemSelected(IMenuItem item)
+        {
+            int id = item.ItemId;
+            if (id == Resource.Id.preview)
+            {
+                Intent intent = new Intent(this, typeof(LockScreenActivity));
+                StartActivity(intent);
+            }
+            return true;
+        }
+
         protected override void OnPause()
         {
             base.OnPause();

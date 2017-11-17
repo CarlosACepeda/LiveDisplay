@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="app_name">LiveDisplay</string>
-  <string name="app_title">Settings</string>
-  <string name="activarawake">Enable Awake</string>
+  <string name="app_title">Configuración</string>
+  <string name="activarawake">Activar Awake</string>
 </resources>

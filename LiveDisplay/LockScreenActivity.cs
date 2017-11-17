@@ -42,7 +42,7 @@ namespace LiveDisplay
         //Cuando la app se muestra al Usuario por primera vez.
         protected override void OnResume()
         {
-
+            base.OnResume();
         }
         protected override void OnPause()
         {
