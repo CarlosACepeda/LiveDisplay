@@ -6,9 +6,7 @@
   >
   <item 
     android:id="@+id/preview"
-    android:icon="@drawable/test"
+    android:icon="@drawable/ic_preview_lockscreen"
     android:showAsAction="always"
-    android:title="Vista Previa"
     />
-  
 </menu>

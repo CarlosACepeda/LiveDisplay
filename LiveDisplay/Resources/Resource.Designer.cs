@@ -45,7 +45,7 @@ namespace LiveDisplay
 		{
 			
 			// aapt resource value: 0x7f020000
-			public const int test = 2130837504;
+			public const int ic_preview_lockscreen = 2130837504;
 			
 			static Drawable()
 			{
@@ -105,6 +105,9 @@ namespace LiveDisplay
 			
 			// aapt resource value: 0x7f030001
 			public const int LockScreen = 2130903041;
+			
+			// aapt resource value: 0x7f030002
+			public const int NotificationLayoutTest = 2130903042;
 			
 			static Layout()
 			{

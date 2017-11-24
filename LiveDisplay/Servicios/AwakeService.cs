@@ -56,7 +56,7 @@ namespace LiveDisplay
 
         public void OnAccuracyChanged(Sensor sensor, [GeneratedEnum] SensorStatus accuracy)
         {
-            //Nada todavía.
+            //No hay nada para hacer aquí
         }
 
         //..Cuando detecta un cambio en el sensor.
