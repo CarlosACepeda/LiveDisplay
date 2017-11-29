@@ -63,8 +63,8 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f060004
 			public const int cbxEnableAwake = 2131099652;
 			
-			// aapt resource value: 0x7f060006
-			public const int clockLock = 2131099654;
+			// aapt resource value: 0x7f060007
+			public const int clockLock = 2131099655;
 			
 			// aapt resource value: 0x7f060005
 			public const int contenedorPrincipal = 2131099653;
@@ -72,8 +72,11 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f060001
 			public const int linearLayout1 = 2131099649;
 			
-			// aapt resource value: 0x7f060008
-			public const int preview = 2131099656;
+			// aapt resource value: 0x7f060006
+			public const int notificationIcon = 2131099654;
+			
+			// aapt resource value: 0x7f060009
+			public const int preview = 2131099657;
 			
 			// aapt resource value: 0x7f060000
 			public const int relativeLayout1 = 2131099648;
@@ -84,8 +87,8 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f060003
 			public const int txtEnableAwake = 2131099651;
 			
-			// aapt resource value: 0x7f060007
-			public const int txtFechaLock = 2131099655;
+			// aapt resource value: 0x7f060008
+			public const int txtFechaLock = 2131099656;
 			
 			static Id()
 			{
@@ -105,9 +108,6 @@ namespace LiveDisplay
 			
 			// aapt resource value: 0x7f030001
 			public const int LockScreen = 2130903041;
-			
-			// aapt resource value: 0x7f030002
-			public const int NotificationLayoutTest = 2130903042;
 			
 			static Layout()
 			{
