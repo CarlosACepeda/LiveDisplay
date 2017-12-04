@@ -57,6 +57,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="NotificationListener.cs" />
     <Compile Include="Servicios\AwakeService.cs" />
     <Compile Include="ConfigurationActivity.cs" />
     <Compile Include="LockScreenActivity.cs" />

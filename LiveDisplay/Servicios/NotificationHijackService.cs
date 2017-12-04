@@ -8,14 +8,15 @@ using Android.Service.Notification;
 using Android.Graphics;
 using System.IO;
 using Android.Support.V4.Content;
+using Android.Widget;
 
 namespace LiveDisplay.Servicios
 {
+    [Service(Name = "undergrounddev.serv.NotificationHijackService",
+        Label = "NotificationHijackService", Permission = "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE")]
+
     class NotificationHijackService : NotificationListenerService 
     {
-
-        Context context;
-
 
         public override IBinder OnBind(Intent intent)
         {
@@ -24,8 +25,8 @@ namespace LiveDisplay.Servicios
         [return: GeneratedEnum]
         public override StartCommandResult OnStartCommand(Intent intent, [GeneratedEnum] StartCommandFlags flags, int startId)
         {
-            context = context.ApplicationContext;
             return StartCommandResult.Sticky;
+
         }
         public override void OnNotificationPosted(StatusBarNotification notification)
         {
@@ -54,13 +55,13 @@ namespace LiveDisplay.Servicios
                 byte[] byteArray = stream.ToArray();
                 notifSender.PutExtra("icon", byteArray);
             }
-            LocalBroadcastManager.GetInstance(context).SendBroadcast(notifSender);
+            LocalBroadcastManager.GetInstance(Application.Context).SendBroadcast(notifSender);
+            Toast.MakeText(Application.Context, "LEL", ToastLength.Short);
 
         }
         public override void OnNotificationRemoved(StatusBarNotification notification)
         {
             Console.WriteLine("notificacion removida");
         }
-
     }
 }

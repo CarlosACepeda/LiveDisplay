@@ -6,10 +6,12 @@ using Android.Views;
 using Java.Util;
 using Android.Graphics;
 using Android.Renderscripts;
+using Android.Content;
 
 namespace LiveDisplay
 {
     [Activity(Label = "LockScreenActivity", MainLauncher = false)]
+
 
     public class LockScreenActivity : Activity
     {
@@ -24,7 +26,7 @@ namespace LiveDisplay
             base.OnCreate(savedInstanceState);
             Window.AddFlags(WindowManagerFlags.TranslucentNavigation);
             Window.AddFlags(WindowManagerFlags.TranslucentStatus);
-   
+
 
 
             RelativeLayout linearLayout;
@@ -50,7 +52,7 @@ namespace LiveDisplay
         }
         private void ObtenerFecha()
         {
-            string dia, mes= null;
+            string dia, mes = null;
 
             Calendar fecha = Calendar.GetInstance(Locale.Default);
             dia = fecha.Get(CalendarField.DayOfMonth).ToString();
@@ -91,7 +93,7 @@ namespace LiveDisplay
             return papelTapizDifuminado;
 
         }
-
+        
     }
 }
 
