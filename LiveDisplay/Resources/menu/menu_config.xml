@@ -9,4 +9,9 @@
     android:icon="@drawable/ic_preview_lockscreen"
     android:showAsAction="always"
     />
+  <item
+    android:id="@+id/notificationSettings"
+    android:title="Ajuste Notificacion"
+    android:showAsAction="never"
+    />
 </menu>

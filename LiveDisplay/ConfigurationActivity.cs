@@ -17,7 +17,6 @@ namespace LiveDisplay
             base.OnCreate(savedInstanceState);
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Configuracion);
-            StartService(new Intent(this, typeof(NotificationHijackService)));
             CheckBox cbxEnableAwake = FindViewById<CheckBox>(Resource.Id.cbxEnableAwake);
             //O es para Objeto, e es para Evento.
             cbxEnableAwake.Click += (o, e) =>
@@ -32,7 +31,7 @@ namespace LiveDisplay
                     StopService(new Intent(this, typeof(AwakeService)));
                 }
             };
-
+            
         }
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
@@ -44,11 +43,21 @@ namespace LiveDisplay
 
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
-            int id = item.ItemId;
-            if (id == Resource.Id.preview)
+            switch (item.ItemId)
             {
-                Intent intent = new Intent(this, typeof(LockScreenActivity));
-                StartActivity(intent);
+                case Resource.Id.preview:
+                    {
+                        Intent intent = new Intent(this, typeof(LockScreenActivity));
+                        StartActivity(intent);
+                        return true;
+                    }
+
+                case Resource.Id.notificationSettings:
+                    {
+                        string lel = Android.Provider.Settings.ActionNotificationListenerSettings;
+                        StartActivity(new Intent(lel));
+                        return true;
+                    }
             }
             return true;
         }

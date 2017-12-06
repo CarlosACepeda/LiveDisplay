@@ -75,6 +75,9 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f060006
 			public const int notificationIcon = 2131099654;
 			
+			// aapt resource value: 0x7f06000a
+			public const int notificationSettings = 2131099658;
+			
 			// aapt resource value: 0x7f060009
 			public const int preview = 2131099657;
 			

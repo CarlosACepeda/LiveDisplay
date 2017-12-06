@@ -12,36 +12,28 @@ using Android.Widget;
 
 namespace LiveDisplay.Servicios
 {
-    [Service(Name = "undergrounddev.serv.NotificationHijackService",
-        Label = "NotificationHijackService", Permission = "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE")]
-
     class NotificationHijackService : NotificationListenerService 
     {
 
-        public override IBinder OnBind(Intent intent)
-        {
-            return null;
-        }
-        [return: GeneratedEnum]
-        public override StartCommandResult OnStartCommand(Intent intent, [GeneratedEnum] StartCommandFlags flags, int startId)
-        {
-            return StartCommandResult.Sticky;
+        static int sdkVersion = Convert.ToInt32(Build.VERSION.SdkInt);
 
-        }
-        public override void OnNotificationPosted(StatusBarNotification notification)
+
+        public override void OnNotificationPosted(StatusBarNotification sbn)
         {
-            String nombrePaquete = notification.PackageName;
+            base.OnNotificationPosted(sbn);
+            Toast.MakeText(Application.Context, "LEL", ToastLength.Short);
+            String nombrePaquete = sbn.PackageName;
             String ticker = "";
-            if (notification.Notification != null)
+            if (sbn.Notification != null)
             {
-                ticker = notification.Notification.TickerText.ToString();
+                ticker = sbn.Notification.TickerText.ToString();
 
             }
-            Bundle extras = notification.Notification.Extras;
+            Bundle extras = sbn.Notification.Extras;
             String titulo = extras.GetString("android.title");
             String texto = extras.GetCharSequence("android.text").ToString();
             int id1 = extras.GetInt(Notification.ExtraSmallIcon);
-            Bitmap id = notification.Notification.LargeIcon;
+            Bitmap id = sbn.Notification.LargeIcon;
 
             Intent notifSender = new Intent("notificationSender");
             notifSender.PutExtra("nombrePaquete", nombrePaquete);
@@ -56,12 +48,28 @@ namespace LiveDisplay.Servicios
                 notifSender.PutExtra("icon", byteArray);
             }
             LocalBroadcastManager.GetInstance(Application.Context).SendBroadcast(notifSender);
-            Toast.MakeText(Application.Context, "LEL", ToastLength.Short);
+            
 
         }
-        public override void OnNotificationRemoved(StatusBarNotification notification)
+        public override void OnNotificationRemoved(StatusBarNotification sbn)
         {
+            base.OnNotificationRemoved(sbn);
             Console.WriteLine("notificacion removida");
+            Toast.MakeText(Application.Context, "LAL", ToastLength.Short);
         }
+
+        public bool SupportsNotificationSettings()
+        {
+            if (sdkVersion >= 19)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
     }
+
 }
