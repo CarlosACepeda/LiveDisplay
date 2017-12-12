@@ -1,27 +1,34 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
+using Android.Views;
+using Android.Widget;
 using Android.Service.Notification;
+using Android.Util;
 using Android.Graphics;
 using System.IO;
 using Android.Support.V4.Content;
-using Android.Widget;
 
 namespace LiveDisplay.Servicios
 {
-    class NotificationHijackService : NotificationListenerService 
+    [Service(Label = "Catcher", Permission = "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE")]
+    [IntentFilter(new[] { "android.service.notification.NotificationListenerService" })]
+    class Catcher: NotificationListenerService
     {
 
-        static int sdkVersion = Convert.ToInt32(Build.VERSION.SdkInt);
-
-
+        public override void OnListenerConnected()
+        {
+            base.OnListenerConnected();
+        }
         public override void OnNotificationPosted(StatusBarNotification sbn)
         {
             base.OnNotificationPosted(sbn);
-            Toast.MakeText(Application.Context, "LEL", ToastLength.Short);
             String nombrePaquete = sbn.PackageName;
             String ticker = "";
             if (sbn.Notification != null)
@@ -48,28 +55,11 @@ namespace LiveDisplay.Servicios
                 notifSender.PutExtra("icon", byteArray);
             }
             LocalBroadcastManager.GetInstance(Application.Context).SendBroadcast(notifSender);
-            
 
         }
         public override void OnNotificationRemoved(StatusBarNotification sbn)
         {
             base.OnNotificationRemoved(sbn);
-            Console.WriteLine("notificacion removida");
-            Toast.MakeText(Application.Context, "LAL", ToastLength.Short);
         }
-
-        public bool SupportsNotificationSettings()
-        {
-            if (sdkVersion >= 19)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
     }
-
 }

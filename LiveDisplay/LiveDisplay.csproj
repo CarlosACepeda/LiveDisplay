@@ -57,12 +57,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Servicios\AwakeService.cs" />
+    <Compile Include="NotificationReceiver.cs" />
+    <Compile Include="servicios\AwakeService.cs" />
     <Compile Include="ConfigurationActivity.cs" />
     <Compile Include="LockScreenActivity.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Servicios\NotificationHijackService.cs" />
+    <Compile Include="servicios\CatcherService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="GettingStarted.Xamarin" />

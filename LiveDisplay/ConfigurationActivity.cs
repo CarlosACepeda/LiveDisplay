@@ -2,6 +2,7 @@
 using Android.App;
 using Android.Content;
 using Android.OS;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
 using LiveDisplay.Servicios;
@@ -18,6 +19,7 @@ namespace LiveDisplay
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Configuracion);
             CheckBox cbxEnableAwake = FindViewById<CheckBox>(Resource.Id.cbxEnableAwake);
+            Log.Info("LOL", "TEST INICIADO");
             //O es para Objeto, e es para Evento.
             cbxEnableAwake.Click += (o, e) =>
             {
