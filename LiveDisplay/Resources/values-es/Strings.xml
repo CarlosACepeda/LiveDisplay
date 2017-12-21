@@ -3,4 +3,6 @@
   <string name="app_name">LiveDisplay</string>
   <string name="app_title">Configuración</string>
   <string name="activarawake">Activar Awake</string>
+  <string name="modoactivo">Modo Activo</string>
+  <string name="placeholder">Insert a string here</string>
 </resources>

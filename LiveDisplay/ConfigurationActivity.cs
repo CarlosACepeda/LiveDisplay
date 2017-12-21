@@ -5,30 +5,29 @@ using Android.OS;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
-using LiveDisplay.Servicios;
 
 namespace LiveDisplay
 {
-    [Activity(Label = "Configuración", MainLauncher = true)]
+    [Activity(Label ="@string/app_title", MainLauncher = true, Icon ="@mipmap/ic_launcher")]
     class ConfigurationActivity: Activity
     {
+
         //Android Lifecycle.
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Configuracion);
-            CheckBox cbxEnableAwake = FindViewById<CheckBox>(Resource.Id.cbxEnableAwake);
-            Log.Info("LOL", "TEST INICIADO");
+            Switch swEnableAwake = FindViewById<Switch>(Resource.Id.swEnableAwake);
             //O es para Objeto, e es para Evento.
-            cbxEnableAwake.Click += (o, e) =>
+            swEnableAwake.Click += (o, e) =>
             {
-                if (cbxEnableAwake.Checked == true)
+                if (swEnableAwake.Checked == true)
                 {
                     StartService(new Intent(this, typeof(AwakeService)));
                     
                 }
-                else if (cbxEnableAwake.Checked == false)
+                else if (swEnableAwake.Checked == false)
                 {
                     StopService(new Intent(this, typeof(AwakeService)));
                 }
@@ -37,7 +36,6 @@ namespace LiveDisplay
         }
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
-
             var inflater = MenuInflater;
             inflater.Inflate(Resource.Menu.menu_config, menu);
             return true;

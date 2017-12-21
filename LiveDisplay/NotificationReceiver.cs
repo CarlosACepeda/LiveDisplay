@@ -12,7 +12,8 @@ using Android.Widget;
 
 namespace LiveDisplay
 {
-    [BroadcastReceiver]
+    [BroadcastReceiver(Enabled = true, Exported =true, Label ="IntentReceiver")]
+    [IntentFilter(new[] {"test.test"}, DataMimeType = "text/plain")]
     public class NotificationReceiver : BroadcastReceiver
     {
         public override void OnReceive(Context context, Intent intent)
