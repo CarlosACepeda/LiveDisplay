@@ -104,10 +104,13 @@ namespace LiveDisplay
 		{
 			
 			// aapt resource value: 0x7f040000
-			public const int Configuracion = 2130968576;
+			public const int About = 2130968576;
 			
 			// aapt resource value: 0x7f040001
-			public const int LockScreen = 2130968577;
+			public const int Configuracion = 2130968577;
+			
+			// aapt resource value: 0x7f040002
+			public const int LockScreen = 2130968578;
 			
 			static Layout()
 			{
@@ -156,6 +159,12 @@ namespace LiveDisplay
 			
 			// aapt resource value: 0x7f050002
 			public const int activarawake = 2131034114;
+			
+			// aapt resource value: 0x7f050006
+			public const int activarlockscreen = 2131034118;
+			
+			// aapt resource value: 0x7f050005
+			public const int ajusteslockscreen = 2131034117;
 			
 			// aapt resource value: 0x7f050000
 			public const int app_name = 2131034112;

@@ -60,6 +60,7 @@
     <Compile Include="LockScreenActivity.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="servicios\BroadcastService.cs" />
     <Compile Include="servicios\CatcherService.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -71,6 +72,9 @@
     </None>
     <None Include="Assets\AboutAssets.txt" />
     <AndroidResource Include="Resources\layout\Configuracion.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\About.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

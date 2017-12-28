@@ -35,10 +35,11 @@
             android:id="@+id/swEnableAwake" />
     </RelativeLayout>
     <TextView
-        android:text="@string/placeholder"
+        android:text="@string/ajusteslockscreen"
         android:paddingLeft="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:id="@+id/textView1" />
     <RelativeLayout
         android:minWidth="25px"
@@ -50,7 +51,7 @@
         android:layout_marginTop="20dp"
         android:id="@+id/contenedorDelMenu">
         <TextView
-            android:text="@string/placeholder"
+            android:text="@string/activarlockscreen"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

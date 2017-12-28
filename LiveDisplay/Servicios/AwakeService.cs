@@ -10,10 +10,9 @@ using Android.Views;
 using Android.Widget;
 using Android.Hardware;
 
-namespace LiveDisplay
+namespace LiveDisplay.servicios
 {
-    [Service(Name = "undergrounddev.serv.AwakeService",
-        Label = "Awake Service")]
+    [Service(Name = "undergrounddev.serv.AwakeService",  Label = "Awake Service")]
     class AwakeService : Service, ISensorEventListener
     {
         //administra los sensores de Android.

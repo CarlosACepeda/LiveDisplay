@@ -5,4 +5,6 @@
   <string name="activarawake">Enable Awake</string>
   <string name="modoactivo">Active Mode</string>
   <string name="placeholder">Insert a string here</string>
+  <string name="ajusteslockscreen">Lockscreen Settings</string>
+  <string name="activarlockscreen">Enable lockscreen</string>
 </resources>

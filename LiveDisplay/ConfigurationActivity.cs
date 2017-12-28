@@ -1,14 +1,14 @@
-﻿
-using Android.App;
+﻿using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using LiveDisplay.servicios;
 
 namespace LiveDisplay
 {
-    [Activity(Label ="@string/app_title", MainLauncher = true, Icon ="@mipmap/ic_launcher")]
+    [Activity(Label ="@string/app_name", MainLauncher = true, Icon ="@mipmap/ic_launcher")]
     class ConfigurationActivity: Activity
     {
 
@@ -18,6 +18,7 @@ namespace LiveDisplay
             base.OnCreate(savedInstanceState);
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Configuracion);
+            StartService(new Intent(this, typeof(BroadcastService)));
             Switch swEnableAwake = FindViewById<Switch>(Resource.Id.swEnableAwake);
             //O es para Objeto, e es para Evento.
             swEnableAwake.Click += (o, e) =>
@@ -69,8 +70,12 @@ namespace LiveDisplay
         protected override void OnDestroy()
         {
             base.OnDestroy();
+           
         }
-
-        
+        protected override void OnResume()
+        {
+            base.OnResume();
+           
+        }
     }
 }
