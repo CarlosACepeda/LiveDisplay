@@ -60,6 +60,9 @@ namespace LiveDisplay
 		public partial class Id
 		{
 			
+			// aapt resource value: 0x7f070005
+			public const int NotificationFragment = 2131165189;
+			
 			// aapt resource value: 0x7f070006
 			public const int clockLock = 2131165190;
 			
@@ -69,20 +72,20 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f070004
 			public const int contenedorPrincipal = 2131165188;
 			
-			// aapt resource value: 0x7f070005
-			public const int notificationIcon = 2131165189;
+			// aapt resource value: 0x7f07000a
+			public const int notificationSettings = 2131165194;
 			
 			// aapt resource value: 0x7f070009
-			public const int notificationSettings = 2131165193;
-			
-			// aapt resource value: 0x7f070008
-			public const int preview = 2131165192;
+			public const int preview = 2131165193;
 			
 			// aapt resource value: 0x7f070003
 			public const int swEnableAwake = 2131165187;
 			
 			// aapt resource value: 0x7f070000
 			public const int textView1 = 2131165184;
+			
+			// aapt resource value: 0x7f070008
+			public const int textView2 = 2131165192;
 			
 			// aapt resource value: 0x7f070002
 			public const int txtAjustes = 2131165186;
@@ -111,6 +114,9 @@ namespace LiveDisplay
 			
 			// aapt resource value: 0x7f040002
 			public const int LockScreen = 2130968578;
+			
+			// aapt resource value: 0x7f040003
+			public const int NotificationFragment = 2130968579;
 			
 			static Layout()
 			{

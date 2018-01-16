@@ -3,13 +3,12 @@
     a:layout_width="match_parent"
     a:layout_height="match_parent"
     a:id="@+id/contenedorPrincipal">
-    <ImageView
-        a:src="@android:drawable/ic_menu_gallery"
+    <ListView
+        a:minWidth="25px"
+        a:minHeight="25px"
+        a:id="@+id/listView1"
         a:layout_width="wrap_content"
-        a:layout_height="wrap_content"
-        a:id="@+id/notificationIcon"
-        a:layout_alignParentRight="true"
-        a:paddingRight="5dp" />
+        a:layout_height="wrap_content" />
     <LinearLayout
         a:orientation="vertical"
         a:layout_width="match_parent"

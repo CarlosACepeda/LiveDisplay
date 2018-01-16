@@ -4,7 +4,7 @@ using Android.OS;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
-using LiveDisplay.servicios;
+using LiveDisplay.Servicios;
 
 namespace LiveDisplay
 {
@@ -18,7 +18,6 @@ namespace LiveDisplay
             base.OnCreate(savedInstanceState);
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Configuracion);
-            StartService(new Intent(this, typeof(BroadcastService)));
             Switch swEnableAwake = FindViewById<Switch>(Resource.Id.swEnableAwake);
             //O es para Objeto, e es para Evento.
             swEnableAwake.Click += (o, e) =>
