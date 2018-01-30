@@ -31,12 +31,46 @@ namespace LiveDisplay
 		public partial class Attribute
 		{
 			
+			// aapt resource value: 0x7f010000
+			public const int layoutManager = 2130771968;
+			
+			// aapt resource value: 0x7f010002
+			public const int reverseLayout = 2130771970;
+			
+			// aapt resource value: 0x7f010001
+			public const int spanCount = 2130771969;
+			
+			// aapt resource value: 0x7f010003
+			public const int stackFromEnd = 2130771971;
+			
 			static Attribute()
 			{
 				global::Android.Runtime.ResourceIdManager.UpdateIdValues();
 			}
 			
 			private Attribute()
+			{
+			}
+		}
+		
+		public partial class Dimension
+		{
+			
+			// aapt resource value: 0x7f050000
+			public const int item_touch_helper_max_drag_scroll_per_frame = 2131034112;
+			
+			// aapt resource value: 0x7f050001
+			public const int item_touch_helper_swipe_escape_max_velocity = 2131034113;
+			
+			// aapt resource value: 0x7f050002
+			public const int item_touch_helper_swipe_escape_velocity = 2131034114;
+			
+			static Dimension()
+			{
+				global::Android.Runtime.ResourceIdManager.UpdateIdValues();
+			}
+			
+			private Dimension()
 			{
 			}
 		}
@@ -60,38 +94,59 @@ namespace LiveDisplay
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f070005
-			public const int NotificationFragment = 2131165189;
+			// aapt resource value: 0x7f060008
+			public const int NotificationListRecyclerView = 2131099656;
 			
-			// aapt resource value: 0x7f070006
-			public const int clockLock = 2131165190;
+			// aapt resource value: 0x7f060009
+			public const int clockLock = 2131099657;
 			
-			// aapt resource value: 0x7f070001
-			public const int contenedorDelMenu = 2131165185;
+			// aapt resource value: 0x7f060004
+			public const int contenedorDelMenu = 2131099652;
 			
-			// aapt resource value: 0x7f070004
-			public const int contenedorPrincipal = 2131165188;
+			// aapt resource value: 0x7f060007
+			public const int contenedorPrincipal = 2131099655;
 			
-			// aapt resource value: 0x7f07000a
-			public const int notificationSettings = 2131165194;
+			// aapt resource value: 0x7f060000
+			public const int item_touch_helper_previous_elevation = 2131099648;
 			
-			// aapt resource value: 0x7f070009
-			public const int preview = 2131165193;
+			// aapt resource value: 0x7f06000c
+			public const int ivNotificationIcon = 2131099660;
 			
-			// aapt resource value: 0x7f070003
-			public const int swEnableAwake = 2131165187;
+			// aapt resource value: 0x7f06000b
+			public const int llNotificationIconHolder = 2131099659;
 			
-			// aapt resource value: 0x7f070000
-			public const int textView1 = 2131165184;
+			// aapt resource value: 0x7f060011
+			public const int notificationSettings = 2131099665;
 			
-			// aapt resource value: 0x7f070008
-			public const int textView2 = 2131165192;
+			// aapt resource value: 0x7f060010
+			public const int preview = 2131099664;
 			
-			// aapt resource value: 0x7f070002
-			public const int txtAjustes = 2131165186;
+			// aapt resource value: 0x7f060006
+			public const int swEnableAwake = 2131099654;
 			
-			// aapt resource value: 0x7f070007
-			public const int txtFechaLock = 2131165191;
+			// aapt resource value: 0x7f060003
+			public const int textView1 = 2131099651;
+			
+			// aapt resource value: 0x7f060002
+			public const int tvAppInfo = 2131099650;
+			
+			// aapt resource value: 0x7f060001
+			public const int tvAppInfoTitle = 2131099649;
+			
+			// aapt resource value: 0x7f06000e
+			public const int tvNotificationText = 2131099662;
+			
+			// aapt resource value: 0x7f06000d
+			public const int tvNotificationTitle = 2131099661;
+			
+			// aapt resource value: 0x7f06000f
+			public const int tvSeparador = 2131099663;
+			
+			// aapt resource value: 0x7f060005
+			public const int txtAjustes = 2131099653;
+			
+			// aapt resource value: 0x7f06000a
+			public const int txtFechaLock = 2131099658;
 			
 			static Id()
 			{
@@ -116,7 +171,7 @@ namespace LiveDisplay
 			public const int LockScreen = 2130968578;
 			
 			// aapt resource value: 0x7f040003
-			public const int NotificationFragment = 2130968579;
+			public const int NotificationItemRow = 2130968579;
 			
 			static Layout()
 			{
@@ -131,8 +186,8 @@ namespace LiveDisplay
 		public partial class Menu
 		{
 			
-			// aapt resource value: 0x7f060000
-			public const int menu_config = 2131099648;
+			// aapt resource value: 0x7f080000
+			public const int menu_config = 2131230720;
 			
 			static Menu()
 			{
@@ -163,26 +218,32 @@ namespace LiveDisplay
 		public partial class String
 		{
 			
-			// aapt resource value: 0x7f050002
-			public const int activarawake = 2131034114;
+			// aapt resource value: 0x7f070007
+			public const int aboutinfo = 2131165191;
 			
-			// aapt resource value: 0x7f050006
-			public const int activarlockscreen = 2131034118;
+			// aapt resource value: 0x7f070008
+			public const int aboutinfotitle = 2131165192;
 			
-			// aapt resource value: 0x7f050005
-			public const int ajusteslockscreen = 2131034117;
+			// aapt resource value: 0x7f070002
+			public const int activarawake = 2131165186;
 			
-			// aapt resource value: 0x7f050000
-			public const int app_name = 2131034112;
+			// aapt resource value: 0x7f070006
+			public const int activarlockscreen = 2131165190;
 			
-			// aapt resource value: 0x7f050001
-			public const int app_title = 2131034113;
+			// aapt resource value: 0x7f070005
+			public const int ajusteslockscreen = 2131165189;
 			
-			// aapt resource value: 0x7f050003
-			public const int modoactivo = 2131034115;
+			// aapt resource value: 0x7f070000
+			public const int app_name = 2131165184;
 			
-			// aapt resource value: 0x7f050004
-			public const int placeholder = 2131034116;
+			// aapt resource value: 0x7f070001
+			public const int app_title = 2131165185;
+			
+			// aapt resource value: 0x7f070003
+			public const int modoactivo = 2131165187;
+			
+			// aapt resource value: 0x7f070004
+			public const int placeholder = 2131165188;
 			
 			static String()
 			{
@@ -190,6 +251,45 @@ namespace LiveDisplay
 			}
 			
 			private String()
+			{
+			}
+		}
+		
+		public partial class Styleable
+		{
+			
+			public static int[] RecyclerView = new int[] {
+					16842948,
+					16842993,
+					2130771968,
+					2130771969,
+					2130771970,
+					2130771971};
+			
+			// aapt resource value: 1
+			public const int RecyclerView_android_descendantFocusability = 1;
+			
+			// aapt resource value: 0
+			public const int RecyclerView_android_orientation = 0;
+			
+			// aapt resource value: 2
+			public const int RecyclerView_layoutManager = 2;
+			
+			// aapt resource value: 4
+			public const int RecyclerView_reverseLayout = 4;
+			
+			// aapt resource value: 3
+			public const int RecyclerView_spanCount = 3;
+			
+			// aapt resource value: 5
+			public const int RecyclerView_stackFromEnd = 5;
+			
+			static Styleable()
+			{
+				global::Android.Runtime.ResourceIdManager.UpdateIdValues();
+			}
+			
+			private Styleable()
 			{
 			}
 		}

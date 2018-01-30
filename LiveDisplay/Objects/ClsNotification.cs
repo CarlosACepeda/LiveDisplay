@@ -5,6 +5,7 @@ using System.Text;
 
 using Android.App;
 using Android.Content;
+using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
@@ -16,7 +17,7 @@ namespace LiveDisplay.Objects
     {
         public string Titulo { get; set; }
         public string Texto { get; set; }
-        public int Icono { get; set; }
+        public Drawable Icono { get; set; }
 
     }
 }

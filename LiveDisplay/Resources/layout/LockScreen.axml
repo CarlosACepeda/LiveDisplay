@@ -3,10 +3,9 @@
     a:layout_width="match_parent"
     a:layout_height="match_parent"
     a:id="@+id/contenedorPrincipal">
-    <ListView
-        a:minWidth="25px"
-        a:minHeight="25px"
-        a:id="@+id/listView1"
+    <android.support.v7.widget.RecyclerView
+        a:id="@+id/NotificationListRecyclerView"
+        a:scrollbars="none"
         a:layout_width="wrap_content"
         a:layout_height="wrap_content" />
     <LinearLayout

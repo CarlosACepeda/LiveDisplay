@@ -6,8 +6,8 @@ using Android.Util;
 
 namespace LiveDisplay.Servicios
 {
-    [Service(Label = "Catcheerr", Permission = "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE")]
-    [IntentFilter(new[] { "android.service.notification.NotificationListenerService" })]
+    [Service(Label = "Caaatcherr", Permission = "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE")]
+    [IntentFilter(new[] { "android.service.notification.NotificationListenerService"})]
     internal class Catcher : NotificationListenerService
     {
 #pragma warning disable CS0649 // El campo 'Catcher.codes' nunca se asigna y siempre tendrá el valor predeterminado

@@ -7,4 +7,6 @@
   <string name="placeholder">Insert a string here</string>
   <string name="ajusteslockscreen">Lockscreen Settings</string>
   <string name="activarlockscreen">Enable lockscreen</string>
+  <string name="aboutinfo">This app is developed with &#60;3 by Carlos Cepeda, you can support me by donating me! i hope youre enjoying this app as much as i developed it </string>
+  <string name="aboutinfotitle">About this application:</string>
 </resources>
