@@ -3,10 +3,12 @@ using Android.Content;
 using Android.OS;
 using Android.Service.Notification;
 using Android.Util;
+using Android.Widget;
+using LiveDisplay.Objects;
 
 namespace LiveDisplay.Servicios
 {
-    [Service(Label = "Caaatcherr", Permission = "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE")]
+    [Service(Label = "Catchrrreer", Permission = "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE")]
     [IntentFilter(new[] { "android.service.notification.NotificationListenerService"})]
     internal class Catcher : NotificationListenerService
     {
@@ -17,6 +19,7 @@ namespace LiveDisplay.Servicios
         public delegate void OnNotificationPostedEventHandler(StatusBarNotification statusBarNotification);
 
         private LockScreenActivity lockScreenActivity = new LockScreenActivity();
+
 
         //Válido para Lollipop en Adelante, no KitKat.
         public override void OnListenerConnected()

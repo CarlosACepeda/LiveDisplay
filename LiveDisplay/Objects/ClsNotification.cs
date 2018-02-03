@@ -13,7 +13,7 @@ using Android.Widget;
 
 namespace LiveDisplay.Objects
 {
-    class ClsNotification
+    public class ClsNotification
     {
         public string Titulo { get; set; }
         public string Texto { get; set; }
