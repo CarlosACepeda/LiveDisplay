@@ -31,6 +31,39 @@ namespace LiveDisplay
 		public partial class Attribute
 		{
 			
+			// aapt resource value: 0x7f010004
+			public const int cardBackgroundColor = 2130771972;
+			
+			// aapt resource value: 0x7f010005
+			public const int cardCornerRadius = 2130771973;
+			
+			// aapt resource value: 0x7f010006
+			public const int cardElevation = 2130771974;
+			
+			// aapt resource value: 0x7f010007
+			public const int cardMaxElevation = 2130771975;
+			
+			// aapt resource value: 0x7f010009
+			public const int cardPreventCornerOverlap = 2130771977;
+			
+			// aapt resource value: 0x7f010008
+			public const int cardUseCompatPadding = 2130771976;
+			
+			// aapt resource value: 0x7f01000a
+			public const int contentPadding = 2130771978;
+			
+			// aapt resource value: 0x7f01000e
+			public const int contentPaddingBottom = 2130771982;
+			
+			// aapt resource value: 0x7f01000b
+			public const int contentPaddingLeft = 2130771979;
+			
+			// aapt resource value: 0x7f01000c
+			public const int contentPaddingRight = 2130771980;
+			
+			// aapt resource value: 0x7f01000d
+			public const int contentPaddingTop = 2130771981;
+			
 			// aapt resource value: 0x7f010000
 			public const int layoutManager = 2130771968;
 			
@@ -53,8 +86,42 @@ namespace LiveDisplay
 			}
 		}
 		
+		public partial class Color
+		{
+			
+			// aapt resource value: 0x7f080000
+			public const int cardview_dark_background = 2131230720;
+			
+			// aapt resource value: 0x7f080001
+			public const int cardview_light_background = 2131230721;
+			
+			// aapt resource value: 0x7f080002
+			public const int cardview_shadow_end_color = 2131230722;
+			
+			// aapt resource value: 0x7f080003
+			public const int cardview_shadow_start_color = 2131230723;
+			
+			static Color()
+			{
+				global::Android.Runtime.ResourceIdManager.UpdateIdValues();
+			}
+			
+			private Color()
+			{
+			}
+		}
+		
 		public partial class Dimension
 		{
+			
+			// aapt resource value: 0x7f050003
+			public const int cardview_compat_inset_shadow = 2131034115;
+			
+			// aapt resource value: 0x7f050004
+			public const int cardview_default_elevation = 2131034116;
+			
+			// aapt resource value: 0x7f050005
+			public const int cardview_default_radius = 2131034117;
 			
 			// aapt resource value: 0x7f050000
 			public const int item_touch_helper_max_drag_scroll_per_frame = 2131034112;
@@ -94,11 +161,17 @@ namespace LiveDisplay
 		public partial class Id
 		{
 			
+			// aapt resource value: 0x7f06000c
+			public const int NotificationCardView = 2131099660;
+			
 			// aapt resource value: 0x7f060008
 			public const int NotificationListRecyclerView = 2131099656;
 			
 			// aapt resource value: 0x7f060009
-			public const int clockLock = 2131099657;
+			public const int clockContainer = 2131099657;
+			
+			// aapt resource value: 0x7f06000a
+			public const int clockLock = 2131099658;
 			
 			// aapt resource value: 0x7f060004
 			public const int contenedorDelMenu = 2131099652;
@@ -106,20 +179,20 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f060007
 			public const int contenedorPrincipal = 2131099655;
 			
+			// aapt resource value: 0x7f06000f
+			public const int cvNotificationIcon = 2131099663;
+			
 			// aapt resource value: 0x7f060000
 			public const int item_touch_helper_previous_elevation = 2131099648;
 			
-			// aapt resource value: 0x7f06000c
-			public const int ivNotificationIcon = 2131099660;
+			// aapt resource value: 0x7f060010
+			public const int ivNotificationIcon = 2131099664;
 			
-			// aapt resource value: 0x7f06000b
-			public const int llNotificationIconHolder = 2131099659;
+			// aapt resource value: 0x7f060012
+			public const int notificationSettings = 2131099666;
 			
 			// aapt resource value: 0x7f060011
-			public const int notificationSettings = 2131099665;
-			
-			// aapt resource value: 0x7f060010
-			public const int preview = 2131099664;
+			public const int preview = 2131099665;
 			
 			// aapt resource value: 0x7f060006
 			public const int swEnableAwake = 2131099654;
@@ -139,14 +212,11 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f06000d
 			public const int tvNotificationTitle = 2131099661;
 			
-			// aapt resource value: 0x7f06000f
-			public const int tvSeparador = 2131099663;
-			
 			// aapt resource value: 0x7f060005
 			public const int txtAjustes = 2131099653;
 			
-			// aapt resource value: 0x7f06000a
-			public const int txtFechaLock = 2131099658;
+			// aapt resource value: 0x7f06000b
+			public const int txtFechaLock = 2131099659;
 			
 			static Id()
 			{
@@ -186,8 +256,8 @@ namespace LiveDisplay
 		public partial class Menu
 		{
 			
-			// aapt resource value: 0x7f080000
-			public const int menu_config = 2131230720;
+			// aapt resource value: 0x7f0a0000
+			public const int menu_config = 2131361792;
 			
 			static Menu()
 			{
@@ -218,32 +288,32 @@ namespace LiveDisplay
 		public partial class String
 		{
 			
-			// aapt resource value: 0x7f070007
-			public const int aboutinfo = 2131165191;
+			// aapt resource value: 0x7f090007
+			public const int aboutinfo = 2131296263;
 			
-			// aapt resource value: 0x7f070008
-			public const int aboutinfotitle = 2131165192;
+			// aapt resource value: 0x7f090008
+			public const int aboutinfotitle = 2131296264;
 			
-			// aapt resource value: 0x7f070002
-			public const int activarawake = 2131165186;
+			// aapt resource value: 0x7f090002
+			public const int activarawake = 2131296258;
 			
-			// aapt resource value: 0x7f070006
-			public const int activarlockscreen = 2131165190;
+			// aapt resource value: 0x7f090006
+			public const int activarlockscreen = 2131296262;
 			
-			// aapt resource value: 0x7f070005
-			public const int ajusteslockscreen = 2131165189;
+			// aapt resource value: 0x7f090005
+			public const int ajusteslockscreen = 2131296261;
 			
-			// aapt resource value: 0x7f070000
-			public const int app_name = 2131165184;
+			// aapt resource value: 0x7f090000
+			public const int app_name = 2131296256;
 			
-			// aapt resource value: 0x7f070001
-			public const int app_title = 2131165185;
+			// aapt resource value: 0x7f090001
+			public const int app_title = 2131296257;
 			
-			// aapt resource value: 0x7f070003
-			public const int modoactivo = 2131165187;
+			// aapt resource value: 0x7f090003
+			public const int modoactivo = 2131296259;
 			
-			// aapt resource value: 0x7f070004
-			public const int placeholder = 2131165188;
+			// aapt resource value: 0x7f090004
+			public const int placeholder = 2131296260;
 			
 			static String()
 			{
@@ -255,8 +325,87 @@ namespace LiveDisplay
 			}
 		}
 		
+		public partial class Style
+		{
+			
+			// aapt resource value: 0x7f070001
+			public const int Base_CardView = 2131165185;
+			
+			// aapt resource value: 0x7f070000
+			public const int CardView = 2131165184;
+			
+			// aapt resource value: 0x7f070002
+			public const int CardView_Dark = 2131165186;
+			
+			// aapt resource value: 0x7f070003
+			public const int CardView_Light = 2131165187;
+			
+			static Style()
+			{
+				global::Android.Runtime.ResourceIdManager.UpdateIdValues();
+			}
+			
+			private Style()
+			{
+			}
+		}
+		
 		public partial class Styleable
 		{
+			
+			public static int[] CardView = new int[] {
+					16843071,
+					16843072,
+					2130771972,
+					2130771973,
+					2130771974,
+					2130771975,
+					2130771976,
+					2130771977,
+					2130771978,
+					2130771979,
+					2130771980,
+					2130771981,
+					2130771982};
+			
+			// aapt resource value: 1
+			public const int CardView_android_minHeight = 1;
+			
+			// aapt resource value: 0
+			public const int CardView_android_minWidth = 0;
+			
+			// aapt resource value: 2
+			public const int CardView_cardBackgroundColor = 2;
+			
+			// aapt resource value: 3
+			public const int CardView_cardCornerRadius = 3;
+			
+			// aapt resource value: 4
+			public const int CardView_cardElevation = 4;
+			
+			// aapt resource value: 5
+			public const int CardView_cardMaxElevation = 5;
+			
+			// aapt resource value: 7
+			public const int CardView_cardPreventCornerOverlap = 7;
+			
+			// aapt resource value: 6
+			public const int CardView_cardUseCompatPadding = 6;
+			
+			// aapt resource value: 8
+			public const int CardView_contentPadding = 8;
+			
+			// aapt resource value: 12
+			public const int CardView_contentPaddingBottom = 12;
+			
+			// aapt resource value: 9
+			public const int CardView_contentPaddingLeft = 9;
+			
+			// aapt resource value: 10
+			public const int CardView_contentPaddingRight = 10;
+			
+			// aapt resource value: 11
+			public const int CardView_contentPaddingTop = 11;
 			
 			public static int[] RecyclerView = new int[] {
 					16842948,

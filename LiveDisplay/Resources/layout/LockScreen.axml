@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:a="http://schemas.android.com/apk/res/android"
+    a:id="@+id/contenedorPrincipal"
     a:layout_width="match_parent"
-    a:layout_height="match_parent"
-    a:id="@+id/contenedorPrincipal">
+    a:layout_height="match_parent">
     <android.support.v7.widget.RecyclerView
         a:id="@+id/NotificationListRecyclerView"
-        a:scrollbars="none"
         a:layout_width="wrap_content"
-        a:layout_height="wrap_content" />
+        a:layout_height="600dp"
+        a:layout_alignParentRight="true" />
     <LinearLayout
+        a:id="@+id/clockContainer"
         a:orientation="vertical"
         a:layout_width="match_parent"
         a:layout_height="wrap_content"

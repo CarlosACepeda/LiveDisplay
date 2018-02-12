@@ -15,12 +15,15 @@ using Java.Lang;
 using System.Threading.Tasks;
 using Android.Util;
 using Android.Content;
+using System;
+using LiveDisplay.Databases;
 
 namespace LiveDisplay
 {
     [Activity(Label = "LockScreen", MainLauncher = false)]
     public class LockScreenActivity : Activity
     {
+        int newListSize, oldListSize;
 
         WallpaperManager wallpaperManager = null;
         Drawable papelTapiz;
@@ -34,6 +37,7 @@ namespace LiveDisplay
         List<ClsNotification> listaNotificaciones = new List<ClsNotification>();
         ActivityLifecycleHelper lifecycleHelper = new ActivityLifecycleHelper();
 
+        DBHelper db = new DBHelper();
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -47,18 +51,16 @@ namespace LiveDisplay
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.LockScreen);
             //Iniciar Lista
-            
             InicializarVariables();
+            CargarDatos();
             ActionBar.Hide();
             ObtenerFecha();
 
         }
         protected override void OnResume()
         {
+            adapter.NotifyDataSetChanged();
             base.OnResume();
-            lifecycleHelper.IsActivityResumed();
-            //IniciarLista();
-
         }
         protected override void OnPause()
         {
@@ -89,21 +91,8 @@ namespace LiveDisplay
             recycler = (RecyclerView)FindViewById(Resource.Id.NotificationListRecyclerView);
             layoutManager = new LinearLayoutManager(this);
             recycler.SetLayoutManager(layoutManager);
-            adapter = new NotificationAdapter(listaNotificaciones);
-            recycler.SetAdapter(adapter);
-            Log.Info("Adaptador iniciado", "SetAdapter exitoso, lista configurada");
-        }
-        public void BuildNotification(StatusBarNotification sbn)
-        {
-
-            ClsNotification notification = new ClsNotification
-            {
-                Titulo = sbn.Notification.Extras.GetString("android.title").ToString(),
-                Texto = sbn.Notification.Extras.GetString("android.text").ToString(),
-                Icono = null
-            };
-            //<Imposible llamar a 'adapter' aquí, wontfix>
-
+            //adapter = new NotificationAdapter(listaNotificaciones);
+            //recycler.SetAdapter(adapter);
         }
         public void IniciarLista()
         {
@@ -115,6 +104,14 @@ namespace LiveDisplay
                 Icono = null
             };
             listaNotificaciones.Add(notification);
+        }
+        private void CargarDatos()
+        {
+            //Bring data from Database.
+            listaNotificaciones = db.SelectTableNotification();
+            adapter = new NotificationAdapter(listaNotificaciones);
+            recycler.SetAdapter(adapter);
+            oldListSize = listaNotificaciones.Count;
         }
     }
 }

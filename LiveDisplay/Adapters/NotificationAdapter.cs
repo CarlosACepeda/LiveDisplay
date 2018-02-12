@@ -6,6 +6,7 @@ using Android.Support.V7.Widget;
 using LiveDisplay.Objects;
 using Android.App;
 using System.Collections.Generic;
+using Android.Graphics;
 
 namespace LiveDisplay.Adapters
 {
@@ -22,8 +23,9 @@ namespace LiveDisplay.Adapters
 
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
+            //Bitmap bitmap = ReturnIconBitMap(notificaciones[position].Icono);
             NotificationAdapterViewHolder viewHolder = holder as NotificationAdapterViewHolder;
-            viewHolder.Icono.SetImageDrawable(notificaciones[position].Icono);
+            viewHolder.Icono.SetImageResource(Resource.Drawable.ic_preview_lockscreen);
             viewHolder.Titulo.Text = notificaciones[position].Titulo;
             viewHolder.Texto.Text = notificaciones[position].Texto;
         }
@@ -33,6 +35,11 @@ namespace LiveDisplay.Adapters
             LayoutInflater layoutInflater = LayoutInflater.From(parent.Context);
             View itemView = layoutInflater.Inflate(Resource.Layout.NotificationItemRow, parent, false);
             return new NotificationAdapterViewHolder(itemView);
+        }
+        //todo
+        public Bitmap ReturnIconBitMap(byte[] iconByteArray)
+        {
+            return BitmapFactory.DecodeByteArray(iconByteArray, 0, iconByteArray.Length);
         }
     }
 

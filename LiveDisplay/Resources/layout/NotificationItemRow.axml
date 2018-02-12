@@ -1,40 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="wrap_content"
-    android:background="@android:color/background_light">
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/llNotificationIconHolder">
+    android:layout_width="200dp">
+    <android.support.v7.widget.CardView
+        android:id="@+id/NotificationCardView"
+        android:layout_height="40dp"
+        android:layout_width="150dp"
+        app:cardCornerRadius="4dp"
+        app:cardBackgroundColor="@color/cardview_light_background">
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:text="NotificationTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvNotificationTitle"
+                android:textColor="@android:color/background_dark" />
+            <TextView
+                android:text="NotificationText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvNotificationText"
+                android:textColor="@android:color/darker_gray"
+                android:layout_below="@id/tvNotificationTitle" />
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+    <android.support.v7.widget.CardView
+        android:id="@+id/cvNotificationIcon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:cardCornerRadius="45dp"
+        app:cardBackgroundColor="@color/cardview_light_background"
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_alignParentRight="true">
         <ImageView
-            android:src="@android:drawable/ic_menu_gallery"
+            android:id="@+id/ivNotificationIcon"
+            android:layout_height="match_parent"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/ivNotificationIcon" />
-    </LinearLayout>
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/llNotificationIconHolder">
-        <TextView
-            android:text="NotificationTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tvNotificationTitle"
-            android:textColor="@android:color/background_dark" />
-        <TextView
-            android:text="NotificationText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tvNotificationText"
-            android:layout_below="@id/tvNotificationTitle"
-            android:textColor="@android:color/darker_gray" />
-    </RelativeLayout>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:id="@+id/tvSeparador"
-        android:alpha="0"
-        android:layout_below="@id/llNotificationIconHolder" />
+            android:src="@android:drawable/ic_menu_gallery" />
+    </android.support.v7.widget.CardView>
 </RelativeLayout>

@@ -4,6 +4,7 @@ using Android.OS;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using LiveDisplay.Databases;
 using LiveDisplay.Servicios;
 
 namespace LiveDisplay
@@ -11,13 +12,14 @@ namespace LiveDisplay
     [Activity(Label ="@string/app_name", MainLauncher = true, Icon ="@mipmap/ic_launcher")]
     class ConfigurationActivity: Activity
     {
-
+        DBHelper helper = new DBHelper();
         //Android Lifecycle.
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Configuracion);
+            helper.CreateDatabase();
             Switch swEnableAwake = FindViewById<Switch>(Resource.Id.swEnableAwake);
             //O es para Objeto, e es para Evento.
             swEnableAwake.Click += (o, e) =>
@@ -32,7 +34,6 @@ namespace LiveDisplay
                     StopService(new Intent(this, typeof(AwakeService)));
                 }
             };
-            
         }
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
