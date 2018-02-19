@@ -35,11 +35,11 @@ namespace LiveDisplay.Servicios
             Bitmap bitmap = (Bitmap)sbn.Notification.Extras.GetParcelable("android.largeIcon");
             ClsNotification notification = new ClsNotification
             {
-                Id= sbn.Id,
+                Id = sbn.Id,
                 Titulo = sbn.Notification.Extras.GetCharSequence("android.title").ToString(),
                 Texto = sbn.Notification.Extras.GetCharSequence("android.text").ToString(),
                 //por ahora null
-                Icono = null
+                Icono = int.Parse(sbn.Notification.Extras.Get(Notification.ExtraSmallIcon).ToString())
             };
             helper.InsertIntoTableNotification(notification);
             Log.Info("Imserción", "Registro Insertado desde OnNoificationPosted");
@@ -49,10 +49,10 @@ namespace LiveDisplay.Servicios
         {
             ClsNotification notification = new ClsNotification
             {
-                Id= sbn.Id,
-                Titulo = sbn.Notification.Extras.GetCharSequence("android.title").ToString(),
-                Texto = sbn.Notification.Extras.GetCharSequence("android.text").ToString(),
-                Icono = sbn.Notification.Extras.GetByteArray("android.icon")
+                Id = sbn.Id,
+                Titulo = null,
+                Texto = null,
+                Icono = 0
             };
             helper.DeleteTableNotification(notification);
             Log.Info("leeel", "Notificación Removida");

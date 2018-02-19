@@ -10,6 +10,6 @@ namespace LiveDisplay.Objects
 
         public string Titulo { get; set; }
         public string Texto { get; set; }
-        public byte[] Icono { get; set; }
+        public int Icono { get; set; }
     }
 }
