@@ -1,65 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:a="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:minWidth="25px"
-    android:minHeight="25px"
-    tools:menu="menu_config">
-    <TextView
-        android:text="@string/modoactivo"
-        android:paddingLeft="20dp"
+    android:minHeight="25px">
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView1" />
-    <RelativeLayout
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp" />
+    <android.support.v7.widget.CardView
+        android:layout_below="@id/my_toolbar"
         android:minWidth="25px"
         android:minHeight="25px"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="20dp"
-        android:id="@+id/contenedorDelMenu">
+        a:cardElevation="1dp">
         <TextView
             android:text="@string/activarawake"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textAppearance="?android:attr/textAppearanceSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/txtAjustes" />
-        <Switch
+            android:id="@+id/lblactivarlockscreen" />
+        <android.support.v7.widget.SwitchCompat
+            android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/txtAjustes"
+            android:layout_toRightOf="@id/lblactivarlockscreen"
+            android:layout_alignStart="@id/lblactivarlockscreen"
+            a:showText="false"
             android:id="@+id/swEnableAwake" />
-    </RelativeLayout>
-    <TextView
-        android:text="@string/ajusteslockscreen"
-        android:paddingLeft="20dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:id="@+id/textView1" />
-    <RelativeLayout
-        android:minWidth="25px"
-        android:minHeight="25px"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="20dp"
-        android:id="@+id/contenedorDelMenu">
-        <TextView
-            android:text="@string/activarlockscreen"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/txtAjustes" />
-        <Switch
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/txtAjustes"
-            android:id="@+id/swEnableAwake" />
-    </RelativeLayout>
-</LinearLayout>
+    </android.support.v7.widget.CardView>
+</RelativeLayout>

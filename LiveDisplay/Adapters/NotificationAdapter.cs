@@ -7,6 +7,10 @@ using LiveDisplay.Objects;
 using Android.App;
 using System.Collections.Generic;
 using Android.Graphics;
+using Android.Content;
+using Android.Graphics.Drawables;
+using Android.Support.V4.Content;
+using Android.OS;
 
 namespace LiveDisplay.Adapters
 {
@@ -23,9 +27,10 @@ namespace LiveDisplay.Adapters
 
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
-            //Bitmap bitmap = ReturnIconBitMap(notificaciones[position].Icono);
+           
+
             NotificationAdapterViewHolder viewHolder = holder as NotificationAdapterViewHolder;
-            viewHolder.Icono.SetImageResource(Resource.Drawable.ic_preview_lockscreen);
+            viewHolder.Icono.Background=(ReturnIconBitMap(notificaciones[position].Icono, notificaciones[position].Paquete));
             viewHolder.Titulo.Text = notificaciones[position].Titulo;
             viewHolder.Texto.Text = notificaciones[position].Texto;
         }
@@ -37,22 +42,25 @@ namespace LiveDisplay.Adapters
             return new NotificationAdapterViewHolder(itemView);
         }
         //todo
-        public Bitmap ReturnIconBitMap(byte[] iconByteArray)
+        public Drawable ReturnIconBitMap(int iconInt, string paquete)
         {
-            return BitmapFactory.DecodeByteArray(iconByteArray, 0, iconByteArray.Length);
+            Context remotePackageContext = null;
+            remotePackageContext = Application.Context.CreatePackageContext(paquete, 0);
+            Drawable icon = ContextCompat.GetDrawable(remotePackageContext, iconInt);
+            return icon;
         }
     }
 
     //La siguiente clase simplemente guarda referencias a las vistas de la fila, para evitar hacer llamadas a FindViewById cada vez, no se hace nada más aquí
     class NotificationAdapterViewHolder : RecyclerView.ViewHolder
     {
-        public ImageView Icono { get; set; }
+        public CardView Icono { get; set; }
         public TextView Titulo { get; set; }
         public TextView Texto { get; set; }
 
         public NotificationAdapterViewHolder(View itemView) : base(itemView)
         {
-            Icono = (ImageView)itemView.FindViewById(Resource.Id.ivNotificationIcon);
+            Icono = (CardView)itemView.FindViewById(Resource.Id.cvNotificationIcon);
             Titulo = (TextView)itemView.FindViewById(Resource.Id.tvNotificationTitle);
             Texto = (TextView)itemView.FindViewById(Resource.Id.tvNotificationText);
         }

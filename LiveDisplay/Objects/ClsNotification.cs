@@ -11,5 +11,6 @@ namespace LiveDisplay.Objects
         public string Titulo { get; set; }
         public string Texto { get; set; }
         public int Icono { get; set; }
+        public string Paquete { get; set; }
     }
 }

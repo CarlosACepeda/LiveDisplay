@@ -1,6 +1,8 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.OS;
+using Android.Support.V7.App;
+using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
@@ -10,28 +12,35 @@ using LiveDisplay.Servicios;
 namespace LiveDisplay
 {
     [Activity(Label ="@string/app_name", MainLauncher = true, Icon ="@mipmap/ic_launcher")]
-    class ConfigurationActivity: Activity
+    class ConfigurationActivity: AppCompatActivity
     {
         DBHelper helper = new DBHelper();
         //Android Lifecycle.
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Configuracion);
             helper.CreateDatabase();
-            Switch swEnableAwake = FindViewById<Switch>(Resource.Id.swEnableAwake);
+
+            Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.my_toolbar);
+            SetSupportActionBar(toolbar);
+
+            SwitchCompat swEnableAwake = FindViewById<SwitchCompat>(Resource.Id.swEnableAwake);
             //O es para Objeto, e es para Evento.
             swEnableAwake.Click += (o, e) =>
             {
                 if (swEnableAwake.Checked == true)
                 {
-                    StartService(new Intent(this, typeof(AwakeService)));
-                    
+                    //StartService(new Intent(this, typeof(AwakeService)));
+                    Toast.MakeText(this, Resource.String.idk, ToastLength.Short).Show();
+
                 }
                 else if (swEnableAwake.Checked == false)
                 {
-                    StopService(new Intent(this, typeof(AwakeService)));
+                    Toast.MakeText(this, Resource.String.idk, ToastLength.Short).Show();
+                    //StopService(new Intent(this, typeof(AwakeService)));
                 }
             };
         }

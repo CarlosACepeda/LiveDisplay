@@ -23,7 +23,6 @@ namespace LiveDisplay
     [Activity(Label = "LockScreen", MainLauncher = false)]
     public class LockScreenActivity : Activity
     {
-        int newListSize, oldListSize;
 
         WallpaperManager wallpaperManager = null;
         Drawable papelTapiz;
@@ -43,9 +42,9 @@ namespace LiveDisplay
         {
             base.OnCreate(savedInstanceState);
 
-            //Propiedades de la ventana: Barra de estado y de Navegación traslúcidas.
+            //Propiedades de la ventana: Barra de estadocodulta y de Navegación traslúcida
             Window.AddFlags(WindowManagerFlags.TranslucentNavigation);
-            Window.AddFlags(WindowManagerFlags.TranslucentStatus);
+            Window.AddFlags(WindowManagerFlags.Fullscreen);
 
 
             // Set our view from the "main" layout resource
@@ -53,13 +52,12 @@ namespace LiveDisplay
             //Iniciar Lista
             InicializarVariables();
             CargarDatos();
-            ActionBar.Hide();
             ObtenerFecha();
 
         }
         protected override void OnResume()
         {
-            adapter.NotifyDataSetChanged();
+            CargarDatos();
             base.OnResume();
         }
         protected override void OnPause()
@@ -91,27 +89,14 @@ namespace LiveDisplay
             recycler = (RecyclerView)FindViewById(Resource.Id.NotificationListRecyclerView);
             layoutManager = new LinearLayoutManager(this);
             recycler.SetLayoutManager(layoutManager);
-            //adapter = new NotificationAdapter(listaNotificaciones);
-            //recycler.SetAdapter(adapter);
         }
-        public void IniciarLista()
-        {
-
-            ClsNotification notification = new ClsNotification
-            {
-                Titulo = "Notificación 1",
-                Texto = "Este es un texto de prueba",
-                Icono = null
-            };
-            listaNotificaciones.Add(notification);
-        }
+        
         private void CargarDatos()
         {
             //Bring data from Database.
             listaNotificaciones = db.SelectTableNotification();
             adapter = new NotificationAdapter(listaNotificaciones);
             recycler.SetAdapter(adapter);
-            oldListSize = listaNotificaciones.Count;
         }
     }
 }

@@ -1,17 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<menu
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:tools="http://schemas.android.com/tools"
-  tools:context=".ConfigurationActivity"
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:a="http://schemas.android.com/apk/res-auto"
   >
   <item 
     android:id="@+id/preview"
     android:icon="@drawable/ic_preview_lockscreen"
-    android:showAsAction="always"
+    a:showAsAction="ifRoom"
     />
   <item
     android:id="@+id/notificationSettings"
     android:title="Ajuste Notificacion"
-    android:showAsAction="never"
+    a:showAsAction="never"
     />
 </menu>
