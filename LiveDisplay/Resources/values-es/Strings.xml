@@ -9,4 +9,9 @@
   <string name="activarlockscreen">Activar pantalla de bloqueo</string>
   <string name="aboutinfo">Esta aplicación es desarrollada con &#60;3 por Carlos Cepeda, puedes ayudarme a través de una donación!, espero que disfrutes mucho esta app como yo desarrollandola!</string>
   <string name="aboutinfotitle">Acerca de esta aplicación:</string>
+  <string name="idk">¯&#92;&#95;(ツ)_/¯</string>
+  <string name="activarwallpaperdinamico">Wallpaper dinámico</string>
+  <string name="activarwallpaperdinamico_description">Al reproducir multimedia, mostrar en el Wallpaper el albumart de la canción que está sonando</string>
+  <string name="hidesystemicons">No mostrar iconos del sistema</string>
+  <string name="about">Acerca de...</string>
 </resources>

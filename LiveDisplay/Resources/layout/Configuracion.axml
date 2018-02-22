@@ -12,24 +12,104 @@
         android:background="?attr/colorPrimary"
         android:elevation="4dp" />
     <android.support.v7.widget.CardView
-        android:layout_below="@id/my_toolbar"
+        android:paddingTop="?android:attr/actionBarSize"
+        a:cardUseCompatPadding="true"
+        a:contentPadding="4dp"
+        android:id="@+id/dummyCardView1"
         android:minWidth="25px"
         android:minHeight="25px"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/my_toolbar"
         a:cardElevation="1dp">
         <TextView
-            android:text="@string/activarawake"
+            android:text="@string/modoactivo"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/lblactivarlockscreen" />
+            android:id="@+id/lblmodoactivo" />
         <android.support.v7.widget.SwitchCompat
+            android:paddingTop="20dp"
+            android:text="@string/activarawake"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:layout_toRightOf="@id/lblactivarlockscreen"
-            android:layout_alignStart="@id/lblactivarlockscreen"
             a:showText="false"
             android:id="@+id/swEnableAwake" />
+    </android.support.v7.widget.CardView>
+    <android.support.v7.widget.CardView
+        a:cardUseCompatPadding="true"
+        a:contentPadding="4dp"
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/dummyCardView1"
+        a:cardElevation="1dp"
+        android:id="@+id/dummyCardView2">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:text="@string/ajusteslockscreen"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/lblmodoactivo" />
+            <android.support.v7.widget.SwitchCompat
+                android:paddingTop="10dp"
+                android:layout_below="@id/lblmodoactivo"
+                android:text="@string/activarlockscreen"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                a:showText="false"
+                android:id="@+id/swEnableLockscreen" />
+            <android.support.v7.widget.SwitchCompat
+                android:paddingTop="7dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/activarwallpaperdinamico"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:id="@+id/swEnableDynamicWallpaper"
+                android:layout_below="@id/swEnableLockscreen" />
+            <TextView
+                android:id="@+id/lblEnableDynamicWallpaper"
+                android:text="@string/activarwallpaperdinamico_description"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingRight="37dp"
+                android:paddingLeft="5dp"
+                android:layout_below="@id/swEnableDynamicWallpaper" />
+            <android.support.v7.widget.SwitchCompat
+                android:id="@+id/swHideSystemIcons"
+                android:layout_below="@id/lblEnableDynamicWallpaper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/hidesystemicons"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+    <android.support.v7.widget.CardView
+        a:cardUseCompatPadding="true"
+        a:contentPadding="4dp"
+        android:id="@+id/dummyCardView3"
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/dummyCardView2"
+        a:cardElevation="1dp">
+        <RelativeLayout
+            android:layout_height="match_parent"
+            android:layout_width="match_parent">
+            <TextView
+                android:text="@string/about"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/lblabout" />
+        </RelativeLayout>
     </android.support.v7.widget.CardView>
 </RelativeLayout>

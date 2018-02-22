@@ -115,6 +115,7 @@
     <Compile Include="Databases\DBHelper.cs" />
     <Compile Include="Factories\BackgroundFactory.cs" />
     <Compile Include="Misc\ActivityLifecycleHelper.cs" />
+    <Compile Include="Misc\NLChecker.cs" />
     <Compile Include="Objects\ClsNotification.cs" />
     <Compile Include="Servicios\AwakeService.cs" />
     <Compile Include="Activities\ConfigurationActivity.cs" />
@@ -199,7 +200,9 @@
     <AndroidResource Include="Resources\mipmap-xxxhdpi\ic_launcher.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\values\styles.xml" />
+    <AndroidResource Include="Resources\values\styles.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values-v21\styles.xml">
