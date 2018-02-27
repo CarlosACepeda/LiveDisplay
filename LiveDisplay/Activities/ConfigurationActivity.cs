@@ -8,6 +8,7 @@ using Android.Views;
 using Android.Widget;
 using LiveDisplay.Databases;
 using LiveDisplay.Servicios;
+using System.Threading;
 
 namespace LiveDisplay
 {
@@ -15,14 +16,21 @@ namespace LiveDisplay
     class ConfigurationActivity: AppCompatActivity
     {
         DBHelper helper = new DBHelper();
-        //Android Lifecycle.
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
 
+
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+            {
+                Window.AddFlags(WindowManagerFlags.DrawsSystemBarBackgrounds);
+            }
+
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Configuracion);
-            helper.CreateDatabase();
+            ThreadPool.QueueUserWorkItem(o => helper.CreateDatabase());
+            //helper.CreateDatabase();
 
             Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.my_toolbar);
             SetSupportActionBar(toolbar);

@@ -17,13 +17,13 @@ using Android.Util;
 using Android.Content;
 using System;
 using LiveDisplay.Databases;
+using System.Threading;
 
 namespace LiveDisplay
 {
     [Activity(Label = "LockScreen", MainLauncher = false)]
     public class LockScreenActivity : Activity
     {
-
         WallpaperManager wallpaperManager = null;
         Drawable papelTapiz;
         RelativeLayout relativeLayout;
@@ -31,12 +31,10 @@ namespace LiveDisplay
         RecyclerView recycler;
         RecyclerView.LayoutManager layoutManager;
         NotificationAdapter adapter;
-
-        BackgroundFactory backgroundFactory = new BackgroundFactory();
-        List<ClsNotification> listaNotificaciones = new List<ClsNotification>();
-        ActivityLifecycleHelper lifecycleHelper = new ActivityLifecycleHelper();
-
         DBHelper db = new DBHelper();
+        BackgroundFactory backgroundFactory = new BackgroundFactory();
+        public List<ClsNotification> listaNotificaciones = new List<ClsNotification>();
+        ActivityLifecycleHelper lifecycleHelper = new ActivityLifecycleHelper();       
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -49,22 +47,22 @@ namespace LiveDisplay
 
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.LockScreen);
-            //Iniciar Lista
+            //Bring data from Database.
             InicializarVariables();
-            CargarDatos();
-            ObtenerFecha();
+            InitData();
+            ThreadPool.QueueUserWorkItem(o => ObtenerFecha());
+
 
         }
         protected override void OnResume()
         {
-            CargarDatos();
+            InitData();
             base.OnResume();
         }
         protected override void OnPause()
         {
             base.OnPause();
-            lifecycleHelper.IsActivityPaused();
-            
+            lifecycleHelper.IsActivityPaused();            
         }
         private void ObtenerFecha()
         {
@@ -73,9 +71,8 @@ namespace LiveDisplay
             Calendar fecha = Calendar.GetInstance(Locale.Default);
             dia = fecha.Get(CalendarField.DayOfMonth).ToString();
             mes = fecha.GetDisplayName(2, 2, Locale.Default);
-
             TextView tvFecha = (TextView)FindViewById(Resource.Id.txtFechaLock);
-            tvFecha.Text = string.Format(dia + ", " + mes);
+            RunOnUiThread(()=>tvFecha.Text = string.Format(dia + ", " + mes));
         }
         private void InicializarVariables()
         {
@@ -84,20 +81,19 @@ namespace LiveDisplay
 
             papelTapiz = wallpaperManager.Drawable;
             relativeLayout.Background = backgroundFactory.Difuminar(papelTapiz);
-
-
             recycler = (RecyclerView)FindViewById(Resource.Id.NotificationListRecyclerView);
             layoutManager = new LinearLayoutManager(this);
             recycler.SetLayoutManager(layoutManager);
         }
-        
-        private void CargarDatos()
+
+        private void InitData()
         {
-            //Bring data from Database.
+            
             listaNotificaciones = db.SelectTableNotification();
             adapter = new NotificationAdapter(listaNotificaciones);
-            recycler.SetAdapter(adapter);
+            RunOnUiThread(() => recycler.SetAdapter(adapter));
+            lifecycleHelper.IsActivityResumed();
         }
+
     }
 }
-

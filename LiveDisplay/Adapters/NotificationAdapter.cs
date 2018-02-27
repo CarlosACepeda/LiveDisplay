@@ -16,7 +16,7 @@ namespace LiveDisplay.Adapters
 {
     class NotificationAdapter : RecyclerView.Adapter
     {
-        private List<ClsNotification> notificaciones = new List<ClsNotification>();
+        public List<ClsNotification> notificaciones = new List<ClsNotification>();
 
         public override int ItemCount => notificaciones.Count;
 
@@ -27,8 +27,6 @@ namespace LiveDisplay.Adapters
 
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
-           
-
             NotificationAdapterViewHolder viewHolder = holder as NotificationAdapterViewHolder;
             viewHolder.Icono.Background=(ReturnIconBitMap(notificaciones[position].Icono, notificaciones[position].Paquete));
             viewHolder.Titulo.Text = notificaciones[position].Titulo;
@@ -41,7 +39,6 @@ namespace LiveDisplay.Adapters
             View itemView = layoutInflater.Inflate(Resource.Layout.NotificationItemRow, parent, false);
             return new NotificationAdapterViewHolder(itemView);
         }
-        //todo
         public Drawable ReturnIconBitMap(int iconInt, string paquete)
         {
             Context remotePackageContext = null;
@@ -50,7 +47,6 @@ namespace LiveDisplay.Adapters
             return icon;
         }
     }
-
     //La siguiente clase simplemente guarda referencias a las vistas de la fila, para evitar hacer llamadas a FindViewById cada vez, no se hace nada más aquí
     class NotificationAdapterViewHolder : RecyclerView.ViewHolder
     {
@@ -65,5 +61,4 @@ namespace LiveDisplay.Adapters
             Texto = (TextView)itemView.FindViewById(Resource.Id.tvNotificationText);
         }
     }
-
 }

@@ -33,7 +33,8 @@ namespace LiveDisplay.Databases
                 using (var connection = new SQLiteConnection(System.IO.Path.Combine(folder, "notifications.db")))
                 {
                     connection.Insert(notificacion);
-                    return true;
+                    return true;                   
+
                 }
             }
             catch (SQLiteException ex)
@@ -106,7 +107,5 @@ namespace LiveDisplay.Databases
                 return false;
             }
         }
-
-
     }
 }
