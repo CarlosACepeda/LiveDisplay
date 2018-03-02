@@ -1,32 +1,29 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.Graphics;
-using Android.OS;
 using Android.Service.Notification;
 using Android.Util;
-using Android.Widget;
-using Java.IO;
-using LiveDisplay.Adapters;
 using LiveDisplay.Databases;
 using LiveDisplay.Misc;
 using LiveDisplay.Objects;
 using System.IO;
-using System.Threading;
 using static Android.Graphics.Bitmap;
 
 namespace LiveDisplay.Servicios
 {
-    [Service(Label = "Catcheeeer", Permission = "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE")]
-    [IntentFilter(new[] { "android.service.notification.NotificationListenerService"})]
+    [Service(Label = "Catcherjer", Permission = "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE")]
+    [IntentFilter(new[] { "android.service.notification.NotificationListenerService" })]
     internal class Catcher : NotificationListenerService
     {
-        DBHelper helper = new DBHelper();
-        ActivityLifecycleHelper lifecycleHelper = new ActivityLifecycleHelper();
+        private DBHelper helper = new DBHelper();
+        private ActivityLifecycleHelper lifecycleHelper = new ActivityLifecycleHelper();
 
         //Válido para Lollipop en Adelante, no KitKat.
         public override void OnListenerConnected()
         {
             base.OnListenerConnected();
+            //implementar un método que recupere las notificaciones que estén en la barra de estado mientras el este Agente de escucha no estaba 'oyendo'
+            GetActiveNotifications();
         }
 
         public override void OnNotificationPosted(StatusBarNotification sbn)
@@ -38,11 +35,14 @@ namespace LiveDisplay.Servicios
                 Texto = sbn.Notification.Extras.GetCharSequence("android.text").ToString(),
                 Icono = int.Parse(sbn.Notification.Extras.Get(Notification.ExtraSmallIcon).ToString()),
                 Paquete = sbn.PackageName
-                
             };
             helper.InsertIntoTableNotification(notification);
-            Log.Info("Inserción", "Registro Insertado desde OnNoificationPosted");
+            if (LockScreenActivity.lockScreenInstance != null)
+            {
+                LockScreenActivity.lockScreenInstance.RunOnUiThread(() => LockScreenActivity.lockScreenInstance.InsertItem(notification));
+            }
 
+            Log.Info("Inserción", "Registro Insertado desde OnNoificationPosted");
         }
 
         public override void OnNotificationRemoved(StatusBarNotification sbn)
@@ -55,8 +55,13 @@ namespace LiveDisplay.Servicios
                 Icono = 0
             };
             helper.DeleteTableNotification(notification);
+            if (LockScreenActivity.lockScreenInstance != null)
+            {
+                LockScreenActivity.lockScreenInstance.RunOnUiThread(() => LockScreenActivity.lockScreenInstance.RemoveItem(notification));
+            }
             Log.Info("Remoción", "Notificación Removida desde OnNotificationRemoved");
         }
+
         public byte[] BitmapToByteArray(Bitmap bitmap)
         {
             byte[] bitmapData;
@@ -65,7 +70,6 @@ namespace LiveDisplay.Servicios
                 bitmap.Compress(CompressFormat.Png, 0, stream);
                 return bitmapData = stream.ToArray();
             }
-                
         }
     }
 }

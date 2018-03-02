@@ -1,21 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
+﻿using Android.App;
 using Android.Graphics;
 using Android.Graphics.Drawables;
-using Android.OS;
 using Android.Renderscripts;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 
 namespace LiveDisplay.Factories
 {
-    class BackgroundFactory
+    //Areglame: Ejecutame en un  worker thread
+    internal class BackgroundFactory
     {
         public Drawable Difuminar(Drawable papelTapiz)
         {
@@ -25,7 +16,6 @@ namespace LiveDisplay.Factories
             Bitmap blurredBitmap;
             //Asignar a este bitmap la imagen original para trabajar con ella.
             blurredBitmap = Bitmap.CreateBitmap(originalBitmap);
-
 
             //Crear la instancia de RenderScript que hará el trabajo
             RenderScript rs = RenderScript.Create(Application.Context);
@@ -48,8 +38,6 @@ namespace LiveDisplay.Factories
 
             Drawable papelTapizDifuminado = new BitmapDrawable(blurredBitmap);
             return papelTapizDifuminado;
-
         }
-
     }
 }

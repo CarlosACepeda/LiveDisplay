@@ -1,20 +1,16 @@
-﻿using System;
-
-using Android.Views;
-using Android.Widget;
-using Android.Support.V7.Widget;
-using LiveDisplay.Objects;
-using Android.App;
-using System.Collections.Generic;
-using Android.Graphics;
+﻿using Android.App;
 using Android.Content;
 using Android.Graphics.Drawables;
 using Android.Support.V4.Content;
-using Android.OS;
+using Android.Support.V7.Widget;
+using Android.Views;
+using Android.Widget;
+using LiveDisplay.Objects;
+using System.Collections.Generic;
 
 namespace LiveDisplay.Adapters
 {
-    class NotificationAdapter : RecyclerView.Adapter
+    public class NotificationAdapter : RecyclerView.Adapter
     {
         public List<ClsNotification> notificaciones = new List<ClsNotification>();
 
@@ -28,7 +24,7 @@ namespace LiveDisplay.Adapters
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
             NotificationAdapterViewHolder viewHolder = holder as NotificationAdapterViewHolder;
-            viewHolder.Icono.Background=(ReturnIconBitMap(notificaciones[position].Icono, notificaciones[position].Paquete));
+            viewHolder.Icono.Background = (ReturnIconBitMap(notificaciones[position].Icono, notificaciones[position].Paquete));
             viewHolder.Titulo.Text = notificaciones[position].Titulo;
             viewHolder.Texto.Text = notificaciones[position].Texto;
         }
@@ -39,6 +35,7 @@ namespace LiveDisplay.Adapters
             View itemView = layoutInflater.Inflate(Resource.Layout.NotificationItemRow, parent, false);
             return new NotificationAdapterViewHolder(itemView);
         }
+
         public Drawable ReturnIconBitMap(int iconInt, string paquete)
         {
             Context remotePackageContext = null;
@@ -47,8 +44,9 @@ namespace LiveDisplay.Adapters
             return icon;
         }
     }
+
     //La siguiente clase simplemente guarda referencias a las vistas de la fila, para evitar hacer llamadas a FindViewById cada vez, no se hace nada más aquí
-    class NotificationAdapterViewHolder : RecyclerView.ViewHolder
+    internal class NotificationAdapterViewHolder : RecyclerView.ViewHolder
     {
         public CardView Icono { get; set; }
         public TextView Titulo { get; set; }

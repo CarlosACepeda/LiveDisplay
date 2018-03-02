@@ -8,7 +8,7 @@ namespace LiveDisplay.Databases
 {
     internal class DBHelper
     {
-        string folder = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+        private string folder = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
 
         public bool CreateDatabase()
         {
@@ -26,6 +26,7 @@ namespace LiveDisplay.Databases
                 return false;
             }
         }
+
         public bool InsertIntoTableNotification(ClsNotification notificacion)
         {
             try
@@ -33,8 +34,7 @@ namespace LiveDisplay.Databases
                 using (var connection = new SQLiteConnection(System.IO.Path.Combine(folder, "notifications.db")))
                 {
                     connection.Insert(notificacion);
-                    return true;                   
-
+                    return true;
                 }
             }
             catch (SQLiteException ex)
@@ -43,6 +43,7 @@ namespace LiveDisplay.Databases
                 return false;
             }
         }
+
         public List<ClsNotification> SelectTableNotification()
         {
             try
@@ -58,6 +59,7 @@ namespace LiveDisplay.Databases
                 return null;
             }
         }
+
         public bool UpdateTableNotification(ClsNotification notificacion)
         {
             try
@@ -75,6 +77,7 @@ namespace LiveDisplay.Databases
                 return false;
             }
         }
+
         public bool DeleteTableNotification(ClsNotification notificacion)
         {
             try
@@ -91,6 +94,7 @@ namespace LiveDisplay.Databases
                 return false;
             }
         }
+
         public bool SelectQueryTableNotification(int id)
         {
             try

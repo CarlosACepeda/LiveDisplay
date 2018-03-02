@@ -1,7 +1,7 @@
 ﻿namespace LiveDisplay.Misc
 {
     //Esta clase simplemente sirve para guardar el estado actual de la Activity.
-    class ActivityLifecycleHelper
+    internal class ActivityLifecycleHelper
     {
         private static bool isActivityVisible;
 
@@ -10,11 +10,13 @@
         {
             return isActivityVisible;
         }
+
         //Actividad resumida, o iniciada.
         public void IsActivityResumed()
         {
             isActivityVisible = true;
         }
+
         //Actividad Pausada.
         public void IsActivityPaused()
         {

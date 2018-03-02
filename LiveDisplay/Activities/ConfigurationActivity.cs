@@ -3,24 +3,21 @@ using Android.Content;
 using Android.OS;
 using Android.Support.V7.App;
 using Android.Support.V7.Widget;
-using Android.Util;
 using Android.Views;
 using Android.Widget;
 using LiveDisplay.Databases;
-using LiveDisplay.Servicios;
 using System.Threading;
 
 namespace LiveDisplay
 {
-    [Activity(Label ="@string/app_name", MainLauncher = true, Icon ="@mipmap/ic_launcher")]
-    class ConfigurationActivity: AppCompatActivity
+    [Activity(Label = "@string/app_name", MainLauncher = true, Icon = "@mipmap/ic_launcher")]
+    internal class ConfigurationActivity : AppCompatActivity
     {
-        DBHelper helper = new DBHelper();
+        private DBHelper helper = new DBHelper();
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-
 
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
             {
@@ -43,7 +40,6 @@ namespace LiveDisplay
                 {
                     //StartService(new Intent(this, typeof(AwakeService)));
                     Toast.MakeText(this, Resource.String.idk, ToastLength.Short).Show();
-
                 }
                 else if (swEnableAwake.Checked == false)
                 {
@@ -52,6 +48,7 @@ namespace LiveDisplay
                 }
             };
         }
+
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
             var inflater = MenuInflater;
@@ -84,15 +81,15 @@ namespace LiveDisplay
         {
             base.OnPause();
         }
+
         protected override void OnDestroy()
         {
             base.OnDestroy();
-           
         }
+
         protected override void OnResume()
         {
             base.OnResume();
-           
         }
     }
 }

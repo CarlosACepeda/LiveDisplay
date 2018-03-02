@@ -1,32 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Android.App;
+﻿using Android.App;
 using Android.Content;
+using Android.Hardware;
 using Android.OS;
 using Android.Runtime;
-using Android.Views;
 using Android.Widget;
-using Android.Hardware;
 
 namespace LiveDisplay.Servicios
 {
-    [Service(Name = "undergrounddev.serv.AwakeService",  Label = "Awake Service")]
-    class AwakeService : Service, ISensorEventListener
+    [Service(Name = "undergrounddev.serv.AwakeService", Label = "Awake Service")]
+    internal class AwakeService : Service, ISensorEventListener
     {
-        SensorManager sensorManager = null;
-        Sensor sProximidad;
-        Sensor sAcelerometro;
-        PowerManager powerManager = null;
-        PowerManager.WakeLock wakeLock = null;
+        private SensorManager sensorManager = null;
+        private Sensor sProximidad;
+        private Sensor sAcelerometro;
+        private PowerManager powerManager = null;
+        private PowerManager.WakeLock wakeLock = null;
 
-        float ejeX, ejeY, ejeZ;
+        private float ejeX, ejeY, ejeZ;
 
         public override IBinder OnBind(Intent intent)
         {
             return null;
         }
+
         public override StartCommandResult OnStartCommand(Intent intent, [GeneratedEnum] StartCommandFlags flags, int startId)
         {
             IniciarVariables();
@@ -70,13 +66,11 @@ namespace LiveDisplay.Servicios
             else if (sensor.Type == SensorType.Accelerometer)
             {
                 //values 1 es el eje Y, values 2 es el eje Z
-                while (evento.Values[1]> 3 && evento.Values[2] < 9)
+                while (evento.Values[1] > 3 && evento.Values[2] < 9)
                 {
                     Toast.MakeText(Application.Context, "El dispositivo se levantó", ToastLength.Short).Show();
                 }
             }
-            
-
         }
 
         private void IniciarVariables()

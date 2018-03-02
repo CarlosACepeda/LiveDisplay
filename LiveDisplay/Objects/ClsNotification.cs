@@ -1,5 +1,4 @@
-﻿using Android.Graphics;
-using SQLite;
+﻿using SQLite;
 
 namespace LiveDisplay.Objects
 {
