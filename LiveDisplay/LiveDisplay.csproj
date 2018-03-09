@@ -114,6 +114,7 @@
     <Compile Include="BroadcastReceivers\BootCompleteReceiver.cs" />
     <Compile Include="Databases\DBHelper.cs" />
     <Compile Include="Factories\BackgroundFactory.cs" />
+    <Compile Include="Fragments\NotificationFragment.cs" />
     <Compile Include="Misc\ActivityLifecycleHelper.cs" />
     <Compile Include="Misc\NLChecker.cs" />
     <Compile Include="Objects\ClsNotification.cs" />
@@ -141,6 +142,9 @@
     <AndroidResource Include="Resources\layout\NotificationItemRow.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
+    <AndroidResource Include="Resources\layout\NotificiationFrag.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\LockScreen.axml">
@@ -151,7 +155,6 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Fragments\" />
     <Folder Include="Resources\drawable\" />
   </ItemGroup>
   <ItemGroup>

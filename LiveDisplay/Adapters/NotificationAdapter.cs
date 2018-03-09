@@ -6,15 +6,22 @@ using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
 using LiveDisplay.Objects;
+using System;
 using System.Collections.Generic;
 
 namespace LiveDisplay.Adapters
 {
     public class NotificationAdapter : RecyclerView.Adapter
     {
+        public event EventHandler<int> ItemClick;
         public List<ClsNotification> notificaciones = new List<ClsNotification>();
 
         public override int ItemCount => notificaciones.Count;
+
+        void OnClick(int position)
+        {
+            ItemClick?.Invoke(this, position);
+        }
 
         public NotificationAdapter(List<ClsNotification> notificaciones)
         {
@@ -25,15 +32,13 @@ namespace LiveDisplay.Adapters
         {
             NotificationAdapterViewHolder viewHolder = holder as NotificationAdapterViewHolder;
             viewHolder.Icono.Background = (ReturnIconBitMap(notificaciones[position].Icono, notificaciones[position].Paquete));
-            viewHolder.Titulo.Text = notificaciones[position].Titulo;
-            viewHolder.Texto.Text = notificaciones[position].Texto;
         }
 
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
         {
             LayoutInflater layoutInflater = LayoutInflater.From(parent.Context);
             View itemView = layoutInflater.Inflate(Resource.Layout.NotificationItemRow, parent, false);
-            return new NotificationAdapterViewHolder(itemView);
+            return new NotificationAdapterViewHolder(itemView, OnClick);
         }
 
         public Drawable ReturnIconBitMap(int iconInt, string paquete)
@@ -49,14 +54,12 @@ namespace LiveDisplay.Adapters
     internal class NotificationAdapterViewHolder : RecyclerView.ViewHolder
     {
         public CardView Icono { get; set; }
-        public TextView Titulo { get; set; }
-        public TextView Texto { get; set; }
 
-        public NotificationAdapterViewHolder(View itemView) : base(itemView)
+        public NotificationAdapterViewHolder(View itemView, Action<int> listener) : base(itemView)
         {
-            Icono = (CardView)itemView.FindViewById(Resource.Id.cvNotificationIcon);
-            Titulo = (TextView)itemView.FindViewById(Resource.Id.tvNotificationTitle);
-            Texto = (TextView)itemView.FindViewById(Resource.Id.tvNotificationText);
+            Icono = itemView.FindViewById<CardView>(Resource.Id.cvNotificationIcon);
+            itemView.Click += (sender, e) => listener(base.LayoutPosition);
         }
+
     }
 }

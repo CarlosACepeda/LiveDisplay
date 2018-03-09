@@ -23,7 +23,7 @@ namespace LiveDisplay.Servicios
         {
             base.OnListenerConnected();
             //implementar un método que recupere las notificaciones que estén en la barra de estado mientras el este Agente de escucha no estaba 'oyendo'
-            GetActiveNotifications();
+
         }
 
         public override void OnNotificationPosted(StatusBarNotification sbn)
@@ -42,7 +42,6 @@ namespace LiveDisplay.Servicios
                 LockScreenActivity.lockScreenInstance.RunOnUiThread(() => LockScreenActivity.lockScreenInstance.InsertItem(notification));
             }
 
-            Log.Info("Inserción", "Registro Insertado desde OnNoificationPosted");
         }
 
         public override void OnNotificationRemoved(StatusBarNotification sbn)
@@ -59,7 +58,6 @@ namespace LiveDisplay.Servicios
             {
                 LockScreenActivity.lockScreenInstance.RunOnUiThread(() => LockScreenActivity.lockScreenInstance.RemoveItem(notification));
             }
-            Log.Info("Remoción", "Notificación Removida desde OnNotificationRemoved");
         }
 
         public byte[] BitmapToByteArray(Bitmap bitmap)

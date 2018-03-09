@@ -8,7 +8,7 @@ namespace LiveDisplay.Misc
 {
     internal class NLChecker
     {
-        public bool IsNotificationListenerEnabled()
+        public static bool IsNotificationListenerEnabled()
         {
             ComponentName cn = new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(Catcher)).Name);
             String flat = Settings.Secure.GetString(Application.Context.ContentResolver, "enabled_notification_listeners");

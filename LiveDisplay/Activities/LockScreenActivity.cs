@@ -18,11 +18,14 @@ namespace LiveDisplay
     [Activity(Label = "LockScreen", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait)]
     public class LockScreenActivity : Activity
     {
+        int oldListSize, newListSize = 0;
         public static LockScreenActivity lockScreenInstance;
         private WallpaperManager wallpaperManager = null;
         private Drawable papelTapiz;
-        private RelativeLayout relativeLayout;
-
+        private LinearLayout linearLayout;
+        private TextView tvTitulo;
+        private TextView tvTexto;
+        private View v;
         private RecyclerView recycler;
         private RecyclerView.LayoutManager layoutManager;
         private NotificationAdapter adapter;
@@ -39,21 +42,22 @@ namespace LiveDisplay
             Window.AddFlags(WindowManagerFlags.Fullscreen);
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.LockScreen);
-            //Bring data from Database.
             InicializarVariables();
-            InitData();
             ThreadPool.QueueUserWorkItem(o => ObtenerFecha());
         }
 
         protected override void OnResume()
         {
-            InitData();
+            newListSize = listaNotificaciones.Count;
+            CheckDataChanges();
             base.OnResume();
         }
 
         protected override void OnPause()
         {
+            oldListSize = listaNotificaciones.Count;
             base.OnPause();
+            
         }
 
         private void ObtenerFecha()
@@ -69,30 +73,41 @@ namespace LiveDisplay
 
         private void InicializarVariables()
         {
-            relativeLayout = (RelativeLayout)FindViewById(Resource.Id.contenedorPrincipal);
-            wallpaperManager = WallpaperManager.GetInstance(this);
+            linearLayout = FindViewById<LinearLayout>(Resource.Id.contenedorPrincipal);          
+            recycler = FindViewById<RecyclerView>(Resource.Id.NotificationListRecyclerView);
+            tvTitulo = FindViewById<TextView>(Resource.Id.tvTitulo);
+            tvTexto = FindViewById<TextView>(Resource.Id.tvTexto);
+            v = FindViewById<View>(Resource.Id.fragment1);
 
+            wallpaperManager = WallpaperManager.GetInstance(this);
             papelTapiz = wallpaperManager.Drawable;
-            relativeLayout.Background = backgroundFactory.Difuminar(papelTapiz);
-            recycler = (RecyclerView)FindViewById(Resource.Id.NotificationListRecyclerView);
+            linearLayout.Background = backgroundFactory.Difuminar(papelTapiz);
             layoutManager = new LinearLayoutManager(this);
             recycler.SetLayoutManager(layoutManager);
-        }
-
-        private void InitData()
-        {
             DBHelper db = new DBHelper();
             listaNotificaciones = db.SelectTableNotification();
             adapter = new NotificationAdapter(listaNotificaciones);
+            adapter.ItemClick += OnItemClick;
             RunOnUiThread(() => recycler.SetAdapter(adapter));
+        }
+
+        private void CheckDataChanges()
+        {
+
+            if (oldListSize != newListSize)
+            {
+                adapter.NotifyDataSetChanged();
+            }
         }
 
         public void InsertItem(ClsNotification notification)
         {
             listaNotificaciones.Add(notification);
+            tvTitulo.Text = notification.Titulo;
+            tvTexto.Text = notification.Texto;
             if (adapter != null && recycler != null)
             {
-                RunOnUiThread(() => adapter.NotifyDataSetChanged());
+                RunOnUiThread(() => adapter.NotifyItemInserted(listaNotificaciones.Count - 1));
             }
         }
 
@@ -105,7 +120,24 @@ namespace LiveDisplay
             if (adapter != null && recycler != null)
             {
                 RunOnUiThread(() => adapter.NotifyItemRemoved(indice));
+                v.Visibility = ViewStates.Invisible;
             }
+        }
+
+        void OnItemClick(object sender, int position)
+        {
+            //Arreglame: A veces el Fragment pierde los valores.
+            int notifNum = position + 1;
+            //Mostrar el Fragment          
+            if (v.Visibility == ViewStates.Invisible)
+            {
+                v.Visibility = ViewStates.Visible;
+            }
+            else
+            {
+                v.Visibility = ViewStates.Invisible;
+            }
+            
         }
     }
 }

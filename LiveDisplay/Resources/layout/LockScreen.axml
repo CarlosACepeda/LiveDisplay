@@ -1,21 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:a="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:a="http://schemas.android.com/apk/res/android"
+    a:animateLayoutChanges="true"
     a:id="@+id/contenedorPrincipal"
+    a:orientation="vertical"
     a:layout_width="match_parent"
-    a:layout_height="match_parent">
-    <android.support.v7.widget.RecyclerView
-        a:id="@+id/NotificationListRecyclerView"
-        a:layout_width="wrap_content"
-        a:layout_height="600dp"
-        a:layout_alignParentRight="true" />
+    a:layout_height="match_parent"
+    a:gravity="bottom"
+    a:weightSum="1">
+    <LinearLayout
+        a:orientation="horizontal"
+        a:minWidth="25px"
+        a:minHeight="25px"
+        a:layout_width="match_parent"
+        a:layout_height="wrap_content"
+        a:layout_weight="0.97"
+        a:weightSum="1">
+        <LinearLayout
+            a:orientation="vertical"
+            a:layout_height="match_parent"
+            a:layout_width="0dp"
+            a:layout_weight="0.8"
+            a:minWidth="25px"
+            a:minHeight="25px"
+            a:gravity="center">
+            <fragment
+                a:name="LiveDisplay.Fragments.NotificationFragment"
+                a:layout_width="wrap_content"
+                a:layout_height="wrap_content"
+                a:id="@+id/fragment1" />
+        </LinearLayout>
+        <LinearLayout
+            a:orientation="vertical"
+            a:minWidth="25px"
+            a:minHeight="25px"
+            a:layout_gravity="right"
+            a:layout_weight="0.2"
+            a:layout_height="match_parent"
+            a:gravity="bottom"
+            a:layout_width="0dp">
+            <android.support.v7.widget.RecyclerView
+                a:id="@+id/NotificationListRecyclerView"
+                a:overScrollMode="never"
+                a:layout_width="match_parent"
+                a:layout_height="wrap_content"
+                a:layout_gravity="bottom" />
+        </LinearLayout>
+    </LinearLayout>
     <LinearLayout
         a:id="@+id/clockContainer"
         a:orientation="vertical"
         a:layout_width="match_parent"
         a:layout_height="wrap_content"
         a:gravity="bottom"
-        a:layout_alignParentBottom="true"
-        a:alpha="1">
+        a:alpha="1"
+        a:layout_weight="0.03">
         <TextClock xmlns:p2="http://xamarin.com/mono/android/designer-default"
             a:layout_width="wrap_content"
             a:layout_height="wrap_content"
@@ -23,7 +61,8 @@
             a:id="@+id/clockLock"
             a:typeface="sans"
             a:textStyle="normal"
-            a:gravity="bottom" />
+            a:gravity="bottom"
+            a:format12Hour="h:mm a" />
         <TextView
             a:layout_width="match_parent"
             a:layout_height="wrap_content"
@@ -31,4 +70,4 @@
             a:id="@+id/txtFechaLock"
             a:layout_marginBottom="40dp" />
     </LinearLayout>
-</RelativeLayout>
+</LinearLayout>
