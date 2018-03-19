@@ -2,15 +2,14 @@
 using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Support.V7.Widget;
+using Android.Transitions;
 using Android.Views;
 using Android.Widget;
 using Java.Util;
 using LiveDisplay.Adapters;
-using LiveDisplay.Databases;
 using LiveDisplay.Factories;
-using LiveDisplay.Objects;
-using System.Collections.Generic;
-using System.Linq;
+using LiveDisplay.Misc;
+using LiveDisplay.Servicios;
 using System.Threading;
 
 namespace LiveDisplay
@@ -18,22 +17,23 @@ namespace LiveDisplay
     [Activity(Label = "LockScreen", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait)]
     public class LockScreenActivity : Activity
     {
-        int oldListSize, newListSize = 0;
+        private int oldListSize, newListSize = 0;
         public static LockScreenActivity lockScreenInstance;
         private WallpaperManager wallpaperManager = null;
         private Drawable papelTapiz;
         private LinearLayout linearLayout;
-        private TextView tvTitulo;
-        private TextView tvTexto;
         private View v;
         private RecyclerView recycler;
         private RecyclerView.LayoutManager layoutManager;
         private NotificationAdapter adapter;
         private BackgroundFactory backgroundFactory = new BackgroundFactory();
-        private List<ClsNotification> listaNotificaciones = new List<ClsNotification>();
+        private TextView tvTitulo;
+        private TextView tvTexto;
+        private PendingIntent notificationAction;
 
         protected override void OnCreate(Bundle savedInstanceState)
-        {
+        {           
+
             base.OnCreate(savedInstanceState);
             lockScreenInstance = this;
 
@@ -48,16 +48,31 @@ namespace LiveDisplay
 
         protected override void OnResume()
         {
-            newListSize = listaNotificaciones.Count;
+            try
+            {
+                newListSize = Catcher.listaNotificaciones.Count;
+            }
+            catch
+            {
+                Toast.MakeText(ApplicationContext, "¡No puedo mostrar notificaciones, el servicio debe estar Activado usando el menu de ajustes de esta app", ToastLength.Long).Show();
+            }
+
             CheckDataChanges();
             base.OnResume();
         }
 
         protected override void OnPause()
         {
-            oldListSize = listaNotificaciones.Count;
+            try
+            {
+                oldListSize = Catcher.listaNotificaciones.Count;
+            }
+            catch
+
+            {
+            };
+
             base.OnPause();
-            
         }
 
         private void ObtenerFecha()
@@ -73,71 +88,71 @@ namespace LiveDisplay
 
         private void InicializarVariables()
         {
-            linearLayout = FindViewById<LinearLayout>(Resource.Id.contenedorPrincipal);          
+            linearLayout = FindViewById<LinearLayout>(Resource.Id.contenedorPrincipal);
             recycler = FindViewById<RecyclerView>(Resource.Id.NotificationListRecyclerView);
-            tvTitulo = FindViewById<TextView>(Resource.Id.tvTitulo);
-            tvTexto = FindViewById<TextView>(Resource.Id.tvTexto);
+            tvTitulo = (TextView)FindViewById(Resource.Id.tvTitulo);
+            tvTexto = (TextView)FindViewById(Resource.Id.tvTexto);
+
             v = FindViewById<View>(Resource.Id.fragment1);
+            v.Click += OnNotificationClicked;
 
             wallpaperManager = WallpaperManager.GetInstance(this);
             papelTapiz = wallpaperManager.Drawable;
             linearLayout.Background = backgroundFactory.Difuminar(papelTapiz);
+            FindViewById<ViewGroup>(Resource.Id.contenedorPrincipal).LayoutTransition.EnableTransitionType(Android.Animation.LayoutTransitionType.Changing);
             layoutManager = new LinearLayoutManager(this);
             recycler.SetLayoutManager(layoutManager);
-            DBHelper db = new DBHelper();
-            listaNotificaciones = db.SelectTableNotification();
-            adapter = new NotificationAdapter(listaNotificaciones);
-            adapter.ItemClick += OnItemClick;
+            adapter = Catcher.adapter;
             RunOnUiThread(() => recycler.SetAdapter(adapter));
+        }
+
+        //Los siguientes 2 métodos son Callbacks desde el Adaptador del RecyclerView
+        //OnNotificationItemClick...
+        public void OnItemClick(int position)
+        {
+            string titulo = Catcher.listaNotificaciones[position].Notification.Extras.GetString("android.title");
+            if (titulo != null)
+            {
+                tvTitulo.Text = titulo;
+            }
+            string text = Catcher.listaNotificaciones[position].Notification.Extras.GetString("android.text");
+            if (text != null)
+            {
+                tvTexto.Text = text;
+            }
+            v.Visibility = ViewStates.Visible;
+            notificationAction = Catcher.listaNotificaciones[position].Notification.ContentIntent;
+        }
+
+        public void OnItemLongClick(int position)
+        {
+            if (Catcher.listaNotificaciones[position].IsClearable == true)
+            {
+                int notiId = Catcher.listaNotificaciones[position].Id;
+                string notiTag = Catcher.listaNotificaciones[position].Tag;
+                string notiPack = Catcher.listaNotificaciones[position].PackageName;
+                NotificationSlave slave = new NotificationSlave();
+                slave.CancelNotification(notiPack, notiTag, notiId);
+                v.Visibility = ViewStates.Invisible;
+            }
+            else
+            {
+                Toast.MakeText(Application.Context, "No", ToastLength.Short).Show();
+            }
         }
 
         private void CheckDataChanges()
         {
-
             if (oldListSize != newListSize)
             {
                 adapter.NotifyDataSetChanged();
             }
         }
 
-        public void InsertItem(ClsNotification notification)
+        private void OnNotificationClicked(object sender, System.EventArgs e)
         {
-            listaNotificaciones.Add(notification);
-            tvTitulo.Text = notification.Titulo;
-            tvTexto.Text = notification.Texto;
-            if (adapter != null && recycler != null)
-            {
-                RunOnUiThread(() => adapter.NotifyItemInserted(listaNotificaciones.Count - 1));
-            }
-        }
-
-        public void RemoveItem(ClsNotification notification)
-        {
-            int indice = listaNotificaciones.IndexOf(listaNotificaciones.First(o => o.Id == notification.Id));
-
-            listaNotificaciones.RemoveAt(indice);
-
-            if (adapter != null && recycler != null)
-            {
-                RunOnUiThread(() => adapter.NotifyItemRemoved(indice));
-                v.Visibility = ViewStates.Invisible;
-            }
-        }
-
-        void OnItemClick(object sender, int position)
-        {
-            //Arreglame: A veces el Fragment pierde los valores.
-            int notifNum = position + 1;
-            //Mostrar el Fragment          
-            if (v.Visibility == ViewStates.Invisible)
-            {
-                v.Visibility = ViewStates.Visible;
-            }
-            else
-            {
-                v.Visibility = ViewStates.Invisible;
-            }
-            
+            notificationAction.Send();
+            v.Visibility = ViewStates.Invisible;
         }
     }
 }

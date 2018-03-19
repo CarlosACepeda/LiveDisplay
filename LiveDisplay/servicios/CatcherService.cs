@@ -1,72 +1,82 @@
 ﻿using Android.App;
 using Android.Content;
-using Android.Graphics;
+using Android.OS;
 using Android.Service.Notification;
 using Android.Util;
-using LiveDisplay.Databases;
-using LiveDisplay.Misc;
-using LiveDisplay.Objects;
-using System.IO;
-using static Android.Graphics.Bitmap;
+using LiveDisplay.Adapters;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace LiveDisplay.Servicios
 {
-    [Service(Label = "Catcherjer", Permission = "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE")]
+    [Service(Label = "Catchereee", Permission = "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE")]
     [IntentFilter(new[] { "android.service.notification.NotificationListenerService" })]
     internal class Catcher : NotificationListenerService
     {
-        private DBHelper helper = new DBHelper();
-        private ActivityLifecycleHelper lifecycleHelper = new ActivityLifecycleHelper();
-
+        public static NotificationAdapter adapter;
+        public static List<StatusBarNotification> listaNotificaciones;
+        public static Catcher catcherInstance;
+        //Kitkat ListenerConnected variable.
+        bool isConnected = false;
         //Válido para Lollipop en Adelante, no KitKat.
         public override void OnListenerConnected()
         {
+            catcherInstance = this;
+            listaNotificaciones = GetActiveNotifications().ToList();
+            adapter = new NotificationAdapter(listaNotificaciones);
             base.OnListenerConnected();
-            //implementar un método que recupere las notificaciones que estén en la barra de estado mientras el este Agente de escucha no estaba 'oyendo'
-
+            Log.Info("Listener connected, list: ", listaNotificaciones.Count.ToString());
         }
 
         public override void OnNotificationPosted(StatusBarNotification sbn)
         {
-            ClsNotification notification = new ClsNotification
+            //Kitkat Dirty ListenerConnected.
+            if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop && isConnected == false)
             {
-                Id = sbn.Id,
-                Titulo = sbn.Notification.Extras.GetCharSequence("android.title").ToString(),
-                Texto = sbn.Notification.Extras.GetCharSequence("android.text").ToString(),
-                Icono = int.Parse(sbn.Notification.Extras.Get(Notification.ExtraSmallIcon).ToString()),
-                Paquete = sbn.PackageName
-            };
-            helper.InsertIntoTableNotification(notification);
-            if (LockScreenActivity.lockScreenInstance != null)
-            {
-                LockScreenActivity.lockScreenInstance.RunOnUiThread(() => LockScreenActivity.lockScreenInstance.InsertItem(notification));
+                catcherInstance = this;
+                listaNotificaciones = GetActiveNotifications().ToList();
+                adapter = new NotificationAdapter(listaNotificaciones);
+                isConnected = true;
+                Log.Info("Kitkat Listener connected, list: ", listaNotificaciones.Count.ToString());
+
             }
 
+            int id = sbn.Id;
+            int indice = listaNotificaciones.IndexOf(listaNotificaciones.FirstOrDefault(o => o.Id == sbn.Id));
+            //Condicional debido a que Play Store causa que algun item se pierda #wontfix ?
+            if (indice >= 0)
+            {
+                listaNotificaciones.RemoveAt(indice);
+                listaNotificaciones.Add(sbn);
+                if (LockScreenActivity.lockScreenInstance != null)
+                {
+                    LockScreenActivity.lockScreenInstance.RunOnUiThread(() => adapter.NotifyItemChanged(indice));
+                }
+
+                Log.Info("Elemento actualizado", "Tamaño lista: " + listaNotificaciones.Count);
+            }
+            else
+            {
+                listaNotificaciones.Add(sbn);
+                if (LockScreenActivity.lockScreenInstance != null)
+                {
+                    LockScreenActivity.lockScreenInstance.RunOnUiThread(() => adapter.NotifyItemInserted(listaNotificaciones.Count));
+                }
+                Log.Info("Elemento insertado", "Tamaño lista: " + listaNotificaciones.Count);
+            }
         }
 
         public override void OnNotificationRemoved(StatusBarNotification sbn)
         {
-            ClsNotification notification = new ClsNotification
+            int indice = listaNotificaciones.IndexOf(listaNotificaciones.FirstOrDefault(o => o.Id == sbn.Id));
+            if (indice >= 0)
             {
-                Id = sbn.Id,
-                Titulo = null,
-                Texto = null,
-                Icono = 0
-            };
-            helper.DeleteTableNotification(notification);
-            if (LockScreenActivity.lockScreenInstance != null)
-            {
-                LockScreenActivity.lockScreenInstance.RunOnUiThread(() => LockScreenActivity.lockScreenInstance.RemoveItem(notification));
+                listaNotificaciones.RemoveAt(indice);
             }
-        }
-
-        public byte[] BitmapToByteArray(Bitmap bitmap)
-        {
-            byte[] bitmapData;
-            using (var stream = new MemoryStream())
+            if (adapter != null && LockScreenActivity.lockScreenInstance != null)
             {
-                bitmap.Compress(CompressFormat.Png, 0, stream);
-                return bitmapData = stream.ToArray();
+                LockScreenActivity.lockScreenInstance.RunOnUiThread(() => adapter.NotifyItemRemoved(indice));
+                Log.Info("Remoción, tamaño lista:  ", listaNotificaciones.Count.ToString());
             }
         }
     }

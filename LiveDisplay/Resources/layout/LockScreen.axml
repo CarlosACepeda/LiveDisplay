@@ -6,7 +6,8 @@
     a:layout_width="match_parent"
     a:layout_height="match_parent"
     a:gravity="bottom"
-    a:weightSum="1">
+    a:weightSum="1"
+    a:background="@android:color/holo_orange_dark">
     <LinearLayout
         a:orientation="horizontal"
         a:minWidth="25px"
@@ -43,7 +44,7 @@
                 a:overScrollMode="never"
                 a:layout_width="match_parent"
                 a:layout_height="wrap_content"
-                a:layout_gravity="bottom" />
+                a:layout_gravity="center_vertical" />
         </LinearLayout>
     </LinearLayout>
     <LinearLayout

@@ -5,7 +5,7 @@ using Android.Support.V7.App;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
-using LiveDisplay.Databases;
+using LiveDisplay.Misc;
 using System.Threading;
 
 namespace LiveDisplay
@@ -13,11 +13,14 @@ namespace LiveDisplay
     [Activity(Label = "@string/app_name", MainLauncher = true, Icon = "@mipmap/ic_launcher")]
     internal class ConfigurationActivity : AppCompatActivity
     {
-        private DBHelper helper = new DBHelper();
-
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+
+            if (NLChecker.IsNotificationListenerEnabled()==false)
+            {
+                //Haz algo
+            }
 
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
             {
@@ -26,8 +29,6 @@ namespace LiveDisplay
 
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Configuracion);
-            ThreadPool.QueueUserWorkItem(o => helper.CreateDatabase());
-            //helper.CreateDatabase();
 
             Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.my_toolbar);
             SetSupportActionBar(toolbar);
@@ -63,6 +64,7 @@ namespace LiveDisplay
                 case Resource.Id.preview:
                     {
                         Intent intent = new Intent(this, typeof(LockScreenActivity));
+                        intent.AddFlags(ActivityFlags.SingleTop);
                         StartActivity(intent);
                         return true;
                     }
@@ -70,7 +72,7 @@ namespace LiveDisplay
                 case Resource.Id.notificationSettings:
                     {
                         string lel = Android.Provider.Settings.ActionNotificationListenerSettings;
-                        StartActivity(new Intent(lel));
+                        StartActivity(new Intent(lel).AddFlags(ActivityFlags.NewTask));
                         return true;
                     }
             }

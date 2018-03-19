@@ -27,5 +27,6 @@ namespace LiveDisplay.Fragments
             View v= inflater.Inflate(Resource.Layout.NotificiationFrag, container, false);
             return v;
         }
+
     }
 }

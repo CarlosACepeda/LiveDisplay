@@ -50,6 +50,7 @@ namespace LiveDisplay.Servicios
 
         public void OnSensorChanged(SensorEvent evento)
         {
+            //Arreglame: Ejecutame en un Backgroudn thread
             Sensor sensor = evento.Sensor;
 
             if (sensor.Type == SensorType.Proximity)
