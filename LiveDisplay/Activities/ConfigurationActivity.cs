@@ -16,13 +16,11 @@ namespace LiveDisplay
     {
         SwitchCompat swEnableAwake;
         Android.Support.V7.Widget.Toolbar toolbar;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            if (NLChecker.IsNotificationListenerEnabled()==false)
-            {
-                //Haz algo
-            }
+            
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Configuracion);         
         }
@@ -31,6 +29,7 @@ namespace LiveDisplay
             base.OnResume();
             BindViews();
             StartVariables();
+            
         }
         protected override void OnPause()
         {
@@ -55,12 +54,21 @@ namespace LiveDisplay
             {
                 case Resource.Id.preview:
                     {
-                        Intent intent = new Intent(this, typeof(LockScreenActivity));
-                        intent.AddFlags(ActivityFlags.NewDocument);
-                        StartActivity(intent);
+                        if (NLChecker.IsNotificationListenerEnabled() == true)
+                        {
+                            Intent intent = new Intent(this, typeof(LockScreenActivity));
+                            intent.AddFlags(ActivityFlags.NewDocument);
+                            StartActivity(intent);
+
+                            intent = null;
+                            return true;
+                        }
+                        else
+                        {
+                            Toast.MakeText(ApplicationContext, "Listener desconectado, no puedes", ToastLength.Short).Show();
+                            return false;
+                        }
                         
-                        intent = null;
-                        return true;
                     }
 
                 case Resource.Id.notificationSettings:

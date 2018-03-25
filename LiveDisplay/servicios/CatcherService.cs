@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace LiveDisplay.Servicios
 {
-    [Service(Label = "Catcherrrr", Permission = "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE")]
+    [Service(Label = "Catcher", Permission = "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE")]
     [IntentFilter(new[] { "android.service.notification.NotificationListenerService" })]
     internal class Catcher : NotificationListenerService
     {

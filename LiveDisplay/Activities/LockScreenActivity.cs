@@ -8,10 +8,8 @@ using Android.Widget;
 using Java.Util;
 using LiveDisplay.Adapters;
 using LiveDisplay.Factories;
-using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
 using System;
-using System.Threading;
 
 namespace LiveDisplay
 {
@@ -39,8 +37,7 @@ namespace LiveDisplay
         {
 
             base.OnCreate(savedInstanceState);
-            lockScreenInstance = this;
-
+            
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.LockScreen);
         }
@@ -183,6 +180,7 @@ namespace LiveDisplay
             dia = fecha.Get(CalendarField.DayOfMonth).ToString();
             mes = fecha.GetDisplayName(2, 2, Locale.Default);
             tvFecha.Text = string.Format(dia + ", " + mes);
+            lockScreenInstance = this;
         }
     }
 }

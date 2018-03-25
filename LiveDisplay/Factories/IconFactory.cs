@@ -22,13 +22,8 @@ namespace LiveDisplay.Factories
             Context remotePackageContext = null;
             remotePackageContext = Application.Context.CreatePackageContext(paquete, 0);
             Drawable icon = ContextCompat.GetDrawable(remotePackageContext, iconInt);
-            Bitmap iconBitmap = ((BitmapDrawable)icon).Bitmap;
-            Bitmap iconBitmapScaled = Bitmap.CreateScaledBitmap(iconBitmap, 36, 36, false);
-            Drawable iconDrawableScaled = new BitmapDrawable(iconBitmapScaled);
-            icon = null;
-            iconBitmap = null;
-            iconBitmapScaled = null;
-            return iconDrawableScaled;
+            remotePackageContext = null;
+            return icon;
         }
     }
 }
