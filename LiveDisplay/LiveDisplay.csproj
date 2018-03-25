@@ -122,6 +122,7 @@
   <ItemGroup>
     <Compile Include="Adapters\NotificationAdapter.cs" />
     <Compile Include="BroadcastReceivers\BootCompleteReceiver.cs" />
+    <Compile Include="BroadcastReceivers\ScreenOnOffReceiver.cs" />
     <Compile Include="Factories\BackgroundFactory.cs" />
     <Compile Include="Factories\IconFactory.cs" />
     <Compile Include="Fragments\NotificationFragment.cs" />

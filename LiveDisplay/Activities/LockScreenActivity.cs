@@ -24,7 +24,6 @@ namespace LiveDisplay
         private View v;
         private RecyclerView recycler;
         private RecyclerView.LayoutManager layoutManager;
-        private NotificationAdapter adapter;
         private BackgroundFactory backgroundFactory;
         private TextView tvTitulo;
         private TextView tvTexto;
@@ -118,7 +117,7 @@ namespace LiveDisplay
         {
             if (oldListSize != newListSize)
             {
-                adapter.NotifyDataSetChanged();
+                Catcher.adapter.NotifyDataSetChanged();
             }
         }
         private void OnNotificationClicked(object sender, System.EventArgs e)
@@ -146,7 +145,6 @@ namespace LiveDisplay
             wallpaperManager = null;
             papelTapiz = null;
             layoutManager = null;
-            adapter = null;
             lockScreenInstance = null;
             backgroundFactory = null;
             fecha = null;
@@ -173,9 +171,7 @@ namespace LiveDisplay
             linearLayout.Background = backgroundFactory.Difuminar(papelTapiz);
             layoutManager = new LinearLayoutManager(this);
             recycler.SetLayoutManager(layoutManager);
-            //Innceseario(?)
-            adapter = Catcher.adapter;
-            RunOnUiThread(() => recycler.SetAdapter(adapter));
+            RunOnUiThread(() => recycler.SetAdapter(Catcher.adapter));
             fecha = Calendar.GetInstance(Locale.Default);
             dia = fecha.Get(CalendarField.DayOfMonth).ToString();
             mes = fecha.GetDisplayName(2, 2, Locale.Default);

@@ -4,6 +4,7 @@ using Android.OS;
 using Android.Service.Notification;
 using Android.Util;
 using LiveDisplay.Adapters;
+using LiveDisplay.BroadcastReceivers;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -22,10 +23,11 @@ namespace LiveDisplay.Servicios
         //Válido para Lollipop en Adelante, no KitKat.
         public override void OnListenerConnected()
         {
+            base.OnListenerConnected();
             catcherInstance = this;
             listaNotificaciones = GetActiveNotifications().ToList();
             adapter = new NotificationAdapter(listaNotificaciones);
-            base.OnListenerConnected();
+            RegisterReceiver(new ScreenOnOffReceiver(), new IntentFilter(Intent.ActionScreenOn));
             Log.Info("Listener connected, list: ", listaNotificaciones.Count.ToString());
         }
 
@@ -40,7 +42,6 @@ namespace LiveDisplay.Servicios
                 adapter = new NotificationAdapter(listaNotificaciones);
                 isConnected = true;
                 Log.Info("Kitkat Listener connected, list: ", listaNotificaciones.Count.ToString());
-
             }
 
             int id = sbn.Id;
