@@ -6,6 +6,7 @@ using Android.Support.V4.Content;
 using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
+using LiveDisplay.Factories;
 using System;
 using System.Collections.Generic;
 
@@ -29,7 +30,7 @@ namespace LiveDisplay.Adapters
             NotificationAdapterViewHolder viewHolder = holder as NotificationAdapterViewHolder;
             //Arréglame
             //Funciona en Kitkat?
-            viewHolder.Icono.Background = (ReturnIconBitMap(notificaciones[position].Notification.Icon, notificaciones[position].PackageName));
+            viewHolder.Icono.Background = IconFactory.ReturnIconDrawable(notificaciones[position].Notification.Icon, notificaciones[position].PackageName);
         }
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
         {
@@ -38,13 +39,7 @@ namespace LiveDisplay.Adapters
             return new NotificationAdapterViewHolder(itemView);
         }
 
-        public Drawable ReturnIconBitMap(int iconInt, string paquete)
-        {
-            Context remotePackageContext = null;
-            remotePackageContext = Application.Context.CreatePackageContext(paquete, 0);
-            Drawable icon = ContextCompat.GetDrawable(remotePackageContext, iconInt);
-            return icon;
-        }
+        
     }
 
     //La siguiente clase simplemente guarda referencias a las vistas de la fila, para evitar hacer llamadas a FindViewById cada vez, no se hace nada más aquí

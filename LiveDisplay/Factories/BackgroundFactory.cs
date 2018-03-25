@@ -16,7 +16,6 @@ namespace LiveDisplay.Factories
             Bitmap blurredBitmap;
             //Asignar a este bitmap la imagen original para trabajar con ella.
             blurredBitmap = Bitmap.CreateBitmap(originalBitmap);
-
             //Crear la instancia de RenderScript que hará el trabajo
             RenderScript rs = RenderScript.Create(Application.Context);
             //Alocar memoria para que RenderScript trabaje.
@@ -36,7 +35,13 @@ namespace LiveDisplay.Factories
             // Copy the output to the blurred bitmap
             output.CopyTo(blurredBitmap);
 
-            Drawable papelTapizDifuminado = new BitmapDrawable(blurredBitmap);
+            //Scale the bitmap:
+            Bitmap blurredBitMapResized= Bitmap.CreateScaledBitmap(blurredBitmap, 70, 80, false);
+
+            Drawable papelTapizDifuminado = new BitmapDrawable(blurredBitMapResized);
+            originalBitmap = null;
+            blurredBitmap = null;
+            blurredBitMapResized = null;
             return papelTapizDifuminado;
         }
     }

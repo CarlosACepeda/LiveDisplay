@@ -9,10 +9,11 @@ using System.Linq;
 
 namespace LiveDisplay.Servicios
 {
-    [Service(Label = "Catchereee", Permission = "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE")]
+    [Service(Label = "Catcherrrr", Permission = "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE")]
     [IntentFilter(new[] { "android.service.notification.NotificationListenerService" })]
     internal class Catcher : NotificationListenerService
     {
+
         public static NotificationAdapter adapter;
         public static List<StatusBarNotification> listaNotificaciones;
         public static Catcher catcherInstance;
@@ -31,6 +32,7 @@ namespace LiveDisplay.Servicios
         public override void OnNotificationPosted(StatusBarNotification sbn)
         {
             //Kitkat Dirty ListenerConnected.
+            //No funciona si no hay una notificación nueva
             if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop && isConnected == false)
             {
                 catcherInstance = this;

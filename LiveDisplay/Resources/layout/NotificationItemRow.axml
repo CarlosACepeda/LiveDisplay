@@ -11,5 +11,5 @@
         app:cardBackgroundColor="@color/cardview_dark_background"
         android:minWidth="25px"
         android:minHeight="25px"
-        app:cardElevation="1dp"/>
+        app:cardElevation="1dp" />
 </RelativeLayout>
