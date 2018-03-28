@@ -1,7 +1,10 @@
 ﻿using Android.App;
 using Android.Content;
+using Android.Media;
 using Android.OS;
+using Android.Runtime;
 using Android.Service.Notification;
+using Android.Support.V4.Media.Session;
 using Android.Util;
 using LiveDisplay.Adapters;
 using LiveDisplay.BroadcastReceivers;
@@ -20,6 +23,8 @@ namespace LiveDisplay.Servicios
         public static Catcher catcherInstance;
         //Kitkat ListenerConnected variable.
         bool isConnected = false;
+
+
         //Válido para Lollipop en Adelante, no KitKat.
         public override void OnListenerConnected()
         {
@@ -34,7 +39,7 @@ namespace LiveDisplay.Servicios
         public override void OnNotificationPosted(StatusBarNotification sbn)
         {
             //Kitkat Dirty ListenerConnected.
-            //No funciona si no hay una notificación nueva
+            //No funciona!
             if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop && isConnected == false)
             {
                 catcherInstance = this;
@@ -45,6 +50,7 @@ namespace LiveDisplay.Servicios
             }
 
             int id = sbn.Id;
+            //Si encuentra el indice significa que el id ya existe y por lo tanto la notificación debe ser actualizada
             int indice = listaNotificaciones.IndexOf(listaNotificaciones.FirstOrDefault(o => o.Id == sbn.Id));
             //Condicional debido a que Play Store causa que algun item se pierda #wontfix ?
             if (indice >= 0)
@@ -54,11 +60,12 @@ namespace LiveDisplay.Servicios
                 if (LockScreenActivity.lockScreenInstance != null)
                 {
                     LockScreenActivity.lockScreenInstance.RunOnUiThread(() => adapter.NotifyItemChanged(indice));
+                    LockScreenActivity.lockScreenInstance.RunOnUiThread(() => LockScreenActivity.lockScreenInstance.OnNotificationUpdated());
                 }
 
                 Log.Info("Elemento actualizado", "Tamaño lista: " + listaNotificaciones.Count);
             }
-            else
+            else //No se encontró el indice y debe ser agregado a la lista
             {
                 listaNotificaciones.Add(sbn);
                 if (LockScreenActivity.lockScreenInstance != null)
@@ -82,5 +89,6 @@ namespace LiveDisplay.Servicios
                 Log.Info("Remoción, tamaño lista:  ", listaNotificaciones.Count.ToString());
             }
         }
+
     }
 }

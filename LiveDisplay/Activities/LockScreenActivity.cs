@@ -3,6 +3,7 @@ using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Support.V7.Widget;
 using Android.Transitions;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Java.Util;
@@ -84,18 +85,47 @@ namespace LiveDisplay
         //OnNotificationItemClick...
         public void OnItemClick(int position)
         {
-            string titulo = Catcher.listaNotificaciones[position].Notification.Extras.GetString("android.title");
-            if (titulo != null)
+            LinearLayout linearLayout = FindViewById<LinearLayout>(Resource.Id.notificationActions);
+            //Objeto anónimo
+            var anonNoti = new
             {
-                tvTitulo.Text = titulo;
-            }
-            string text = Catcher.listaNotificaciones[position].Notification.Extras.GetString("android.text");
-            if (text != null)
+                paquete = Catcher.listaNotificaciones[position].PackageName,
+                titulo = Catcher.listaNotificaciones[position].Notification.Extras.GetString("android.title"),
+                text = Catcher.listaNotificaciones[position].Notification.Extras.GetString("android.text"),
+                accionesBotones = Catcher.listaNotificaciones[position].Notification.Actions,
+                accionNotificacion= Catcher.listaNotificaciones[position].Notification.ContentIntent
+            };
+
+
+            if (anonNoti.titulo != null)
             {
-                tvTexto.Text = text;
+                tvTitulo.Text = anonNoti.titulo;
             }
+            if (anonNoti.text != null)
+            {
+                tvTexto.Text = anonNoti.text;
+            }
+
+            if (anonNoti.accionesBotones != null)
+            {
+                //Limpiar las vistas previas antes de agregar nuevas.
+                linearLayout.RemoveAllViews();
+                foreach (var actions in anonNoti.accionesBotones)
+                {
+                    Button accion = new Button(this)
+                    {
+                        //LayoutParams depende el tamaño de la pantalla
+                        LayoutParameters = new ViewGroup.LayoutParams(100, 100),
+                    };
+                    accion.Click += (o, e) => actions.ActionIntent.Send();
+                    accion.Background = IconFactory.ReturnActionIconDrawable(actions.Icon, anonNoti.paquete);
+                    linearLayout.AddView(accion);
+                }
+            }
+            notificationAction = anonNoti.accionNotificacion;
+
             v.Visibility = ViewStates.Visible;
-            notificationAction = Catcher.listaNotificaciones[position].Notification.ContentIntent;
+
         }
         public void OnItemLongClick(int position)
         {
@@ -122,8 +152,18 @@ namespace LiveDisplay
         }
         private void OnNotificationClicked(object sender, System.EventArgs e)
         {
-            notificationAction.Send();
+            try
+            {
+                notificationAction.Send();
+            }
+            catch
+            {
+
+            }
             v.Visibility = ViewStates.Invisible;
+        }
+        public void OnNotificationUpdated()
+        {
         }
         private void BindViews()
         {

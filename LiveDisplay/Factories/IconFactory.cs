@@ -25,5 +25,11 @@ namespace LiveDisplay.Factories
             remotePackageContext = null;
             return icon;
         }
+        public static Drawable ReturnActionIconDrawable(Icon icon, string paquete)
+        {
+            Context remotePackageContext = null;
+            remotePackageContext = Application.Context.CreatePackageContext(paquete, 0);
+            return icon.LoadDrawable(remotePackageContext);
+        }
     }
 }

@@ -9,6 +9,11 @@ using LiveDisplay.Misc;
 using System;
 using System.Threading;
 
+//for CI.
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
+
 namespace LiveDisplay
 {
     [Activity(Label = "@string/app_name", MainLauncher = true, Icon = "@mipmap/ic_launcher")]
@@ -103,6 +108,10 @@ namespace LiveDisplay
         }
         private void StartVariables()
         {
+            //CI
+            AppCenter.Start("0ec5320c-34b4-498b-a9c2-dae7614997fa",
+                   typeof(Analytics), typeof(Crashes));
+            AppCenter.Start("0ec5320c-34b4-498b-a9c2-dae7614997fa", typeof(Analytics), typeof(Crashes));
             //O es para Objeto, e es para Evento.
             swEnableAwake.Click += (o, e) =>
             {

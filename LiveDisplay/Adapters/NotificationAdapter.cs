@@ -28,8 +28,6 @@ namespace LiveDisplay.Adapters
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
             NotificationAdapterViewHolder viewHolder = holder as NotificationAdapterViewHolder;
-            //Arréglame
-            //Funciona en Kitkat?
             viewHolder.Icono.Background = IconFactory.ReturnIconDrawable(notificaciones[position].Notification.Icon, notificaciones[position].PackageName);
         }
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
@@ -38,7 +36,6 @@ namespace LiveDisplay.Adapters
             View itemView = layoutInflater.Inflate(Resource.Layout.NotificationItemRow, parent, false);
             return new NotificationAdapterViewHolder(itemView);
         }
-
         
     }
 
@@ -66,5 +63,6 @@ namespace LiveDisplay.Adapters
         {
             new ItemOnClickListener(LockScreenActivity.lockScreenInstance.OnItemClick).Invoke(LayoutPosition);
         }
+        
     }
 }
