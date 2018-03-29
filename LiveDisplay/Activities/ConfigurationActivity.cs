@@ -22,6 +22,14 @@ namespace LiveDisplay
         SwitchCompat swEnableAwake;
         Android.Support.V7.Widget.Toolbar toolbar;
 
+        //Configuration Variables.
+        bool enabledAwake;
+        bool dinamycWallpaperEnabled;
+        bool systemIconsShowed;
+        bool lockScreenEnabled;
+        //Shared preferences.
+
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);

@@ -44,5 +44,6 @@ namespace LiveDisplay.Factories
             blurredBitMapResized = null;
             return papelTapizDifuminado;
         }
+
     }
 }
