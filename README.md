@@ -20,7 +20,7 @@ We use [SemVer](http://semver.org/) for versioning
 ## Authors & Collaborators
 
 * **Me** - *Initial work* - [CarlosACepeda](https://github.com/CarlosACepeda)
-* **Yasujizr**  - *New Icon Design!* -[Yasujirz] (https://github.com/CarlosACepeda)
+* **Yasujizr**  - *New Icon Design!* - [Yasujizr] (https://github.com/CarlosACepeda)
 
 See also the list of [contributors](https://github.com/CarlosACepeda/LiveDisplay/contributors) who participated in this project.
 
