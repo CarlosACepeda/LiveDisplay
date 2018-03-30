@@ -16,7 +16,7 @@ using Microsoft.AppCenter.Crashes;
 
 namespace LiveDisplay
 {
-    [Activity(Label = "@string/app_name", MainLauncher = true, Icon = "@mipmap/ic_launcher")]
+    [Activity(Label = "@string/app_name", MainLauncher = true, Icon = "@mipmap/ic_launcher_2_dark")]
     internal class ConfigurationActivity : AppCompatActivity
     {
         SwitchCompat swEnableAwake;
