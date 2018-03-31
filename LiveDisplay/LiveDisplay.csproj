@@ -152,6 +152,7 @@
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Servicios\CatcherService.cs" />
+    <Compile Include="Servicios\ConfigurationManager.cs" />
     <Compile Include="Servicios\MusicController.cs" />
     <Compile Include="Servicios\NotificationSlave.cs" />
   </ItemGroup>
