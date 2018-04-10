@@ -2526,53 +2526,65 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f0a0012
 			public const int abc_toolbar_collapse_description = 2131361810;
 			
-			// aapt resource value: 0x7f0a002e
-			public const int about = 2131361838;
-			
-			// aapt resource value: 0x7f0a0028
-			public const int aboutinfo = 2131361832;
-			
-			// aapt resource value: 0x7f0a0029
-			public const int aboutinfotitle = 2131361833;
-			
-			// aapt resource value: 0x7f0a0023
-			public const int activarawake = 2131361827;
-			
-			// aapt resource value: 0x7f0a0027
-			public const int activarlockscreen = 2131361831;
-			
-			// aapt resource value: 0x7f0a002b
-			public const int activarwallpaperdinamico = 2131361835;
-			
-			// aapt resource value: 0x7f0a002c
-			public const int activarwallpaperdinamico_description = 2131361836;
-			
-			// aapt resource value: 0x7f0a0026
-			public const int ajusteslockscreen = 2131361830;
-			
 			// aapt resource value: 0x7f0a0021
-			public const int app_name = 2131361825;
+			public const int about = 2131361825;
 			
 			// aapt resource value: 0x7f0a0022
-			public const int app_title = 2131361826;
+			public const int aboutinfo = 2131361826;
 			
-			// aapt resource value: 0x7f0a002d
-			public const int hidesystemicons = 2131361837;
-			
-			// aapt resource value: 0x7f0a002a
-			public const int idk = 2131361834;
+			// aapt resource value: 0x7f0a0023
+			public const int aboutinfotitle = 2131361827;
 			
 			// aapt resource value: 0x7f0a0024
-			public const int modoactivo = 2131361828;
+			public const int activarawake = 2131361828;
 			
 			// aapt resource value: 0x7f0a0025
-			public const int placeholder = 2131361829;
+			public const int activarlockscreen = 2131361829;
+			
+			// aapt resource value: 0x7f0a0026
+			public const int activarwallpaperdinamico = 2131361830;
+			
+			// aapt resource value: 0x7f0a0027
+			public const int activarwallpaperdinamico_description = 2131361831;
+			
+			// aapt resource value: 0x7f0a0028
+			public const int ajusteslockscreen = 2131361832;
+			
+			// aapt resource value: 0x7f0a0029
+			public const int app_name = 2131361833;
+			
+			// aapt resource value: 0x7f0a002a
+			public const int app_title = 2131361834;
+			
+			// aapt resource value: 0x7f0a0030
+			public const int dialognldisabledmessage = 2131361840;
+			
+			// aapt resource value: 0x7f0a0032
+			public const int dialognldisablednegativebutton = 2131361842;
+			
+			// aapt resource value: 0x7f0a0031
+			public const int dialognldisabledpositivebutton = 2131361841;
+			
+			// aapt resource value: 0x7f0a002b
+			public const int hidesystemicons = 2131361835;
+			
+			// aapt resource value: 0x7f0a002c
+			public const int idk = 2131361836;
+			
+			// aapt resource value: 0x7f0a002d
+			public const int modoactivo = 2131361837;
+			
+			// aapt resource value: 0x7f0a002e
+			public const int placeholder = 2131361838;
 			
 			// aapt resource value: 0x7f0a0013
 			public const int search_menu_title = 2131361811;
 			
 			// aapt resource value: 0x7f0a0014
 			public const int status_bar_notification_info_overflow = 2131361812;
+			
+			// aapt resource value: 0x7f0a002f
+			public const int stickynotificationwarn = 2131361839;
 			
 			static String()
 			{

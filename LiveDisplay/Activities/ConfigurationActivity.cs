@@ -8,7 +8,6 @@ using Android.Widget;
 using LiveDisplay.Misc;
 using System;
 using System.Threading;
-
 //for CI.
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
@@ -73,7 +72,9 @@ namespace LiveDisplay
                             StartActivity(intent);
 
                             intent = null;
+                            Finish();
                             return true;
+                            
                         }
                         else
                         {
@@ -101,10 +102,11 @@ namespace LiveDisplay
             swHideSystemIcons = null;
             toolbar = null;
             Window.ClearFlags(WindowManagerFlags.DrawsSystemBarBackgrounds);
+            configurationManager = null;
         }
         protected void UnbindClickEvents()
         {
-            //Nothing yet.
+            
         }
         protected void BindViews()
         {
@@ -157,6 +159,7 @@ namespace LiveDisplay
                          dialogBuilder.SetNegativeButton("Cancelar", new EventHandler<DialogClickEventArgs>(OnDialogClickNegativeEventArgs));
                          dialogBuilder.Show();
                          swEnableLockScreen.Checked = false;
+                         dialogBuilder = null;
                      }
                      else
                      {
@@ -171,6 +174,7 @@ namespace LiveDisplay
             string lel = Android.Provider.Settings.ActionNotificationListenerSettings;
             Intent intent = new Intent(lel).AddFlags(ActivityFlags.NewTask);
             StartActivity(intent);
+            intent = null;
         }
         private void OnDialogClickNegativeEventArgs(object sender, DialogClickEventArgs e)
         {

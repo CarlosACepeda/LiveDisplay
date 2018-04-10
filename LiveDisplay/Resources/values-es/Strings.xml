@@ -1,17 +1,21 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <string name="app_name">LiveDisplay</string>
-  <string name="app_title">Configuración</string>
-  <string name="activarawake">Activar Awake</string>
-  <string name="modoactivo">Modo Activo</string>
-  <string name="placeholder">Insert a string here</string>
-  <string name="ajusteslockscreen">Ajustes de la pantalla de bloqueo</string>
-  <string name="activarlockscreen">Activar pantalla de bloqueo</string>
-  <string name="aboutinfo">Esta aplicación es desarrollada con &#60;3 por Carlos Cepeda, puedes ayudarme a través de una donación!, espero que disfrutes mucho esta app como yo desarrollandola!</string>
+  <string name="about">Acerca de...</string>
+  <string name="aboutinfo">Esta aplicación es desarrollada con &lt;3 por Carlos Cepeda, puedes ayudarme a través de una donación!, espero que disfrutes mucho esta app como yo desarrollandola!</string>
   <string name="aboutinfotitle">Acerca de esta aplicación:</string>
-  <string name="idk">¯&#92;&#95;(ツ)_/¯</string>
+  <string name="activarawake">Activar Awake</string>
+  <string name="activarlockscreen">Activar pantalla de bloqueo</string>
   <string name="activarwallpaperdinamico">Wallpaper dinámico</string>
   <string name="activarwallpaperdinamico_description">Al reproducir multimedia, mostrar en el Wallpaper el albumart de la canción que está sonando</string>
+  <string name="ajusteslockscreen">Ajustes de la pantalla de bloqueo</string>
+  <string name="app_name">LiveDisplay</string>
+  <string name="app_title">Configuración</string>
   <string name="hidesystemicons">No mostrar iconos del sistema</string>
-  <string name="about">Acerca de...</string>
+  <string name="idk">¯\_(ツ)_/¯</string>
+  <string name="modoactivo">Modo Activo</string>
+  <string name="placeholder">Inserta una cadena aquí</string>
+  <string name="stickynotificationwarn">No puedes eliminar notificaciones pegasosas</string>
+  <string name="dialognldisabledmessage">Debes permitir que esta app acceda a las notificaciones primero!</string>
+  <string name="dialognldisabledpositivebutton">Permitir</string>
+  <string name="dialognldisablednegativebutton">Cancelar</string>
 </resources>

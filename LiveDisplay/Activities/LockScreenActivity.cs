@@ -32,6 +32,7 @@ namespace LiveDisplay
         string dia, mes = null;
         private Calendar fecha;
         private TextView tvFecha;
+        private int position;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -123,7 +124,7 @@ namespace LiveDisplay
                 }
             }
             notificationAction = anonNoti.accionNotificacion;
-
+            this.position = position;
             v.Visibility = ViewStates.Visible;
 
         }
@@ -137,6 +138,7 @@ namespace LiveDisplay
                 NotificationSlave slave = new NotificationSlave();
                 slave.CancelNotification(notiPack, notiTag, notiId);
                 v.Visibility = ViewStates.Invisible;
+                
             }
             else
             {
@@ -164,6 +166,7 @@ namespace LiveDisplay
         }
         public void OnNotificationUpdated()
         {
+            OnItemClick(position);
         }
         private void BindViews()
         {

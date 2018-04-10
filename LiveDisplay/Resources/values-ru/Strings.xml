@@ -1,12 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="about">О...</string>
+  <string name="aboutinfotitle">Об этом приложении:</string>
+  <string name="activarawake">Активировать Awake</string>
   <string name="app_name">LiveDisplay</string>
   <string name="app_title">Настройки</string>
-  <string name="activarawake">Активировать Awake</string>
-  <string name="modoactivo">Active Mode(fix)</string>
-  <string name="placeholder">Insert a string here</string>
-  <string name="ajusteslockscreen">Ajustes de la pantalla de bloqueo</string>
-  <string name="activarlockscreen">Activar pantalla de bloqueo</string>
-  <string name="aboutinfo">Esta aplicación fue desarrollada con &#60;3 por Carlos Cepeda, puedes ayudarme a través de una donación!, espero que disfrutes mucho esta app como yo desarrollandola!</string>
-  <string name="aboutinfotitle">Acerca de esta aplicación:</string>
+  <string name="idk">¯\_(ツ)_/¯</string>
+  <string name="dialognldisablednegativebutton">Отмена</string>
 </resources>
