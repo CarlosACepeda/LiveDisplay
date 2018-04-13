@@ -1,6 +1,8 @@
 ﻿using Android.App;
+using Android.Content;
 using Android.Graphics.Drawables;
 using Android.OS;
+using Android.Provider;
 using Android.Support.V7.Widget;
 using Android.Transitions;
 using Android.Util;
@@ -33,6 +35,7 @@ namespace LiveDisplay
         string dia, mes = null;
         private Calendar fecha;
         private TextView tvFecha;
+        private TextClock reloj;
         private int position;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -87,17 +90,18 @@ namespace LiveDisplay
         //OnNotificationItemClick...
         public void OnItemClick(int position)
         {
+            notificationAction = Acciones.RetrieveNotificationAction(position);
             LinearLayout linearLayout = FindViewById<LinearLayout>(Resource.Id.notificationActions);
-            using (dynamic newType = Contents.RetrieveNotificationContents(position))
-            {
-                tvTitulo.Text = newType != null ? newType.titulo : "";
-                tvTexto.Text = newType != null ? newType.texto : "";
-            }
+            var newType = Contents.RetrieveNotificationContents(position);
             
-            if (Acciones.RetrieveNotificationButtonsActions(position)!=null)
+                tvTitulo.Text = newType != null ? newType.Item2 : "";
+                tvTexto.Text = newType != null ? newType.Item3 : "";
+            
+            
+            if (Acciones.RetrieveNotificationButtonsActions(position, newType.Item1)!=null)
             {
                 linearLayout.RemoveAllViews();
-                foreach (var a in Acciones.RetrieveNotificationButtonsActions(position))
+                foreach (var a in Acciones.RetrieveNotificationButtonsActions(position, newType.Item1))
                 {
                     linearLayout.AddView(a);
                 }
@@ -121,7 +125,7 @@ namespace LiveDisplay
             }
             else
             {
-                Toast.MakeText(Application.Context, "No", ToastLength.Short).Show();
+                v.SetBackgroundColor(Android.Graphics.Color.Red);
             }
         }
         private void CheckDataChanges()
@@ -156,7 +160,7 @@ namespace LiveDisplay
             tvTexto = (TextView)FindViewById(Resource.Id.tvTexto);
             v = FindViewById<View>(Resource.Id.fragment1);
             tvFecha = (TextView)FindViewById(Resource.Id.txtFechaLock);
-            
+            reloj = FindViewById<TextClock>(Resource.Id.clockLock);
         }
         private void UnbindViews()
         {
@@ -174,14 +178,24 @@ namespace LiveDisplay
             dia = null;
             mes = null;
             notificationAction = null;
+            reloj = null;
         }
         private void BindClickEvents()
         {
             v.Click += OnNotificationClicked;
+            reloj.Click += Reloj_Click;
         }
+
+        private void Reloj_Click(object sender, EventArgs e)
+        {
+            Intent intent = new Intent(AlarmClock.ActionShowAlarms);
+            StartActivity(intent);
+        }
+
         private void UnbindClickEvents()
         {
             v.Click -= OnNotificationClicked;
+            reloj.Click -= Reloj_Click;
         }
         private void InicializarValores()
         {

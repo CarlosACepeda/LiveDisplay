@@ -1987,20 +1987,11 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f07000b
 			public const int normal = 2131165195;
 			
-			// aapt resource value: 0x7f07008a
-			public const int notifAction1 = 2131165322;
-			
-			// aapt resource value: 0x7f07008b
-			public const int notifAction2 = 2131165323;
-			
-			// aapt resource value: 0x7f07008c
-			public const int notifAction3 = 2131165324;
-			
 			// aapt resource value: 0x7f070089
 			public const int notificationActions = 2131165321;
 			
-			// aapt resource value: 0x7f07008e
-			public const int notificationSettings = 2131165326;
+			// aapt resource value: 0x7f07008b
+			public const int notificationSettings = 2131165323;
 			
 			// aapt resource value: 0x7f07007e
 			public const int notification_background = 2131165310;
@@ -2014,8 +2005,8 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f070031
 			public const int parentPanel = 2131165233;
 			
-			// aapt resource value: 0x7f07008d
-			public const int preview = 2131165325;
+			// aapt resource value: 0x7f07008a
+			public const int preview = 2131165322;
 			
 			// aapt resource value: 0x7f070006
 			public const int progress_circular = 2131165190;

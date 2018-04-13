@@ -4,6 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="?android:selectableItemBackground"
     android:visibility="invisible">
     <TextView
         android:text=" "
@@ -16,32 +17,12 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tvTexto" />
+        android:id="@+id/tvTexto"
+        android:maxLines="4"
+        android:minLines="0" />
     <LinearLayout
-      android:id="@+id/notificationActions"
+        android:id="@+id/notificationActions"
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <Button
-            android:text="Button"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:id="@+id/notifAction1"
-            android:background="@android:color/transparent"
-            android:visibility="gone" />
-        <Button
-            android:text="Button"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:id="@+id/notifAction2"
-            android:background="@android:color/transparent"
-            android:visibility="gone" />
-        <Button
-            android:text="Button "
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:id="@+id/notifAction3"
-            android:background="@android:color/transparent"
-            android:visibility="gone" />
-    </LinearLayout>
+        android:layout_height="wrap_content" />
 </LinearLayout>

@@ -6,8 +6,7 @@
     a:layout_width="match_parent"
     a:layout_height="match_parent"
     a:gravity="bottom"
-    a:weightSum="1"
-    a:background="@android:color/holo_orange_dark">
+    a:weightSum="1">
     <LinearLayout
         a:orientation="horizontal"
         a:minWidth="25px"
@@ -56,6 +55,7 @@
         a:alpha="1"
         a:layout_weight="0.03">
         <TextClock xmlns:p2="http://xamarin.com/mono/android/designer-default"
+            a:background="?android:selectableItemBackground"
             a:layout_width="wrap_content"
             a:layout_height="wrap_content"
             a:textSize="60dp"
