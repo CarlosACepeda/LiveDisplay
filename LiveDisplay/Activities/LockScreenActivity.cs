@@ -10,6 +10,7 @@ using Java.Util;
 using LiveDisplay.Adapters;
 using LiveDisplay.Factories;
 using LiveDisplay.Servicios;
+using LiveDisplay.Servicios.Notificaciones;
 using System;
 
 namespace LiveDisplay
@@ -87,43 +88,21 @@ namespace LiveDisplay
         public void OnItemClick(int position)
         {
             LinearLayout linearLayout = FindViewById<LinearLayout>(Resource.Id.notificationActions);
-            //Objeto anónimo
-            var anonNoti = new
+            using (dynamic newType = Contents.RetrieveNotificationContents(position))
             {
-                paquete = Catcher.listaNotificaciones[position].PackageName,
-                titulo = Catcher.listaNotificaciones[position].Notification.Extras.GetString("android.title"),
-                text = Catcher.listaNotificaciones[position].Notification.Extras.GetString("android.text"),
-                accionesBotones = Catcher.listaNotificaciones[position].Notification.Actions,
-                accionNotificacion= Catcher.listaNotificaciones[position].Notification.ContentIntent
-            };
-
-
-            if (anonNoti.titulo != null)
-            {
-                tvTitulo.Text = anonNoti.titulo;
+                tvTitulo.Text = newType != null ? newType.titulo : "";
+                tvTexto.Text = newType != null ? newType.texto : "";
             }
-            if (anonNoti.text != null)
+            
+            if (Acciones.RetrieveNotificationButtonsActions(position)!=null)
             {
-                tvTexto.Text = anonNoti.text;
-            }
-
-            if (anonNoti.accionesBotones != null)
-            {
-                //Limpiar las vistas previas antes de agregar nuevas.
                 linearLayout.RemoveAllViews();
-                foreach (var actions in anonNoti.accionesBotones)
+                foreach (var a in Acciones.RetrieveNotificationButtonsActions(position))
                 {
-                    Button accion = new Button(this)
-                    {
-                        //LayoutParams depende el tamaño de la pantalla
-                        LayoutParameters = new ViewGroup.LayoutParams(100, 100),
-                    };
-                    accion.Click += (o, e) => actions.ActionIntent.Send();
-                    accion.Background = IconFactory.ReturnActionIconDrawable(actions.Icon, anonNoti.paquete);
-                    linearLayout.AddView(accion);
+                    linearLayout.AddView(a);
                 }
             }
-            notificationAction = anonNoti.accionNotificacion;
+            //actualizar.
             this.position = position;
             v.Visibility = ViewStates.Visible;
 
@@ -152,7 +131,7 @@ namespace LiveDisplay
                 Catcher.adapter.NotifyDataSetChanged();
             }
         }
-        private void OnNotificationClicked(object sender, System.EventArgs e)
+        private void OnNotificationClicked(object sender, EventArgs e)
         {
             try
             {
@@ -160,12 +139,13 @@ namespace LiveDisplay
             }
             catch
             {
-
+                Log.Wtf("OnNotificationClicked", "Metodo falla porque no existe una notificacion con esta acción");
             }
             v.Visibility = ViewStates.Invisible;
         }
         public void OnNotificationUpdated()
         {
+            //Arreglame:
             OnItemClick(position);
         }
         private void BindViews()

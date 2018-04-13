@@ -21,9 +21,9 @@ namespace LiveDisplay.Servicios
         public static NotificationAdapter adapter;
         public static List<StatusBarNotification> listaNotificaciones;
         public static Catcher catcherInstance;
+
         //Kitkat ListenerConnected variable.
         bool isConnected = false;
-
 
         //Válido para Lollipop en Adelante, no KitKat.
         public override void OnListenerConnected()
@@ -88,6 +88,11 @@ namespace LiveDisplay.Servicios
                 LockScreenActivity.lockScreenInstance.RunOnUiThread(() => adapter.NotifyItemRemoved(indice));
                 Log.Info("Remoción, tamaño lista:  ", listaNotificaciones.Count.ToString());
             }
+        }
+        public override void OnListenerDisconnected()
+        {
+            base.OnListenerDisconnected();
+            //Implementame
         }
 
     }

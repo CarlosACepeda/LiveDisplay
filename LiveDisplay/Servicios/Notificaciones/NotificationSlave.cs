@@ -13,6 +13,7 @@ using Android.Widget;
 
 namespace LiveDisplay.Servicios
 {
+    //Esta clase sirve para manipular las notificaciones, como quitarlas o agregarlas.
     class NotificationSlave
     {
         //Postear Notificaciones sobre mi app.
@@ -26,6 +27,10 @@ namespace LiveDisplay.Servicios
         public void CancelAll()
         {
             Catcher.catcherInstance.CancelAllNotifications();
+        }
+        public void PostNotification()
+        {
+            notificationManager.Notify(1, new Notification { });
         }
     }
 }
