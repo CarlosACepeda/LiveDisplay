@@ -1,15 +1,13 @@
 ﻿using Android.App;
 using Android.Content;
-using Android.Media;
 using Android.OS;
-using Android.Runtime;
 using Android.Service.Notification;
-using Android.Support.V4.Media.Session;
 using Android.Util;
 using LiveDisplay.Adapters;
 using LiveDisplay.BroadcastReceivers;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace LiveDisplay.Servicios
 {
@@ -17,13 +15,26 @@ namespace LiveDisplay.Servicios
     [IntentFilter(new[] { "android.service.notification.NotificationListenerService" })]
     internal class Catcher : NotificationListenerService
     {
-
         public static NotificationAdapter adapter;
         public static List<StatusBarNotification> listaNotificaciones;
         public static Catcher catcherInstance;
+        private bool isListenerConnected = false;
 
-        //Kitkat ListenerConnected variable.
-        bool isConnected = false;
+        public override IBinder OnBind(Intent intent)
+        {
+            //KitKat Workaround: Enviar una notificación para poder iniciar la lista de notificaciones y obtener las notificaciones que hayan sido posteadas desde antes.
+            //Porque parece imposible hacerlo sin otros métodos
+            NotificationSlave slave = new NotificationSlave();
+            ThreadPool.QueueUserWorkItem(o=>
+            {
+                Thread.Sleep(700);
+                slave.PostNotification();
+                
+            });
+            
+
+            return base.OnBind(intent);
+        }
 
         //Válido para Lollipop en Adelante, no KitKat.
         public override void OnListenerConnected()
@@ -33,20 +44,20 @@ namespace LiveDisplay.Servicios
             listaNotificaciones = GetActiveNotifications().ToList();
             adapter = new NotificationAdapter(listaNotificaciones);
             RegisterReceiver(new ScreenOnOffReceiver(), new IntentFilter(Intent.ActionScreenOn));
+            isListenerConnected = true;
             Log.Info("Listener connected, list: ", listaNotificaciones.Count.ToString());
         }
 
         public override void OnNotificationPosted(StatusBarNotification sbn)
         {
-            //Kitkat Dirty ListenerConnected.
-            //No funciona!
-            if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop && isConnected == false)
+            if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop && isListenerConnected == false)
             {
                 catcherInstance = this;
                 listaNotificaciones = GetActiveNotifications().ToList();
                 adapter = new NotificationAdapter(listaNotificaciones);
-                isConnected = true;
-                Log.Info("Kitkat Listener connected, list: ", listaNotificaciones.Count.ToString());
+                RegisterReceiver(new ScreenOnOffReceiver(), new IntentFilter(Intent.ActionScreenOn));
+                isListenerConnected = true;
+                Log.Info("KitkatListener connected, list: ", listaNotificaciones.Count.ToString());
             }
 
             int id = sbn.Id;
@@ -89,11 +100,11 @@ namespace LiveDisplay.Servicios
                 Log.Info("Remoción, tamaño lista:  ", listaNotificaciones.Count.ToString());
             }
         }
+
         public override void OnListenerDisconnected()
         {
             base.OnListenerDisconnected();
             //Implementame
         }
-
     }
 }

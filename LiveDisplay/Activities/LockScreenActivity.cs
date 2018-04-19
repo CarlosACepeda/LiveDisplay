@@ -96,11 +96,11 @@ namespace LiveDisplay
             
                 tvTitulo.Text = newType != null ? newType.Item2 : "";
                 tvTexto.Text = newType != null ? newType.Item3 : "";
-            
-            
+                linearLayout.RemoveAllViews();
+
             if (Acciones.RetrieveNotificationButtonsActions(position, newType.Item1)!=null)
             {
-                linearLayout.RemoveAllViews();
+                
                 foreach (var a in Acciones.RetrieveNotificationButtonsActions(position, newType.Item1))
                 {
                     linearLayout.AddView(a);
@@ -115,12 +115,21 @@ namespace LiveDisplay
         {
             if (Catcher.listaNotificaciones[position].IsClearable == true)
             {
-                int notiId = Catcher.listaNotificaciones[position].Id;
-                string notiTag = Catcher.listaNotificaciones[position].Tag;
-                string notiPack = Catcher.listaNotificaciones[position].PackageName;
                 NotificationSlave slave = new NotificationSlave();
-                slave.CancelNotification(notiPack, notiTag, notiId);
-                v.Visibility = ViewStates.Invisible;
+                if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+                {
+                    int notiId = Catcher.listaNotificaciones[position].Id;
+                    string notiTag = Catcher.listaNotificaciones[position].Tag;
+                    string notiPack = Catcher.listaNotificaciones[position].PackageName;
+                    slave.CancelNotification(notiPack, notiTag, notiId);
+                    v.Visibility = ViewStates.Invisible;
+                }
+                else
+                {
+                    slave.CancelNotification(Catcher.listaNotificaciones[position].Key);
+                    v.Visibility = ViewStates.Invisible;
+                }
+                
                 
             }
             else
