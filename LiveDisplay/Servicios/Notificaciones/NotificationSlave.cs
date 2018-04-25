@@ -24,7 +24,6 @@ namespace LiveDisplay.Servicios
         {
             Catcher.catcherInstance.CancelAllNotifications();
         }
-
         public void PostNotification()
         {
             //Test.
@@ -32,8 +31,8 @@ namespace LiveDisplay.Servicios
             builder.SetContentTitle("LiveDisplay");
             builder.SetContentText("This is a test notification");
             builder.SetAutoCancel(true);
-            builder.SetPriority(Convert.ToInt32(Notification.PriorityLow));
-            builder.SetSmallIcon(Resource.Mipmap.ic_launcher_2_dark);
+            builder.SetPriority(Convert.ToInt32(Android.App.NotificationPriority.Low));
+            builder.SetSmallIcon(Resource.Drawable.ic_stat_default_appicon);
             notificationManager.Notify(1, builder.Build());
         }
     }

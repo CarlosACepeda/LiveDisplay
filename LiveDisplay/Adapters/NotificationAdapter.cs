@@ -4,17 +4,20 @@ using Android.Graphics.Drawables;
 using Android.Service.Notification;
 using Android.Support.V4.Content;
 using Android.Support.V7.Widget;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
 using LiveDisplay.Factories;
+using LiveDisplay.Servicios;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace LiveDisplay.Adapters
 {
     public class NotificationAdapter : RecyclerView.Adapter
     {
-
+        public static int selectedItem = -1;
         public List<StatusBarNotification> notificaciones = new List<StatusBarNotification>();
 
         public override int ItemCount => notificaciones.Count;
@@ -29,6 +32,15 @@ namespace LiveDisplay.Adapters
         {
             NotificationAdapterViewHolder viewHolder = holder as NotificationAdapterViewHolder;
             viewHolder.Icono.Background = IconFactory.ReturnIconDrawable(notificaciones[position].Notification.Icon, notificaciones[position].PackageName);
+            //FUnciona, habrá otra forma más simple?
+            if (selectedItem == position)
+            {
+                viewHolder.Icono.Alpha = 0.5f;
+            }
+            else
+            {
+                viewHolder.Icono.Alpha = 1;
+            }
         }
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
         {
@@ -38,7 +50,6 @@ namespace LiveDisplay.Adapters
         }
         
     }
-
     //La siguiente clase simplemente guarda referencias a las vistas de la fila, para evitar hacer llamadas a FindViewById cada vez, no se hace nada más aquí
     internal class NotificationAdapterViewHolder : RecyclerView.ViewHolder
     {
@@ -61,8 +72,9 @@ namespace LiveDisplay.Adapters
 
         private void ItemView_Click(object sender, EventArgs e)
         {
+            NotificationAdapter.selectedItem = LayoutPosition;
+            Catcher.adapter.NotifyDataSetChanged();
             new ItemOnClickListener(LockScreenActivity.lockScreenInstance.OnItemClick).Invoke(LayoutPosition);
         }
-        
     }
 }

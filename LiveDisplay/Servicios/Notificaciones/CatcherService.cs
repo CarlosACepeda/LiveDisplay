@@ -24,6 +24,7 @@ namespace LiveDisplay.Servicios
         {
             //KitKat Workaround: Enviar una notificación para poder iniciar la lista de notificaciones y obtener las notificaciones que hayan sido posteadas desde antes.
             //Porque parece imposible hacerlo sin otros métodos
+
             NotificationSlave slave = new NotificationSlave();
             ThreadPool.QueueUserWorkItem(o=>
             {
@@ -62,7 +63,7 @@ namespace LiveDisplay.Servicios
 
             int id = sbn.Id;
             //Si encuentra el indice significa que el id ya existe y por lo tanto la notificación debe ser actualizada
-            int indice = listaNotificaciones.IndexOf(listaNotificaciones.FirstOrDefault(o => o.Id == sbn.Id));
+            int indice = listaNotificaciones.IndexOf(listaNotificaciones.FirstOrDefault(o => o.Id == sbn.Id && o.PackageName== sbn.PackageName));
             //Condicional debido a que Play Store causa que algun item se pierda #wontfix ?
             if (indice >= 0)
             {

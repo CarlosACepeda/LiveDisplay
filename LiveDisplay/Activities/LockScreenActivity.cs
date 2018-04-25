@@ -99,8 +99,7 @@ namespace LiveDisplay
                 linearLayout.RemoveAllViews();
 
             if (Acciones.RetrieveNotificationButtonsActions(position, newType.Item1)!=null)
-            {
-                
+            {               
                 foreach (var a in Acciones.RetrieveNotificationButtonsActions(position, newType.Item1))
                 {
                     linearLayout.AddView(a);
@@ -158,7 +157,6 @@ namespace LiveDisplay
         }
         public void OnNotificationUpdated()
         {
-            //Arreglame:
             OnItemClick(position);
         }
         private void BindViews()
