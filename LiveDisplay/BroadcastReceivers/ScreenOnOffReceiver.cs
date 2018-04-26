@@ -17,11 +17,17 @@ namespace LiveDisplay.BroadcastReceivers
     [IntentFilter(new[] { Intent.ActionScreenOn})]
     public class ScreenOnOffReceiver : BroadcastReceiver
     {
+        public static bool isScreenOn;
         public override void OnReceive(Context context, Intent intent)
         {
             if (intent.Action == Intent.ActionScreenOn)
             {
                 Toast.MakeText(context, "La pantalla ha sido encendida prro", ToastLength.Short).Show();
+                isScreenOn = true;
+            }
+            else if(intent.Action==Intent.ActionScreenOff)
+            {
+                isScreenOn = false;
             }
             
         }

@@ -192,13 +192,11 @@ namespace LiveDisplay
             v.Click += OnNotificationClicked;
             reloj.Click += Reloj_Click;
         }
-
         private void Reloj_Click(object sender, EventArgs e)
         {
             Intent intent = new Intent(AlarmClock.ActionShowAlarms);
             StartActivity(intent);
         }
-
         private void UnbindClickEvents()
         {
             v.Click -= OnNotificationClicked;
@@ -221,6 +219,12 @@ namespace LiveDisplay
             mes = fecha.GetDisplayName(2, 2, Locale.Default);
             tvFecha.Text = string.Format(dia + ", " + mes);
             lockScreenInstance = this;
+        }
+        public void UnlockScreenAndShowNotification()
+        {
+            Window.AddFlags(WindowManagerFlags.DismissKeyguard);
+            Window.AddFlags(WindowManagerFlags.ShowWhenLocked);
+            Window.AddFlags(WindowManagerFlags.TurnScreenOn);
         }
     }
 }
