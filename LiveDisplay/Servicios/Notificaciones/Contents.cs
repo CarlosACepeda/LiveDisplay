@@ -1,19 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-using LiveDisplay.Factories;
 
 namespace LiveDisplay.Servicios.Notificaciones
 {
-    class Contents
+    internal class Contents
     {
         //Item1 es 'Paquete'
         //Item2 es 'Titulo'

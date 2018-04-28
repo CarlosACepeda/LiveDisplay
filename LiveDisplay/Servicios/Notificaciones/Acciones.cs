@@ -41,12 +41,11 @@ namespace LiveDisplay.Servicios.Notificaciones
         //>Nougat: Textbox directly in notification
         public void RetrieveSendButtonAction()
         { }
+
         private static int DpToPx(int dp)
         {
             float density = Application.Context.Resources.DisplayMetrics.Density;
             return Convert.ToInt32(Math.Round(dp * density));
         }
-
-
     }
 }

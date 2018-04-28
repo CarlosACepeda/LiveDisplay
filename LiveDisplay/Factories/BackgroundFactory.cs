@@ -36,7 +36,7 @@ namespace LiveDisplay.Factories
             output.CopyTo(blurredBitmap);
 
             //Scale the bitmap:
-            Bitmap blurredBitMapResized= Bitmap.CreateScaledBitmap(blurredBitmap, 70, 80, false);
+            Bitmap blurredBitMapResized = Bitmap.CreateScaledBitmap(blurredBitmap, 70, 80, false);
 
             Drawable papelTapizDifuminado = new BitmapDrawable(blurredBitMapResized);
             originalBitmap = null;
@@ -44,6 +44,5 @@ namespace LiveDisplay.Factories
             blurredBitMapResized = null;
             return papelTapizDifuminado;
         }
-
     }
 }

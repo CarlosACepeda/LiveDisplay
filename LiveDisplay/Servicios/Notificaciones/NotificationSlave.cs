@@ -25,6 +25,7 @@ namespace LiveDisplay.Servicios
         {
             Catcher.catcherInstance.CancelAllNotifications();
         }
+
         public void PostNotification()
         {
             //Test.

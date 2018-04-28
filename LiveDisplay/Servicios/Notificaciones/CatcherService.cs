@@ -26,13 +26,11 @@ namespace LiveDisplay.Servicios
             //Porque parece imposible hacerlo sin otros métodos
 
             NotificationSlave slave = new NotificationSlave();
-            ThreadPool.QueueUserWorkItem(o=>
+            ThreadPool.QueueUserWorkItem(o =>
             {
                 Thread.Sleep(700);
                 slave.PostNotification();
-                
             });
-            
 
             return base.OnBind(intent);
         }
@@ -63,7 +61,7 @@ namespace LiveDisplay.Servicios
 
             int id = sbn.Id;
             //Si encuentra el indice significa que el id ya existe y por lo tanto la notificación debe ser actualizada
-            int indice = listaNotificaciones.IndexOf(listaNotificaciones.FirstOrDefault(o => o.Id == sbn.Id && o.PackageName== sbn.PackageName));
+            int indice = listaNotificaciones.IndexOf(listaNotificaciones.FirstOrDefault(o => o.Id == sbn.Id && o.PackageName == sbn.PackageName));
             //Condicional debido a que Play Store causa que algun item se pierda #wontfix ?
             if (indice >= 0)
             {

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:a="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/notificationSettingsToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp" />
+    <android.support.v7.widget.CardView
+        android:paddingTop="?android:attr/actionBarSize"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        a:cardElevation="1dp"
+        a:cardUseCompatPadding="true"
+        a:cardCornerRadius="4dp"
+        android:minWidth="25px"
+        android:minHeight="25px">
+        <CheckBox
+            android:text="@string/enablenotificationlistener"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/cbxEnableNotificationListener" />
+    </android.support.v7.widget.CardView>
+    <android.support.v7.widget.CardView
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        a:cardElevation="1dp"
+        a:cardUseCompatPadding="true"
+        a:cardCornerRadius="4dp"
+        android:minWidth="25px"
+        android:minHeight="25px">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:text="@string/opciones"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <android.support.v7.widget.SwitchCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/swShowStickyNotifications"
+                android:text="@string/showstickynotifications" />
+            <Button
+                android:text="@string/blacklist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnBlacklist"
+                android:background="?android:selectableItemBackground"
+                android:textAllCaps="false"
+                android:gravity="left|center_vertical" />
+            <TextView
+                android:text="@string/blacklistdesc"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <android.support.v7.widget.SwitchCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/swEnableQuickReply"
+                android:text="@string/enablequickreply" />
+            <TextView
+                android:text="@string/enablequickreplydesc"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+</LinearLayout>

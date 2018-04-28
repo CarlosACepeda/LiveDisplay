@@ -2,31 +2,31 @@
 using Android.Content;
 using Android.OS;
 using Android.Support.V7.App;
-using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
+using LiveDisplay.Activities;
 using LiveDisplay.Misc;
-using System;
-using System.Threading;
+using LiveDisplay.Servicios;
+
 //for CI.
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
-using LiveDisplay.Servicios;
+using System;
 
 namespace LiveDisplay
 {
     [Activity(Label = "@string/app_name", MainLauncher = true, Icon = "@mipmap/ic_launcher_2_dark")]
     internal class ConfigurationActivity : AppCompatActivity
     {
-        Android.Support.V7.Widget.Toolbar toolbar;
-        SwitchCompat swEnableAwake;
-        SwitchCompat swEnableLockScreen;
-        SwitchCompat swEnableDynamicWallpaper;
-        SwitchCompat swHideSystemIcons;
-        
-        
-        ConfigurationManager configurationManager;
+        private Android.Support.V7.Widget.Toolbar toolbar;
+
+        private Button btnLockScreen;
+        private Button btnNotifications;
+        private Button btnAwake;
+        private Button btnAbout;
+
+        private ConfigurationManager configurationManager;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -35,30 +35,34 @@ namespace LiveDisplay
 
             configurationManager = new ConfigurationManager(GetPreferences(FileCreationMode.Private));
         }
+
         protected override void OnResume()
         {
             base.OnResume();
             BindViews();
             StartVariables();
-            
         }
+
         protected override void OnPause()
         {
             base.OnPause();
             UnbindViews();
             GC.Collect();
         }
+
         protected override void OnDestroy()
         {
             base.OnDestroy();
             GC.Collect();
-        }       
+        }
+
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
             var inflater = MenuInflater;
             inflater.Inflate(Resource.Menu.menu_config, menu);
             return true;
         }
+
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
             switch (item.ItemId)
@@ -74,14 +78,12 @@ namespace LiveDisplay
                             intent = null;
                             Finish();
                             return true;
-                            
                         }
                         else
                         {
                             Toast.MakeText(ApplicationContext, "Listener desconectado, no puedes", ToastLength.Short).Show();
                             return false;
                         }
-                        
                     }
 
                 case Resource.Id.notificationSettings:
@@ -93,21 +95,23 @@ namespace LiveDisplay
                     }
             }
             return true;
-        }        
+        }
+
         protected void UnbindViews()
         {
-            swEnableAwake = null;
-            swEnableLockScreen = null;
-            swEnableDynamicWallpaper = null;
-            swHideSystemIcons = null;
             toolbar = null;
             Window.ClearFlags(WindowManagerFlags.DrawsSystemBarBackgrounds);
             configurationManager = null;
+            btnAbout = null;
+            btnAwake = null;
+            btnLockScreen = null;
+            btnNotifications = null;
         }
+
         protected void UnbindClickEvents()
         {
-            
         }
+
         protected void BindViews()
         {
             //Needed for Status Bar Tinting on Lollipop and beyond using AppCompat
@@ -115,60 +119,28 @@ namespace LiveDisplay
             {
                 Window.AddFlags(WindowManagerFlags.DrawsSystemBarBackgrounds);
             }
-            toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.my_toolbar);
+            toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.mainToolbar);
             SetSupportActionBar(toolbar);
-            swEnableAwake = FindViewById<SwitchCompat>(Resource.Id.swEnableAwake);
-            swEnableLockScreen = FindViewById<SwitchCompat>(Resource.Id.swEnableLockscreen);
-            swEnableDynamicWallpaper= FindViewById<SwitchCompat>(Resource.Id.swEnableDynamicWallpaper);
-            swHideSystemIcons= FindViewById<SwitchCompat>(Resource.Id.swHideSystemIcons);
-           
+
+            btnLockScreen = FindViewById<Button>(Resource.Id.btnLockScreen);
+            btnNotifications = FindViewById<Button>(Resource.Id.btnNotification);
+            btnAwake = FindViewById<Button>(Resource.Id.btnAwake);
+            btnAbout = FindViewById<Button>(Resource.Id.btnAbout);
         }
+
         private void StartVariables()
         {
             //CI
             AppCenter.Start("0ec5320c-34b4-498b-a9c2-dae7614997fa",
                    typeof(Analytics), typeof(Crashes));
             AppCenter.Start("0ec5320c-34b4-498b-a9c2-dae7614997fa", typeof(Analytics), typeof(Crashes));
-            //sender es para Objeto, e es para Evento.
-            swEnableAwake.CheckedChange += (sender, e) =>
-            {
-                if (swEnableAwake.Checked == true)
-                {
-                    //StartService(new Intent(this, typeof(AwakeService)));
-                    Toast.MakeText(this, Resource.String.idk, ToastLength.Short).Show();
-                    configurationManager.SaveAValue("awakeEnabled", true);
 
-
-                }
-                else if (swEnableAwake.Checked == false)
-                {
-                    Toast.MakeText(this, Resource.String.idk, ToastLength.Short).Show();
-                    configurationManager.SaveAValue("awakeEnabled", false);
-                    //StopService(new Intent(this, typeof(AwakeService)));
-                }
-            };
-            swEnableLockScreen.CheckedChange += (sender, e) =>
-             {
-                 if (swEnableLockScreen.Checked==true)
-                 {
-                     if (NLChecker.IsNotificationListenerEnabled() == false)
-                     {
-                         Android.Support.V7.App.AlertDialog.Builder dialogBuilder = new Android.Support.V7.App.AlertDialog.Builder(this);
-                         dialogBuilder.SetMessage("Debes permitir que esta app acceda a las notificaciones primero!");//Add this to strings.xml
-                         dialogBuilder.SetPositiveButton("Activar", new EventHandler<DialogClickEventArgs>(OnDialogClickPositiveEventArgs));
-                         dialogBuilder.SetNegativeButton("Cancelar", new EventHandler<DialogClickEventArgs>(OnDialogClickNegativeEventArgs));
-                         dialogBuilder.Show();
-                         swEnableLockScreen.Checked = false;
-                         dialogBuilder = null;
-                     }
-                     else
-                     {
-                         configurationManager.SaveAValue("lockScreenEnabled", true);
-                     }
-                 }
-             };
-
+            btnLockScreen.Click += (o, e) => StartActivity(new Intent(this, typeof(LockScreenSettingsActivity)).AddFlags(ActivityFlags.ClearTop));
+            btnNotifications.Click += (o, e) => StartActivity(new Intent(this, typeof(NotificationSettingsActivity)).AddFlags(ActivityFlags.ClearTop));
+            btnAwake.Click += (o, e) => StartActivity(new Intent(this, typeof(AwakeSettingsActivity)).AddFlags(ActivityFlags.ClearTop));
+            btnAbout.Click += (o, e) => StartActivity(new Intent(this, typeof(AboutActivity)).AddFlags(ActivityFlags.ClearTop));
         }
+
         private void OnDialogClickPositiveEventArgs(object sender, DialogClickEventArgs e)
         {
             string lel = Android.Provider.Settings.ActionNotificationListenerSettings;
@@ -176,6 +148,7 @@ namespace LiveDisplay
             StartActivity(intent);
             intent = null;
         }
+
         private void OnDialogClickNegativeEventArgs(object sender, DialogClickEventArgs e)
         {
             //Nada.

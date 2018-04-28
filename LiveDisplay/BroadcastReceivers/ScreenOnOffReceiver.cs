@@ -1,23 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
+﻿using Android.App;
 using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
 using Android.Widget;
 
 namespace LiveDisplay.BroadcastReceivers
 {
     [BroadcastReceiver(Label = "ScreenOnOffReceiver")]
-    [IntentFilter(new[] { Intent.ActionScreenOff})]
-    [IntentFilter(new[] { Intent.ActionScreenOn})]
+    [IntentFilter(new[] { Intent.ActionScreenOff })]
+    [IntentFilter(new[] { Intent.ActionScreenOn })]
     public class ScreenOnOffReceiver : BroadcastReceiver
     {
         public static bool isScreenOn;
+
         public override void OnReceive(Context context, Intent intent)
         {
             if (intent.Action == Intent.ActionScreenOn)
@@ -25,11 +18,10 @@ namespace LiveDisplay.BroadcastReceivers
                 Toast.MakeText(context, "La pantalla ha sido encendida prro", ToastLength.Short).Show();
                 isScreenOn = true;
             }
-            else if(intent.Action==Intent.ActionScreenOff)
+            else if (intent.Action == Intent.ActionScreenOff)
             {
                 isScreenOn = false;
             }
-            
         }
     }
 }
