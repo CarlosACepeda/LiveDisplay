@@ -16,13 +16,6 @@ namespace LiveDisplay.Servicios
         private PowerManager powerManager = null;
         private PowerManager.WakeLock wakeLock = null;
 
-#pragma warning disable CS0169 // El campo 'AwakeService.ejeZ' nunca se usa
-#pragma warning disable CS0169 // El campo 'AwakeService.ejeX' nunca se usa
-#pragma warning disable CS0169 // El campo 'AwakeService.ejeY' nunca se usa
-        private float ejeX, ejeY, ejeZ;
-#pragma warning restore CS0169 // El campo 'AwakeService.ejeY' nunca se usa
-#pragma warning restore CS0169 // El campo 'AwakeService.ejeX' nunca se usa
-#pragma warning restore CS0169 // El campo 'AwakeService.ejeZ' nunca se usa
 
         public override IBinder OnBind(Intent intent)
         {

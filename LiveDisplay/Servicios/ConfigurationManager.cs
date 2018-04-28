@@ -10,18 +10,18 @@ namespace LiveDisplay.Servicios
         //Shared preferences.
         public ConfigurationManager(ISharedPreferences sharedPreferences)
         {
+            this.sharedPreferences = sharedPreferences;
             sharedPreferencesEditor = sharedPreferences.Edit();
         }
-
         public void SaveAValue(string key, bool value)
         {
             sharedPreferencesEditor.PutBoolean(key, value);
             sharedPreferencesEditor.Commit();
         }
-
-        public bool RetrieveAValue(string key, bool value)
-        {
-            return sharedPreferences.GetBoolean(key, value);
+        public bool RetrieveAValue(string key)
+        {           
+            return sharedPreferences.GetBoolean(key, false);
         }
+            
     }
 }

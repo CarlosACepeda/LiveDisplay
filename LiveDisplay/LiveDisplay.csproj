@@ -149,6 +149,7 @@
     <Compile Include="Factories\IconFactory.cs" />
     <Compile Include="Fragments\MusicFragment.cs" />
     <Compile Include="Fragments\NotificationFragment.cs" />
+    <Compile Include="Misc\ConfigurationParameters.cs" />
     <Compile Include="Misc\NLChecker.cs" />
     <Compile Include="Servicios\AwakeService.cs" />
     <Compile Include="Activities\ConfigurationActivity.cs" />

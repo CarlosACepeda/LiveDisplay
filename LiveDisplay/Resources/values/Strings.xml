@@ -27,7 +27,7 @@
   <string name="notificationsettings">Notifications</string>
   <string name="opciones">Options</string>
   <string name="placeholder">Insert a string here</string>
-  <string name="showclock">Show the clock</string>
+  <string name="showclock">Don\'t show the clock</string>
   <string name="showstickynotifications">Show also notifications that can\'t be removed</string>
   <string name="stickynotificationwarn">You can\'t delete a sticky notification</string>
   <string name="turnonnewnotification">Turn on screen if a new notification incomes</string>

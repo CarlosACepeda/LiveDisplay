@@ -26,14 +26,14 @@ namespace LiveDisplay
         private Button btnAwake;
         private Button btnAbout;
 
-        private ConfigurationManager configurationManager;
+        
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.Configuracion);
 
-            configurationManager = new ConfigurationManager(GetPreferences(FileCreationMode.Private));
+            
         }
 
         protected override void OnResume()
@@ -101,7 +101,6 @@ namespace LiveDisplay
         {
             toolbar = null;
             Window.ClearFlags(WindowManagerFlags.DrawsSystemBarBackgrounds);
-            configurationManager = null;
             btnAbout = null;
             btnAwake = null;
             btnLockScreen = null;
