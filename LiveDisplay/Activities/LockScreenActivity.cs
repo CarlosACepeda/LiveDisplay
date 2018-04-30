@@ -12,6 +12,7 @@ using LiveDisplay.Factories;
 using LiveDisplay.Servicios;
 using LiveDisplay.Servicios.Notificaciones;
 using System;
+using System.Threading;
 
 namespace LiveDisplay
 {
@@ -35,6 +36,7 @@ namespace LiveDisplay
         private TextView tvFecha;
         private TextClock reloj;
         private int position;
+        private LinearLayout unlocker;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -74,11 +76,13 @@ namespace LiveDisplay
             UnbindClickEvents();
             UnbindViews();
             GC.Collect();
+            
         }
 
         protected override void OnDestroy()
         {
             base.OnDestroy();
+            
             GC.Collect();
         }
 
@@ -131,6 +135,7 @@ namespace LiveDisplay
             }
         }
 
+        //In Catcher.
         private void CheckDataChanges()
         {
             if (oldListSize != newListSize)
@@ -166,6 +171,7 @@ namespace LiveDisplay
             v = FindViewById<View>(Resource.Id.fragment1);
             tvFecha = (TextView)FindViewById(Resource.Id.txtFechaLock);
             reloj = FindViewById<TextClock>(Resource.Id.clockLock);
+            unlocker = FindViewById<LinearLayout>(Resource.Id.unlocker);
         }
 
         private void UnbindViews()
@@ -191,6 +197,30 @@ namespace LiveDisplay
         {
             v.Click += OnNotificationClicked;
             reloj.Click += Reloj_Click;
+            unlocker.Touch += Unlocker_Touch;
+        }
+
+        private void Unlocker_Touch(object sender, View.TouchEventArgs e)
+        {
+            float startPoint = 0;
+            float finalPoint = 0;
+            if (e.Event.Action == MotionEventActions.Down)
+            {
+                Log.Info("Down", e.Event.GetY().ToString());
+                startPoint = e.Event.GetY();
+            }
+            if (e.Event.Action == MotionEventActions.Up)
+            {
+                Log.Info("Up", e.Event.GetY().ToString());
+                finalPoint= e.Event.GetY();
+            }
+            if (startPoint > finalPoint && finalPoint<0)
+            {
+                Log.Info("Swipe", "Up");
+                Finish();
+                //Add an animation to Swipe Up.
+            }
+
         }
 
         private void Reloj_Click(object sender, EventArgs e)
@@ -207,14 +237,19 @@ namespace LiveDisplay
 
         private void InicializarValores()
         {
-            //Propiedades de la ventana: Barra de estado odulta y de Navegación traslúcida
-            Window.AddFlags(WindowManagerFlags.TranslucentNavigation);
             Window.AddFlags(WindowManagerFlags.Fullscreen);
+            Window.AddFlags(WindowManagerFlags.TranslucentNavigation);
             wallpaperManager = WallpaperManager.GetInstance(this);
             papelTapiz = wallpaperManager.Drawable;
             backgroundFactory = new BackgroundFactory();
-            linearLayout.Background = backgroundFactory.Difuminar(papelTapiz);
+            ThreadPool.QueueUserWorkItem(o =>
+            {
+               Drawable background= backgroundFactory.Difuminar(papelTapiz);
 
+                RunOnUiThread(() => linearLayout.Background = background);
+                
+            });
+            
             layoutManager = new LinearLayoutManager(this);
             recycler.SetLayoutManager(layoutManager);
             RunOnUiThread(() => recycler.SetAdapter(Catcher.adapter));
@@ -231,5 +266,7 @@ namespace LiveDisplay
             Window.AddFlags(WindowManagerFlags.ShowWhenLocked);
             Window.AddFlags(WindowManagerFlags.TurnScreenOn);
         }
+       
+
     }
 }

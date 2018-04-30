@@ -2,14 +2,15 @@
 using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.Renderscripts;
+using System.Threading;
 
 namespace LiveDisplay.Factories
 {
-    //Areglame: Ejecutame en un  worker thread
     internal class BackgroundFactory
     {
         public Drawable Difuminar(Drawable papelTapiz)
         {
+
             //Fondo de escritorio provista por el Argumento que se pasa en <papelTapiz>
             Bitmap originalBitmap = ((BitmapDrawable)papelTapiz).Bitmap;
             // Un bitmap null que almacenará la imagen difuminada.

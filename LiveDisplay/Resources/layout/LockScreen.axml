@@ -13,7 +13,7 @@
         a:minHeight="25px"
         a:layout_width="match_parent"
         a:layout_height="wrap_content"
-        a:layout_weight="0.97"
+        a:layout_weight="0.93"
         a:weightSum="1">
         <LinearLayout
             a:orientation="vertical"
@@ -25,7 +25,7 @@
             a:gravity="center">
             <fragment
                 a:name="LiveDisplay.Fragments.NotificationFragment"
-                a:layout_width="wrap_content"
+                a:layout_width="match_parent"
                 a:layout_height="wrap_content"
                 a:id="@+id/fragment1" />
         </LinearLayout>
@@ -53,7 +53,7 @@
         a:layout_height="wrap_content"
         a:gravity="bottom"
         a:alpha="1"
-        a:layout_weight="0.03">
+        a:layout_weight="0.02">
         <TextClock xmlns:p2="http://xamarin.com/mono/android/designer-default"
             a:background="?android:selectableItemBackground"
             a:layout_width="wrap_content"
@@ -68,7 +68,22 @@
             a:layout_width="match_parent"
             a:layout_height="wrap_content"
             a:gravity="bottom"
-            a:id="@+id/txtFechaLock"
-            a:layout_marginBottom="40dp" />
+            a:id="@+id/txtFechaLock" />
+    </LinearLayout>
+    <LinearLayout
+        a:background="@color/background_material_dark"
+        a:alpha="0.5"
+        a:orientation="vertical"
+        a:minWidth="25px"
+        a:minHeight="25px"
+        a:layout_width="match_parent"
+        a:layout_height="wrap_content"
+        a:id="@+id/unlocker"
+        a:layout_weight="0.05">
+        <ImageView
+            a:src="@drawable/ic_unlock"
+            a:layout_width="match_parent"
+            a:layout_height="match_parent"
+            a:layout_gravity="center_vertical|center_horizontal" />
     </LinearLayout>
 </LinearLayout>
