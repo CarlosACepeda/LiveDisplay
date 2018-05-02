@@ -44,6 +44,7 @@ namespace LiveDisplay
 
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.LockScreen);
+            
         }
 
         protected override void OnResume()
@@ -217,11 +218,13 @@ namespace LiveDisplay
             if (startPoint > finalPoint && finalPoint<0)
             {
                 Log.Info("Swipe", "Up");
+               
                 Finish();
-                //Add an animation to Swipe Up.
+                OverridePendingTransition(Resource.Animation.slidetounlockanim, Resource.Animation.slidetounlockanim);
             }
 
         }
+
 
         private void Reloj_Click(object sender, EventArgs e)
         {

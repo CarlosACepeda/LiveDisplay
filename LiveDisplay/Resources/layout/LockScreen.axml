@@ -71,8 +71,6 @@
             a:id="@+id/txtFechaLock" />
     </LinearLayout>
     <LinearLayout
-        a:background="@color/background_material_dark"
-        a:alpha="0.5"
         a:orientation="vertical"
         a:minWidth="25px"
         a:minHeight="25px"
@@ -82,8 +80,10 @@
         a:layout_weight="0.05">
         <ImageView
             a:src="@drawable/ic_unlock"
+            a:alpha="0.7"
             a:layout_width="match_parent"
             a:layout_height="match_parent"
-            a:layout_gravity="center_vertical|center_horizontal" />
+            a:layout_gravity="center_vertical|center_horizontal"
+            a:background="@android:color/transparent" />
     </LinearLayout>
 </LinearLayout>
