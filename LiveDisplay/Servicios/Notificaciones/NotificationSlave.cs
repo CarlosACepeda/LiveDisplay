@@ -12,8 +12,9 @@ namespace LiveDisplay.Servicios
         //Instancia a Catcher para cancelar notificaciones desde la lockScreen
         public void CancelNotification(string notiPack, string notiTag, int notiId)
         {
-            //Deprecated since Android Kitkat Watch.
+#pragma warning disable CS0618 // El tipo o el miembro están obsoletos
             Catcher.catcherInstance.CancelNotification(notiPack, notiTag, notiId);
+#pragma warning restore CS0618 // El tipo o el miembro están obsoletos
         }
 
         public void CancelNotification(string key)
@@ -24,6 +25,7 @@ namespace LiveDisplay.Servicios
         public void CancelAll()
         {
             Catcher.catcherInstance.CancelAllNotifications();
+            Catcher.adapter.NotifyDataSetChanged();
         }
 
         public void PostNotification()

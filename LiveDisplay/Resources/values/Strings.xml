@@ -34,4 +34,5 @@
   <string name="turnonusermovement">Turn on screen on device pick up</string>
   <string name="uselockscreennonotifications">Use the lockscreen without notifications</string>
   <string name="uselockscreennonotificationsdesc">For better usage, turn off the default Android lockscreen</string>
+  <string name="clearallnotifications">Clear all</string>
 </resources>

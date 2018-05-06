@@ -3,7 +3,10 @@ using Android.Content;
 using Android.Hardware;
 using Android.OS;
 using Android.Runtime;
+using Android.Views;
 using Android.Widget;
+using Java.Lang;
+using System.Threading;
 
 namespace LiveDisplay.Servicios
 {
@@ -15,6 +18,10 @@ namespace LiveDisplay.Servicios
         private Sensor sAcelerometro;
         private PowerManager powerManager = null;
         private PowerManager.WakeLock wakeLock = null;
+        public static AwakeService awakeServiceInstance = null;
+
+
+        //Must be aware of LockScreen and PhoneOff or Inactive.
 
 
         public override IBinder OnBind(Intent intent)
@@ -84,6 +91,14 @@ namespace LiveDisplay.Servicios
             //Registrar un Listener para Oir los eventos de los sensores previamente obtenidos-
             sensorManager.RegisterListener(this, sProximidad, SensorDelay.Fastest);
             sensorManager.RegisterListener(this, sAcelerometro, SensorDelay.Normal);
+            awakeServiceInstance = this;
+        }
+        public void UnlockScreen(Context aContext)
+        {
+            Intent intent = new Intent(aContext, typeof(LockScreenActivity));
+            intent.AddFlags(ActivityFlags.NewTask);
+            StartActivity(intent);
+  
         }
     }
 }

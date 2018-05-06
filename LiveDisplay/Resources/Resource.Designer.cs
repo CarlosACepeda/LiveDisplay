@@ -1786,8 +1786,8 @@ namespace LiveDisplay
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f070064
-			public const int NotificationListRecyclerView = 2131165284;
+			// aapt resource value: 0x7f070065
+			public const int NotificationListRecyclerView = 2131165285;
 			
 			// aapt resource value: 0x7f07007b
 			public const int action0 = 2131165307;
@@ -1879,6 +1879,9 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f070070
 			public const int btnChangeWallpaper = 2131165296;
 			
+			// aapt resource value: 0x7f070063
+			public const int btnClearAllNotifications = 2131165283;
+			
 			// aapt resource value: 0x7f07005e
 			public const int btnLockScreen = 2131165278;
 			
@@ -1914,9 +1917,6 @@ namespace LiveDisplay
 			
 			// aapt resource value: 0x7f070084
 			public const int chronometer = 2131165316;
-			
-			// aapt resource value: 0x7f070065
-			public const int clockContainer = 2131165285;
 			
 			// aapt resource value: 0x7f070066
 			public const int clockLock = 2131165286;
@@ -1963,8 +1963,8 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f07003e
 			public const int expanded_menu = 2131165246;
 			
-			// aapt resource value: 0x7f070063
-			public const int fragment1 = 2131165283;
+			// aapt resource value: 0x7f070064
+			public const int fragment1 = 2131165284;
 			
 			// aapt resource value: 0x7f070005
 			public const int home = 2131165189;
@@ -2633,6 +2633,9 @@ namespace LiveDisplay
 			
 			// aapt resource value: 0x7f0a002f
 			public const int changewallpaperdesc = 2131361839;
+			
+			// aapt resource value: 0x7f0a0043
+			public const int clearallnotifications = 2131361859;
 			
 			// aapt resource value: 0x7f0a0030
 			public const int dialognldisabledmessage = 2131361840;

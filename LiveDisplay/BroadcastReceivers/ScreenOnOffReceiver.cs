@@ -9,7 +9,7 @@ namespace LiveDisplay.BroadcastReceivers
     [IntentFilter(new[] { Intent.ActionScreenOn })]
     public class ScreenOnOffReceiver : BroadcastReceiver
     {
-        public static bool isScreenOn;
+        public static bool isScreenOn=true;
 
         public override void OnReceive(Context context, Intent intent)
         {

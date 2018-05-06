@@ -19,7 +19,6 @@ namespace LiveDisplay
     [Activity(Label = "LockScreen", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, LaunchMode = Android.Content.PM.LaunchMode.SingleTop)]
     public class LockScreenActivity : Activity
     {
-        private int oldListSize, newListSize = 0;
         public static LockScreenActivity lockScreenInstance;
         private WallpaperManager wallpaperManager = null;
         private Drawable papelTapiz;
@@ -37,43 +36,29 @@ namespace LiveDisplay
         private TextClock reloj;
         private int position;
         private LinearLayout unlocker;
+        private Button btnClearAll;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
 
             // Set our view from the "main" layout resource
-            SetContentView(Resource.Layout.LockScreen);
-            
+            SetContentView(Resource.Layout.LockScreen);            
         }
 
         protected override void OnResume()
         {
             base.OnResume();
-            try
-            {
-                newListSize = Catcher.listaNotificaciones.Count;
-            }
-            catch
-            {
-                Toast.MakeText(ApplicationContext, "¡No puedo mostrar notificaciones, el servicio debe estar Activado usando el menu de ajustes de esta app", ToastLength.Long).Show();
-            }
+
             BindViews();
             BindClickEvents();
             InicializarValores();
-            CheckDataChanges();
         }
 
         protected override void OnPause()
         {
             base.OnPause();
-            try
-            {
-                oldListSize = Catcher.listaNotificaciones.Count;
-            }
-            catch
-            {
-            };
+
             UnbindClickEvents();
             UnbindViews();
             GC.Collect();
@@ -136,14 +121,6 @@ namespace LiveDisplay
             }
         }
 
-        //In Catcher.
-        private void CheckDataChanges()
-        {
-            if (oldListSize != newListSize)
-            {
-                Catcher.adapter.NotifyDataSetChanged();
-            }
-        }
 
         private void OnNotificationClicked(object sender, EventArgs e)
         {
@@ -173,6 +150,7 @@ namespace LiveDisplay
             tvFecha = (TextView)FindViewById(Resource.Id.txtFechaLock);
             reloj = FindViewById<TextClock>(Resource.Id.clockLock);
             unlocker = FindViewById<LinearLayout>(Resource.Id.unlocker);
+            btnClearAll = FindViewById<Button>(Resource.Id.btnClearAllNotifications);
         }
 
         private void UnbindViews()
@@ -192,6 +170,7 @@ namespace LiveDisplay
             mes = null;
             notificationAction = null;
             reloj = null;
+            btnClearAll = null;
         }
 
         private void BindClickEvents()
@@ -199,6 +178,16 @@ namespace LiveDisplay
             v.Click += OnNotificationClicked;
             reloj.Click += Reloj_Click;
             unlocker.Touch += Unlocker_Touch;
+            btnClearAll.Click += BtnClearAll_Click;
+        }
+
+        private void BtnClearAll_Click(object sender, EventArgs e)
+        {
+            NotificationSlave notificationSlave = new NotificationSlave();
+            notificationSlave.CancelAll();
+            btnClearAll.Visibility = ViewStates.Gone;
+            v.Visibility = ViewStates.Invisible;
+            notificationSlave = null; 
         }
 
         private void Unlocker_Touch(object sender, View.TouchEventArgs e)
@@ -224,8 +213,6 @@ namespace LiveDisplay
             }
 
         }
-
-
         private void Reloj_Click(object sender, EventArgs e)
         {
             Intent intent = new Intent(AlarmClock.ActionShowAlarms);
@@ -236,21 +223,27 @@ namespace LiveDisplay
         {
             v.Click -= OnNotificationClicked;
             reloj.Click -= Reloj_Click;
+            unlocker.Touch -= Unlocker_Touch;
+            btnClearAll.Click -= BtnClearAll_Click;
         }
 
         private void InicializarValores()
         {
             Window.AddFlags(WindowManagerFlags.Fullscreen);
             Window.AddFlags(WindowManagerFlags.TranslucentNavigation);
+            Window.AddFlags(WindowManagerFlags.DismissKeyguard);
+            Window.AddFlags(WindowManagerFlags.ShowWhenLocked);
+            Window.AddFlags(WindowManagerFlags.TurnScreenOn);
             wallpaperManager = WallpaperManager.GetInstance(this);
             papelTapiz = wallpaperManager.Drawable;
             backgroundFactory = new BackgroundFactory();
             ThreadPool.QueueUserWorkItem(o =>
             {
                Drawable background= backgroundFactory.Difuminar(papelTapiz);
-
-                RunOnUiThread(() => linearLayout.Background = background);
-                
+                if (linearLayout != null)
+                {
+                    RunOnUiThread(() => linearLayout.Background = background);
+                }
             });
             
             layoutManager = new LinearLayoutManager(this);
@@ -260,16 +253,22 @@ namespace LiveDisplay
             dia = fecha.Get(CalendarField.DayOfMonth).ToString();
             mes = fecha.GetDisplayName(2, 2, Locale.Default);
             tvFecha.Text = string.Format(dia + ", " + mes);
+            DodgeNavigationBar();
             lockScreenInstance = this;
         }
+        //public void UnlockScreenAndShowNotification()
+        //{
 
-        public void UnlockScreenAndShowNotification()
+        //}
+        private void DodgeNavigationBar()
         {
-            Window.AddFlags(WindowManagerFlags.DismissKeyguard);
-            Window.AddFlags(WindowManagerFlags.ShowWhenLocked);
-            Window.AddFlags(WindowManagerFlags.TurnScreenOn);
+            int id;
+            id = Resources.GetIdentifier("navigation_bar_height", "dimen", "android");
+            if (id > 0)
+            {
+                unlocker.SetPadding(0, 0, 0, Resources.GetDimensionPixelSize(id));
+            }
         }
-       
 
     }
 }

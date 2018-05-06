@@ -34,4 +34,5 @@
   <string name="turnonusermovement">Prender la pantalla al levantar el dispositivo</string>
   <string name="uselockscreennonotifications">Usar la pantalla de bloqueo sin notificaciones</string>
   <string name="uselockscreennonotificationsdesc">Para mejor usabilidad, desactiva la pantalla de bloqueo por defecto de Android</string>
+  <string name="clearallnotifications">Descartar todas</string>
 </resources>

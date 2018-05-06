@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:a="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     a:animateLayoutChanges="true"
     a:id="@+id/contenedorPrincipal"
     a:orientation="vertical"
@@ -13,7 +14,25 @@
         a:minHeight="25px"
         a:layout_width="match_parent"
         a:layout_height="wrap_content"
-        a:layout_weight="0.93"
+        a:gravity="right"
+        a:layout_weight="0.03">
+        <Button
+            a:background="?android:selectableItemBackground"
+            a:text="@string/clearallnotifications"
+            a:layout_width="wrap_content"
+            a:gravity="right"
+            a:layout_height="match_parent"
+            a:id="@+id/btnClearAllNotifications"
+            a:textAllCaps="false"
+            a:alpha="0.7" />
+    </LinearLayout>
+    <LinearLayout
+        a:orientation="horizontal"
+        a:minWidth="25px"
+        a:minHeight="25px"
+        a:layout_width="match_parent"
+        a:layout_height="wrap_content"
+        a:layout_weight="0.90"
         a:weightSum="1">
         <LinearLayout
             a:orientation="vertical"
@@ -33,7 +52,6 @@
             a:orientation="vertical"
             a:minWidth="25px"
             a:minHeight="25px"
-            a:layout_gravity="right"
             a:layout_weight="0.2"
             a:layout_height="match_parent"
             a:gravity="bottom"
@@ -41,13 +59,12 @@
             <android.support.v7.widget.RecyclerView
                 a:id="@+id/NotificationListRecyclerView"
                 a:overScrollMode="never"
-                a:layout_width="match_parent"
+                a:layout_width="wrap_content"
                 a:layout_height="wrap_content"
-                a:layout_gravity="center_vertical" />
+                a:layout_gravity="center" />
         </LinearLayout>
     </LinearLayout>
     <LinearLayout
-        a:id="@+id/clockContainer"
         a:orientation="vertical"
         a:layout_width="match_parent"
         a:layout_height="wrap_content"
@@ -56,7 +73,7 @@
         a:layout_weight="0.02">
         <TextClock xmlns:p2="http://xamarin.com/mono/android/designer-default"
             a:background="?android:selectableItemBackground"
-            a:layout_width="wrap_content"
+            a:layout_width="match_parent"
             a:layout_height="wrap_content"
             a:textSize="60dp"
             a:id="@+id/clockLock"

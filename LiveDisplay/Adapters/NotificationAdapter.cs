@@ -23,7 +23,7 @@ namespace LiveDisplay.Adapters
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
             NotificationAdapterViewHolder viewHolder = holder as NotificationAdapterViewHolder;
-            viewHolder.Icono.Background = IconFactory.ReturnIconDrawable(notificaciones[position].Notification.Icon, notificaciones[position].PackageName);
+            viewHolder.Icono.Background = IconFactory.ReturnIconDrawable(notificaciones[position].Notification.Icon, notificaciones[position].PackageName); 
             //FUnciona, habrá otra forma más simple?
             if (selectedItem == position)
             {
