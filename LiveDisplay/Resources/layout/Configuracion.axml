@@ -11,7 +11,20 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
-        android:elevation="4dp" />
+        android:layout_gravity="right"
+        android:elevation="4dp">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="right">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="right"
+                android:background="@android:color/transparent"
+                android:text="beta" />
+        </LinearLayout>
+    </android.support.v7.widget.Toolbar>
     <android.support.v7.widget.CardView
         android:paddingTop="?android:attr/actionBarSize"
         a:cardCornerRadius="5dp"
@@ -21,7 +34,8 @@
         android:minHeight="25px"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        a:cardElevation="1dp">
+        a:cardElevation="1dp"
+        android:alpha="0.9">
         <Button
             android:text="@string/ajusteslockscreen"
             android:layout_width="match_parent"

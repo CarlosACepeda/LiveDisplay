@@ -8,12 +8,14 @@
     android:visibility="invisible">
     <TextView
         android:text=" "
+        android:fontFamily="sans-serif-condensed"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/tvTitulo" />
     <TextView
         android:text=" "
+        android:fontFamily="sans-serif-condensed"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,6 +24,7 @@
         android:minLines="0" />
     <LinearLayout
         android:id="@+id/notificationActions"
+        
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

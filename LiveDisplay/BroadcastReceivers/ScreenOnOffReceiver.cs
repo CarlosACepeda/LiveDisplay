@@ -17,6 +17,7 @@ namespace LiveDisplay.BroadcastReceivers
             {
                 Toast.MakeText(context, "La pantalla ha sido encendida prro", ToastLength.Short).Show();
                 isScreenOn = true;
+                //Trigger an Action to Start LockScreen.
             }
             else if (intent.Action == Intent.ActionScreenOff)
             {

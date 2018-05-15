@@ -15,6 +15,7 @@
   <string name="blacklistdesc">Don\'t show notifications from the apps selected, these won\'t appear in the status bar too, unless the notifications are Sticky notifications(that can\'t be removed by the system itself)</string>
   <string name="changewallpaper">Change wallpaper</string>
   <string name="changewallpaperdesc">By default, current system wallpaper is used</string>
+  <string name="clearallnotifications">Clear all</string>
   <string name="dialognldisabledmessage">You must allow this app to read Notifications first!</string>
   <string name="dialognldisablednegativebutton">Cancel</string>
   <string name="dialognldisabledpositivebutton">Allow</string>
@@ -29,10 +30,14 @@
   <string name="placeholder">Insert a string here</string>
   <string name="showclock">Don\'t show the clock</string>
   <string name="showstickynotifications">Show also notifications that can\'t be removed</string>
+  <string name="splashscreennotificationsettings">Enable notification access</string>
+  <string name="splashscreennotificationsettings_desc">Needed for retrieving notifications</string>
+  <string name="splashscreennotificationssettings_takemebutton">Okay, take me there!</string>
+  <string name="splashscreentitle">Welcome, set up the app!</string>
   <string name="stickynotificationwarn">You can\'t delete a sticky notification</string>
   <string name="turnonnewnotification">Turn on screen if a new notification incomes</string>
   <string name="turnonusermovement">Turn on screen on device pick up</string>
   <string name="uselockscreennonotifications">Use the lockscreen without notifications</string>
   <string name="uselockscreennonotificationsdesc">For better usage, turn off the default Android lockscreen</string>
-  <string name="clearallnotifications">Clear all</string>
+  <string name="dialogcancelledclick">Ok, you can change this setting later in Notifications section!</string>
 </resources>

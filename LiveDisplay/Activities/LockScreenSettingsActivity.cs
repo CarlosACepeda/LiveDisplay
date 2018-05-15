@@ -30,7 +30,7 @@ namespace LiveDisplay.Activities
 
             // Create your application here
             SetContentView(Resource.Layout.LockScreenSettings);
-            configurationManager = new ConfigurationManager(GetPreferences(FileCreationMode.Private));
+            configurationManager = new ConfigurationManager(GetSharedPreferences("livedisplayconfig", FileCreationMode.Private));
             BindViews();
             BindClickEvents();
             RetrieveLockScreenConfiguration();
@@ -78,7 +78,7 @@ namespace LiveDisplay.Activities
             {
                 configurationManager.SaveAValue("enabledlockscreen?", true);
             }
-            else
+            else if(cbEnableLockScreen.Checked==false)
             {
                 configurationManager.SaveAValue("enabledlockscreen?", false);
             }
@@ -88,11 +88,11 @@ namespace LiveDisplay.Activities
         {
             if (swToggleClock.Checked == true)
             {
-                configurationManager.SaveAValue("hiddenclock?", true);
+                configurationManager.SaveAValue(ConfigurationParameters.hiddenclock, true);
             }
-            else
+            else if (swToggleClock.Checked==false)
             {
-                configurationManager.SaveAValue("hiddenclock?", false);
+                configurationManager.SaveAValue(ConfigurationParameters.hiddenclock, false);
             }
         }
         private void SwToggleSystemIcons_CheckedChange(object sender, EventArgs e)
@@ -101,7 +101,7 @@ namespace LiveDisplay.Activities
             {
                 configurationManager.SaveAValue(ConfigurationParameters.hiddensystemicons, true);
             }
-            else
+            else if(swToggleSystemIcons.Checked==false)
             {
                 configurationManager.SaveAValue(ConfigurationParameters.hiddensystemicons, false);
             }
@@ -112,7 +112,7 @@ namespace LiveDisplay.Activities
             {
                 configurationManager.SaveAValue(ConfigurationParameters.enabledlockscreennonotifications, true);
             }
-            else
+            else if (swUseLockscreenNoNotifications.Checked==false)
             {
                 configurationManager.SaveAValue(ConfigurationParameters.enabledlockscreennonotifications, false);
             }
@@ -121,11 +121,11 @@ namespace LiveDisplay.Activities
         {
             if (swDynamicWallpaper.Checked == true)
             {
-                configurationManager.SaveAValue(ConfigurationParameters.dynamicwallpaperdisabled, true);
+                configurationManager.SaveAValue(ConfigurationParameters.dynamicwallpaperenabled, true);
             }
-            else
+            else if (swDynamicWallpaper.Checked==false)
             {
-                configurationManager.SaveAValue(ConfigurationParameters.dynamicwallpaperdisabled, false);
+                configurationManager.SaveAValue(ConfigurationParameters.dynamicwallpaperenabled, false);
             }
         }
         private void BtnChangeWallpaper_Click(object sender, EventArgs e)
@@ -138,8 +138,9 @@ namespace LiveDisplay.Activities
             swToggleClock.Checked = configurationManager.RetrieveAValue(ConfigurationParameters.hiddenclock) == true ? true : false;
             swToggleSystemIcons.Checked = configurationManager.RetrieveAValue(ConfigurationParameters.hiddensystemicons) == true ? true : false;
             swUseLockscreenNoNotifications.Checked = configurationManager.RetrieveAValue(ConfigurationParameters.enabledlockscreennonotifications) == true ? true : false;
-            swDynamicWallpaper.Checked = configurationManager.RetrieveAValue(ConfigurationParameters.dynamicwallpaperdisabled) == true ? true : false;
+            swDynamicWallpaper.Checked = configurationManager.RetrieveAValue(ConfigurationParameters.dynamicwallpaperenabled) == true ? true : false;
 
         }
+        //Implement OnDestroy and kill all the references.
     }
 }

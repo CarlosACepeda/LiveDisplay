@@ -8,10 +8,13 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Java.Util;
+using LiveDisplay.Activities;
 using LiveDisplay.Factories;
+using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
 using LiveDisplay.Servicios.Notificaciones;
 using System;
+using System.Linq;
 using System.Threading;
 
 namespace LiveDisplay
@@ -43,9 +46,10 @@ namespace LiveDisplay
             base.OnCreate(savedInstanceState);
 
             // Set our view from the "main" layout resource
-            SetContentView(Resource.Layout.LockScreen);            
-        }
+            SetContentView(Resource.Layout.LockScreen);
+            
 
+        }
         protected override void OnResume()
         {
             base.OnResume();
@@ -53,8 +57,9 @@ namespace LiveDisplay
             BindViews();
             BindClickEvents();
             InicializarValores();
+            //<Start is sensible to configuration LockScreen Settings>
+             ThreadPool.QueueUserWorkItem(o => LoadConfiguration());
         }
-
         protected override void OnPause()
         {
             base.OnPause();
@@ -64,7 +69,6 @@ namespace LiveDisplay
             GC.Collect();
             
         }
-
         protected override void OnDestroy()
         {
             base.OnDestroy();
@@ -185,7 +189,7 @@ namespace LiveDisplay
         {
             NotificationSlave notificationSlave = new NotificationSlave();
             notificationSlave.CancelAll();
-            btnClearAll.Visibility = ViewStates.Gone;
+            CheckForNotifications();
             v.Visibility = ViewStates.Invisible;
             notificationSlave = null; 
         }
@@ -226,7 +230,6 @@ namespace LiveDisplay
             unlocker.Touch -= Unlocker_Touch;
             btnClearAll.Click -= BtnClearAll_Click;
         }
-
         private void InicializarValores()
         {
             Window.AddFlags(WindowManagerFlags.Fullscreen);
@@ -256,19 +259,65 @@ namespace LiveDisplay
             DodgeNavigationBar();
             lockScreenInstance = this;
         }
-        //public void UnlockScreenAndShowNotification()
-        //{
-
-        //}
         private void DodgeNavigationBar()
         {
-            int id;
-            id = Resources.GetIdentifier("navigation_bar_height", "dimen", "android");
-            if (id > 0)
+            //Test
+
+            int idNavigationBar=
+                Resources.GetIdentifier("config_showNavigationBar", "bool", "android");
+            bool hasNavigationBar =
+                Resources.GetBoolean(idNavigationBar);
+            int idNavigationBarHeight=
+            Resources.GetIdentifier("navigation_bar_height", "dimen", "android");
+            if (idNavigationBarHeight > 0 && hasNavigationBar==true)
             {
-                unlocker.SetPadding(0, 0, 0, Resources.GetDimensionPixelSize(id));
+                unlocker.SetPadding(0, 0, 0, Resources.GetDimensionPixelSize(idNavigationBarHeight));
             }
         }
-
+        //Debe ser un evento invocado desde Catcher, aquí sólo debe ser para mostrar resultados, 
+        //no para consultar datos de Catcher
+        //mala practica LMAO.
+        private void CheckForNotifications()
+        {
+            if (Catcher.listaNotificaciones.Where(i => i.IsClearable == true).Count() == 0)
+            {
+                btnClearAll.Visibility = ViewStates.Invisible;
+            }
+            else
+            {
+                btnClearAll.Visibility = ViewStates.Visible;
+            }
+        }
+        private void LoadConfiguration()
+        {
+            //Load configurations based on User configs.
+            ConfigurationManager configurationManager = new ConfigurationManager(GetSharedPreferences("livedisplayconfig", FileCreationMode.Private));
+            if (configurationManager.RetrieveAValue(ConfigurationParameters.enabledLockscreen) == true)
+            {
+                if (configurationManager.RetrieveAValue(ConfigurationParameters.hiddenclock) == true)
+                {
+                    //Hide the clock
+                    RunOnUiThread(() => reloj.Visibility = ViewStates.Gone);                   
+                }
+                if (configurationManager.RetrieveAValue(ConfigurationParameters.hiddensystemicons) == true)
+                {
+                    //Hide system icons, when available, FIX ME.
+                }
+                if (configurationManager.RetrieveAValue(ConfigurationParameters.enabledlockscreennonotifications) == false)
+                {
+                    //Finish this activity because user disabled this option Should never happen normally.
+                    RunOnUiThread(() => Finish());                    
+                }
+               
+                if (configurationManager.RetrieveAValue(ConfigurationParameters.dynamicwallpaperenabled) == true)
+                {
+                    //Allow the app to show Album art.
+                }
+            }
+            else //SHould never happen normally.
+            {
+                Finish();
+            }
+        }
     }
 }

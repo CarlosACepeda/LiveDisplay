@@ -15,6 +15,7 @@
   <string name="blacklistdesc">No mostrar notificaciones de las apps seleccionadas, estas se quitaran también de la barra de estado, a menos que sean notificaciones pegajosas (que no pueden ser removidas por el sistema)</string>
   <string name="changewallpaper">Cambiar fondo de pantalla</string>
   <string name="changewallpaperdesc">El fondo de pantalla actual se usa por defecto</string>
+  <string name="clearallnotifications">Descartar todas</string>
   <string name="dialognldisabledmessage">Debes permitir que esta app acceda a las notificaciones primero!</string>
   <string name="dialognldisablednegativebutton">Cancelar</string>
   <string name="dialognldisabledpositivebutton">Permitir</string>
@@ -27,12 +28,16 @@
   <string name="notificationsettings">Notificaciones</string>
   <string name="opciones">Opciones</string>
   <string name="placeholder">Inserta una cadena aquí</string>
-  <string name="showclock">Mostrar el reloj</string>
+  <string name="showclock">No mostrar el reloj</string>
   <string name="showstickynotifications">Mostrar también las notificaciones que no se pueden remover</string>
+  <string name="splashscreennotificationsettings">Activa el acceso a las notificaciones</string>
+  <string name="splashscreennotificationsettings_desc">Necesario para captar las notificaciones</string>
+  <string name="splashscreennotificationssettings_takemebutton">Bien, llévame ahí!</string>
+  <string name="splashscreentitle">Bienvenido, configura la app!</string>
   <string name="stickynotificationwarn">No puedes eliminar notificaciones pegasosas</string>
   <string name="turnonnewnotification">Prender la pantalla si una nueva notificacion llega</string>
   <string name="turnonusermovement">Prender la pantalla al levantar el dispositivo</string>
   <string name="uselockscreennonotifications">Usar la pantalla de bloqueo sin notificaciones</string>
   <string name="uselockscreennonotificationsdesc">Para mejor usabilidad, desactiva la pantalla de bloqueo por defecto de Android</string>
-  <string name="clearallnotifications">Descartar todas</string>
+  <string name="dialogcancelledclick">Muy bien, puedes cambiar esta opción después en la sección \'Notificaciones\'</string>
 </resources>

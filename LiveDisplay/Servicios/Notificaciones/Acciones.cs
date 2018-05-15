@@ -19,6 +19,7 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             List<Button> buttons = new List<Button>();
             var actions = Catcher.listaNotificaciones[whichNotification].Notification.Actions;
+            //Fix me
             int pixels = DpToPx(30);
             if (actions != null)
             {
@@ -28,7 +29,7 @@ namespace LiveDisplay.Servicios.Notificaciones
                     {
                         LayoutParameters = new ViewGroup.LayoutParams(pixels, pixels),
                         Background = IconFactory.ReturnActionIconDrawable(a.Icon, paquete),
-                        Text = a.Title.ToString()
+                        //Text = a.Title.ToString()
                     };
                     anActionButton.Click += (o, e) => a.ActionIntent.Send();
                     buttons.Add(anActionButton);

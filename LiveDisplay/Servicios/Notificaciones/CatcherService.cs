@@ -109,8 +109,7 @@ namespace LiveDisplay.Servicios
                     LockScreenActivity.lockScreenInstance.RunOnUiThread(() => LockScreenActivity.lockScreenInstance.OnNotificationUpdated());
                 }
                 
-            }
-            
+            }            
             Log.Info("Elemento actualizado", "Tamaño lista: " + listaNotificaciones.Count);
         }
         private void InsertNotification(StatusBarNotification sbn)

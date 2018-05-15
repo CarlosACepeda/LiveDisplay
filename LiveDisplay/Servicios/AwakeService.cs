@@ -97,8 +97,7 @@ namespace LiveDisplay.Servicios
         {
             Intent intent = new Intent(aContext, typeof(LockScreenActivity));
             intent.AddFlags(ActivityFlags.NewTask);
-            StartActivity(intent);
-  
+            StartActivity(intent);  
         }
     }
 }
