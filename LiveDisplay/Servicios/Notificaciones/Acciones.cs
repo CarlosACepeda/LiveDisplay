@@ -1,4 +1,5 @@
 ﻿using Android.App;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
 using LiveDisplay.Factories;
@@ -23,16 +24,29 @@ namespace LiveDisplay.Servicios.Notificaciones
             int pixels = DpToPx(30);
             if (actions != null)
             {
+                double weight = (double)1 / actions.Count;
+                float weightfloat= 
+                float.Parse(weight.ToString());
+                
                 foreach (var a in actions)
                 {
+                    
                     Button anActionButton = new Button(Application.Context)
                     {
-                        LayoutParameters = new ViewGroup.LayoutParams(pixels, pixels),
-                        Background = IconFactory.ReturnActionIconDrawable(a.Icon, paquete),
-                        //Text = a.Title.ToString()
+                        LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WrapContent, weightfloat),
+                        
+                        Text = a.Title.ToString(),
+                       
                     };
+                    anActionButton.SetMaxLines(1);
                     anActionButton.Click += (o, e) => a.ActionIntent.Send();
+                    anActionButton.Gravity = GravityFlags.CenterVertical;
+                    TypedValue typedValue = new TypedValue();
+                    Application.Context.Theme.ResolveAttribute(Resource.Attribute.selectableItemBackground, typedValue, true);
+                    anActionButton.SetBackgroundResource(typedValue.ResourceId);
+                    anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(IconFactory.ReturnActionIconDrawable(a.Icon, paquete), null, null, null);
                     buttons.Add(anActionButton);
+                    typedValue.Dispose();
                 }
                 return buttons;
             }

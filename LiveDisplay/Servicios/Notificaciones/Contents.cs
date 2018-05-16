@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Android.Util;
+using System;
 
 namespace LiveDisplay.Servicios.Notificaciones
 {
@@ -11,10 +12,15 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             return Tuple.Create
             (
+                //Showwhen?
+                //Appname?
+                //Time?
                 Catcher.listaNotificaciones[whichNotification].PackageName,
-                Catcher.listaNotificaciones[whichNotification].Notification.Extras.GetString("android.title"),
-                Catcher.listaNotificaciones[whichNotification].Notification.Extras.GetString("android.text")
+                Catcher.listaNotificaciones[whichNotification].Notification.Extras.Get("android.title").ToString(),
+                Catcher.listaNotificaciones[whichNotification].Notification.Extras.Get("android.text").ToString()
+                
             );
+
         }
     }
 }

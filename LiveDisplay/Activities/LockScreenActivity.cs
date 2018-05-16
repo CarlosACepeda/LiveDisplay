@@ -82,17 +82,20 @@ namespace LiveDisplay
         {
             notificationAction = Acciones.RetrieveNotificationAction(position);
             LinearLayout linearLayout = FindViewById<LinearLayout>(Resource.Id.notificationActions);
+            
             var newType = Contents.RetrieveNotificationContents(position);
 
             tvTitulo.Text = newType != null ? newType.Item2 : "";
             tvTexto.Text = newType != null ? newType.Item3 : "";
             linearLayout.RemoveAllViews();
+            linearLayout.WeightSum = 1f;
 
             if (Acciones.RetrieveNotificationButtonsActions(position, newType.Item1) != null)
             {
                 foreach (var a in Acciones.RetrieveNotificationButtonsActions(position, newType.Item1))
-                {
+                {                   
                     linearLayout.AddView(a);
+                    
                 }
             }
             //actualizar.
