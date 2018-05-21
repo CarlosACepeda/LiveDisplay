@@ -6,10 +6,12 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Java.Lang;
+using LiveDisplay.BroadcastReceivers;
 using System.Threading;
 
 namespace LiveDisplay.Servicios
 {
+    //Deprecating this service(?)
     [Service(Name = "undergrounddev.serv.AwakeService", Label = "Awake Service")]
     internal class AwakeService : Service, ISensorEventListener
     {
@@ -31,6 +33,9 @@ namespace LiveDisplay.Servicios
 
         public override StartCommandResult OnStartCommand(Intent intent, [GeneratedEnum] StartCommandFlags flags, int startId)
         {
+            RegisterReceiver(new ScreenOnOffReceiver(), new IntentFilter(Intent.ActionScreenOn));
+            RegisterReceiver(new ScreenOnOffReceiver(), new IntentFilter(Intent.ActionScreenOff));
+            awakeServiceInstance = this;
             IniciarVariables();
             return StartCommandResult.Sticky;
         }
@@ -39,7 +44,7 @@ namespace LiveDisplay.Servicios
         {
             base.OnDestroy();
             //Desregistrar el Listener.
-            sensorManager.UnregisterListener(this);
+            //sensorManager.UnregisterListener(this);
             Toast.MakeText(this, "El servicio ha sido detenido", ToastLength.Short).Show();
         }
 
@@ -82,22 +87,22 @@ namespace LiveDisplay.Servicios
 
         private void IniciarVariables()
         {
-            powerManager = (PowerManager)GetSystemService(PowerService);
-            //Wakelock que apaga la pantalla.
-            wakeLock = powerManager.NewWakeLock(WakeLockFlags.ProximityScreenOff, "Mi Etiqueta");
-            sensorManager = (SensorManager)GetSystemService(SensorService);
-            sProximidad = sensorManager.GetDefaultSensor(SensorType.Proximity);
-            sAcelerometro = sensorManager.GetDefaultSensor(SensorType.Accelerometer);
-            //Registrar un Listener para Oir los eventos de los sensores previamente obtenidos-
-            sensorManager.RegisterListener(this, sProximidad, SensorDelay.Fastest);
-            sensorManager.RegisterListener(this, sAcelerometro, SensorDelay.Normal);
+            //powerManager = (PowerManager)GetSystemService(PowerService);
+            ////Wakelock que apaga la pantalla.
+            //wakeLock = powerManager.NewWakeLock(WakeLockFlags.ProximityScreenOff, "Mi Etiqueta");
+            //sensorManager = (SensorManager)GetSystemService(SensorService);
+            //sProximidad = sensorManager.GetDefaultSensor(SensorType.Proximity);
+            //sAcelerometro = sensorManager.GetDefaultSensor(SensorType.Accelerometer);
+            ////Registrar un Listener para Oir los eventos de los sensores previamente obtenidos-
+            //sensorManager.RegisterListener(this, sProximidad, SensorDelay.Fastest);
+            //sensorManager.RegisterListener(this, sAcelerometro, SensorDelay.Normal);
             awakeServiceInstance = this;
         }
-        public void UnlockScreen(Context aContext)
+        public void UnlockScreen()
         {
-            Intent intent = new Intent(aContext, typeof(LockScreenActivity));
+            Intent intent = new Intent(Application.Context, typeof(LockScreenActivity));
             intent.AddFlags(ActivityFlags.NewTask);
-            StartActivity(intent);  
+            StartActivity(intent);
         }
     }
 }

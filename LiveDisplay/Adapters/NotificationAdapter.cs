@@ -1,6 +1,7 @@
 ﻿using Android.Service.Notification;
 using Android.Support.V7.Widget;
 using Android.Views;
+using Android.Widget;
 using LiveDisplay.Factories;
 using LiveDisplay.Servicios;
 using System;
@@ -50,11 +51,11 @@ namespace LiveDisplay.Adapters
 
         private delegate void ItemOnLongClickListener(int position);
 
-        public CardView Icono { get; set; }
+        public ImageView Icono { get; set; }
 
         public NotificationAdapterViewHolder(View itemView) : base(itemView)
         {
-            Icono = itemView.FindViewById<CardView>(Resource.Id.cvNotificationIcon);
+            Icono = itemView.FindViewById<ImageView>(Resource.Id.ivNotificationIcon);
             itemView.Click += ItemView_Click;
             itemView.LongClick += ItemView_LongClick;
         }

@@ -5,6 +5,8 @@ using Android.Service.Notification;
 using Android.Util;
 using LiveDisplay.Adapters;
 using LiveDisplay.BroadcastReceivers;
+using LiveDisplay.Servicios.Notificaciones;
+using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +15,7 @@ using System.Threading;
 namespace LiveDisplay.Servicios
 {
     [Service(Label = "Catcher", Permission = "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE")]
-    [IntentFilter(new[] { "android.service.notification.NotificationListenerService" })]
+    [IntentFilter(new[] { "android.service.notification.NotificationListenerService"})]
     internal class Catcher : NotificationListenerService
     {
         public static NotificationAdapter adapter;
@@ -21,8 +23,15 @@ namespace LiveDisplay.Servicios
         public static Catcher catcherInstance;
         private bool isListenerConnected = false;
 
+
+        public event EventHandler<NotificationPostedEventArgs> NotificationPosted;
+        public event EventHandler<NotificationUpdatedEventArgs> NotificationUpdated;
+        public event EventHandler ClearAllButtonEvent;
+
+
         public override IBinder OnBind(Intent intent)
         {
+            
             //KitKat Workaround: Enviar una notificación para poder iniciar la lista de notificaciones y obtener las notificaciones que hayan sido posteadas desde antes.
             //Porque parece imposible hacerlo sin otros métodos
             
@@ -82,9 +91,9 @@ namespace LiveDisplay.Servicios
             {
                 listaNotificaciones.RemoveAt(indice);
             }
-            if (adapter != null && LockScreenActivity.lockScreenInstance != null)
+            if (adapter != null)
             {
-                LockScreenActivity.lockScreenInstance.RunOnUiThread(() => adapter.NotifyItemRemoved(indice));
+                adapter.NotifyItemRemoved(indice);
                 Log.Info("Remoción, tamaño lista:  ", listaNotificaciones.Count.ToString());
             }
         }
@@ -105,8 +114,8 @@ namespace LiveDisplay.Servicios
                 }
                 
                 if (LockScreenActivity.lockScreenInstance!=null)
-                { 
-                    LockScreenActivity.lockScreenInstance.RunOnUiThread(() => LockScreenActivity.lockScreenInstance.OnNotificationUpdated());
+                {
+                    OnUpdatedNotification(new NotificationUpdatedEventArgs { Position = indice });
                 }
                 
             }            
@@ -115,6 +124,9 @@ namespace LiveDisplay.Servicios
         private void InsertNotification(StatusBarNotification sbn)
         {
             listaNotificaciones.Add(sbn);
+
+            OnPostedNotification(new NotificationPostedEventArgs { Position=  1});
+            
 
             try {
                 adapter.NotifyItemInserted(listaNotificaciones.Count);
@@ -140,6 +152,14 @@ namespace LiveDisplay.Servicios
             base.OnListenerDisconnected();
             //Implementame
         }
-        
+        //Eventos.
+        protected virtual void OnPostedNotification(NotificationPostedEventArgs e)
+        {
+            NotificationPosted?.Invoke(this, e);
+        }
+        protected virtual void OnUpdatedNotification(NotificationUpdatedEventArgs e)
+        {
+            NotificationUpdated?.Invoke(this, e);
+        }
     }
 }

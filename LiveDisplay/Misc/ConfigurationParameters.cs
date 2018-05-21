@@ -18,6 +18,7 @@ namespace LiveDisplay.Misc
         public static string istheappconfigured = "istheappconfigured?";
 
         //For LockScreenSettings:
+        public static string imagePath = "imagePath";
         public static string enabledLockscreen = "enabledlockscreen?";
         public static string hiddenclock = "hiddenclock?";
         public static string hiddensystemicons = "hiddensystemicons?";

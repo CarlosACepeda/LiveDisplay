@@ -88,7 +88,8 @@
                     android:text="@string/changewallpaperdesc"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView1" />
             </LinearLayout>
         </android.support.v7.widget.CardView>
     </LinearLayout>

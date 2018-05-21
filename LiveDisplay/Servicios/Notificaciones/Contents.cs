@@ -10,6 +10,7 @@ namespace LiveDisplay.Servicios.Notificaciones
         //Item3 es 'Texto'
         public static Tuple<string, string, string> RetrieveNotificationContents(int whichNotification)
         {
+            
             return Tuple.Create
             (
                 //Showwhen?

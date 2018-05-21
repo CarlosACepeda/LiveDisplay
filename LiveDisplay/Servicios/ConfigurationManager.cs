@@ -1,4 +1,5 @@
 ﻿using Android.Content;
+using System;
 
 namespace LiveDisplay.Servicios
 {
@@ -18,10 +19,22 @@ namespace LiveDisplay.Servicios
             sharedPreferencesEditor.PutBoolean(key, value);
             sharedPreferencesEditor.Commit();
         }
+        public void SaveAValue(string key, string value)
+        {
+            sharedPreferencesEditor.PutString(key, value);
+            sharedPreferencesEditor.Commit();
+        }
         public bool RetrieveAValue(string key)
         {           
             return sharedPreferences.GetBoolean(key, false);
         }
-            
+        public string RetrieveAValue(string key, string defValue)
+        {
+            string imagenotfound = "imagenotfound";
+            return sharedPreferences.GetString(key, imagenotfound);
+        }
+
+
+
     }
 }

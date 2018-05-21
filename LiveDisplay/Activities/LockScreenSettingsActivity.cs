@@ -8,6 +8,13 @@ using Android.Widget;
 using LiveDisplay.Servicios;
 using LiveDisplay.Misc;
 using System;
+using Android.Runtime;
+using Android.Graphics.Drawables;
+using Java.IO;
+using Android.Graphics;
+using Android.Provider;
+using Android.Util;
+using LiveDisplay.Factories;
 
 namespace LiveDisplay.Activities
 {
@@ -21,9 +28,9 @@ namespace LiveDisplay.Activities
         private SwitchCompat swDynamicWallpaper;
         private Button btnChangeWallpaper;
         private Android.Support.V7.Widget.Toolbar toolbar;
+        private int requestCode = 1;
 
         private ConfigurationManager configurationManager;
-
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -35,7 +42,26 @@ namespace LiveDisplay.Activities
             BindClickEvents();
             RetrieveLockScreenConfiguration();
         }
+        protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
+        {
+            base.OnActivityResult(requestCode, resultCode, data);
+            if (this.requestCode == requestCode && resultCode == Result.Ok && data != null)
+            {
+                Android.Net.Uri uri = data.Data;
+                try
+                {
+                    
+                    BackgroundFactory background = new BackgroundFactory();
+                    background.SaveImagePath(uri);
+                    background = null;
 
+                }
+                catch
+                {
+
+                }
+            }
+        }
         private void BindViews()
         {
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
@@ -130,7 +156,10 @@ namespace LiveDisplay.Activities
         }
         private void BtnChangeWallpaper_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            Intent intent = new Intent();
+            intent.SetType("image/*");
+            intent.SetAction(Intent.ActionGetContent);
+            StartActivityForResult(Intent.CreateChooser(intent, "Pick image"), requestCode);
         }
         private void RetrieveLockScreenConfiguration()
         {

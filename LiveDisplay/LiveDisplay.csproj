@@ -143,7 +143,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Activities\AboutActivity.cs" />
-    <Compile Include="Activities\AwakeSettingsActivity.cs" />
     <Compile Include="Activities\LockScreenSettingsActivity.cs" />
     <Compile Include="Activities\NotificationSettingsActivity.cs" />
     <Compile Include="Adapters\NotificationAdapter.cs" />
@@ -155,7 +154,7 @@
     <Compile Include="Fragments\NotificationFragment.cs" />
     <Compile Include="Misc\ConfigurationParameters.cs" />
     <Compile Include="Misc\NLChecker.cs" />
-    <Compile Include="Servicios\AwakeService.cs" />
+    <Compile Include="Servicios\Awake\AwakeService.cs" />
     <Compile Include="Activities\ConfigurationActivity.cs" />
     <Compile Include="Activities\LockScreenActivity.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
@@ -165,6 +164,8 @@
     <Compile Include="Servicios\ConfigurationManager.cs" />
     <Compile Include="Servicios\MusicController.cs" />
     <Compile Include="Servicios\Notificaciones\Contents.cs" />
+    <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationPostedEventArgs.cs" />
+    <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationUpdatedEventArgs.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationSlave.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -194,9 +195,6 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\LockScreenSettings.axml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
-    <AndroidResource Include="Resources\layout\AwakeSettings.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

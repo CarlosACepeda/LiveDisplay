@@ -60,27 +60,28 @@ namespace LiveDisplay
         protected override void OnPause()
         {
             base.OnPause();
-            UnbindViews();
-            GC.Collect();
+            UnbindClickEvents();
         }
 
         protected override void OnDestroy()
         {
             base.OnDestroy();
+            UnbindViews();
+            //Workaround, Memory is never released.
             GC.Collect();
         }
 
-        
-        
+
+
 
         protected void UnbindViews()
         {
-            toolbar = null;
+            toolbar.Dispose();
             Window.ClearFlags(WindowManagerFlags.DrawsSystemBarBackgrounds);
-            btnAbout = null;
-            btnAwake = null;
-            btnLockScreen = null;
-            btnNotifications = null;
+            btnAbout.Dispose();
+            btnAwake.Dispose();
+            btnLockScreen.Dispose();
+            btnNotifications.Dispose();
         }
 
         protected void UnbindClickEvents()

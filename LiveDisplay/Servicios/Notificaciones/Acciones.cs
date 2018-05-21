@@ -5,6 +5,7 @@ using Android.Widget;
 using LiveDisplay.Factories;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace LiveDisplay.Servicios.Notificaciones
 {
@@ -39,23 +40,40 @@ namespace LiveDisplay.Servicios.Notificaciones
                        
                     };
                     anActionButton.SetMaxLines(1);
-                    anActionButton.Click += (o, e) => a.ActionIntent.Send();
+                    anActionButton.Click += (o, e)=> 
+                    {
+                        try
+                        {
+
+                            a.GetRemoteInputs();
+                            a.ActionIntent.Send();
+                            LockScreenActivity.lockScreenInstance.OnNotificationUpdated();
+                        }
+                        catch(Exception ex)
+                        {
+                            Log.Error("Action button ex:", ex.ToString());
+                        }
+                    };
+                    
                     anActionButton.Gravity = GravityFlags.CenterVertical;
                     TypedValue typedValue = new TypedValue();
                     Application.Context.Theme.ResolveAttribute(Resource.Attribute.selectableItemBackground, typedValue, true);
                     anActionButton.SetBackgroundResource(typedValue.ResourceId);
                     anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(IconFactory.ReturnActionIconDrawable(a.Icon, paquete), null, null, null);
                     buttons.Add(anActionButton);
-                    typedValue.Dispose();
+                    
                 }
                 return buttons;
             }
             return null;
         }
 
+
         //>Nougat: Textbox directly in notification
         public void RetrieveSendButtonAction()
-        { }
+        {
+
+        }
 
         private static int DpToPx(int dp)
         {
