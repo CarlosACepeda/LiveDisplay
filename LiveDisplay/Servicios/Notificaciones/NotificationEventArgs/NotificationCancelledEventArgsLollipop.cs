@@ -12,8 +12,8 @@ using Android.Widget;
 
 namespace LiveDisplay.Servicios.Notificaciones.NotificationEventArgs
 {
-    class NotificationUpdatedEventArgs: EventArgs
+    class NotificationCancelledEventArgsLollipop: EventArgs
     {
-        public int Position { get; set; }
+        public string Key { get; set; }
     }
 }

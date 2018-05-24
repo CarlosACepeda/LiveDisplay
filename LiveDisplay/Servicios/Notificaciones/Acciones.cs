@@ -13,14 +13,14 @@ namespace LiveDisplay.Servicios.Notificaciones
     {
         public static PendingIntent RetrieveNotificationAction(int whichNotification)
         {
-            var accionNotificacion = Catcher.listaNotificaciones[whichNotification].Notification.ContentIntent;
+            var accionNotificacion = CatcherHelper.statusBarNotifications[whichNotification].Notification.ContentIntent;
             return accionNotificacion;
         }
 
         public static List<Button> RetrieveNotificationButtonsActions(int whichNotification, string paquete)
         {
             List<Button> buttons = new List<Button>();
-            var actions = Catcher.listaNotificaciones[whichNotification].Notification.Actions;
+            var actions = CatcherHelper.statusBarNotifications[whichNotification].Notification.Actions;
             //Fix me
             int pixels = DpToPx(30);
             if (actions != null)

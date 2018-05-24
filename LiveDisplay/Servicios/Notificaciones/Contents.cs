@@ -10,15 +10,15 @@ namespace LiveDisplay.Servicios.Notificaciones
         //Item3 es 'Texto'
         public static Tuple<string, string, string> RetrieveNotificationContents(int whichNotification)
         {
-            
+           // TODO: Very Unstable 
             return Tuple.Create
             (
                 //Showwhen?
                 //Appname?
                 //Time?
-                Catcher.listaNotificaciones[whichNotification].PackageName,
-                Catcher.listaNotificaciones[whichNotification].Notification.Extras.Get("android.title").ToString(),
-                Catcher.listaNotificaciones[whichNotification].Notification.Extras.Get("android.text").ToString()
+                CatcherHelper.statusBarNotifications[whichNotification].PackageName,
+                CatcherHelper.statusBarNotifications[whichNotification].Notification.Extras.Get("android.title").ToString(),
+                CatcherHelper.statusBarNotifications[whichNotification].Notification.Extras.Get("android.text").ToString()
                 
             );
 

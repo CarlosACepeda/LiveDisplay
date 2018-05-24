@@ -20,11 +20,11 @@ namespace LiveDisplay.BroadcastReceivers
             {
                 Toast.MakeText(context, "La pantalla ha sido encendida prro", ToastLength.Short).Show();
                 isScreenOn = true;
-                //Trigger an Action to Start LockScreen.
-                if (AwakeService.awakeServiceInstance != null)
-                {
-                    AwakeService.awakeServiceInstance.UnlockScreen();
-                }
+                //Trigger an Action to Start LockScreen when enabled, by default it is.
+                Intent lockScreenIntent = new Intent(Application.Context, typeof(LockScreenActivity));
+                lockScreenIntent.AddFlags(ActivityFlags.NewTask);
+                
+                Application.Context.StartActivity(lockScreenIntent);
                 
             }
             else if (intent.Action == Intent.ActionScreenOff)

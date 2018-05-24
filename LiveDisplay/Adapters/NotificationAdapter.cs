@@ -4,6 +4,7 @@ using Android.Views;
 using Android.Widget;
 using LiveDisplay.Factories;
 using LiveDisplay.Servicios;
+using LiveDisplay.Servicios.Notificaciones;
 using System;
 using System.Collections.Generic;
 
@@ -68,7 +69,7 @@ namespace LiveDisplay.Adapters
         private void ItemView_Click(object sender, EventArgs e)
         {
             NotificationAdapter.selectedItem = LayoutPosition;
-            Catcher.adapter.NotifyDataSetChanged();
+            CatcherHelper.notificationAdapter.NotifyDataSetChanged();
             new ItemOnClickListener(LockScreenActivity.lockScreenInstance.OnItemClick).Invoke(LayoutPosition);
         }
     }

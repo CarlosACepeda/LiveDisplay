@@ -113,7 +113,6 @@ namespace LiveDisplay
 
             btnLockScreen.Click += (o, e) => StartActivity(new Intent(this, typeof(LockScreenSettingsActivity)).AddFlags(ActivityFlags.ClearTop));
             btnNotifications.Click += (o, e) => StartActivity(new Intent(this, typeof(NotificationSettingsActivity)).AddFlags(ActivityFlags.ClearTop));
-            btnAwake.Click += (o, e) => StartActivity(new Intent(this, typeof(AwakeSettingsActivity)).AddFlags(ActivityFlags.ClearTop));
             btnAbout.Click += (o, e) => StartActivity(new Intent(this, typeof(AboutActivity)).AddFlags(ActivityFlags.ClearTop));
         }
 

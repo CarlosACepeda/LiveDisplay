@@ -9,6 +9,7 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Java.Util;
+using LiveDisplay.BroadcastReceivers;
 using LiveDisplay.Factories;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
@@ -41,6 +42,7 @@ namespace LiveDisplay
         private int position;
         private LinearLayout unlocker;
         private Button btnClearAll;
+        CatcherReceiver catcherReceiver;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -49,19 +51,12 @@ namespace LiveDisplay
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.LockScreen);
             BindViews();
+           
             //suscrption to event.
             
         }
 
-        private void CatcherInstance_NotificationUpdated(object sender, NotificationUpdatedEventArgs e)
-        {
-            OnItemClick(e.Position);
-        }
 
-        private void CatcherInstance_NotificationPosted(object sender, NotificationPostedEventArgs e)
-        {
-            Log.Info("Event raised from Activity", "NotificationPosted "+ e.Position);
-        }
         protected override void OnResume()
         {
             base.OnResume();
@@ -71,12 +66,17 @@ namespace LiveDisplay
             InicializarValores();
             //<Start is sensible to configuration LockScreen Settings>
              ThreadPool.QueueUserWorkItem(o => LoadConfiguration());
+            //RegisterBoradcast
+            catcherReceiver = new CatcherReceiver();
+            IntentFilter intentFilter = new IntentFilter("CatcherIntent");
+            RegisterReceiver(catcherReceiver, intentFilter);
         }
         protected override void OnPause()
         {
             base.OnPause();
 
             UnbindEvents();
+            UnregisterReceiver(catcherReceiver);
      
         }
         protected override void OnDestroy()
@@ -90,52 +90,51 @@ namespace LiveDisplay
         //OnNotificationItemClick...
         public void OnItemClick(int position)
         {
+
             notificationAction = Acciones.RetrieveNotificationAction(position);
             LinearLayout linearLayout = FindViewById<LinearLayout>(Resource.Id.notificationActions);
-            
-            var newType = Contents.RetrieveNotificationContents(position);
 
-            tvTitulo.Text = newType != null ? newType.Item2 : "";
-            tvTexto.Text = newType != null ? newType.Item3 : "";
-            linearLayout.RemoveAllViews();
+            OpenNotification notification = new OpenNotification(position);
+            
+                tvTitulo.Text = notification.GetTitle();
+                tvTexto.Text = notification.GetText();
+            
+
+                linearLayout.RemoveAllViews();
             linearLayout.WeightSum = 1f;
 
-            if (Acciones.RetrieveNotificationButtonsActions(position, newType.Item1) != null)
-            {
-                foreach (var a in Acciones.RetrieveNotificationButtonsActions(position, newType.Item1))
-                {                   
-                    linearLayout.AddView(a);
+            //if (Acciones.RetrieveNotificationButtonsActions(position, newType.Item1) != null)
+            //{
+            //    foreach (var a in Acciones.RetrieveNotificationButtonsActions(position, newType.Item1))
+            //    {                   
+            //        linearLayout.AddView(a);
                     
-                }
-            }
+            //    }
+            //}
             //actualizar.
             this.position = position;
             v.Visibility = ViewStates.Visible;
+            notification = null;
         }
 
         public void OnItemLongClick(int position)
         {
-            if (Catcher.listaNotificaciones[position].IsClearable == true)
-            {
+
                 NotificationSlave slave = new NotificationSlave();
                 if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
                 {
-                    int notiId = Catcher.listaNotificaciones[position].Id;
-                    string notiTag = Catcher.listaNotificaciones[position].Tag;
-                    string notiPack = Catcher.listaNotificaciones[position].PackageName;
+                    int notiId = CatcherHelper.statusBarNotifications[position].Id;
+                    string notiTag = CatcherHelper.statusBarNotifications[position].Tag;
+                    string notiPack = CatcherHelper.statusBarNotifications[position].PackageName;
                     slave.CancelNotification(notiPack, notiTag, notiId);
                     v.Visibility = ViewStates.Invisible;
                 }
                 else
                 {
-                    slave.CancelNotification(Catcher.listaNotificaciones[position].Key);
+                    slave.CancelNotification(CatcherHelper.statusBarNotifications[position].Key);
                     v.Visibility = ViewStates.Invisible;
                 }
-            }
-            else
-            {
-                v.SetBackgroundColor(Android.Graphics.Color.Red);
-            }
+            
         }
         private void OnNotificationClicked(object sender, EventArgs e)
         {
@@ -167,7 +166,6 @@ namespace LiveDisplay
             unlocker = FindViewById<LinearLayout>(Resource.Id.unlocker);
             btnClearAll = FindViewById<Button>(Resource.Id.btnClearAllNotifications);
         }
-
         private void UnbindViews()
         {
             for (int i = 0; i < linearLayout.ChildCount; i++)
@@ -195,7 +193,6 @@ namespace LiveDisplay
             //reloj = null;
             //btnClearAll = null;
         }
-
         private void BindEvents()
         {
             v.Click += OnNotificationClicked;
@@ -205,8 +202,7 @@ namespace LiveDisplay
             //If lockscreen no notifications is enabled.
             try
             {
-                Catcher.catcherInstance.NotificationPosted += CatcherInstance_NotificationPosted;
-                Catcher.catcherInstance.NotificationUpdated += CatcherInstance_NotificationUpdated;
+                //Here it goes CatcherHelper Events
             }
             catch {
             }
@@ -258,8 +254,7 @@ namespace LiveDisplay
            //if lockscreen no notifications is enabled.
             try
             {
-                Catcher.catcherInstance.NotificationPosted -= CatcherInstance_NotificationPosted;
-                Catcher.catcherInstance.NotificationUpdated -= CatcherInstance_NotificationUpdated;
+                //Here goes Events from CatcherHelper
             }
             catch
             {
@@ -278,7 +273,7 @@ namespace LiveDisplay
             wallpaperManager = WallpaperManager.GetInstance(this);
             layoutManager = new LinearLayoutManager(this);
             recycler.SetLayoutManager(layoutManager);
-            RunOnUiThread(() => recycler.SetAdapter(Catcher.adapter));
+            RunOnUiThread(() => recycler.SetAdapter(CatcherHelper.notificationAdapter));
             fecha = Calendar.GetInstance(Locale.Default);
             dia = fecha.Get(CalendarField.DayOfMonth).ToString();
             mes = fecha.GetDisplayName(2, 2, Locale.Default);
@@ -305,7 +300,7 @@ namespace LiveDisplay
         //mala practica LMAO.
         private void CheckForNotifications()
         {
-            if (Catcher.listaNotificaciones.Where(i => i.IsClearable == true).Count() == 0)
+            if (CatcherHelper.statusBarNotifications.Where(i => i.IsClearable == true).Count() == 0)
             {
                 btnClearAll.Visibility = ViewStates.Invisible;
             }

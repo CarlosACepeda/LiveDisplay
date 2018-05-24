@@ -1,4 +1,6 @@
 ﻿using Android.App;
+using LiveDisplay.Servicios.Notificaciones;
+using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
 using System;
 
 namespace LiveDisplay.Servicios
@@ -6,26 +8,36 @@ namespace LiveDisplay.Servicios
     //Esta clase sirve para manipular las notificaciones, como quitarlas o agregarlas.
     internal class NotificationSlave
     {
+
+        public event EventHandler<NotificationCancelledEventArgsKitkat> NotificationCancelled;
+        public event EventHandler<NotificationCancelledEventArgsLollipop> NotificationCancelledLollipop;
+        public event EventHandler AllNotificationsCancelled;
+
+
         //Postear Notificaciones sobre mi app.
         private NotificationManager notificationManager = (NotificationManager)Application.Context.GetSystemService("notification");
 
-        //Instancia a Catcher para cancelar notificaciones desde la lockScreen
         public void CancelNotification(string notiPack, string notiTag, int notiId)
         {
-#pragma warning disable CS0618 // El tipo o el miembro están obsoletos
-            Catcher.catcherInstance.CancelNotification(notiPack, notiTag, notiId);
-#pragma warning restore CS0618 // El tipo o el miembro están obsoletos
+            NotificationCancelled(this, new NotificationCancelledEventArgsKitkat
+            {
+                NotificationPackage = notiPack,
+                NotificationTag = notiTag,
+                NotificationId = notiId
+            });
         }
 
         public void CancelNotification(string key)
         {
-            Catcher.catcherInstance.CancelNotification(key);
+            NotificationCancelledLollipop(this, new NotificationCancelledEventArgsLollipop
+            {
+                Key = key
+            });
         }
 
         public void CancelAll()
         {
-            Catcher.catcherInstance.CancelAllNotifications();
-            Catcher.adapter.NotifyDataSetChanged();
+            AllNotificationsCancelled(this, new EventArgs());          
         }
 
         public void PostNotification()
@@ -38,6 +50,20 @@ namespace LiveDisplay.Servicios
             builder.SetPriority(Convert.ToInt32(Android.App.NotificationPriority.Low));
             builder.SetSmallIcon(Resource.Drawable.ic_stat_default_appicon);
             notificationManager.Notify(1, builder.Build());
+        }
+
+       //Raising events.
+        protected virtual void OnNotificationCancelled(NotificationCancelledEventArgsKitkat e)
+        {
+            NotificationCancelled?.Invoke(this, e);
+        }
+        protected virtual void OnNotificationCancelled(NotificationCancelledEventArgsLollipop e)
+        {
+            NotificationCancelledLollipop?.Invoke(this, e);
+        }
+        protected virtual void OnAllNotificationsCancelled(EventArgs e)
+        {
+            AllNotificationsCancelled?.Invoke(this, e);
         }
     }
 }

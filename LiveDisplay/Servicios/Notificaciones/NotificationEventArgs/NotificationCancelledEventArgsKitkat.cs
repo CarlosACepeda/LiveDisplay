@@ -12,8 +12,10 @@ using Android.Widget;
 
 namespace LiveDisplay.Servicios.Notificaciones.NotificationEventArgs
 {
-    class NotificationPostedEventArgs: EventArgs
+    class NotificationCancelledEventArgsKitkat : EventArgs
     {
-         public int Position { get; set; }
+        public string NotificationPackage { get; set; }
+        public string NotificationTag { get; set; }
+        public int NotificationId { get; set; }
     }
 }
