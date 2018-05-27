@@ -6,6 +6,7 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using LiveDisplay.Activities;
+using LiveDisplay.BroadcastReceivers;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
 
@@ -32,14 +33,16 @@ namespace LiveDisplay
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.Configuracion);
+            BindViews();
+            StartVariables();
             configurationManager = new ConfigurationManager(GetSharedPreferences("livedisplayconfig", FileCreationMode.Private));
             if (configurationManager.RetrieveAValue(ConfigurationParameters.istheappconfigured)==false)
             {
                 LoadDefaultConfiguration();
             }
-            ShowDialog();    
-                
+            ShowDialog();
             
+
         }
 
         private void LoadDefaultConfiguration()
@@ -52,8 +55,7 @@ namespace LiveDisplay
         protected override void OnResume()
         {
             base.OnResume();
-            BindViews();
-            StartVariables();
+            
 
         }
 
@@ -106,7 +108,7 @@ namespace LiveDisplay
 
         private void StartVariables()
         {
-            //CI
+            ////CI
             AppCenter.Start("0ec5320c-34b4-498b-a9c2-dae7614997fa",
                    typeof(Analytics), typeof(Crashes));
             AppCenter.Start("0ec5320c-34b4-498b-a9c2-dae7614997fa", typeof(Analytics), typeof(Crashes));

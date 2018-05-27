@@ -1,5 +1,7 @@
 ﻿using Android.App;
 using Android.Content;
+using Android.Media;
+using Android.Media.Session;
 using Android.OS;
 using Android.Service.Notification;
 using Android.Util;
@@ -15,7 +17,7 @@ using System.Threading;
 
 namespace LiveDisplay.Servicios
 {
-    [Service(Label = "Catcher", Permission = "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE", Process =":NotificationCatcher")]
+    [Service(Label = "Catcherrr", Permission = "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE")]
     [IntentFilter(new[] { "android.service.notification.NotificationListenerService"})]
     internal class Catcher : NotificationListenerService
     {
@@ -44,11 +46,7 @@ namespace LiveDisplay.Servicios
         public override void OnNotificationPosted(StatusBarNotification sbn)
         {
             catcherHelper.InsertNotification(sbn);
-            Intent intent = new Intent();
-            intent.SetAction("CatcherIntent");
-            intent.AddFlags(ActivityFlags.ReceiverForeground);
-            intent.PutExtra("Sample Text", "NotificationWasPosted");
-            SendBroadcast(intent);
+           
             base.OnNotificationPosted(sbn);
         }
         public override void OnNotificationRemoved(StatusBarNotification sbn)
@@ -81,12 +79,12 @@ namespace LiveDisplay.Servicios
                     statusBarNotifications.Add(notification);
                 }                
             }
-            catcherHelper = new CatcherHelper(statusBarNotifications);
+            catcherHelper = new CatcherHelper(statusBarNotifications, this);
         }
         //Subscribe to events by NotificationSlave
         private void SubscribeToEvents()
         {
-            NotificationSlave notificationSlave = new NotificationSlave();
+            NotificationSlave notificationSlave = NotificationSlave.NotificationSlaveInstance();
             notificationSlave.AllNotificationsCancelled += NotificationSlave_AllNotificationsCancelled;
             notificationSlave.NotificationCancelled += NotificationSlave_NotificationCancelled;
             notificationSlave.NotificationCancelledLollipop += NotificationSlave_NotificationCancelledLollipop;

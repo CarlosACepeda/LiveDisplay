@@ -8,11 +8,23 @@ namespace LiveDisplay.Servicios
     //Esta clase sirve para manipular las notificaciones, como quitarlas o agregarlas.
     internal class NotificationSlave
     {
-
+        public static NotificationSlave instance;
         public event EventHandler<NotificationCancelledEventArgsKitkat> NotificationCancelled;
         public event EventHandler<NotificationCancelledEventArgsLollipop> NotificationCancelledLollipop;
         public event EventHandler AllNotificationsCancelled;
 
+        private NotificationSlave()
+        {
+
+        }
+        public static NotificationSlave NotificationSlaveInstance()
+        {
+            if (instance == null)
+            {
+                instance= new NotificationSlave();
+            }
+            return instance;
+        }
 
         //Postear Notificaciones sobre mi app.
         private NotificationManager notificationManager = (NotificationManager)Application.Context.GetSystemService("notification");
@@ -29,6 +41,7 @@ namespace LiveDisplay.Servicios
 
         public void CancelNotification(string key)
         {
+
             NotificationCancelledLollipop(this, new NotificationCancelledEventArgsLollipop
             {
                 Key = key

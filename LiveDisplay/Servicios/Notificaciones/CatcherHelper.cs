@@ -25,6 +25,7 @@ namespace LiveDisplay.Servicios.Notificaciones
     /// </summary>
     class CatcherHelper
     {
+        Context context;
         public static NotificationAdapter notificationAdapter;
         public static List<StatusBarNotification> statusBarNotifications;
         //Events that this class will trigger to Notify LockScreen about these
@@ -40,10 +41,11 @@ namespace LiveDisplay.Servicios.Notificaciones
         /// <param name="statusBarNotifications">This list is sent by Catcher, and is used to fill the Adapter
         /// that the RecyclerView will use.
         /// </param>
-        public CatcherHelper(List<StatusBarNotification> statusBarNotifications)
+        public CatcherHelper(List<StatusBarNotification> statusBarNotifications, Context context)
         {
             CatcherHelper.statusBarNotifications = statusBarNotifications;
-            notificationAdapter = new NotificationAdapter(statusBarNotifications);     
+            notificationAdapter = new NotificationAdapter(statusBarNotifications);
+            this.context = context;
         }
         //If Catcher call this, it means that the notification is part of a Group of notifications and should be Grouped.
         private void GroupNotification()
@@ -77,7 +79,9 @@ namespace LiveDisplay.Servicios.Notificaciones
                 try
                 {
                     notificationAdapter.NotifyItemInserted(GetNotificationPosition(sbn.Id, sbn.PackageName));
-                    
+                    Intent lockScreenIntent = new Intent(context, typeof(LockScreenActivity));
+                    lockScreenIntent.AddFlags(ActivityFlags.NewTask);
+                    context.StartActivity(lockScreenIntent);
                 }
                 catch(Exception ex)
                 {
@@ -125,7 +129,7 @@ namespace LiveDisplay.Servicios.Notificaciones
         public bool FindNotification(int which, string package)
         {
             int? index = statusBarNotifications.IndexOf(statusBarNotifications.FirstOrDefault(o => o.Id == which && o.PackageName == package));
-            if (index !=null)
+            if (index >0)
             {
                 return true;
             }
@@ -133,6 +137,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             {
                 return false;
             }
+            
         }
         private int GetNotificationPosition(int which, string package)
         {

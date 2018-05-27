@@ -34,7 +34,7 @@
     <WarningLevel>4</WarningLevel>
     <AndroidUseSharedRuntime>True</AndroidUseSharedRuntime>
     <AndroidLinkMode>None</AndroidLinkMode>
-    <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
+    <EmbedAssembliesIntoApk>false</EmbedAssembliesIntoApk>
     <AotAssemblies>false</AotAssemblies>
     <EnableLLVM>false</EnableLLVM>
     <BundleAssemblies>false</BundleAssemblies>
@@ -147,7 +147,6 @@
     <Compile Include="Activities\NotificationSettingsActivity.cs" />
     <Compile Include="Adapters\NotificationAdapter.cs" />
     <Compile Include="BroadcastReceivers\BootCompleteReceiver.cs" />
-    <Compile Include="BroadcastReceivers\CatcherReceiver.cs" />
     <Compile Include="BroadcastReceivers\ScreenOnOffReceiver.cs" />
     <Compile Include="Factories\BackgroundFactory.cs" />
     <Compile Include="Factories\IconFactory.cs" />
@@ -210,7 +209,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Interfaces\" />
-    <Folder Include="Servicios\Awake\" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values-es\Strings.xml">

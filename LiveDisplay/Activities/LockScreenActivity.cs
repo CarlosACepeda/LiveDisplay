@@ -2,6 +2,8 @@
 using Android.Content;
 using Android.Graphics;
 using Android.Graphics.Drawables;
+using Android.Media;
+using Android.Media.Session;
 using Android.OS;
 using Android.Provider;
 using Android.Support.V7.Widget;
@@ -16,6 +18,7 @@ using LiveDisplay.Servicios;
 using LiveDisplay.Servicios.Notificaciones;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
@@ -42,7 +45,6 @@ namespace LiveDisplay
         private int position;
         private LinearLayout unlocker;
         private Button btnClearAll;
-        CatcherReceiver catcherReceiver;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -51,32 +53,25 @@ namespace LiveDisplay
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.LockScreen);
             BindViews();
-           
-            //suscrption to event.
-            
+            ThreadPool.QueueUserWorkItem(o=>
+            InicializarValores());
+            //<Start is sensible to configuration LockScreen Settings>
+            ThreadPool.QueueUserWorkItem(o => LoadConfiguration());
         }
-
 
         protected override void OnResume()
         {
-            base.OnResume();
-
-            
+            base.OnResume();     
             BindEvents();
-            InicializarValores();
-            //<Start is sensible to configuration LockScreen Settings>
-             ThreadPool.QueueUserWorkItem(o => LoadConfiguration());
-            //RegisterBoradcast
-            catcherReceiver = new CatcherReceiver();
-            IntentFilter intentFilter = new IntentFilter("CatcherIntent");
-            RegisterReceiver(catcherReceiver, intentFilter);
+            AddFlags();
+
+            Console.WriteLine("value is", Intent.GetBundleExtra("wake"));
+
         }
         protected override void OnPause()
         {
             base.OnPause();
-
-            UnbindEvents();
-            UnregisterReceiver(catcherReceiver);
+            UnbindEvents();            
      
         }
         protected override void OnDestroy()
@@ -116,11 +111,10 @@ namespace LiveDisplay
             v.Visibility = ViewStates.Visible;
             notification = null;
         }
-
         public void OnItemLongClick(int position)
         {
 
-                NotificationSlave slave = new NotificationSlave();
+                 NotificationSlave slave = NotificationSlave.NotificationSlaveInstance();
                 if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
                 {
                     int notiId = CatcherHelper.statusBarNotifications[position].Id;
@@ -156,7 +150,7 @@ namespace LiveDisplay
         }
         private void BindViews()
         {
-            linearLayout = FindViewById<LinearLayout>(Resource.Id.contenedorPrincipal);
+            
             recycler = FindViewById<RecyclerView>(Resource.Id.NotificationListRecyclerView);
             tvTitulo = (TextView)FindViewById(Resource.Id.tvTitulo);
             tvTexto = (TextView)FindViewById(Resource.Id.tvTexto);
@@ -168,6 +162,7 @@ namespace LiveDisplay
         }
         private void UnbindViews()
         {
+            linearLayout = FindViewById<LinearLayout>(Resource.Id.contenedorPrincipal);
             for (int i = 0; i < linearLayout.ChildCount; i++)
             {
                 View view = linearLayout.GetChildAt(i);
@@ -176,22 +171,6 @@ namespace LiveDisplay
             }
             lockScreenInstance.Dispose();
             lockScreenInstance = null;
-            //linearLayout=
-            //recycler = null;
-            //tvTitulo = null;
-            //tvTexto = null;
-            //v = null;
-            //wallpaperManager = null;
-            //papelTapiz = null;
-            //layoutManager = null;
-            
-            //backgroundFactory = null;
-            //fecha = null;
-            //dia = null;
-            //mes = null;
-            //notificationAction = null;
-            //reloj = null;
-            //btnClearAll = null;
         }
         private void BindEvents()
         {
@@ -208,12 +187,10 @@ namespace LiveDisplay
             }
             
         }
-
         private void BtnClearAll_Click(object sender, EventArgs e)
         {
-            NotificationSlave notificationSlave = new NotificationSlave();
+            NotificationSlave notificationSlave = NotificationSlave.NotificationSlaveInstance();
             notificationSlave.CancelAll();
-            CheckForNotifications();
             v.Visibility = ViewStates.Invisible;
             notificationSlave = null; 
         }
@@ -234,7 +211,7 @@ namespace LiveDisplay
             if (startPoint > finalPoint && finalPoint<0)
             {
                 Log.Info("Swipe", "Up");
-               
+
                 Finish();
                 OverridePendingTransition(Resource.Animation.slidetounlockanim, Resource.Animation.slidetounlockanim);
             }
@@ -251,39 +228,33 @@ namespace LiveDisplay
             reloj.Click -= Reloj_Click;
             unlocker.Touch -= Unlocker_Touch;
             btnClearAll.Click -= BtnClearAll_Click;
-           //if lockscreen no notifications is enabled.
-            try
-            {
-                //Here goes Events from CatcherHelper
-            }
-            catch
-            {
-                
-            }
             
         }
         private void InicializarValores()
         {
             lockScreenInstance = this;
-            Window.AddFlags(WindowManagerFlags.Fullscreen);
-            Window.AddFlags(WindowManagerFlags.TranslucentNavigation);
-            Window.AddFlags(WindowManagerFlags.DismissKeyguard);
-            Window.AddFlags(WindowManagerFlags.ShowWhenLocked);
-            Window.AddFlags(WindowManagerFlags.TurnScreenOn);
-            wallpaperManager = WallpaperManager.GetInstance(this);
             layoutManager = new LinearLayoutManager(this);
-            recycler.SetLayoutManager(layoutManager);
-            RunOnUiThread(() => recycler.SetAdapter(CatcherHelper.notificationAdapter));
+            
             fecha = Calendar.GetInstance(Locale.Default);
             dia = fecha.Get(CalendarField.DayOfMonth).ToString();
             mes = fecha.GetDisplayName(2, 2, Locale.Default);
-            tvFecha.Text = string.Format(dia + ", " + mes);
-            DodgeNavigationBar();
+            RunOnUiThread(() =>
+            {
+                AddFlags();
+                recycler.SetLayoutManager(layoutManager);
+                recycler.SetAdapter(CatcherHelper.notificationAdapter);
+                tvFecha.Text = string.Format(dia + ", " + mes);
+            });
             
-        }
+            
+            
+
+            //DodgeNavigationBar();
+            
+        }       
         private void DodgeNavigationBar()
         {
-
+            //Deprecated.
             int idNavigationBar=
                 Resources.GetIdentifier("config_showNavigationBar", "bool", "android");
             bool hasNavigationBar =
@@ -292,21 +263,7 @@ namespace LiveDisplay
             Resources.GetIdentifier("navigation_bar_height", "dimen", "android");
             if (idNavigationBarHeight > 0 && hasNavigationBar==true)
             {
-                unlocker.SetPadding(0, 0, 0, Resources.GetDimensionPixelSize(idNavigationBarHeight));
-            }
-        }
-        //Debe ser un evento invocado desde Catcher, aquí sólo debe ser para mostrar resultados, 
-        //no para consultar datos de Catcher
-        //mala practica LMAO.
-        private void CheckForNotifications()
-        {
-            if (CatcherHelper.statusBarNotifications.Where(i => i.IsClearable == true).Count() == 0)
-            {
-                btnClearAll.Visibility = ViewStates.Invisible;
-            }
-            else
-            {
-                btnClearAll.Visibility = ViewStates.Visible;
+                RunOnUiThread(()=>unlocker.SetPadding(0, 0, 0, Resources.GetDimensionPixelSize(idNavigationBarHeight)));
             }
         }
         private void LoadConfiguration()
@@ -337,27 +294,25 @@ namespace LiveDisplay
                 {
                     //Found an image, use it as wallpaper.
                     Bitmap bm = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.imagePath, ""));
-                    
-                    if (linearLayout != null)
-                    {
+
                         backgroundFactory = new BackgroundFactory();
                         Drawable background = backgroundFactory.Difuminar(bm);
-                        RunOnUiThread(() => linearLayout.Background = background);
+                        RunOnUiThread(() => Window.DecorView.Background = background);
                         backgroundFactory = null;
                         bm = null;
-                    }
+                    
                 }
                 else
                 {
+                    wallpaperManager = WallpaperManager.GetInstance(this);
                     papelTapiz = wallpaperManager.Drawable;
                     backgroundFactory = new BackgroundFactory();
                     ThreadPool.QueueUserWorkItem(o =>
                     {
                         Drawable background = backgroundFactory.Difuminar(papelTapiz);
-                        if (linearLayout != null)
-                        {
-                            RunOnUiThread(() => linearLayout.Background = background);
-                        }
+
+                            RunOnUiThread(() => Window.DecorView.Background = background);
+                       
                     });
                 }
             }
@@ -365,6 +320,23 @@ namespace LiveDisplay
             {
                 Finish();
             }
+        }
+        private void AddFlags()
+        {
+            View view = Window.DecorView;
+            var uiOptions = (int)view.SystemUiVisibility;
+            var newUiOptions = uiOptions;
+
+            newUiOptions |= (int)SystemUiFlags.LowProfile;
+            newUiOptions |= (int)SystemUiFlags.Fullscreen;
+            newUiOptions |= (int)SystemUiFlags.HideNavigation;
+            newUiOptions |= (int)SystemUiFlags.Immersive;
+            // This option will make bars disappear by themselves
+            newUiOptions |= (int)SystemUiFlags.ImmersiveSticky;
+
+            view.SystemUiVisibility = (StatusBarVisibility)newUiOptions;
+            Window.AddFlags(WindowManagerFlags.DismissKeyguard);
+            Window.AddFlags(WindowManagerFlags.ShowWhenLocked);
         }
     }
 }
