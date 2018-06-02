@@ -11,6 +11,7 @@ using Android.Service.Notification;
 using Android.Views;
 using Android.Widget;
 using LiveDisplay.Adapters;
+using LiveDisplay.BroadcastReceivers;
 
 namespace LiveDisplay.Servicios.Notificaciones
 {
@@ -25,7 +26,6 @@ namespace LiveDisplay.Servicios.Notificaciones
     /// </summary>
     class CatcherHelper
     {
-        Context context;
         public static NotificationAdapter notificationAdapter;
         public static List<StatusBarNotification> statusBarNotifications;
         //Events that this class will trigger to Notify LockScreen about these
@@ -41,11 +41,10 @@ namespace LiveDisplay.Servicios.Notificaciones
         /// <param name="statusBarNotifications">This list is sent by Catcher, and is used to fill the Adapter
         /// that the RecyclerView will use.
         /// </param>
-        public CatcherHelper(List<StatusBarNotification> statusBarNotifications, Context context)
+        public CatcherHelper(List<StatusBarNotification> statusBarNotifications)
         {
             CatcherHelper.statusBarNotifications = statusBarNotifications;
             notificationAdapter = new NotificationAdapter(statusBarNotifications);
-            this.context = context;
         }
         //If Catcher call this, it means that the notification is part of a Group of notifications and should be Grouped.
         private void GroupNotification()
@@ -55,33 +54,38 @@ namespace LiveDisplay.Servicios.Notificaciones
         }
         public void InsertNotification(StatusBarNotification sbn)
         {
+            bool foundNotification = FindNotification(sbn.Id, sbn.PackageName);
             //After this fire event.
             //Check if the Notification is part of a group and if a Notification with that Id exists to Append that Group.
-            if (Build.VERSION.SdkInt > BuildVersionCodes.N)
-            {                
-                if(sbn.IsGroup==true&& FindNotification(sbn.Id, sbn.PackageName)==true)
-                {
-                    //TODO
-                    //Should I define a counter to know how many Notifications are part of this Group?
-                    GroupNotification();
-                }
-            }
-
+            //if (Build.VERSION.SdkInt > BuildVersionCodes.N)
+            //{                
+            //    if(sbn.IsGroup==true&& FindNotification(sbn.Id, sbn.PackageName)==true)
+            //    {
+            //        //TODO
+            //        //Should I define a counter to know how many Notifications are part of this Group?
+            //        GroupNotification();
+            //    }
+            //}
             //For Marshmallow and below: Check if Notification Exists, if true, update it, if not, Insert one.
-            if (FindNotification(sbn.Id, sbn.PackageName) == true)
+            if (foundNotification == true)
             {
                 UpdateNotification(sbn);
             }
             else
             {
                 statusBarNotifications.Add(sbn);
-               
+                int position = GetNotificationPosition(sbn.Id, sbn.PackageName);
                 try
                 {
-                    notificationAdapter.NotifyItemInserted(GetNotificationPosition(sbn.Id, sbn.PackageName));
-                    Intent lockScreenIntent = new Intent(context, typeof(LockScreenActivity));
-                    lockScreenIntent.AddFlags(ActivityFlags.NewTask);
-                    context.StartActivity(lockScreenIntent);
+                    notificationAdapter.NotifyItemInserted(position);
+                    if (ScreenOnOffReceiver.isScreenOn == false)
+                    {
+                    Intent lockScreenIntent = new Intent(Application.Context, typeof(LockScreenActivity));
+                        Bundle b = new Bundle();
+                        b.PutInt("wake", 1);
+                    Application.Context.StartActivity(lockScreenIntent);
+                    }
+                    
                 }
                 catch(Exception ex)
                 {
@@ -111,8 +115,9 @@ namespace LiveDisplay.Servicios.Notificaciones
         }
         public void RemoveNotification(StatusBarNotification sbn)
         {
-            statusBarNotifications.RemoveAt(GetNotificationPosition(sbn.Id, sbn.PackageName));
-            notificationAdapter.NotifyItemRemoved(GetNotificationPosition(sbn.Id, sbn.PackageName));
+            int position = GetNotificationPosition(sbn.Id, sbn.PackageName);
+            statusBarNotifications.RemoveAt(position);
+            notificationAdapter.NotifyItemRemoved(position);
         }
         public void CancelAllNotifications()
         {
@@ -141,7 +146,8 @@ namespace LiveDisplay.Servicios.Notificaciones
         }
         private int GetNotificationPosition(int which, string package)
         {
-           int? index = statusBarNotifications.IndexOf(statusBarNotifications.FirstOrDefault(o => o.Id == which && o.PackageName == package));
+           int index = statusBarNotifications.IndexOf(statusBarNotifications.FirstOrDefault(o => o.Id == which && o.PackageName == package));
+            
            return Convert.ToInt32(index);
         }
     }

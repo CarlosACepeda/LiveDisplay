@@ -88,19 +88,20 @@
             a:id="@+id/txtFechaLock" />
     </LinearLayout>
     <LinearLayout
-        a:orientation="vertical"
+        a:orientation="horizontal"
         a:minWidth="25px"
         a:minHeight="25px"
         a:layout_width="match_parent"
+        a:weightSum="0.9"
         a:layout_height="wrap_content"
-        a:id="@+id/unlocker"
         a:layout_weight="0.05">
         <ImageView
             a:src="@drawable/ic_unlock"
             a:alpha="0.7"
-            a:layout_width="match_parent"
+            a:layout_width="0dp"
             a:layout_height="match_parent"
-            a:layout_gravity="center_vertical|center_horizontal"
-            a:background="@android:color/transparent" />
+            a:background="@android:color/transparent"
+            a:layout_weight="0.9"
+            a:id="@+id/unlocker" />
     </LinearLayout>
 </LinearLayout>

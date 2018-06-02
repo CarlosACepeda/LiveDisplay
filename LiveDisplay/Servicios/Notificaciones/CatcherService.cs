@@ -37,11 +37,11 @@ namespace LiveDisplay.Servicios
 
         }
         public override void OnListenerConnected()
-        {
-            RetrieveNotificationFromStatusBar();
+        {            
             SubscribeToEvents();
             RegisterReceivers();
-            
+            RetrieveNotificationFromStatusBar();
+
         }
         public override void OnNotificationPosted(StatusBarNotification sbn)
         {
@@ -77,9 +77,10 @@ namespace LiveDisplay.Servicios
                 if (notification.IsClearable == true)
                 {
                     statusBarNotifications.Add(notification);
-                }                
+                }
             }
-            catcherHelper = new CatcherHelper(statusBarNotifications, this);
+
+            catcherHelper = new CatcherHelper(statusBarNotifications);
         }
         //Subscribe to events by NotificationSlave
         private void SubscribeToEvents()
@@ -112,6 +113,7 @@ namespace LiveDisplay.Servicios
         private void NotificationSlave_AllNotificationsCancelled(object sender, EventArgs e)
         {
             CancelAllNotifications();
+            catcherHelper.CancelAllNotifications();
         }
 
     }

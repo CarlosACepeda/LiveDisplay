@@ -17,12 +17,12 @@ namespace LiveDisplay.BroadcastReceivers
 
         public override void OnReceive(Context context, Intent intent)
         {
-            if (intent.Action == Intent.ActionScreenOn )
+            if (intent.Action == Intent.ActionScreenOn)
             {
                 //Toast.MakeText(context, "La pantalla ha sido encendida prro", ToastLength.Short).Show();
                 //Nice easter eggs here, lol.
                 isScreenOn = true;
-               
+
 
             }
             else if (intent.Action == Intent.ActionScreenOff)
@@ -31,8 +31,6 @@ namespace LiveDisplay.BroadcastReceivers
                 isScreenOn = false;
                 //Trigger an Action to Start LockScreen when enabled, by default it is.
                 Intent lockScreenIntent = new Intent(Application.Context, typeof(LockScreenActivity));
-                lockScreenIntent.AddFlags(ActivityFlags.NewTask);
-                
                 PendingIntent pendingIntent = PendingIntent.GetActivity(Application.Context, 0, lockScreenIntent, 0);
 
                 pendingIntent.Send();

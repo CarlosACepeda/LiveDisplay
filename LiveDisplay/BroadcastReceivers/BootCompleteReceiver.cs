@@ -13,7 +13,9 @@ namespace LiveDisplay.BroadcastReceivers
             Intent lanzarLockScreen = new Intent(context, typeof(LockScreenActivity));
             //Tener en cuenta, posible Memory Leak aquí
             lanzarLockScreen.AddFlags(ActivityFlags.NewTask);
-            context.StartActivity(lanzarLockScreen);
+            PendingIntent pendingIntent = PendingIntent.GetActivity(context, 0, lanzarLockScreen, 0);
+
+            pendingIntent.Send();
         }
     }
 }

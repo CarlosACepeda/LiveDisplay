@@ -37,14 +37,16 @@ namespace LiveDisplay
         private BackgroundFactory backgroundFactory;
         private TextView tvTitulo;
         private TextView tvTexto;
-        private PendingIntent notificationAction;
         private string dia, mes = null;
         private Calendar fecha;
         private TextView tvFecha;
         private LinearLayout reloj;
         private int position;
-        private LinearLayout unlocker;
+        private ImageView unlocker;
         private Button btnClearAll;
+        //Tiny field used to indicate if Flag.ScreenTurnOn should be applied. (Usually when a new notification is posted)
+        //(BEcause Intent for some reason is not Working) by default is false;
+        public static bool turnScreenOn = false;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -65,7 +67,7 @@ namespace LiveDisplay
             BindEvents();
             AddFlags();
 
-            Console.WriteLine("value is", Intent.GetBundleExtra("wake"));
+            
 
         }
         protected override void OnPause()
@@ -86,7 +88,7 @@ namespace LiveDisplay
         public void OnItemClick(int position)
         {
 
-            notificationAction = Acciones.RetrieveNotificationAction(position);
+            //notificationAction = Acciones.RetrieveNotificationAction(position);
             LinearLayout linearLayout = FindViewById<LinearLayout>(Resource.Id.notificationActions);
 
             OpenNotification notification = new OpenNotification(position);
@@ -98,14 +100,13 @@ namespace LiveDisplay
                 linearLayout.RemoveAllViews();
             linearLayout.WeightSum = 1f;
 
-            //if (Acciones.RetrieveNotificationButtonsActions(position, newType.Item1) != null)
-            //{
-            //    foreach (var a in Acciones.RetrieveNotificationButtonsActions(position, newType.Item1))
-            //    {                   
-            //        linearLayout.AddView(a);
-                    
-            //    }
-            //}
+            if (OpenNotification.RetrieveActionButtons(position) != null)
+            {
+                foreach (var a in OpenNotification.RetrieveActionButtons(position))
+                {
+                    linearLayout.AddView(a);
+                }
+            }
             //actualizar.
             this.position = position;
             v.Visibility = ViewStates.Visible;
@@ -134,7 +135,7 @@ namespace LiveDisplay
         {
             try
             {
-                notificationAction.Send();
+                OpenNotification.ClickNotification(position);
             }
             catch
             {
@@ -157,8 +158,9 @@ namespace LiveDisplay
             v = FindViewById<View>(Resource.Id.fragment1);
             tvFecha = (TextView)FindViewById(Resource.Id.txtFechaLock);
             reloj = FindViewById<LinearLayout>(Resource.Id.clockLock);
-            unlocker = FindViewById<LinearLayout>(Resource.Id.unlocker);
+            unlocker = FindViewById<ImageView>(Resource.Id.unlocker);
             btnClearAll = FindViewById<Button>(Resource.Id.btnClearAllNotifications);
+            linearLayout = FindViewById<LinearLayout>(Resource.Id.contenedorPrincipal);
         }
         private void UnbindViews()
         {
@@ -174,10 +176,12 @@ namespace LiveDisplay
         }
         private void BindEvents()
         {
+            //Click events
             v.Click += OnNotificationClicked;
-            reloj.Click += Reloj_Click;
-            unlocker.Touch += Unlocker_Touch;
+            reloj.Click += Reloj_Click;           
             btnClearAll.Click += BtnClearAll_Click;
+            //TouchEvents
+            unlocker.Touch += Unlocker_Touch;
             //If lockscreen no notifications is enabled.
             try
             {
@@ -187,6 +191,9 @@ namespace LiveDisplay
             }
             
         }
+
+
+
         private void BtnClearAll_Click(object sender, EventArgs e)
         {
             NotificationSlave notificationSlave = NotificationSlave.NotificationSlaveInstance();
@@ -194,6 +201,12 @@ namespace LiveDisplay
             v.Visibility = ViewStates.Invisible;
             notificationSlave = null; 
         }
+        private void Reloj_Click(object sender, EventArgs e)
+        {
+            Intent intent = new Intent(AlarmClock.ActionShowAlarms);
+            StartActivity(intent);
+        }
+
         private void Unlocker_Touch(object sender, View.TouchEventArgs e)
         {
             float startPoint = 0;
@@ -217,11 +230,21 @@ namespace LiveDisplay
             }
 
         }
-        private void Reloj_Click(object sender, EventArgs e)
-        {
-            Intent intent = new Intent(AlarmClock.ActionShowAlarms);
-            StartActivity(intent);
-        }
+        
+            //switch (e.Event.Action)
+            //{
+            //    case MotionEventActions.Down:
+            //        x = linearLayout.GetX()- e.Event.RawX;
+            //        break;
+            //    case MotionEventActions.Move:
+            //        linearLayout.Animate().X(e.Event.RawX + x)
+            //            .SetDuration(0)
+            //            .Start();
+                    
+            //        break;
+               
+            //}
+        
         private void UnbindEvents()
         {
             v.Click -= OnNotificationClicked;
@@ -337,6 +360,13 @@ namespace LiveDisplay
             view.SystemUiVisibility = (StatusBarVisibility)newUiOptions;
             Window.AddFlags(WindowManagerFlags.DismissKeyguard);
             Window.AddFlags(WindowManagerFlags.ShowWhenLocked);
+            Bundle b = Intent.Extras;
+            if (b!=null && b.GetInt("wake")==1)
+            {
+                Window.AddFlags(WindowManagerFlags.TurnScreenOn);
+                Console.WriteLine("Added Flag");
+            }
         }
     }
+
 }
