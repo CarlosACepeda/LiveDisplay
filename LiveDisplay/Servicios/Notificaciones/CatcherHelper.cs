@@ -83,6 +83,7 @@ namespace LiveDisplay.Servicios.Notificaciones
                             Thread.Sleep(5000);
                             screenLock.Release();
                             LockScreen();
+
                         });
                         //Start a user configurable timer to Sleep again device;
                         Console.WriteLine("Awake device");
