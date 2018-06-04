@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using System.Threading;
 using Android.App;
+using Android.App.Admin;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
@@ -45,6 +46,7 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             CatcherHelper.statusBarNotifications = statusBarNotifications;
             notificationAdapter = new NotificationAdapter(statusBarNotifications);
+            Console.WriteLine("Bound adapter");
         }
         //If Catcher call this, it means that the notification is part of a Group of notifications and should be Grouped.
         private void GroupNotification()
@@ -54,38 +56,39 @@ namespace LiveDisplay.Servicios.Notificaciones
         }
         public void InsertNotification(StatusBarNotification sbn)
         {
-            bool foundNotification = FindNotification(sbn.Id, sbn.PackageName);
-            //After this fire event.
-            //Check if the Notification is part of a group and if a Notification with that Id exists to Append that Group.
-            //if (Build.VERSION.SdkInt > BuildVersionCodes.N)
-            //{                
-            //    if(sbn.IsGroup==true&& FindNotification(sbn.Id, sbn.PackageName)==true)
-            //    {
-            //        //TODO
-            //        //Should I define a counter to know how many Notifications are part of this Group?
-            //        GroupNotification();
-            //    }
-            //}
-            //For Marshmallow and below: Check if Notification Exists, if true, update it, if not, Insert one.
-            if (foundNotification == true)
+            int indice = GetNotificationPosition(sbn);
+            
+            if (indice>=0)
             {
-                UpdateNotification(sbn);
+                statusBarNotifications.RemoveAt(indice);
+                statusBarNotifications.Add(sbn);
+                notificationAdapter.NotifyItemChanged(indice);
+                Console.WriteLine("Notification Updated");                          
             }
             else
-            {
-                statusBarNotifications.Add(sbn);
-                int position = GetNotificationPosition(sbn.Id, sbn.PackageName);
+            {              
                 try
                 {
-                    notificationAdapter.NotifyItemInserted(position);
+                    statusBarNotifications.Add(sbn);
+                    notificationAdapter.NotifyItemInserted(indice);
+
+                    Console.WriteLine("Notification Inserted");
                     if (ScreenOnOffReceiver.isScreenOn == false)
                     {
-                    Intent lockScreenIntent = new Intent(Application.Context, typeof(LockScreenActivity));
-                        Bundle b = new Bundle();
-                        b.PutInt("wake", 1);
-                    Application.Context.StartActivity(lockScreenIntent);
+                     PowerManager pm = ((PowerManager)Application.Context.GetSystemService(Context.PowerService));
+                    var screenLock = pm.NewWakeLock(WakeLockFlags.ScreenDim | WakeLockFlags.AcquireCausesWakeup, "Turn On Lockscreen");
+                    screenLock.Acquire();
+                        ThreadPool.QueueUserWorkItem(o =>
+                        {
+                            Thread.Sleep(5000);
+                            screenLock.Release();
+                            LockScreen();
+                        });
+                        //Start a user configurable timer to Sleep again device;
+                        Console.WriteLine("Awake device");
                     }
                     
+
                 }
                 catch(Exception ex)
                 {
@@ -102,12 +105,17 @@ namespace LiveDisplay.Servicios.Notificaciones
         /// <param name="whichNotification">Id of the Notification to be Updated.</param>
         private void UpdateNotification(StatusBarNotification sbn)
         {
-            int position = GetNotificationPosition(sbn.Id, sbn.PackageName);
+            int position = GetNotificationPosition(sbn);
             //After this, fire event.
             //Call GroupNotification if needed.
-            statusBarNotifications.RemoveAt(position);
-            statusBarNotifications.Add(sbn);
+            if (position>=0)
+            {
+                statusBarNotifications.RemoveAt(position);
+                statusBarNotifications.Add(sbn);
+            }
+            
             notificationAdapter.NotifyItemChanged(position);
+            Console.WriteLine("NotificationUpdated");
         }
         private void RemoveNotificationFromGroup()
         {
@@ -115,40 +123,76 @@ namespace LiveDisplay.Servicios.Notificaciones
         }
         public void RemoveNotification(StatusBarNotification sbn)
         {
-            int position = GetNotificationPosition(sbn.Id, sbn.PackageName);
-            statusBarNotifications.RemoveAt(position);
-            notificationAdapter.NotifyItemRemoved(position);
+            int position = GetNotificationPosition(sbn);
+            if (position >= 0)
+            {
+                statusBarNotifications.RemoveAt(position);
+                notificationAdapter.NotifyItemRemoved(position);
+            }
+            
+            
+            Console.WriteLine("NotificationRemoved");
         }
         public void CancelAllNotifications()
         {
             notificationAdapter.NotifyDataSetChanged();
         }
 
-        /// <summary>
-        /// Method that finds a Notification within the list of Notifications using an Id and the Package of the app
-        /// that the notification belongs to.
-        /// </summary>
-        /// <param name="which">the id of the Notification to find</param>
-        /// <param name="package">the package(app) that this notification belongs to</param>
-        /// <returns>Returns true if found a Notification, false otherwise</returns>
-        public bool FindNotification(int which, string package)
+        private int GetNotificationPosition(StatusBarNotification sbn)
         {
-            int? index = statusBarNotifications.IndexOf(statusBarNotifications.FirstOrDefault(o => o.Id == which && o.PackageName == package));
-            if (index >0)
+            int index = statusBarNotifications.IndexOf(statusBarNotifications.FirstOrDefault(o => o.Id == sbn.Id && o.PackageName == sbn.PackageName));
+
+            return index;
+        }
+        /// <summary>
+        /// Lock/Turn off the screen TODO: Move to Awake class (returns)
+        /// </summary>
+        private void LockScreen()
+        {
+            PowerManager pm = ((PowerManager)Application.Context.GetSystemService(Context.PowerService));
+            DevicePolicyManager policy;
+            if (Build.VERSION.SdkInt < BuildVersionCodes.KitkatWatch)
             {
-                return true;
+#pragma warning disable CS0618 // El tipo o el miembro están obsoletos
+                if (pm.IsScreenOn == true)
+#pragma warning restore CS0618 // El tipo o el miembro están obsoletos
+                {
+                    policy = (DevicePolicyManager)Application.Context.GetSystemService(Context.DevicePolicyService);
+                    try
+                    {
+                        policy.LockNow();
+                    }
+                    catch (Exception ex)
+                    {
+                        ex.ToString();
+                        Console.WriteLine(ex); 
+                        Toast.MakeText(Application.Context, "Must enable dev admin", ToastLength.Long).Show();
+                        ComponentName admin = new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(AdminReceiver)));
+                        Intent intent = new Intent(DevicePolicyManager.ActionAddDeviceAdmin).PutExtra(DevicePolicyManager.ExtraDeviceAdmin, admin);
+                        Application.Context.StartActivity(intent);
+                    }
+                }
             }
             else
             {
-                return false;
+                if (pm.IsInteractive == true)
+                {
+                    policy = (DevicePolicyManager)Application.Context.GetSystemService(Context.DevicePolicyService);
+                    try
+                    {
+                        policy.LockNow();
+                    }
+                    catch (Exception ex)
+                    {
+                        ex.ToString();
+                        Console.WriteLine(ex);
+                        Toast.MakeText(Application.Context, "Must enable dev admin", ToastLength.Long).Show();
+                        ComponentName admin = new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof( AdminReceiver)));
+                        Intent intent = new Intent(DevicePolicyManager.ActionAddDeviceAdmin).PutExtra(DevicePolicyManager.ExtraDeviceAdmin, admin);
+                        Application.Context.StartActivity(intent);
+                    }
+                }
             }
-            
-        }
-        private int GetNotificationPosition(int which, string package)
-        {
-           int index = statusBarNotifications.IndexOf(statusBarNotifications.FirstOrDefault(o => o.Id == which && o.PackageName == package));
-            
-           return Convert.ToInt32(index);
         }
     }
 }

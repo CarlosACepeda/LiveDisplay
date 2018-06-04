@@ -360,12 +360,6 @@ namespace LiveDisplay
             view.SystemUiVisibility = (StatusBarVisibility)newUiOptions;
             Window.AddFlags(WindowManagerFlags.DismissKeyguard);
             Window.AddFlags(WindowManagerFlags.ShowWhenLocked);
-            Bundle b = Intent.Extras;
-            if (b!=null && b.GetInt("wake")==1)
-            {
-                Window.AddFlags(WindowManagerFlags.TurnScreenOn);
-                Console.WriteLine("Added Flag");
-            }
         }
     }
 

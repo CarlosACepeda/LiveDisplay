@@ -27,7 +27,14 @@ namespace LiveDisplay.Servicios.Notificaciones
         //TODO
         public string GetTitle()
         {
-            return CatcherHelper.statusBarNotifications[position].Notification.Extras.Get("android.title").ToString();
+            try
+            {
+                return CatcherHelper.statusBarNotifications[position].Notification.Extras.Get("android.title").ToString();
+            }
+            catch
+            {
+                return "";
+            }
         }
         public string GetText()
         {
