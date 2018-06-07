@@ -30,6 +30,10 @@ namespace LiveDisplay.BroadcastReceivers
                 //Start hidden in Darkness. :$
                 isScreenOn = false;
                 //Trigger an Action to Start LockScreen when enabled, by default it is.
+                //TODO: Add a timer to Start the lockScreen, the timer gets reset when this Intent is triggered.
+                //Because sometimes I don't want to Unlock the Lockscreen everytime I turn the screen off.
+                //Allowing to the user a more flexible experience. This setting is also configurable
+
                 Intent lockScreenIntent = new Intent(Application.Context, typeof(LockScreenActivity));
                 PendingIntent pendingIntent = PendingIntent.GetActivity(Application.Context, 0, lockScreenIntent, 0);
 

@@ -55,7 +55,7 @@ namespace LiveDisplay.Servicios
 
         public void PostNotification()
         {
-            //Test.
+            //TODO: Change Hardcoded values to parameters.
             Notification.Builder builder = new Notification.Builder(Application.Context);
             builder.SetContentTitle("LiveDisplay");
             builder.SetContentText("This is a test notification");

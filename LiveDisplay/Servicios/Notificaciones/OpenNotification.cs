@@ -17,14 +17,11 @@ namespace LiveDisplay.Servicios.Notificaciones
 {
     class OpenNotification: IDisposable
     {
-        int position;
-
-
+        private int position;
         public OpenNotification(int position)
         { 
             this.position = position;
         }
-        //TODO
         public string GetTitle()
         {
             try
@@ -47,7 +44,6 @@ namespace LiveDisplay.Servicios.Notificaciones
                 return "";
             }
         }
-
         public static void ClickNotification(int position)
         {
             var pendingIntent = CatcherHelper.statusBarNotifications[position].Notification.ContentIntent;
@@ -109,7 +105,17 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
             return null;
         }
-
+        public static bool NotificationHasActionButtons(int position)
+        {
+            if (CatcherHelper.statusBarNotifications[position].Notification.Actions.Count > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
         public void Dispose()
         {
             

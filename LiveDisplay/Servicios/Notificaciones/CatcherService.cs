@@ -1,15 +1,10 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.Hardware;
-using Android.Media;
-using Android.Media.Session;
 using Android.OS;
 using Android.Runtime;
 using Android.Service.Notification;
-using Android.Util;
-using LiveDisplay.Adapters;
 using LiveDisplay.BroadcastReceivers;
-using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Notificaciones;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
 using System;
@@ -20,16 +15,14 @@ using System.Threading;
 namespace LiveDisplay.Servicios
 {
     [Service(Label = "Catcherrr", Permission = "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE")]
-    [IntentFilter(new[] { "android.service.notification.NotificationListenerService"})]
+    [IntentFilter(new[] { "android.service.notification.NotificationListenerService" })]
     internal class Catcher : NotificationListenerService, ISensorEventListener
     {
-        CatcherHelper catcherHelper;
-        List<StatusBarNotification> statusBarNotifications;
-        SensorManager sensorManager;
-        Sensor sensorAccelerometer;
-        ISensorListener sensorListener;
+        private CatcherHelper catcherHelper;
+        private List<StatusBarNotification> statusBarNotifications;
+        private SensorManager sensorManager;
+        private Sensor sensorAccelerometer;
 
-        
         public override IBinder OnBind(Intent intent)
         {
             //Workaround for Kitkat to Retrieve Notifications.
@@ -38,47 +31,50 @@ namespace LiveDisplay.Servicios
                 RetrieveNotificationFromStatusBar();
                 SubscribeToEvents();
                 RegisterReceivers();
+                //TODO: This setting is sensible to user configuration and also the Inactive hours setting.
                 StartWatchingDeviceMovement();
-            }           
+            }
             return base.OnBind(intent);
-
         }
 
-
-
         public override void OnListenerConnected()
-        {            
+        {
             SubscribeToEvents();
             RegisterReceivers();
             RetrieveNotificationFromStatusBar();
+            //TODO:This setting is sensible to user configuration and also the Inactive hours setting.
             StartWatchingDeviceMovement();
         }
+
         public override void OnNotificationPosted(StatusBarNotification sbn)
         {
             catcherHelper.InsertNotification(sbn);
-           
+
             base.OnNotificationPosted(sbn);
         }
+
         public override void OnNotificationRemoved(StatusBarNotification sbn)
         {
             catcherHelper.RemoveNotification(sbn);
             base.OnNotificationRemoved(sbn);
         }
+
         public override void OnListenerDisconnected()
         {
             catcherHelper = null;
             base.OnListenerDisconnected();
         }
+
         public override bool OnUnbind(Intent intent)
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
             {
                 catcherHelper = null;
             }
-                
+
             return base.OnUnbind(intent);
-            
         }
+
         private void RetrieveNotificationFromStatusBar()
         {
             statusBarNotifications = new List<StatusBarNotification>();
@@ -92,6 +88,7 @@ namespace LiveDisplay.Servicios
 
             catcherHelper = new CatcherHelper(statusBarNotifications);
         }
+
         //Subscribe to events by NotificationSlave
         private void SubscribeToEvents()
         {
@@ -125,6 +122,7 @@ namespace LiveDisplay.Servicios
             CancelAllNotifications();
             catcherHelper.CancelAllNotifications();
         }
+
         //Sensor Implementation
         private void StartWatchingDeviceMovement()
         {
@@ -132,6 +130,7 @@ namespace LiveDisplay.Servicios
             sensorAccelerometer = sensorManager.GetDefaultSensor(SensorType.Accelerometer);
             sensorManager.RegisterListener(this, sensorAccelerometer, SensorDelay.Normal);
         }
+
         public void OnAccuracyChanged(Sensor sensor, [GeneratedEnum] SensorStatus accuracy)
         {
             //Nothing yet.
@@ -148,10 +147,16 @@ namespace LiveDisplay.Servicios
                 //TODO:
 
                 //Detect phone on plain surface:
-                //Z axis must have the following value: 
-                //>10 m/s2; 
+                //Z axis must have the following value:
+                //>10 m/s2;
                 //Y axis must be less than 3m/s2 so, the device can be slightly tilted and still being
                 //in a Plain surface.
+
+                //This will be true if above conditions match
+                bool isInAPlainSurface = true;
+                //after, use this value to decide if wake up or not the screen.
+                //We don't want to awake the screen if the device is already vertical for some reason.
+
                 //Put a timer of 3 seconds, and if the device is still with these values,
                 //the phone is left in a plain surface.
                 //New feature? Don't awake phone on new Notification while phone is left alone
@@ -161,16 +166,21 @@ namespace LiveDisplay.Servicios
                 //Z axis must be less than 10 m/s2("Example: 9.5") it means that Z  axis is not being
                 //Accelerated and
                 //Y axis must be greater than 3m/s2
+                if (ScreenOnOffReceiver.isScreenOn == false)//&& isInAPlainSurface=true
+                {
+                    if (e.Values[2] < 9.6f && e.Values[1] > 3)
+                    {
+                        //Awake the phone:
+                        Awake.WakeUpScreen();
+                        Awake.LockScreen();
+                    }
+                }
 
                 //The less Z axis m/s2 value is, and the more Y axis m/s2 value is, the phone more vertically is.
 
                 //Notes:
                 //X axis is not necessary as I don't need to know if the phone is being moved Horizontally.
-
-
-
             }
         }
-        
     }
 }

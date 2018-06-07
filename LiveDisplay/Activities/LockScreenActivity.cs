@@ -66,6 +66,7 @@ namespace LiveDisplay
             base.OnResume();     
             BindEvents();
             AddFlags();
+            StartTimerToLockScreen();
 
             
 
@@ -87,8 +88,10 @@ namespace LiveDisplay
         //OnNotificationItemClick...
         public void OnItemClick(int position)
         {
+            //Define events to communicate with the Notification Widget:
+            //When this method is called, tell NotificationWidget to update itself with data provided
+            //by this method.
 
-            //notificationAction = Acciones.RetrieveNotificationAction(position);
             LinearLayout linearLayout = FindViewById<LinearLayout>(Resource.Id.notificationActions);
 
             OpenNotification notification = new OpenNotification(position);
@@ -100,7 +103,7 @@ namespace LiveDisplay
                 linearLayout.RemoveAllViews();
             linearLayout.WeightSum = 1f;
 
-            if (OpenNotification.RetrieveActionButtons(position) != null)
+            if (OpenNotification.NotificationHasActionButtons(position)==true)
             {
                 foreach (var a in OpenNotification.RetrieveActionButtons(position))
                 {
@@ -114,7 +117,8 @@ namespace LiveDisplay
         }
         public void OnItemLongClick(int position)
         {
-
+            //TODO: When this is called communicate with Notification Widget
+            //and tell it to Unload the data and make itself invisible
                  NotificationSlave slave = NotificationSlave.NotificationSlaveInstance();
                 if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
                 {
@@ -191,9 +195,6 @@ namespace LiveDisplay
             }
             
         }
-
-
-
         private void BtnClearAll_Click(object sender, EventArgs e)
         {
             NotificationSlave notificationSlave = NotificationSlave.NotificationSlaveInstance();
@@ -361,6 +362,15 @@ namespace LiveDisplay
             Window.AddFlags(WindowManagerFlags.DismissKeyguard);
             Window.AddFlags(WindowManagerFlags.ShowWhenLocked);
         }
+        /// <summary>
+        /// This method calls Awake#LockScreen
+        /// </summary>
+        private void StartTimerToLockScreen()
+        {
+            Awake.LockScreen();
+        }
+        //TODO:
+        //If Lockscreen register a click, reset the timer.
     }
 
 }
