@@ -118,6 +118,7 @@ namespace LiveDisplay.Servicios
                     }
                     catch (Exception ex)
                     {
+
                         //Should never happen, this setting is setted up on first launch of the app.
                         //TODO: This doesn't work, fix it man.
                         ex.ToString();
