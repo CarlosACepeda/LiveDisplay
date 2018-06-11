@@ -76,7 +76,7 @@ namespace LiveDisplay.Servicios.Notificaciones
                     if (ScreenOnOffReceiver.isScreenOn == false)
                     {
                         //Awake.WakeUpScreen can be configurable by blacklist;
-                        Awake.WakeUpScreen();                      
+                        Awake.WakeUpScreenOnNewNotification(sbn.PackageName);                     
                         Awake.LockScreen();
                         //Start a user configurable timer to Sleep again device;
                         Console.WriteLine("Awake device");
@@ -121,6 +121,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             if (position >= 0)
             {
                 statusBarNotifications.RemoveAt(position);
+
                 notificationAdapter.NotifyItemRemoved(position);
             }
             

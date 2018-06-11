@@ -73,7 +73,7 @@ namespace LiveDisplay.Servicios.Notificaciones
                     Button anActionButton = new Button(Application.Context)
                     {
                         LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WrapContent, weightfloat),
-
+                        
                         Text = a.Title.ToString(),
 
                     };
@@ -82,7 +82,7 @@ namespace LiveDisplay.Servicios.Notificaciones
                     {
                         try
                         {
-
+                            
                             a.GetRemoteInputs();
                             a.ActionIntent.Send();
                             LockScreenActivity.lockScreenInstance.OnNotificationUpdated();
@@ -97,7 +97,11 @@ namespace LiveDisplay.Servicios.Notificaciones
                     TypedValue typedValue = new TypedValue();
                     Application.Context.Theme.ResolveAttribute(Resource.Attribute.selectableItemBackground, typedValue, true);
                     anActionButton.SetBackgroundResource(typedValue.ResourceId);
-                    anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(IconFactory.ReturnActionIconDrawable(a.Icon,paquete), null, null, null);
+                    if (Build.VERSION.SdkInt > BuildVersionCodes.M)
+                    {
+                        anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(IconFactory.ReturnActionIconDrawable(a.Icon, paquete), null, null, null);
+
+                    }
                     buttons.Add(anActionButton);
 
                 }
@@ -107,7 +111,7 @@ namespace LiveDisplay.Servicios.Notificaciones
         }
         public static bool NotificationHasActionButtons(int position)
         {
-            if (CatcherHelper.statusBarNotifications[position].Notification.Actions.Count > 0)
+            if (CatcherHelper.statusBarNotifications[position].Notification.Actions!=null)
             {
                 return true;
             }

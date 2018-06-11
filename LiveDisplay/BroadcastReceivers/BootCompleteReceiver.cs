@@ -1,5 +1,7 @@
 ﻿using Android.App;
 using Android.Content;
+using LiveDisplay.Misc;
+using LiveDisplay.Servicios;
 
 namespace LiveDisplay.BroadcastReceivers
 {
@@ -7,15 +9,20 @@ namespace LiveDisplay.BroadcastReceivers
     [IntentFilter(new[] { Intent.ActionBootCompleted })]
     public class BootCompleteReceiver : BroadcastReceiver
     {
+        private ConfigurationManager configurationManager = new ConfigurationManager(Application.Context.GetSharedPreferences("livedisplayconfig", FileCreationMode.Private));
+
         public override void OnReceive(Context context, Intent intent)
         {
-            //funciona, no se hace nada más aquí
-            Intent lanzarLockScreen = new Intent(context, typeof(LockScreenActivity));
-            //Tener en cuenta, posible Memory Leak aquí
-            lanzarLockScreen.AddFlags(ActivityFlags.NewTask);
-            PendingIntent pendingIntent = PendingIntent.GetActivity(context, 0, lanzarLockScreen, 0);
+            //Sólo iniciar el LockScreen si el usuario activa el lockScreen sin notificaciones
+            if (configurationManager.RetrieveAValue(ConfigurationParameters.enabledlockscreennonotifications) == true)
+            {
+                //funciona, no se hace nada más aquí
 
-            pendingIntent.Send();
+                Intent lanzarLockScreen = new Intent(context, typeof(LockScreenActivity));
+                lanzarLockScreen.AddFlags(ActivityFlags.NewTask);
+                PendingIntent pendingIntent = PendingIntent.GetActivity(context, 0, lanzarLockScreen, 0);
+                pendingIntent.Send();
+            }
         }
     }
 }

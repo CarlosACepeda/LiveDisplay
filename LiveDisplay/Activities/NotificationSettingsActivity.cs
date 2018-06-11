@@ -17,7 +17,6 @@ namespace LiveDisplay.Activities
         private Android.Support.V7.Widget.Toolbar toolbar;
         private Android.Support.V7.Widget.CardView notificationOptionsPanel;
         private CheckBox cbxEnableNotificationListener;
-        private SwitchCompat swShowStickyNotifications;
         private ConfigurationManager configurationManager;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -60,24 +59,10 @@ namespace LiveDisplay.Activities
             SetSupportActionBar(toolbar);
             notificationOptionsPanel = FindViewById<Android.Support.V7.Widget.CardView>(Resource.Id.notificationOptionsPanel);
             cbxEnableNotificationListener = FindViewById<CheckBox>(Resource.Id.cbxEnableNotificationListener);
-            swShowStickyNotifications = FindViewById<SwitchCompat>(Resource.Id.swShowStickyNotifications);
         }
         private void BindEvents()
         {
             cbxEnableNotificationListener.CheckedChange += CbxEnableNotificationListener_CheckedChange;
-            swShowStickyNotifications.CheckedChange += SwShowStickyNotifications_CheckedChange;
-        }
-
-        private void SwShowStickyNotifications_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
-        {
-            if (swShowStickyNotifications.Checked == true)
-            {
-                configurationManager.SaveAValue(ConfigurationParameters.showstickynotifications, true);
-            }
-            else if (swShowStickyNotifications.Checked == false)
-            {
-                configurationManager.SaveAValue(ConfigurationParameters.showstickynotifications, false);
-            }
         }
 
         private void CbxEnableNotificationListener_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)

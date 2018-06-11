@@ -48,8 +48,6 @@ namespace LiveDisplay
         private void LoadDefaultConfiguration()
         {
             configurationManager.SaveAValue(ConfigurationParameters.istheappconfigured, true);
-            configurationManager.SaveAValue(ConfigurationParameters.enabledLockscreen, true);
-            configurationManager.SaveAValue(ConfigurationParameters.enabledlockscreennonotifications, true);
         }
 
         protected override void OnResume()

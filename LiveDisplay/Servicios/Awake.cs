@@ -1,29 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using Android.App;
+﻿using Android.App;
 using Android.App.Admin;
 using Android.Content;
 using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-using LiveDisplay.BroadcastReceivers;
+using LiveDisplay.Misc;
+using System;
+using System.Threading;
 
 namespace LiveDisplay.Servicios
 {
     /// <summary>
-    /// This class will handle everything related to: Wake up the screen on User movement, 
+    /// This class will handle everything related to: Wake up the screen on User movement,
     /// wake up the screen when user picks the phone out of his pocket.
     /// wake up the screen on New notification posted when screen is turned off.
     /// Turn off the screen programatically providing it with the custom time in which the screen should
     /// remain turned on
-    /// 
+    ///
     /// </summary>
-    class Awake
+    internal class Awake
     {
+        private static ConfigurationManager configurationManager = new ConfigurationManager(Application.Context.GetSharedPreferences("livedisplayconfig", FileCreationMode.Private));
+
         /// <summary>
         /// Method that will wake up the screen when user picks up the phone from a plain surface
         /// ,user picks up the phone out of his pocket and when a new Notification is posted.
@@ -31,20 +27,23 @@ namespace LiveDisplay.Servicios
         /// </summary>
         public static void WakeUpScreen()
         {
-            PowerManager pm = ((PowerManager)Application.Context.GetSystemService(Context.PowerService));
-            var screenLock = pm.NewWakeLock(WakeLockFlags.ScreenDim | WakeLockFlags.AcquireCausesWakeup, "Turn On Lockscreen");
-            screenLock.Acquire();
-            ThreadPool.QueueUserWorkItem(o =>
+            //Only wake up the device if this setting is enabled.
+            if (configurationManager.RetrieveAValue(ConfigurationParameters.turnonusermovement) == true)
             {
-                Thread.Sleep(500);
-                if (screenLock.IsHeld == true)
-                { screenLock.Release();
-                }
-                
-            });
-            pm = null;
-            screenLock = null;
+                PowerManager pm = ((PowerManager)Application.Context.GetSystemService(Context.PowerService));
+                var screenLock = pm.NewWakeLock(WakeLockFlags.ScreenDim | WakeLockFlags.AcquireCausesWakeup, "Turn On Lockscreen");
+                screenLock.Acquire();
+                ThreadPool.QueueUserWorkItem(o =>
+                {
+                    Thread.Sleep(500);
+                    if (screenLock.IsHeld == true)
+                    {
+                        screenLock.Release();
+                    }
+                });
+            }
         }
+
         /// <summary>
         /// This method awakes the screen when a new notification is posted, except when the app that
         /// publishes it, is Blacklisted by the user, so this notification has forbbiden to wake the device
@@ -53,7 +52,20 @@ namespace LiveDisplay.Servicios
         public static void WakeUpScreenOnNewNotification(string appPackage)
         {
             //TODO: Check if App is blacklisted
+
+            PowerManager pm = ((PowerManager)Application.Context.GetSystemService(Context.PowerService));
+            var screenLock = pm.NewWakeLock(WakeLockFlags.ScreenDim | WakeLockFlags.AcquireCausesWakeup, "Turn On Lockscreen");
+            screenLock.Acquire();
+            ThreadPool.QueueUserWorkItem(o =>
+            {
+                Thread.Sleep(500);
+                if (screenLock.IsHeld == true)
+                {
+                    screenLock.Release();
+                }
+            });
         }
+
         /// <summary>
         /// This method will turn the screen off and lock the device at given time.
         /// Called by LockScreen and by Catcher
@@ -88,10 +100,10 @@ namespace LiveDisplay.Servicios
                     {
                         ex.ToString();
                         Console.WriteLine(ex);
-                        Toast.MakeText(Application.Context, "Must enable dev admin", ToastLength.Long).Show();
-                        ComponentName admin = new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(AdminReceiver)));
-                        Intent intent = new Intent(DevicePolicyManager.ActionAddDeviceAdmin).PutExtra(DevicePolicyManager.ExtraDeviceAdmin, admin);
-                        Application.Context.StartActivity(intent);
+                        //Toast.MakeText(Application.Context, "Must enable dev admin", ToastLength.Long).Show();
+                        //ComponentName admin = new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(AdminReceiver)));
+                        //Intent intent = new Intent(DevicePolicyManager.ActionAddDeviceAdmin).PutExtra(DevicePolicyManager.ExtraDeviceAdmin, admin);
+                        //Application.Context.StartActivity(intent);
                     }
                 }
             }
@@ -110,13 +122,15 @@ namespace LiveDisplay.Servicios
                         //TODO: This doesn't work, fix it man.
                         ex.ToString();
                         Console.WriteLine(ex);
-                        Toast.MakeText(Application.Context, "Must enable dev admin", ToastLength.Long).Show();
-                        ComponentName admin = new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(AdminReceiver)));
-                        Intent intent = new Intent(DevicePolicyManager.ActionAddDeviceAdmin).PutExtra(DevicePolicyManager.ExtraDeviceAdmin, admin);
-                        Application.Context.StartActivity(intent);
+                        //Toast.MakeText(Application.Context, "Must enable dev admin", ToastLength.Long).Show();
+                        //ComponentName admin = new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(AdminReceiver)));
+                        //Intent intent = new Intent(DevicePolicyManager.ActionAddDeviceAdmin).PutExtra(DevicePolicyManager.ExtraDeviceAdmin, admin);
+                        //Application.Context.StartActivity(intent);
                     }
                 }
             }
         }
+
+
     }
 }

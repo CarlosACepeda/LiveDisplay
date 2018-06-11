@@ -21,7 +21,6 @@ namespace LiveDisplay.Activities
     [Activity(Label = "@string/ajusteslockscreen")]
     public class LockScreenSettingsActivity : AppCompatActivity
     {
-        private CheckBox cbEnableLockScreen;
         private SwitchCompat swToggleClock;
         private SwitchCompat swToggleSystemIcons;
         private SwitchCompat swUseLockscreenNoNotifications;
@@ -71,7 +70,6 @@ namespace LiveDisplay.Activities
             toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.lockscreenSettingsToolbar);
             SetSupportActionBar(toolbar);
 
-            cbEnableLockScreen = FindViewById<CheckBox>(Resource.Id.cbEnableLockScreen);
             swToggleClock = FindViewById<SwitchCompat>(Resource.Id.swToggleClock);
             swToggleSystemIcons = FindViewById<SwitchCompat>(Resource.Id.swToggleSystemIcons);
             swUseLockscreenNoNotifications = FindViewById<SwitchCompat>(Resource.Id.swUseLockscreenNoNotifications);
@@ -80,7 +78,6 @@ namespace LiveDisplay.Activities
         }
         private void BindClickEvents()
         {
-            cbEnableLockScreen.CheckedChange += CbEnableLockScreen_CheckedChange;
             swToggleClock.CheckedChange += SwToggleClock_CheckedChange;
             swToggleSystemIcons.CheckedChange += SwToggleSystemIcons_CheckedChange;
             swUseLockscreenNoNotifications.CheckedChange += SwUseLockscreenNoNotifications_CheckedChange;
@@ -90,25 +87,11 @@ namespace LiveDisplay.Activities
         }      
         private void UnbindClickEvents()
         {
-            cbEnableLockScreen.CheckedChange -= CbEnableLockScreen_CheckedChange;
             swToggleClock.CheckedChange -= SwToggleClock_CheckedChange;
             swToggleSystemIcons.CheckedChange -= SwToggleSystemIcons_CheckedChange;
             swUseLockscreenNoNotifications.CheckedChange -= SwUseLockscreenNoNotifications_CheckedChange;
             swDynamicWallpaper.CheckedChange -= SwDymamicWallpaper_CheckedChange;
             btnChangeWallpaper.Click -= BtnChangeWallpaper_Click;
-        }
-        private void CbEnableLockScreen_CheckedChange(object sender, EventArgs e)
-        {
-
-            if (cbEnableLockScreen.Checked == true)
-            {
-                configurationManager.SaveAValue("enabledlockscreen?", true);
-            }
-            else if(cbEnableLockScreen.Checked==false)
-            {
-                configurationManager.SaveAValue("enabledlockscreen?", false);
-            }
-            
         }
         private void SwToggleClock_CheckedChange(object sender, EventArgs e)
         {
@@ -163,7 +146,7 @@ namespace LiveDisplay.Activities
         }
         private void RetrieveLockScreenConfiguration()
         {
-            cbEnableLockScreen.Checked = configurationManager.RetrieveAValue(ConfigurationParameters.enabledLockscreen) == true ? true : false;
+            
             swToggleClock.Checked = configurationManager.RetrieveAValue(ConfigurationParameters.hiddenclock) == true ? true : false;
             swToggleSystemIcons.Checked = configurationManager.RetrieveAValue(ConfigurationParameters.hiddensystemicons) == true ? true : false;
             swUseLockscreenNoNotifications.Checked = configurationManager.RetrieveAValue(ConfigurationParameters.enabledlockscreennonotifications) == true ? true : false;

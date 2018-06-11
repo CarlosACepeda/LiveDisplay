@@ -19,11 +19,10 @@ namespace LiveDisplay.Misc
 
         //For LockScreenSettings:
         public static string imagePath = "imagePath";
-        //TODO: Review this:
-        public static string enabledLockscreen = "enabledlockscreen?";
+        //Deleted one string, useless.
         public static string hiddenclock = "hiddenclock?";
         public static string hiddensystemicons = "hiddensystemicons?";
-        //TODO: Review this:
+        //Functional
         public static string enabledlockscreennonotifications = "enabledlockscreennonotifications?";
         public static string dynamicwallpaperenabled = "dynamicwallpaperenabled?";
         //For Notifications Settings :

@@ -3,6 +3,7 @@ using Android.Content;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
 using System;
 
@@ -14,7 +15,7 @@ namespace LiveDisplay.BroadcastReceivers
     public class ScreenOnOffReceiver : BroadcastReceiver
     {
         public static bool isScreenOn=true;
-
+        ConfigurationManager configurationManager = new ConfigurationManager(Application.Context.GetSharedPreferences("livedisplayconfig", FileCreationMode.Private));
         public override void OnReceive(Context context, Intent intent)
         {
             if (intent.Action == Intent.ActionScreenOn)
@@ -29,15 +30,17 @@ namespace LiveDisplay.BroadcastReceivers
             {
                 //Start hidden in Darkness. :$
                 isScreenOn = false;
-                //Trigger an Action to Start LockScreen when enabled, by default it is.
                 //TODO: Add a timer to Start the lockScreen, the timer gets reset when this Intent is triggered.
                 //Because sometimes I don't want to Unlock the Lockscreen everytime I turn the screen off.
                 //Allowing to the user a more flexible experience. This setting is also configurable
-
+                if (configurationManager.RetrieveAValue(ConfigurationParameters.enabledlockscreennonotifications) == true)
+                {
                 Intent lockScreenIntent = new Intent(Application.Context, typeof(LockScreenActivity));
                 PendingIntent pendingIntent = PendingIntent.GetActivity(Application.Context, 0, lockScreenIntent, 0);
 
                 pendingIntent.Send();
+                }
+                
             }
         }
     }

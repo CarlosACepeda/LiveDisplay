@@ -44,9 +44,6 @@ namespace LiveDisplay
         private int position;
         private ImageView unlocker;
         private Button btnClearAll;
-        //Tiny field used to indicate if Flag.ScreenTurnOn should be applied. (Usually when a new notification is posted)
-        //(BEcause Intent for some reason is not Working) by default is false;
-        public static bool turnScreenOn = false;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -139,7 +136,9 @@ namespace LiveDisplay
         {
             try
             {
-                OpenNotification.ClickNotification(position);
+                RunOnUiThread(() =>
+                OpenNotification.ClickNotification(position)
+                );
             }
             catch
             {
@@ -294,8 +293,7 @@ namespace LiveDisplay
         {
             //Load configurations based on User configs.
             ConfigurationManager configurationManager = new ConfigurationManager(GetSharedPreferences("livedisplayconfig", FileCreationMode.Private));
-            if (configurationManager.RetrieveAValue(ConfigurationParameters.enabledLockscreen) == true)
-            {
+            //Deleted previous if line, LockScreen should always be Enabled.
                 if (configurationManager.RetrieveAValue(ConfigurationParameters.hiddenclock) == true)
                 {
                     //Hide the clock
@@ -305,11 +303,7 @@ namespace LiveDisplay
                 {
                     //Hide system icons, when available, FIX ME.
                 }
-                if (configurationManager.RetrieveAValue(ConfigurationParameters.enabledlockscreennonotifications) == false)
-                {
-                    //Finish this activity because user disabled this option Should never happen normally.
-                    RunOnUiThread(() => Finish());                    
-                }               
+                               
                 if (configurationManager.RetrieveAValue(ConfigurationParameters.dynamicwallpaperenabled) == true)
                 {
                     //Allow the app to show Album art.
@@ -339,12 +333,9 @@ namespace LiveDisplay
                        
                     });
                 }
-            }
-            else //SHould never happen normally.
-            {
-                Finish();
-            }
         }
+
+        
         private void AddFlags()
         {
             View view = Window.DecorView;
