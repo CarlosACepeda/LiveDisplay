@@ -2,10 +2,22 @@
 
 This Application shows the list of current notifications on Screen, remove them, with various configurable options.
 
+## Features
+
+* To be added, I'm sleepy. lol.
+
+### Screenshots
+* Lockscreen
+<img src="https://i.imgur.com/or1E4B1.png" width="350">
+
+* Settings
+<img src="https://i.imgur.com/6jGHFaF.png" width="350">
+
+
+
 ### Build Status: App Center
 
 [![Build status](https://build.appcenter.ms/v0.1/apps/35ff8c85-fde9-4e45-9e27-834a716fce2b/branches/master/badge)](https://appcenter.ms)
-
 
 
 ## Built With
