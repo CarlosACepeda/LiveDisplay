@@ -2,6 +2,7 @@
 using Android.Content;
 using Android.Hardware;
 using Android.Media;
+using Android.Media.Session;
 using Android.OS;
 using Android.Runtime;
 using Android.Service.Notification;
@@ -15,10 +16,17 @@ using System.Threading;
 
 namespace LiveDisplay.Servicios
 {
-    [Service(Label = "Catcherf", Permission = "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE")]
+    [Service(Label = "Catcher", Permission = "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE")]
     [IntentFilter(new[] { "android.service.notification.NotificationListenerService" })]
     internal class Catcher : NotificationListenerService, ISensorEventListener, RemoteController.IOnClientUpdateListener
     {
+        //Manipular las sesiones-
+        private MediaSessionManager mediaSessionManager;
+        //el controlador actual de media.
+        private MediaController mediaController;
+        //Al parecer hay varios controladores de Multimedia y toca recuperarlos.
+        private List<MediaController> mediaControllers;
+
         private RemoteController remoteController;
         private CatcherHelper catcherHelper;
         private List<StatusBarNotification> statusBarNotifications;
@@ -28,11 +36,7 @@ namespace LiveDisplay.Servicios
 
         public override IBinder OnBind(Intent intent)
         {
-            //New remote controller.
-
-            remoteController = new RemoteController(Application.Context, this);
-            var audioService= (AudioManager)Application.Context.GetSystemService(AudioService);
-            audioService.RegisterRemoteController(remoteController);
+            
 
 
             //Workaround for Kitkat to Retrieve Notifications.
@@ -45,17 +49,33 @@ namespace LiveDisplay.Servicios
                     Thread.Sleep(1000);
                     RetrieveNotificationFromStatusBar();
                 });
-                
+
                 SubscribeToEvents();
                 RegisterReceivers();
                 //TODO: This setting is sensible to user configuration and also the Inactive hours setting.
                 StartWatchingDeviceMovement();
+                //New remote controller for Kitkat
+
+                remoteController = new RemoteController(Application.Context, this);
+                var audioService = (AudioManager)Application.Context.GetSystemService(AudioService);
+                audioService.RegisterRemoteController(remoteController);
             }
             return base.OnBind(intent);
         }
 
         public override void OnListenerConnected()
         {
+            //RemoteController Lollipop and Beyond Implementation
+            mediaSessionManager = (MediaSessionManager)GetSystemService(Context.MediaSessionService);
+            mediaControllers = mediaSessionManager.GetActiveSessions(new ComponentName(this, Java.Lang.Class.FromType(typeof(Catcher)))).ToList();
+            if (mediaControllers != null)
+            {
+                mediaController = mediaControllers[0];
+                mediaController.RegisterCallback(new MusicController());
+                Console.WriteLine("RemoteController registered Lollipop");
+                
+            }
+
             SubscribeToEvents();
             RegisterReceivers();
             RetrieveNotificationFromStatusBar();
@@ -155,7 +175,7 @@ namespace LiveDisplay.Servicios
 
         public void OnSensorChanged(SensorEvent e)
         {
-            
+
             if (e.Sensor.Type == SensorType.Accelerometer)
             {
                 //Console.WriteLine("X= " + e.Values[0]);//Aceleración en el eje X- Gx;
@@ -173,9 +193,9 @@ namespace LiveDisplay.Servicios
                 //This will be true if above conditions match
                 if (e.Values[2] > 10 && e.Values[1] < 3)
                 {
-                   
+
                 }
-                
+
                 //after, use this value to decide if wake up or not the screen.
                 //We don't want to awake the screen if the device is already vertical for some reason.
 
@@ -231,5 +251,11 @@ namespace LiveDisplay.Servicios
         {
             Console.WriteLine("OnClientTransportControlUpdate called");
         }
+
+        //MEdia Controller for Lollipop and Beyond.
+        private void ControlMediaLollipop()
+        {
+           
+        } 
     }
 }
