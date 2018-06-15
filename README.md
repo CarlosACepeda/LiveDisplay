@@ -6,9 +6,13 @@ This Application shows the list of current notifications on Screen, remove them,
 
 * Manage the Notifications directly from the LockScreen - *Functional*
 
+* Block the notifications from the apps you choose. *WIP*
+
+* Configure which apps should be allowed to wake up the device when a new notification from that app is posted. *To be added*
+
 * Control music currently playing directly from the Lockscreen - *WIP.*
 
-* Automatic device turn-on screen when a new notification is posted or when the user picks the phone up, or when you pick your phone out of your pocket, you can change this behavior. -*Parcially functional*, there are bugs.
+* Automatic device turn-on screen when a new notification is posted or when the user picks the phone up, or when you pick your phone out of your pocket, you can change this behavior. -*Partially functional*, there are bugs.
 
 * Turning on the Screen automatically is disabled at night, or at the time you want, it's configurable, it helps to save battery. -*To be added*
 
