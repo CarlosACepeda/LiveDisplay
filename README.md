@@ -4,7 +4,16 @@ This Application shows the list of current notifications on Screen, remove them,
 
 ## Features
 
-* To be added, I'm sleepy. lol.
+* Manage the Notifications directly from the LockScreen - *Functional*
+
+* Control music currently playing directly from the Lockscreen - *WIP.*
+
+* Automatic device turn-on screen when a new notification is posted or when the user picks the phone up, or when you pick your phone out of your pocket, you can change this behavior. -*Parcially functional*, there are bugs.
+
+* Turning on the Screen automatically is disabled at night, or at the time you want, it's configurable, it helps to save battery. -*To be added*
+
+* LockScreen shortcuts, by default, the camera is launched, you can change it. - *WIP*
+
 
 ### Screenshots
 * Lockscreen
