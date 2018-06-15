@@ -56,6 +56,7 @@ namespace LiveDisplay.Servicios
         public void PostNotification()
         {
             //TODO: Change Hardcoded values to parameters.
+            //USe SetPriority/SetImportance on Different Android devices.
             Notification.Builder builder = new Notification.Builder(Application.Context);
             builder.SetContentTitle("LiveDisplay");
             builder.SetContentText("This is a test notification");

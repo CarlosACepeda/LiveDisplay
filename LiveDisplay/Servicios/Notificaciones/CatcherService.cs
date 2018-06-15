@@ -18,7 +18,7 @@ namespace LiveDisplay.Servicios
 {
     [Service(Label = "Catcher", Permission = "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE")]
     [IntentFilter(new[] { "android.service.notification.NotificationListenerService" })]
-    internal class Catcher : NotificationListenerService, ISensorEventListener, RemoteController.IOnClientUpdateListener
+    internal class Catcher : NotificationListenerService, ISensorEventListener
     {
         //Manipular las sesiones-
         private MediaSessionManager mediaSessionManager;
@@ -27,7 +27,9 @@ namespace LiveDisplay.Servicios
         //Al parecer hay varios controladores de Multimedia y toca recuperarlos.
         private List<MediaController> mediaControllers;
 
+#pragma warning disable CS0618 // El tipo o el miembro están obsoletos
         private RemoteController remoteController;
+#pragma warning restore CS0618 // El tipo o el miembro están obsoletos
         private CatcherHelper catcherHelper;
         private List<StatusBarNotification> statusBarNotifications;
         private SensorManager sensorManager;
@@ -37,7 +39,7 @@ namespace LiveDisplay.Servicios
         public override IBinder OnBind(Intent intent)
         {
             
-
+            
 
             //Workaround for Kitkat to Retrieve Notifications.
             if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
@@ -56,9 +58,13 @@ namespace LiveDisplay.Servicios
                 StartWatchingDeviceMovement();
                 //New remote controller for Kitkat
 
-                remoteController = new RemoteController(Application.Context, this);
+#pragma warning disable CS0618 // El tipo o el miembro están obsoletos
+                remoteController = new RemoteController(Application.Context, new MusicControllerKitkat());
+#pragma warning restore CS0618 // El tipo o el miembro están obsoletos
                 var audioService = (AudioManager)Application.Context.GetSystemService(AudioService);
+#pragma warning disable CS0618 // El tipo o el miembro están obsoletos
                 audioService.RegisterRemoteController(remoteController);
+#pragma warning restore CS0618 // El tipo o el miembro están obsoletos
             }
             return base.OnBind(intent);
         }
@@ -67,11 +73,20 @@ namespace LiveDisplay.Servicios
         {
             //RemoteController Lollipop and Beyond Implementation
             mediaSessionManager = (MediaSessionManager)GetSystemService(Context.MediaSessionService);
+            //Listener para Sesiones
+            mediaSessionManager.AddOnActiveSessionsChangedListener(new ActiveMediaSessionsListener(), new ComponentName(this, Java.Lang.Class.FromType(typeof(Catcher))));
+            //Obtener las sesiones
             mediaControllers = mediaSessionManager.GetActiveSessions(new ComponentName(this, Java.Lang.Class.FromType(typeof(Catcher)))).ToList();
-            if (mediaControllers != null)
+            //Si hay alguna, usala, si no,nada.
+            //TODO: Move it to ActiveMediaSessionsListener
+
+            if (mediaControllers != null&& mediaControllers.Count>0)
             {
                 mediaController = mediaControllers[0];
                 mediaController.RegisterCallback(new MusicController());
+                //To control current media playing
+                var mediaTransportControls = mediaController.GetTransportControls();
+                Jukebox jukebox = Jukebox.JukeboxInstance(mediaTransportControls);
                 Console.WriteLine("RemoteController registered Lollipop");
                 
             }
@@ -226,36 +241,8 @@ namespace LiveDisplay.Servicios
         }
 
 
-        //RemoteController Implementation, Kitkat
-        public void OnClientChange(bool clearing)
-        {
-            Console.WriteLine("OnClientChange called");
-        }
-
-        public void OnClientMetadataUpdate(RemoteController.MetadataEditor metadataEditor)
-        {
-            Console.WriteLine("OnClientMetadataUpdate called");
-        }
-
-        public void OnClientPlaybackStateUpdateSimple([GeneratedEnum] RemoteControlPlayState stateSimple)
-        {
-            Console.WriteLine("OnClientPlaybackStateUpdateSimple called");
-        }
-
-        public void OnClientPlaybackStateUpdate([GeneratedEnum] RemoteControlPlayState state, long stateChangeTimeMs, long currentPosMs, float speed)
-        {
-            Console.WriteLine("OnClientPlaybackStateUpdate called");
-        }
-
-        public void OnClientTransportControlUpdate([GeneratedEnum] RemoteControlFlags transportControlFlags)
-        {
-            Console.WriteLine("OnClientTransportControlUpdate called");
-        }
-
+        
+        
         //MEdia Controller for Lollipop and Beyond.
-        private void ControlMediaLollipop()
-        {
-           
-        } 
     }
 }

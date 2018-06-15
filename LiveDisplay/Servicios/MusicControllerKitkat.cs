@@ -1,0 +1,53 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+using Android.App;
+using Android.Content;
+using Android.Media;
+using Android.OS;
+using Android.Runtime;
+using Android.Views;
+using Android.Widget;
+
+namespace LiveDisplay.Servicios
+{
+    /// <summary>
+    /// This class receives Callbacks with Media metadata and other information about media playing.
+    /// This class is registered in Catcher to receive callbacks 
+    /// For Kitkat only.
+    /// </summary>
+#pragma warning disable CS0618 // El tipo o el miembro están obsoletos
+    class MusicControllerKitkat :Java.Lang.Object, RemoteController.IOnClientUpdateListener
+#pragma warning restore CS0618 // El tipo o el miembro están obsoletos
+    {
+        public void OnClientChange(bool clearing)
+        {
+            Console.WriteLine("OnClientChange called");
+        }
+
+#pragma warning disable CS0618 // El tipo o el miembro están obsoletos
+        public void OnClientMetadataUpdate(RemoteController.MetadataEditor metadataEditor)
+#pragma warning restore CS0618 // El tipo o el miembro están obsoletos
+        {
+            Console.WriteLine("OnClientMetadataUpdate called");
+        }
+
+        public void OnClientPlaybackStateUpdateSimple([GeneratedEnum] RemoteControlPlayState stateSimple)
+        {
+            Console.WriteLine("OnClientPlaybackStateUpdateSimple called");
+        }
+
+        public void OnClientPlaybackStateUpdate([GeneratedEnum] RemoteControlPlayState state, long stateChangeTimeMs, long currentPosMs, float speed)
+        {
+            Console.WriteLine("OnClientPlaybackStateUpdate called");
+        }
+
+        public void OnClientTransportControlUpdate([GeneratedEnum] RemoteControlFlags transportControlFlags)
+        {
+            Console.WriteLine("OnClientTransportControlUpdate called");
+        }
+
+    }
+}
