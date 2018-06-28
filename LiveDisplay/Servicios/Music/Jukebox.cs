@@ -10,7 +10,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 
-namespace LiveDisplay.Servicios
+namespace LiveDisplay.Servicios.Music
 {
     /// <summary>
     /// Nice name, isn't it?, this class is for controlling the Multimedia that is currently playing

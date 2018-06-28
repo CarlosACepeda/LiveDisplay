@@ -1963,6 +1963,9 @@ namespace LiveDisplay
 		public partial class Id
 		{
 			
+			// aapt resource value: 0x7f080060
+			public const int MusicNotificationPlaceholder = 2131230816;
+			
 			// aapt resource value: 0x7f080061
 			public const int NotificationListRecyclerView = 2131230817;
 			
@@ -2059,17 +2062,17 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f08005a
 			public const int btnLockScreen = 2131230810;
 			
-			// aapt resource value: 0x7f08005b
-			public const int btnNotification = 2131230811;
-			
-			// aapt resource value: 0x7f080071
-			public const int button1 = 2131230833;
+			// aapt resource value: 0x7f080073
+			public const int btnMediaNext = 2131230835;
 			
 			// aapt resource value: 0x7f080072
-			public const int button2 = 2131230834;
+			public const int btnMediaPlayPlause = 2131230834;
 			
-			// aapt resource value: 0x7f080073
-			public const int button3 = 2131230835;
+			// aapt resource value: 0x7f080071
+			public const int btnMediaPrevious = 2131230833;
+			
+			// aapt resource value: 0x7f08005b
+			public const int btnNotification = 2131230811;
 			
 			// aapt resource value: 0x7f08002f
 			public const int buttonPanel = 2131230767;
@@ -2128,9 +2131,6 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f08003e
 			public const int expanded_menu = 2131230782;
 			
-			// aapt resource value: 0x7f080060
-			public const int fragment1 = 2131230816;
-			
 			// aapt resource value: 0x7f080005
 			public const int home = 2131230725;
 			
@@ -2167,9 +2167,6 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f080088
 			public const int line3 = 2131230856;
 			
-			// aapt resource value: 0x7f080070
-			public const int linearLayout1 = 2131230832;
-			
 			// aapt resource value: 0x7f080098
 			public const int list = 2131230872;
 			
@@ -2187,6 +2184,9 @@ namespace LiveDisplay
 			
 			// aapt resource value: 0x7f080059
 			public const int mainToolbar = 2131230809;
+			
+			// aapt resource value: 0x7f080070
+			public const int mediaControls = 2131230832;
 			
 			// aapt resource value: 0x7f08007a
 			public const int media_actions = 2131230842;

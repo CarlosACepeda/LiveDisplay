@@ -11,7 +11,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 
-namespace LiveDisplay.Servicios
+namespace LiveDisplay.Servicios.Music
 {
     /// <summary>
     /// This class receives Callbacks with Media metadata and other information about media playing.

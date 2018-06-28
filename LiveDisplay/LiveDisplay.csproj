@@ -160,16 +160,18 @@
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Servicios\Awake.cs" />
-    <Compile Include="Servicios\Jukebox.cs" />
-    <Compile Include="Servicios\JukeboxKitkat.cs" />
-    <Compile Include="Servicios\MusicControllerKitkat.cs" />
-    <Compile Include="Servicios\Notificaciones\Acciones.cs" />
-    <Compile Include="Servicios\Notificaciones\ActiveMediaSessionsListener.cs" />
+    <Compile Include="Servicios\Music\Jukebox.cs" />
+    <Compile Include="Servicios\Music\JukeboxKitkat.cs" />
+    <Compile Include="Servicios\Music\MediaEventArgs\MediaMetadataChangedEventArgs.cs" />
+    <Compile Include="Servicios\Music\MediaEventArgs\MediaPlaybackStateChangedEventArgs.cs" />
+    <Compile Include="Servicios\Music\MusicControllerKitkat.cs" />
+    <Compile Include="Servicios\Music\ActiveMediaSessionsListener.cs" />
+    <Compile Include="Servicios\Music\OpenSong.cs" />
     <Compile Include="Servicios\Notificaciones\CatcherHelper.cs" />
     <Compile Include="Servicios\Notificaciones\CatcherService.cs" />
     <Compile Include="Servicios\ConfigurationManager.cs" />
-    <Compile Include="Servicios\MusicController.cs" />
-    <Compile Include="Servicios\Notificaciones\Contents.cs" />
+    <Compile Include="Servicios\Music\MusicController.cs" />
+    <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationItemClickedEventArgs.cs" />
     <Compile Include="Servicios\Notificaciones\OpenNotification.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationCancelledEventArgsKitkat.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationCancelledEventArgsLollipop.cs" />
@@ -213,9 +215,7 @@
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Interfaces\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <AndroidResource Include="Resources\values-es\Strings.xml">
       <SubType>Designer</SubType>

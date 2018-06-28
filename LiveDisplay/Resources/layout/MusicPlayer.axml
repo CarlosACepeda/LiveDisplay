@@ -22,24 +22,24 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/linearLayout1">
+        android:id="@+id/mediaControls">
         <Button
             android:drawableTop="@drawable/ic_skip_previous_white_24dp"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:id="@+id/button1"
+            android:id="@+id/btnMediaPrevious"
             android:background="@android:color/transparent" />
         <Button
             android:drawableTop="@drawable/ic_play_arrow_white_24dp"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:id="@+id/button2"
+            android:id="@+id/btnMediaPlayPlause"
             android:background="@android:color/transparent" />
         <Button
             android:drawableTop="@drawable/ic_skip_next_white_24dp"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:id="@+id/button3"
+            android:id="@+id/btnMediaNext"
             android:background="@android:color/transparent" />
     </LinearLayout>
 </LinearLayout>

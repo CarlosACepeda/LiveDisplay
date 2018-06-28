@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:selectableItemBackground"
-    android:visibility="invisible">
+    android:visibility="visible">
     <TextView
         android:text=" "
         android:fontFamily="sans-serif-condensed"
@@ -24,7 +24,6 @@
         android:minLines="0" />
     <LinearLayout
         android:id="@+id/notificationActions"
-        
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

@@ -42,11 +42,10 @@
             a:minWidth="25px"
             a:minHeight="25px"
             a:gravity="center">
-            <fragment
-                a:name="LiveDisplay.Fragments.NotificationFragment"
+            <FrameLayout
                 a:layout_width="match_parent"
                 a:layout_height="wrap_content"
-                a:id="@+id/fragment1" />
+                a:id="@+id/MusicNotificationPlaceholder" />
         </LinearLayout>
         <LinearLayout
             a:orientation="vertical"

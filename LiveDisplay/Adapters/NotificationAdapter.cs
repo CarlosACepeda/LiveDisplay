@@ -43,6 +43,7 @@ namespace LiveDisplay.Adapters
             View itemView = layoutInflater.Inflate(Resource.Layout.NotificationItemRow, parent, false);
             return new NotificationAdapterViewHolder(itemView);
         }
+        
     }
 
     //La siguiente clase simplemente guarda referencias a las vistas de la fila, para evitar hacer llamadas a FindViewById cada vez, no se hace nada más aquí
@@ -61,6 +62,7 @@ namespace LiveDisplay.Adapters
             itemView.LongClick += ItemView_LongClick;
         }
 
+        //TODO: Invoke these events on the Fragment? Don't use activity for this callbacks?
         private void ItemView_LongClick(object sender, View.LongClickEventArgs e)
         {
             new ItemOnLongClickListener(LockScreenActivity.lockScreenInstance.OnItemLongClick).Invoke(LayoutPosition);

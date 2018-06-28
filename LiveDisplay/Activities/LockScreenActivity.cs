@@ -13,8 +13,10 @@ using Android.Widget;
 using Java.Util;
 using LiveDisplay.BroadcastReceivers;
 using LiveDisplay.Factories;
+using LiveDisplay.Fragments;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
+using LiveDisplay.Servicios.Music;
 using LiveDisplay.Servicios.Notificaciones;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
 using System;
@@ -24,14 +26,13 @@ using System.Threading;
 
 namespace LiveDisplay
 {
-    [Activity(Label = "LockScreen", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, LaunchMode = Android.Content.PM.LaunchMode.SingleTop)]
+    [Activity(Label = "LockScreen", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, LaunchMode = Android.Content.PM.LaunchMode.SingleTop, ExcludeFromRecents = true)]
     public class LockScreenActivity : Activity
     {
         public static LockScreenActivity lockScreenInstance;
         private WallpaperManager wallpaperManager = null;
         private Drawable papelTapiz;
         private LinearLayout linearLayout;
-        private View v;
         private RecyclerView recycler;
         private RecyclerView.LayoutManager layoutManager;
         private BackgroundFactory backgroundFactory;
@@ -44,6 +45,8 @@ namespace LiveDisplay
         private int position;
         private ImageView unlocker;
         private Button btnClearAll;
+        private Fragment notificationFragment;
+        public event EventHandler<NotificationItemClickedEventArgs> NotificationItemClicked;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -52,7 +55,8 @@ namespace LiveDisplay
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.LockScreen);
             BindViews();
-            ThreadPool.QueueUserWorkItem(o=>
+            BindMediaControllerEvents();
+            ThreadPool.QueueUserWorkItem(o =>
             InicializarValores());
             //<Start is sensible to configuration LockScreen Settings>
             ThreadPool.QueueUserWorkItem(o => LoadConfiguration());
@@ -60,19 +64,20 @@ namespace LiveDisplay
 
         protected override void OnResume()
         {
-            base.OnResume();     
+            base.OnResume();
             BindEvents();
             AddFlags();
             StartTimerToLockScreen();
-
-            
-
+            CheckIfMusicIsPlaying();
         }
+
+        
+
         protected override void OnPause()
         {
             base.OnPause();
-            UnbindEvents();            
-     
+            UnbindEvents();
+
         }
         protected override void OnDestroy()
         {
@@ -82,89 +87,68 @@ namespace LiveDisplay
         }
 
         //Los siguientes 2 métodos son Callbacks desde el Adaptador del RecyclerView
-        //OnNotificationItemClick...
         public void OnItemClick(int position)
         {
-            //Define events to communicate with the Notification Widget:
-            //When this method is called, tell NotificationWidget to update itself with data provided
-            //by this method.
-
-            LinearLayout linearLayout = FindViewById<LinearLayout>(Resource.Id.notificationActions);
-
-            OpenNotification notification = new OpenNotification(position);
+            //TODO: Dont call this if the Music is playing
+            OnNotificationItemClicked(position);
             
-                tvTitulo.Text = notification.GetTitle();
-                tvTexto.Text = notification.GetText();
-            
-
-                linearLayout.RemoveAllViews();
-            linearLayout.WeightSum = 1f;
-
-            if (OpenNotification.NotificationHasActionButtons(position)==true)
-            {
-                foreach (var a in OpenNotification.RetrieveActionButtons(position))
-                {
-                    linearLayout.AddView(a);
-                }
-            }
-            //actualizar.
-            this.position = position;
-            v.Visibility = ViewStates.Visible;
-            notification = null;
         }
+
+        private void OnNotificationItemClicked(int position)
+        {
+            NotificationItemClicked?.Invoke(this, new NotificationItemClickedEventArgs
+            {
+                Position = position
+            });
+        }
+
         public void OnItemLongClick(int position)
         {
             //TODO: When this is called communicate with Notification Widget
             //and tell it to Unload the data and make itself invisible
-                 NotificationSlave slave = NotificationSlave.NotificationSlaveInstance();
-                if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
-                {
-                    int notiId = CatcherHelper.statusBarNotifications[position].Id;
-                    string notiTag = CatcherHelper.statusBarNotifications[position].Tag;
-                    string notiPack = CatcherHelper.statusBarNotifications[position].PackageName;
-                    slave.CancelNotification(notiPack, notiTag, notiId);
-                    v.Visibility = ViewStates.Invisible;
-                }
-                else
-                {
-                    slave.CancelNotification(CatcherHelper.statusBarNotifications[position].Key);
-                    v.Visibility = ViewStates.Invisible;
-                }
-            
-        }
-        private void OnNotificationClicked(object sender, EventArgs e)
-        {
-            try
+            NotificationSlave slave = NotificationSlave.NotificationSlaveInstance();
+            if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
             {
-                RunOnUiThread(() =>
-                OpenNotification.ClickNotification(position)
-                );
+                int notiId = CatcherHelper.statusBarNotifications[position].Id;
+                string notiTag = CatcherHelper.statusBarNotifications[position].Tag;
+                string notiPack = CatcherHelper.statusBarNotifications[position].PackageName;
+                slave.CancelNotification(notiPack, notiTag, notiId);
+                //TODO: Tell the Fragment to unload the data instead
+                //v.Visibility = ViewStates.Invisible;
             }
-            catch
+            else
             {
-                Log.Wtf("OnNotificationClicked", "Metodo falla porque no existe una notificacion con esta acción");
+                slave.CancelNotification(CatcherHelper.statusBarNotifications[position].Key);
+                //TODO: Tell the Fragment to unload the data instead
+                //v.Visibility = ViewStates.Invisible;
+              
             }
-            v.Visibility = ViewStates.Invisible;
+
         }
-        //Replace with an Event in Acciones.
+        
         //Deprecated.
         public void OnNotificationUpdated()
         {
+            //TODO: Make a Event listener to Update the information instead of Clicking the Item again
+
             OnItemClick(position);
         }
         private void BindViews()
         {
-            
+
             recycler = FindViewById<RecyclerView>(Resource.Id.NotificationListRecyclerView);
+            //TODO: Move to Fragment
             tvTitulo = (TextView)FindViewById(Resource.Id.tvTitulo);
             tvTexto = (TextView)FindViewById(Resource.Id.tvTexto);
-            v = FindViewById<View>(Resource.Id.fragment1);
             tvFecha = (TextView)FindViewById(Resource.Id.txtFechaLock);
             reloj = FindViewById<LinearLayout>(Resource.Id.clockLock);
             unlocker = FindViewById<ImageView>(Resource.Id.unlocker);
             btnClearAll = FindViewById<Button>(Resource.Id.btnClearAllNotifications);
             linearLayout = FindViewById<LinearLayout>(Resource.Id.contenedorPrincipal);
+            LoadNotificationFragment();
         }
+
+        
         private void UnbindViews()
         {
             linearLayout = FindViewById<LinearLayout>(Resource.Id.contenedorPrincipal);
@@ -180,25 +164,44 @@ namespace LiveDisplay
         private void BindEvents()
         {
             //Click events
-            v.Click += OnNotificationClicked;
-            reloj.Click += Reloj_Click;           
+            //TODO: Move to Fragment:
+            //v.Click += OnNotificationClicked;
+            reloj.Click += Reloj_Click;
             btnClearAll.Click += BtnClearAll_Click;
             //TouchEvents
             unlocker.Touch += Unlocker_Touch;
-            //If lockscreen no notifications is enabled.
-            try
-            {
-                //Here it goes CatcherHelper Events
-            }
-            catch {
-            }
             
+
         }
+        private void BindMediaControllerEvents()
+        {
+            ActiveMediaSessionsListener.MediaSessionStarted += MusicController_MediaSessionStarted;
+            ActiveMediaSessionsListener.MediaSessionStopped += MusicController_MediaSessionStopped;
+            Console.WriteLine("Eventos enlazados");
+        }
+        private void MusicController_MediaSessionStarted(object sender, EventArgs e)
+        {
+            StartMusicController();
+            if (recycler != null)
+            {
+                recycler.Visibility = ViewStates.Invisible;
+            }
+        }
+        private void MusicController_MediaSessionStopped(object sender, EventArgs e)
+        {
+            StopMusicController();
+            if (recycler != null)
+            {
+                recycler.Visibility = ViewStates.Visible;
+            }
+        }
+       
         private void BtnClearAll_Click(object sender, EventArgs e)
         {
             NotificationSlave notificationSlave = NotificationSlave.NotificationSlaveInstance();
             notificationSlave.CancelAll();
-            v.Visibility = ViewStates.Invisible;
+            //TODO:Move to fragment:
+            //v.Visibility = ViewStates.Invisible;
             notificationSlave = null; 
         }
         private void Reloj_Click(object sender, EventArgs e)
@@ -247,7 +250,8 @@ namespace LiveDisplay
         
         private void UnbindEvents()
         {
-            v.Click -= OnNotificationClicked;
+            //TODO: Move to Fragment
+            //v.Click -= OnNotificationClicked;
             reloj.Click -= Reloj_Click;
             unlocker.Touch -= Unlocker_Touch;
             btnClearAll.Click -= BtnClearAll_Click;
@@ -270,25 +274,8 @@ namespace LiveDisplay
             });
             
             
-            
-
-            //DodgeNavigationBar();
-            
         }       
-        private void DodgeNavigationBar()
-        {
-            //Deprecated.
-            int idNavigationBar=
-                Resources.GetIdentifier("config_showNavigationBar", "bool", "android");
-            bool hasNavigationBar =
-                Resources.GetBoolean(idNavigationBar);
-            int idNavigationBarHeight=
-            Resources.GetIdentifier("navigation_bar_height", "dimen", "android");
-            if (idNavigationBarHeight > 0 && hasNavigationBar==true)
-            {
-                RunOnUiThread(()=>unlocker.SetPadding(0, 0, 0, Resources.GetDimensionPixelSize(idNavigationBarHeight)));
-            }
-        }
+       
         private void LoadConfiguration()
         {
             //Load configurations based on User configs.
@@ -334,8 +321,16 @@ namespace LiveDisplay
                     });
                 }
         }
+        private void LoadNotificationFragment()
+        {
+            notificationFragment = new NotificationFragment();
+            FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction();
+            fragmentTransaction.Replace(Resource.Id.MusicNotificationPlaceholder, notificationFragment);
+            fragmentTransaction.DisallowAddToBackStack();
+            fragmentTransaction.Commit();
+        }
 
-        
+
         private void AddFlags()
         {
             View view = Window.DecorView;
@@ -362,6 +357,59 @@ namespace LiveDisplay
         }
         //TODO:
         //If Lockscreen register a click, reset the timer.
+
+        private void CheckIfMusicIsPlaying()
+        {
+            if (ActiveMediaSessionsListener.isASessionActive == true)
+            {
+                StartMusicController();
+                //Also disable the NotificationList to show.
+                recycler.Visibility = ViewStates.Invisible;
+            }
+            else if (ActiveMediaSessionsListener.isASessionActive == false)
+            {
+                StopMusicController();
+                //Reenable NotificationList to show-
+                recycler.Visibility = ViewStates.Visible;
+            }
+        }
+
+        /// <summary>
+        /// Call this method automatically when Music is playing
+        /// </summary>
+        private void StartMusicController()
+        {
+            try
+            {
+            Fragment fragment = new MusicFragment();
+            FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction();
+            fragmentTransaction.Replace(Resource.Id.MusicNotificationPlaceholder, fragment);
+            fragmentTransaction.AddToBackStack(null);
+            fragmentTransaction.Commit();
+            }
+            catch
+            {
+                Console.WriteLine("Failed to start music widget");
+            }
+            
+        }
+        //When music is stopped, call this.
+        private void StopMusicController()
+        {
+            try
+            {
+            Fragment fragment = new NotificationFragment();
+            FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction();
+            fragmentTransaction.Replace(Resource.Id.MusicNotificationPlaceholder, fragment);
+                fragmentTransaction.DisallowAddToBackStack();
+            fragmentTransaction.Commit();
+            }
+            catch
+            {
+                Console.WriteLine("Failed to Stop Music Controller");
+            }
+            
+        }
     }
 
 }

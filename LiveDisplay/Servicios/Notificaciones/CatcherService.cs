@@ -7,6 +7,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Service.Notification;
 using LiveDisplay.BroadcastReceivers;
+using LiveDisplay.Servicios.Music;
 using LiveDisplay.Servicios.Notificaciones;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
 using System;
@@ -23,9 +24,7 @@ namespace LiveDisplay.Servicios
         //Manipular las sesiones-
         private MediaSessionManager mediaSessionManager;
         //el controlador actual de media.
-        private MediaController mediaController;
-        //Al parecer hay varios controladores de Multimedia y toca recuperarlos.
-        private List<MediaController> mediaControllers;
+        
 
 #pragma warning disable CS0618 // El tipo o el miembro están obsoletos
         private RemoteController remoteController;
@@ -38,9 +37,6 @@ namespace LiveDisplay.Servicios
 
         public override IBinder OnBind(Intent intent)
         {
-            
-            
-
             //Workaround for Kitkat to Retrieve Notifications.
             if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
             {
@@ -75,22 +71,6 @@ namespace LiveDisplay.Servicios
             mediaSessionManager = (MediaSessionManager)GetSystemService(Context.MediaSessionService);
             //Listener para Sesiones
             mediaSessionManager.AddOnActiveSessionsChangedListener(new ActiveMediaSessionsListener(), new ComponentName(this, Java.Lang.Class.FromType(typeof(Catcher))));
-            //Obtener las sesiones
-            mediaControllers = mediaSessionManager.GetActiveSessions(new ComponentName(this, Java.Lang.Class.FromType(typeof(Catcher)))).ToList();
-            //Si hay alguna, usala, si no,nada.
-            //TODO: Move it to ActiveMediaSessionsListener
-
-            if (mediaControllers != null&& mediaControllers.Count>0)
-            {
-                mediaController = mediaControllers[0];
-                mediaController.RegisterCallback(new MusicController());
-                //To control current media playing
-                var mediaTransportControls = mediaController.GetTransportControls();
-                Jukebox jukebox = Jukebox.JukeboxInstance(mediaTransportControls);
-                Console.WriteLine("RemoteController registered Lollipop");
-                
-            }
-
             SubscribeToEvents();
             RegisterReceivers();
             RetrieveNotificationFromStatusBar();
@@ -240,9 +220,5 @@ namespace LiveDisplay.Servicios
             }
         }
 
-
-        
-        
-        //MEdia Controller for Lollipop and Beyond.
     }
 }

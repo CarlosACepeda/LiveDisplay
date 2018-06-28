@@ -31,7 +31,7 @@ namespace LiveDisplay.Servicios
 
         public void CancelNotification(string notiPack, string notiTag, int notiId)
         {
-            NotificationCancelled(this, new NotificationCancelledEventArgsKitkat
+            OnNotificationCancelled(new NotificationCancelledEventArgsKitkat
             {
                 NotificationPackage = notiPack,
                 NotificationTag = notiTag,
@@ -42,7 +42,7 @@ namespace LiveDisplay.Servicios
         public void CancelNotification(string key)
         {
 
-            NotificationCancelledLollipop(this, new NotificationCancelledEventArgsLollipop
+            OnNotificationCancelled(new NotificationCancelledEventArgsLollipop
             {
                 Key = key
             });
@@ -50,7 +50,7 @@ namespace LiveDisplay.Servicios
 
         public void CancelAll()
         {
-            AllNotificationsCancelled(this, new EventArgs());          
+            OnAllNotificationsCancelled();          
         }
 
         public void PostNotification()
@@ -75,9 +75,9 @@ namespace LiveDisplay.Servicios
         {
             NotificationCancelledLollipop?.Invoke(this, e);
         }
-        protected virtual void OnAllNotificationsCancelled(EventArgs e)
+        protected virtual void OnAllNotificationsCancelled()
         {
-            AllNotificationsCancelled?.Invoke(this, e);
+            AllNotificationsCancelled?.Invoke(this, EventArgs.Empty);
         }
     }
 }

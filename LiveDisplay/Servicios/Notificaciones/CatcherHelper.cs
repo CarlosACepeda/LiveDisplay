@@ -37,7 +37,7 @@ namespace LiveDisplay.Servicios.Notificaciones
         public event EventHandler OnNotificationUngrouped; //TODO
 
         /// <summary>
-        /// Contructor of the Class
+        /// Constructor of the Class
         /// </summary>
         /// <param name="statusBarNotifications">This list is sent by Catcher, and is used to fill the Adapter
         /// that the RecyclerView will use.
@@ -46,7 +46,7 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             CatcherHelper.statusBarNotifications = statusBarNotifications;
             notificationAdapter = new NotificationAdapter(statusBarNotifications);
-            Console.WriteLine("Bound adapter");
+
         }
         //If Catcher call this, it means that the notification is part of a Group of notifications and should be Grouped.
         private void GroupNotification()
