@@ -1,5 +1,6 @@
 ﻿using System;
 using Android.App;
+using Android.Graphics.Drawables;
 using Android.Media.Session;
 using Android.OS;
 using Android.Views;
@@ -13,6 +14,7 @@ namespace LiveDisplay.Fragments
     {
         private TextView tvTitle, tvArtist, tvAlbum;
         private Button btnSkipPrevious, btnPlayPause, btnSkipNext;
+        Window window;
         public override void OnCreate(Bundle savedInstanceState)
         {
             // Create your fragment here
@@ -75,27 +77,34 @@ namespace LiveDisplay.Fragments
 
         private void MusicController_MediaMetadataChanged(object sender, MediaMetadataChangedEventArgs e)
         {
+            BitmapDrawable bitmapDrawable = new BitmapDrawable(e.AlbumArt);
             tvTitle.Text = e.Title;
             tvAlbum.Text = e.Album;
             tvArtist.Text = e.Artist;
+            if (bitmapDrawable != null)
+            {
+                window.DecorView.Background = bitmapDrawable;
+                Toast.MakeText(Application.Context, "There is a AlbumArt", ToastLength.Short).Show();
+            }
+            
         }
 
         private void MusicController_MediaPlaybackChanged(object sender, MediaPlaybackStateChangedEventArgs e)
         {
-            switch (e.PlaybackState)
-            {
-                case PlaybackStateCode.Paused:
-                    btnPlayPause.SetBackgroundResource(Resource.Drawable.ic_play_arrow_white_24dp);
-                    break;
-                case PlaybackStateCode.Playing:
-                    btnPlayPause.SetBackgroundResource(Resource.Drawable.ic_pause_white_24dp);
-                    break;
-                case PlaybackStateCode.Stopped:
-                    btnPlayPause.SetBackgroundResource(Resource.Drawable.ic_play_arrow_white_24dp);
-                    break;
-                default:
-                    break;
-            }
+            //switch (e.PlaybackState)
+            //{
+            //    case PlaybackStateCode.Paused:
+            //        btnPlayPause.SetBackgroundResource(Resource.Drawable.ic_play_arrow_white_24dp);
+            //        break;
+            //    case PlaybackStateCode.Playing:
+            //        btnPlayPause.SetBackgroundResource(Resource.Drawable.ic_pause_white_24dp);
+            //        break;
+            //    case PlaybackStateCode.Stopped:
+            //        btnPlayPause.SetBackgroundResource(Resource.Drawable.ic_play_arrow_white_24dp);
+            //        break;
+            //    default:
+            //        break;
+            //}
 
         }
 
@@ -111,29 +120,39 @@ namespace LiveDisplay.Fragments
             btnSkipPrevious = view.FindViewById<Button>(Resource.Id.btnMediaPrevious);
             btnPlayPause = view.FindViewById<Button>(Resource.Id.btnMediaPlayPlause);
             btnSkipNext = view.FindViewById<Button>(Resource.Id.btnMediaNext);
+
+           window  = Activity.Window;
         }
-
-
         private void RetrieveMediaInformation()
         {
+                       
             OpenSong song = OpenSong.OpenSongInstance();
+            BitmapDrawable bD = new BitmapDrawable(song.AlbumArt);
             tvTitle.Text = song.Title;
             tvAlbum.Text = song.Album;
             tvArtist.Text = song.Artist;
-            switch (song.PlaybackState)
-            {
-                case PlaybackStateCode.Paused:
-                    btnPlayPause.SetBackgroundResource(Resource.Drawable.ic_play_arrow_white_24dp);
-                    break;
-                case PlaybackStateCode.Playing:
-                    btnPlayPause.SetBackgroundResource(Resource.Drawable.ic_pause_white_24dp);
-                    break;
-                case PlaybackStateCode.Stopped:
-                    btnPlayPause.SetBackgroundResource(Resource.Drawable.ic_play_arrow_white_24dp);
-                    break;
-                default:
-                    break;
-            }
+            Activity.Window.DecorView.Background = bD; 
+            //switch (song.PlaybackState)
+            //{
+            //    case PlaybackStateCode.Paused:
+            //        btnPlayPause.SetBackgroundResource(Resource.Drawable.ic_play_arrow_white_24dp);
+            //        break;
+            //    case PlaybackStateCode.Playing:
+            //        btnPlayPause.SetBackgroundResource(Resource.Drawable.ic_pause_white_24dp);
+            //        break;
+            //    case PlaybackStateCode.Stopped:
+            //        btnPlayPause.SetBackgroundResource(Resource.Drawable.ic_play_arrow_white_24dp);
+            //        break;
+            //    default:
+            //        break;
+            //}
+        }
+        public override void OnDestroy()
+        {
+            tvAlbum = null;
+            tvArtist = null;
+            tvTitle = null;
+            base.OnDestroy();
         }
     }
 }

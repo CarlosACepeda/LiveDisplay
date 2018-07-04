@@ -85,6 +85,7 @@ namespace LiveDisplay.Servicios.Notificaciones
                             
                             a.GetRemoteInputs();
                             a.ActionIntent.Send();
+                            //TODO: Move to fragment
                             LockScreenActivity.lockScreenInstance.OnNotificationUpdated();
                         }
                         catch (Exception ex)
@@ -119,6 +120,14 @@ namespace LiveDisplay.Servicios.Notificaciones
             {
                 return false;
             }
+        }
+        public static bool NotificationIsAutoCancel(int position)
+        {
+            if (CatcherHelper.statusBarNotifications[position].Notification.Flags.HasFlag(NotificationFlags.AutoCancel) == true)
+            {
+                return true;
+            }
+            return false;
         }
         public void Dispose()
         {

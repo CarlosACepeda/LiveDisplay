@@ -14,6 +14,7 @@ namespace LiveDisplay.Fragments
         LinearLayout notificationActions;
         TextView tvTitulo;
         TextView tvTexto;
+        LinearLayout llNotification;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
@@ -29,7 +30,32 @@ namespace LiveDisplay.Fragments
             notificationActions = v.FindViewById<LinearLayout>(Resource.Id.notificationActions);
             tvTexto = v.FindViewById<TextView>(Resource.Id.tvTexto);
             tvTitulo = v.FindViewById<TextView>(Resource.Id.tvTitulo);
+            llNotification = v.FindViewById<LinearLayout>(Resource.Id.llNotification);
+
+            llNotification.Click += LlNotification_Click;
+
             return v;
+        }
+
+        private void LlNotification_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Activity.RunOnUiThread(() =>
+                OpenNotification.ClickNotification(position)
+                );
+                //TODO: Manage this In Fragment
+                if (OpenNotification.NotificationIsAutoCancel(position) == true)
+                {
+                    llNotification.Visibility = ViewStates.Invisible;
+                }
+                llNotification.Visibility = ViewStates.Visible;
+
+            }
+            catch
+            {
+                Log.Wtf("OnNotificationClicked", "Metodo falla porque no existe una notificacion con esta acción");
+            }
         }
 
         private void SubscribeToEvents()
@@ -66,25 +92,8 @@ namespace LiveDisplay.Fragments
                     notificationActions.AddView(a);
                 }
             }
-            //TODO: Manage this In Fragment
-            //v.Visibility = ViewStates.Visible;
+            
             notification = null;
-        }
-        //TODO: Move to Fragment
-        private void OnNotificationClicked()
-        {
-            try
-            {
-                Activity.RunOnUiThread(() =>
-                OpenNotification.ClickNotification(position)
-                );
-            }
-            catch
-            {
-                Log.Wtf("OnNotificationClicked", "Metodo falla porque no existe una notificacion con esta acción");
-            }
-            //TODO:Move to Fragment
-            //v.Visibility = ViewStates.Invisible;
         }
     }
 }
