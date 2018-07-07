@@ -15,6 +15,7 @@ using Android.Graphics;
 using Android.Provider;
 using Android.Util;
 using LiveDisplay.Factories;
+using LiveDisplay.Fragments;
 
 namespace LiveDisplay.Activities
 {
@@ -36,10 +37,13 @@ namespace LiveDisplay.Activities
 
             // Create your application here
             SetContentView(Resource.Layout.LockScreenSettings);
-            configurationManager = new ConfigurationManager(GetSharedPreferences("livedisplayconfig", FileCreationMode.Private));
             BindViews();
-            BindClickEvents();
-            RetrieveLockScreenConfiguration();
+            configurationManager = new ConfigurationManager(GetSharedPreferences("livedisplayconfig", FileCreationMode.Private));
+            FragmentManager.BeginTransaction().Replace(Resource.Id.content, new LockscreenPreferencesFragment()).Commit();
+
+           
+            //BindClickEvents();
+            //RetrieveLockScreenConfiguration();
         }
         protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
         {
@@ -70,11 +74,11 @@ namespace LiveDisplay.Activities
             toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.lockscreenSettingsToolbar);
             SetSupportActionBar(toolbar);
 
-            swToggleClock = FindViewById<SwitchCompat>(Resource.Id.swToggleClock);
-            swToggleSystemIcons = FindViewById<SwitchCompat>(Resource.Id.swToggleSystemIcons);
-            swUseLockscreenNoNotifications = FindViewById<SwitchCompat>(Resource.Id.swUseLockscreenNoNotifications);
-            swDynamicWallpaper = FindViewById<SwitchCompat>(Resource.Id.swDynamicWallpaper);
-            btnChangeWallpaper = FindViewById<Button>(Resource.Id.btnChangeWallpaper);
+            //swToggleClock = FindViewById<SwitchCompat>(Resource.Id.swToggleClock);
+            //swToggleSystemIcons = FindViewById<SwitchCompat>(Resource.Id.swToggleSystemIcons);
+            //swUseLockscreenNoNotifications = FindViewById<SwitchCompat>(Resource.Id.swUseLockscreenNoNotifications);
+            //swDynamicWallpaper = FindViewById<SwitchCompat>(Resource.Id.swDynamicWallpaper);
+            //btnChangeWallpaper = FindViewById<Button>(Resource.Id.btnChangeWallpaper);
         }
         private void BindClickEvents()
         {

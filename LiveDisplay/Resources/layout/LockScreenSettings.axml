@@ -1,96 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:a="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <LinearLayout
-        android:orientation="vertical"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/lockscreenSettingsToolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/lockscreenSettingsToolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:elevation="4dp" />
-    <!--<android.support.v7.widget.CardView
-            android:paddingTop="?android:attr/actionBarSize"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            a:cardElevation="1dp"
-            a:cardUseCompatPadding="true"
-            a:cardCornerRadius="4dp"
-            android:minWidth="25px"
-            android:minHeight="25px">
-            <CheckBox
-                android:text="@string/activarlockscreen"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/cbEnableLockScreen" />
-        </android.support.v7.widget.CardView>-->
-        <android.support.v7.widget.CardView
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            a:cardElevation="1dp"
-            a:cardUseCompatPadding="true"
-            a:cardCornerRadius="4dp"
-            android:minWidth="25px"
-            android:minHeight="25px">
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/lockScreenOptionsContainer">
-                <TextView
-                    android:text="@string/opciones"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-                <android.support.v7.widget.SwitchCompat
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/swToggleClock"
-                    android:text="@string/showclock" />
-                <android.support.v7.widget.SwitchCompat
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/swToggleSystemIcons"
-                    android:text="@string/hidesystemicons" />
-                <android.support.v7.widget.SwitchCompat
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/swUseLockscreenNoNotifications"
-                    android:text="@string/uselockscreennonotifications" />
-                <TextView
-                    android:text="@string/uselockscreennonotificationsdesc"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-                <android.support.v7.widget.SwitchCompat
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/swDynamicWallpaper"
-                    android:text="@string/activarwallpaperdinamico" />
-                <TextView
-                    android:text="@string/activarwallpaperdinamico_description"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-                <Button
-                    android:text="@string/changewallpaper"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/btnChangeWallpaper"
-                    android:background="?android:selectableItemBackground"
-                    android:textAllCaps="false"
-                    android:gravity="left|center_vertical" />
-                <TextView
-                    android:text="@string/changewallpaperdesc"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textView1" />
-            </LinearLayout>
-        </android.support.v7.widget.CardView>
-    </LinearLayout>
-</ScrollView>
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp" />
+    <FrameLayout
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</LinearLayout>

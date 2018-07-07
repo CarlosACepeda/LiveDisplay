@@ -10,6 +10,6 @@
     <item name="colorPrimaryDark">#4C497F</item>
     <!--   theme UI controls like checkboxes and text fields -->
     <item name="colorAccent">#9992FF</item>
-    <item name="background">@drawable/splash_nodpi</item>
+    <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
   </style>
 </resources>
