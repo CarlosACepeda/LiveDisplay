@@ -4,6 +4,7 @@ using Android.Support.V7.App;
 
 namespace LiveDisplay.Activities
 {
+    //prepare for deprecation
     [Activity(Label = "@string/about")]
     public class AboutActivity : AppCompatActivity
     {

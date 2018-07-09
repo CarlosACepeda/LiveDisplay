@@ -16,13 +16,14 @@ using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using System;
 
-namespace LiveDisplay
+namespace LiveDisplay.Activities
 {
+    //THis will be MainActivity
     [Activity(Label = "@string/app_name", MainLauncher = true, Icon = "@mipmap/ic_launcher_2_dark")]
-    internal class ConfigurationActivity : AppCompatActivity
+    internal class MainActivity : AppCompatActivity
     {
         private Android.Support.V7.Widget.Toolbar toolbar;
-
+        //TODO: Deprecate this,
         private Button btnLockScreen;
         private Button btnNotifications;
         private Button btnAwake;
@@ -32,7 +33,7 @@ namespace LiveDisplay
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.Configuracion);
+            SetContentView(Resource.Layout.Main);
             BindViews();
             StartVariables();
             configurationManager = new ConfigurationManager(GetSharedPreferences("livedisplayconfig", FileCreationMode.Private));
@@ -53,8 +54,6 @@ namespace LiveDisplay
         protected override void OnResume()
         {
             base.OnResume();
-            
-
         }
 
         protected override void OnPause()
@@ -71,17 +70,34 @@ namespace LiveDisplay
             GC.Collect();
         }
 
+        public override bool OnCreateOptionsMenu(IMenu menu)
+        {
+            MenuInflater.Inflate(Resource.Menu.menu_main, menu);
+            return true;
+        }
+        public override bool OnOptionsItemSelected(IMenuItem item)
+        {
+            int id = item.ItemId;
+            if (id == Resource.Id.action_settings)
+            {
+                //TODO: GO to settings screen
+                Intent intent = new Intent(this, typeof(SettingsActivity));
+                StartActivity(intent);
+                return true;
+            }
 
+            return base.OnOptionsItemSelected(item);
+        }
 
 
         protected void UnbindViews()
         {
             toolbar.Dispose();
             Window.ClearFlags(WindowManagerFlags.DrawsSystemBarBackgrounds);
-            btnAbout.Dispose();
-            btnAwake.Dispose();
-            btnLockScreen.Dispose();
-            btnNotifications.Dispose();
+            //btnAbout.Dispose();
+            //btnAwake.Dispose();
+            //btnLockScreen.Dispose();
+            //btnNotifications.Dispose();
         }
 
         protected void UnbindClickEvents()
@@ -97,11 +113,11 @@ namespace LiveDisplay
             }
             toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.mainToolbar);
             SetSupportActionBar(toolbar);
-
-            btnLockScreen = FindViewById<Button>(Resource.Id.btnLockScreen);
-            btnNotifications = FindViewById<Button>(Resource.Id.btnNotification);
-            btnAwake = FindViewById<Button>(Resource.Id.btnAwake);
-            btnAbout = FindViewById<Button>(Resource.Id.btnAbout);
+            //TODO,: Depercation
+            //btnLockScreen = FindViewById<Button>(Resource.Id.btnLockScreen);
+            //btnNotifications = FindViewById<Button>(Resource.Id.btnNotification);
+            //btnAwake = FindViewById<Button>(Resource.Id.btnAwake);
+            //btnAbout = FindViewById<Button>(Resource.Id.btnAbout);
         }
 
         private void StartVariables()
@@ -111,9 +127,9 @@ namespace LiveDisplay
                    typeof(Analytics), typeof(Crashes));
             AppCenter.Start("0ec5320c-34b4-498b-a9c2-dae7614997fa", typeof(Analytics), typeof(Crashes));
 
-            btnLockScreen.Click += (o, e) => StartActivity(new Intent(this, typeof(LockScreenSettingsActivity)).AddFlags(ActivityFlags.ClearTop));
-            btnNotifications.Click += (o, e) => StartActivity(new Intent(this, typeof(NotificationSettingsActivity)).AddFlags(ActivityFlags.ClearTop));
-            btnAbout.Click += (o, e) => StartActivity(new Intent(this, typeof(AboutActivity)).AddFlags(ActivityFlags.ClearTop));
+            //btnLockScreen.Click += (o, e) => StartActivity(new Intent(this, typeof(SettingsActivity)).AddFlags(ActivityFlags.ClearTop));
+            //btnNotifications.Click += (o, e) => StartActivity(new Intent(this, typeof(NotificationSettingsActivity)).AddFlags(ActivityFlags.ClearTop));
+            //btnAbout.Click += (o, e) => StartActivity(new Intent(this, typeof(AboutActivity)).AddFlags(ActivityFlags.ClearTop));
         }
 
         private void ShowDialog()

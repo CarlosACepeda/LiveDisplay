@@ -11,6 +11,7 @@ using System;
 
 namespace LiveDisplay.Activities
 {
+    //prepare for deprecation
     [Activity(Label = "@string/notificationsettings")]
     public class NotificationSettingsActivity : AppCompatActivity
     {

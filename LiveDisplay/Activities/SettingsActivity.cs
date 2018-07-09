@@ -19,8 +19,9 @@ using LiveDisplay.Fragments;
 
 namespace LiveDisplay.Activities
 {
-    [Activity(Label = "@string/ajusteslockscreen")]
-    public class LockScreenSettingsActivity : AppCompatActivity
+    //prepare for deprecation, this will be Settings Screen
+    [Activity(Label = "@string/settings")]
+    public class SettingsActivity : AppCompatActivity
     {
         private SwitchCompat swToggleClock;
         private SwitchCompat swToggleSystemIcons;
@@ -38,8 +39,9 @@ namespace LiveDisplay.Activities
             // Create your application here
             SetContentView(Resource.Layout.LockScreenSettings);
             BindViews();
-            configurationManager = new ConfigurationManager(GetSharedPreferences("livedisplayconfig", FileCreationMode.Private));
-            FragmentManager.BeginTransaction().Replace(Resource.Id.content, new LockscreenPreferencesFragment()).Commit();
+            //TODO: DO i really want this?:
+            //configurationManager = new ConfigurationManager(GetSharedPreferences("livedisplayconfig", FileCreationMode.Private));
+            FragmentManager.BeginTransaction().Replace(Resource.Id.content, new LiveDisplayPreferencesFragment()).Commit();
 
            
             //BindClickEvents();

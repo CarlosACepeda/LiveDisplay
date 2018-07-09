@@ -1,0 +1,90 @@
+﻿<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+  <!--This is the first preference screen-->
+  <PreferenceScreen android:title="@string/lockscreensettings"
+                    android:key="lockscreenkey"
+  >
+  <PreferenceCategory android:title="@string/opciones">
+    <SwitchPreference
+   android:key="hiddenclock?"
+   android:title="@string/showclock" />
+    <SwitchPreference
+      android:key="hiddensystemicons?"
+      android:title="@string/hidesystemicons"
+    />
+    <SwitchPreference
+      android:key="enabledlockscreennonotifications?"
+      android:title="@string/uselockscreennonotifications"
+      android:summary="@string/uselockscreennonotificationsdesc"
+    />
+    <SwitchPreference
+      android:key="dynamicwallpaperenabled?"
+      android:title="@string/activarwallpaperdinamico"
+      android:summary="@string/activarwallpaperdinamico_description"
+  />
+  </PreferenceCategory>
+</PreferenceScreen>
+  <PreferenceScreen
+    android:title="@string/notificationsettings"
+    android:key="notificationskey"
+    >
+    
+    <PreferenceCategory android:title="@string/notificationsettings">
+      <!--Custom list, fill with all the apps installed. for now selectable is false-->
+      <Preference
+        android:title="@string/blacklist"
+        android:summary="@string/blacklistdesc"
+        android:selectable="false"
+        >
+        
+      </Preference>
+      <SwitchPreference
+        android:key="enablequickreply?"
+        android:title="@string/enablequickreply"
+        android:summary="@string/enablequickreplydesc"
+        ></SwitchPreference>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/awakesettings">
+      <SwitchPreference
+      android:key="turnonnewnotification?"
+      android:title="@string/turnonnewnotification"
+      android:summary="@string/turnonnewnotification_desc"
+      >
+      </SwitchPreference>
+      <SwitchPreference
+        android:key="turnonusermovement?"
+        android:title="@string/turnonusermovement"
+        >
+
+      </SwitchPreference>
+      <ListPreference
+        android:key="startlock"
+        android:title="@string/lockdelay"
+        android:summary="bash"
+        android:entries="@array/listentriesstartlock"
+        android:entryValues="@array/listvaluesstartlock">
+      </ListPreference>
+      <ListPreference
+        android:key="turnoff"
+        android:title="@string/turnoffdelay"
+        android:summary="bash"
+        android:entries="@array/listentriesturnoff"
+        android:entryValues="@array/listvaluesturnoff">
+        
+      </ListPreference>
+    </PreferenceCategory>
+  </PreferenceScreen>
+  <PreferenceScreen android:title="@string/about">
+    <PreferenceCategory android:title="@string/about">
+      <Preference
+        android:title="@string/about"
+        android:summary="@string/aboutinfo"
+        android:persistent="false"
+        android:selectable="false"
+        >
+        
+      </Preference>
+  </PreferenceCategory>
+  </PreferenceScreen>
+</PreferenceScreen>
+
+
