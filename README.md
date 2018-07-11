@@ -2,6 +2,10 @@
 
 This Application shows the list of current notifications on Screen, remove them, with various configurable options.
 
+[![currentversion](https://img.shields.io/badge/current--version-v0.3.1-blue.svg)](https://github.com/CarlosACepeda/LiveDisplay)
+[![pre-releaseversion](https://img.shields.io/badge/pre--release-v.0.1-blue.svg)](https://github.com/CarlosACepeda/LiveDisplay/releases)
+[![release](https://img.shields.io/badge/release-not%20released-lightgrey.svg)](https://github.com/CarlosACepeda/LiveDisplay)
+
 |Build Status: App Center|
 |----------|
 |[![Build status](https://build.appcenter.ms/v0.1/apps/35ff8c85-fde9-4e45-9e27-834a716fce2b/branches/master/badge)](https://appcenter.ms)|
