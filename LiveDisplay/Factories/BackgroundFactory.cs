@@ -4,6 +4,7 @@ using Android.Database;
 using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.Net;
+using Android.Preferences;
 using Android.Renderscripts;
 using Android.Util;
 using LiveDisplay.Misc;
@@ -86,7 +87,7 @@ namespace LiveDisplay.Factories
         public string SaveImagePath(Uri uri)
         {
             ContextWrapper contextWrapper = new ContextWrapper(Application.Context);
-            ConfigurationManager configuration = new ConfigurationManager(contextWrapper.GetSharedPreferences("livedisplayconfig", FileCreationMode.Private));
+            ConfigurationManager configuration = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(contextWrapper));
             string doc_id = "";
             using (var c1 = Application.Context.ContentResolver.Query(uri, null, null, null, null))
             {
@@ -105,7 +106,6 @@ namespace LiveDisplay.Factories
                 var columnIndex = cursor.GetColumnIndexOrThrow(Android.Provider.MediaStore.Images.Media.InterfaceConsts.Data);
                 cursor.MoveToFirst();
                 path = cursor.GetString(columnIndex);
-                Log.Info("Path is", path);
                 configuration.SaveAValue(ConfigurationParameters.imagePath, path);
             }
             return path;

@@ -1,8 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <string name="tenseconds">10 seconds</string>
-  <string name="fifteenseconds">15 seconds</string>
-  <string name="fiveseconds">5 seconds</string>
   <string name="about">About...</string>
   <string name="aboutinfo">This app is developed with &lt;3 by Carlos Cepeda, you can support me by donating me! i hope youre enjoying this app as much as i developed it </string>
   <string name="aboutinfotitle">About this application:</string>
@@ -25,6 +22,8 @@
   <string name="enablenotificationlistener">Enable the Notification Listener</string>
   <string name="enablequickreply">Enable quick Notification Reply</string>
   <string name="enablequickreplydesc">Answer directly from Notification to messages, as seen in Nougat and beyond</string>
+  <string name="fifteenseconds">15 seconds</string>
+  <string name="fiveseconds">5 seconds</string>
   <string name="hidesystemicons">Do not show system icons</string>
   <string name="idk">¯\_(ツ)_/¯</string>
   <string name="lockdelay">Automatically lock</string>
@@ -41,10 +40,14 @@
   <string name="splashscreennotificationssettings_takemebutton">Okay, take me there!</string>
   <string name="splashscreentitle">Welcome, set up the app!</string>
   <string name="stickynotificationwarn">You can\'t delete a sticky notification</string>
+  <string name="tenseconds">10 seconds</string>
   <string name="turnoffdelay">Automatically turn screen off</string>
   <string name="turnonnewnotification">Turn on screen</string>
   <string name="turnonnewnotification_desc">Turn on screen if a new notification incomes</string>
   <string name="turnonusermovement">Turn on screen on device pick up</string>
   <string name="uselockscreennonotifications">Use the lockscreen without notifications</string>
   <string name="uselockscreennonotificationsdesc">For better usage, turn off the default Android lockscreen</string>
+  <string name="immediately">Immediately</string>
+  <string name="lockdelay_desc">Block the screen in the given time</string>
+  <string name="turnoffdelay_desc">If the screen turns on(e.g.: A new notification is posted) and there is not user interaction, turn off the screen in...</string>
 </resources>

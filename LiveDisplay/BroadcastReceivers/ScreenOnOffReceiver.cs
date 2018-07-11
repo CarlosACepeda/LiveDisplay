@@ -1,11 +1,13 @@
 ﻿using Android.App;
 using Android.Content;
+using Android.Preferences;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
 using System;
+using System.Threading;
 
 namespace LiveDisplay.BroadcastReceivers
 {
@@ -14,8 +16,8 @@ namespace LiveDisplay.BroadcastReceivers
     [IntentFilter(new[] { Intent.ActionScreenOn })]
     public class ScreenOnOffReceiver : BroadcastReceiver
     {
-        public static bool isScreenOn=true;
-        ConfigurationManager configurationManager = new ConfigurationManager(Application.Context.GetSharedPreferences("livedisplayconfig", FileCreationMode.Private));
+        public static bool isScreenOn=true;       
+        ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context));
         public override void OnReceive(Context context, Intent intent)
         {
             if (intent.Action == Intent.ActionScreenOn)
@@ -35,10 +37,26 @@ namespace LiveDisplay.BroadcastReceivers
                 //Allowing to the user a more flexible experience. This setting is also configurable
                 if (configurationManager.RetrieveAValue(ConfigurationParameters.enabledlockscreennonotifications) == true)
                 {
-                Intent lockScreenIntent = new Intent(Application.Context, typeof(LockScreenActivity));
-                PendingIntent pendingIntent = PendingIntent.GetActivity(Application.Context, 0, lockScreenIntent, 0);
+                    int delaytolockscreen = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.startlockscreendelaytime, "0"));
+                    
 
-                pendingIntent.Send();
+                    ThreadPool.QueueUserWorkItem(m =>
+                        {
+                                                     
+                            Thread.Sleep(delaytolockscreen);//5 Seconds of delay before locking screen(Start the LockScreen Activity)
+                            //The reason to check if the Screen is turned off is because User can Turn off device screen,
+                            //then turn it on before the delay to lock screen is finished. 
+                            //So, the Activity will start even if the screen is On, so,
+                            //in summary the Lockscreen only can start when screen is off
+                            if (isScreenOn == false)
+                            {
+                                Intent lockScreenIntent = new Intent(Application.Context, typeof(LockScreenActivity));
+                                PendingIntent pendingIntent = PendingIntent.GetActivity(Application.Context, 0, lockScreenIntent, 0);
+
+                                pendingIntent.Send();
+                            }
+                        });
+                    
                 }
                 
             }

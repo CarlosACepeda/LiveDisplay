@@ -1,5 +1,6 @@
 ﻿using Android.App;
 using Android.Content;
+using Android.Preferences;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
 
@@ -9,12 +10,14 @@ namespace LiveDisplay.BroadcastReceivers
     [IntentFilter(new[] { Intent.ActionBootCompleted })]
     public class BootCompleteReceiver : BroadcastReceiver
     {
-        private ConfigurationManager configurationManager = new ConfigurationManager(Application.Context.GetSharedPreferences("livedisplayconfig", FileCreationMode.Private));
+        private ISharedPreferences sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
+        private ConfigurationManager configurationManager;
 
         public override void OnReceive(Context context, Intent intent)
         {
+             configurationManager= new ConfigurationManager(sharedPreferences);
             //Sólo iniciar el LockScreen si el usuario activa el lockScreen sin notificaciones
-            if (configurationManager.RetrieveAValue(ConfigurationParameters.enabledlockscreennonotifications) == true)
+            if (sharedPreferences.GetBoolean(ConfigurationParameters.enabledlockscreennonotifications, false) == true)
             {
                 //funciona, no se hace nada más aquí
 

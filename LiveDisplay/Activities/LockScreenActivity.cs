@@ -5,6 +5,7 @@ using Android.Graphics.Drawables;
 using Android.Media;
 using Android.Media.Session;
 using Android.OS;
+using Android.Preferences;
 using Android.Provider;
 using Android.Support.V7.Widget;
 using Android.Util;
@@ -279,9 +280,8 @@ namespace LiveDisplay
         private void LoadConfiguration()
         {
             //Load configurations based on User configs.
-            ConfigurationManager configurationManager = new ConfigurationManager(GetSharedPreferences("livedisplayconfig", FileCreationMode.Private));
-            //Deleted previous if line, LockScreen should always be Enabled.
-                if (configurationManager.RetrieveAValue(ConfigurationParameters.hiddenclock) == true)
+            ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(this));
+                if (configurationManager.RetrieveAValue(ConfigurationParameters.hiddenclock)==true)
                 {
                     //Hide the clock
                     RunOnUiThread(() => reloj.Visibility = ViewStates.Gone);                   
@@ -294,8 +294,9 @@ namespace LiveDisplay
                 if (configurationManager.RetrieveAValue(ConfigurationParameters.dynamicwallpaperenabled) == true)
                 {
                     //Allow the app to show Album art.
+                    //:TODO move to Music Fragment, not here.
                 }
-                if (String.Equals(configurationManager.RetrieveAValue(ConfigurationParameters.imagePath, ""), "imagenotfound") == false)
+                if (String.Equals(configurationManager.RetrieveAValue(ConfigurationParameters.imagePath, "imagenotfound"), "imagenotfound") == false)
                 {
                     //Found an image, use it as wallpaper.
                     Bitmap bm = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.imagePath, ""));

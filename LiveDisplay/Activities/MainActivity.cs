@@ -1,6 +1,7 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.OS;
+using Android.Preferences;
 using Android.Support.V7.App;
 using Android.Util;
 using Android.Views;
@@ -15,20 +16,17 @@ using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using System;
+using System.Threading;
 
 namespace LiveDisplay.Activities
 {
     //THis will be MainActivity
-    [Activity(Label = "@string/app_name", MainLauncher = true, Icon = "@mipmap/ic_launcher_2_dark")]
+    [Activity(Label = "@string/app_name", Theme ="@style/LiveDisplayTheme.NoActionBar",  MainLauncher = true)]
     internal class MainActivity : AppCompatActivity
     {
         private Android.Support.V7.Widget.Toolbar toolbar;
-        //TODO: Deprecate this,
-        private Button btnLockScreen;
-        private Button btnNotifications;
-        private Button btnAwake;
-        private Button btnAbout;
         private ConfigurationManager configurationManager;
+        ISharedPreferences sharedPreferences;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -36,14 +34,14 @@ namespace LiveDisplay.Activities
             SetContentView(Resource.Layout.Main);
             BindViews();
             StartVariables();
-            configurationManager = new ConfigurationManager(GetSharedPreferences("livedisplayconfig", FileCreationMode.Private));
-            if (configurationManager.RetrieveAValue(ConfigurationParameters.istheappconfigured)==false)
+            sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(this);
+            configurationManager = new ConfigurationManager(sharedPreferences);           
+            if (sharedPreferences.GetBoolean(ConfigurationParameters.istheappconfigured, false)==false)
             {
                 LoadDefaultConfiguration();
             }
             ShowDialog();
             
-
         }
 
         private void LoadDefaultConfiguration()
@@ -80,7 +78,6 @@ namespace LiveDisplay.Activities
             int id = item.ItemId;
             if (id == Resource.Id.action_settings)
             {
-                //TODO: GO to settings screen
                 Intent intent = new Intent(this, typeof(SettingsActivity));
                 StartActivity(intent);
                 return true;
@@ -93,11 +90,7 @@ namespace LiveDisplay.Activities
         protected void UnbindViews()
         {
             toolbar.Dispose();
-            Window.ClearFlags(WindowManagerFlags.DrawsSystemBarBackgrounds);
-            //btnAbout.Dispose();
-            //btnAwake.Dispose();
-            //btnLockScreen.Dispose();
-            //btnNotifications.Dispose();
+            
         }
 
         protected void UnbindClickEvents()
@@ -106,32 +99,23 @@ namespace LiveDisplay.Activities
 
         protected void BindViews()
         {
-            //Needed for Status Bar Tinting on Lollipop and beyond using AppCompat
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
-            {
-                Window.AddFlags(WindowManagerFlags.DrawsSystemBarBackgrounds);
-            }
             toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.mainToolbar);
             SetSupportActionBar(toolbar);
-            //TODO,: Depercation
-            //btnLockScreen = FindViewById<Button>(Resource.Id.btnLockScreen);
-            //btnNotifications = FindViewById<Button>(Resource.Id.btnNotification);
-            //btnAwake = FindViewById<Button>(Resource.Id.btnAwake);
-            //btnAbout = FindViewById<Button>(Resource.Id.btnAbout);
         }
 
         private void StartVariables()
         {
             ////CI
-            AppCenter.Start("0ec5320c-34b4-498b-a9c2-dae7614997fa",
+            ThreadPool.QueueUserWorkItem(m =>
+            {
+                    AppCenter.Start("0ec5320c-34b4-498b-a9c2-dae7614997fa",
                    typeof(Analytics), typeof(Crashes));
-            AppCenter.Start("0ec5320c-34b4-498b-a9c2-dae7614997fa", typeof(Analytics), typeof(Crashes));
-
-            //btnLockScreen.Click += (o, e) => StartActivity(new Intent(this, typeof(SettingsActivity)).AddFlags(ActivityFlags.ClearTop));
-            //btnNotifications.Click += (o, e) => StartActivity(new Intent(this, typeof(NotificationSettingsActivity)).AddFlags(ActivityFlags.ClearTop));
-            //btnAbout.Click += (o, e) => StartActivity(new Intent(this, typeof(AboutActivity)).AddFlags(ActivityFlags.ClearTop));
+                AppCenter.Start("0ec5320c-34b4-498b-a9c2-dae7614997fa", typeof(Analytics), typeof(Crashes));
+            });
+            
         }
 
+        //TODO: CHANGE THIS, maybe with a single notification to the user, or not letting him to open the app?
         private void ShowDialog()
         {
         if (NLChecker.IsNotificationListenerEnabled() == false)

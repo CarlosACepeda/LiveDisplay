@@ -30,11 +30,9 @@ namespace LiveDisplay.Servicios
         }
         public string RetrieveAValue(string key, string defValue)
         {
-            string imagenotfound = "imagenotfound";
-            return sharedPreferences.GetString(key, imagenotfound);
+            return sharedPreferences.GetString(key, defValue);
         }
-
-
+        
 
     }
 }

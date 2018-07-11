@@ -1,8 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <string name="tenseconds">10 segundos</string>
-  <string name="fifteenseconds">15 segundos</string>
-  <string name="fiveseconds">5 segundos</string>
   <string name="about">Acerca de...</string>
   <string name="aboutinfo">Esta aplicación es desarrollada con &lt;3 por Carlos Cepeda, puedes ayudarme a través de una donación!, espero que disfrutes mucho esta app como yo desarrollandola!</string>
   <string name="aboutinfotitle">Acerca de esta aplicación:</string>
@@ -25,6 +22,8 @@
   <string name="enablenotificationlistener">Activar el agente de escucha de Notificaciones</string>
   <string name="enablequickreply">Activar la respuesta rápida</string>
   <string name="enablequickreplydesc">Contesta directamente a mensajes desde la notificación como se muestra en Nougat y versiones superiores</string>
+  <string name="fifteenseconds">15 segundos</string>
+  <string name="fiveseconds">5 segundos</string>
   <string name="hidesystemicons">No mostrar iconos del sistema</string>
   <string name="idk">¯\_(ツ)_/¯</string>
   <string name="lockdelay">Bloquear automaticamente</string>
@@ -41,10 +40,14 @@
   <string name="splashscreennotificationssettings_takemebutton">Bien, llévame ahí!</string>
   <string name="splashscreentitle">Bienvenido, configura la app!</string>
   <string name="stickynotificationwarn">No puedes eliminar notificaciones pegasosas</string>
+  <string name="tenseconds">10 segundos</string>
   <string name="turnoffdelay">Apagar pantalla automaticamente</string>
   <string name="turnonnewnotification">Encender pantalla</string>
   <string name="turnonnewnotification_desc">Prender la pantalla si una nueva notificacion llega</string>
   <string name="turnonusermovement">Prender la pantalla al levantar el dispositivo</string>
   <string name="uselockscreennonotifications">Usar la pantalla de bloqueo sin notificaciones</string>
   <string name="uselockscreennonotificationsdesc">Para mejor usabilidad, desactiva la pantalla de bloqueo por defecto de Android</string>
+  <string name="immediately">De inmediato</string>
+  <string name="lockdelay_desc">Bloquear la pantalla después del tiempo dado</string>
+  <string name="turnoffdelay_desc">Si la pantalla se enciende(p.e.j. una nueva notificación llega) y no hay interaccion por parte del usuario, apagar la pantalla en...</string>
 </resources>

@@ -57,16 +57,16 @@
 
       </SwitchPreference>
       <ListPreference
-        android:key="startlock"
+        android:key="startlockscreendelaytime"
         android:title="@string/lockdelay"
-        android:summary="bash"
+        android:summary="@string/lockdelay_desc"
         android:entries="@array/listentriesstartlock"
         android:entryValues="@array/listvaluesstartlock">
       </ListPreference>
       <ListPreference
-        android:key="turnoff"
+        android:key="turnoffscreendelaytime"
         android:title="@string/turnoffdelay"
-        android:summary="bash"
+        android:summary="@string/turnoffdelay_desc"
         android:entries="@array/listentriesturnoff"
         android:entryValues="@array/listvaluesturnoff">
         

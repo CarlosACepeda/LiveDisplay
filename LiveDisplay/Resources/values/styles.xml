@@ -1,15 +1,19 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<resources>
+﻿<resources>
+  <!--Base application theme-->
   <style name="LiveDisplayTheme" parent="Theme.AppCompat">
-    <item name="android:windowActionBar">false</item>
-    <item name="windowNoTitle">true</item>
+    
     <!-- Main theme colors -->
     <!--   your app branding color for the app bar -->
-    <item name="android:colorPrimary">@color/colorPrimary</item>
+    <item name="colorPrimary">@color/colorPrimary</item>
     <!--   darker variant for the status bar and contextual app bars -->
-    <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
+    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <!--   theme UI controls like checkboxes and text fields -->
-    <item name="android:colorAccent">@color/colorAccent</item>
+    <item name="colorAccent">@color/colorAccent</item>
     <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+  </style>
+  <!--the following Style is for No actio bar-->
+  <style name="LiveDisplayTheme.NoActionBar">
+    <item name="windowActionBar">false</item>
+    <item name="windowNoTitle">true</item>
   </style>
 </resources>
