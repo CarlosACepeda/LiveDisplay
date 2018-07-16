@@ -13,6 +13,7 @@ using Android.Views;
 using Android.Widget;
 using LiveDisplay.Adapters;
 using LiveDisplay.BroadcastReceivers;
+using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
 
 namespace LiveDisplay.Servicios.Notificaciones
 {
@@ -31,11 +32,12 @@ namespace LiveDisplay.Servicios.Notificaciones
         public static List<StatusBarNotification> statusBarNotifications;
         //Events that this class will trigger to Notify LockScreen about these
         //When RecyclerView will be removed
-        public event EventHandler OnNotificationPosted; //NotifyItemInserted.
-        public event EventHandler OnNotificationUpdated; //NotifyItemUpdated.
-        public event EventHandler OnNotificationGrouped; // TODO: Clueless (?) :'-( I don't know how to implement this in LockScreen
-        public event EventHandler OnNotificationUngrouped; //TODO
-
+        public event EventHandler NotificationPosted; //NotifyItemInserted.
+        public event EventHandler NotificationUpdated; //NotifyItemUpdated.
+        public event EventHandler NotificationGrouped; // TODO: Clueless (?) :'-( I don't know how to implement this in LockScreen
+        public event EventHandler NotificationUngrouped; //TODO
+        public event EventHandler<NotificationListSizeChangedEventArgs> NotificationListSizeChanged;
+        public static bool thereAreNotifications = false;
         /// <summary>
         /// Constructor of the Class
         /// </summary>
@@ -46,6 +48,10 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             CatcherHelper.statusBarNotifications = statusBarNotifications;
             notificationAdapter = new NotificationAdapter(statusBarNotifications);
+            if (statusBarNotifications.Count > 0)
+            {
+                thereAreNotifications = true;
+            }
 
         }
         //If Catcher call this, it means that the notification is part of a Group of notifications and should be Grouped.
@@ -90,6 +96,14 @@ namespace LiveDisplay.Servicios.Notificaciones
                 }
                 
             }
+            if (statusBarNotifications.Count > 0)
+            {
+                OnNotificationListSizeChanged(new NotificationListSizeChangedEventArgs
+                {
+                    ThereAreNotifications = true
+                });
+                thereAreNotifications = true;
+            }
 
         }
         /// <summary>
@@ -124,9 +138,15 @@ namespace LiveDisplay.Servicios.Notificaciones
 
                 notificationAdapter.NotifyItemRemoved(position);
             }
-            
-            
-            Console.WriteLine("NotificationRemoved");
+            //Check if when removing this notification the list size is zero, if true, then raise an event that will
+            //indicate the lockscreen to hide the 'Clear all button'
+            if (statusBarNotifications.Count == 0)
+            {
+                OnNotificationListSizeChanged(new NotificationListSizeChangedEventArgs
+                { ThereAreNotifications=false
+                });
+                thereAreNotifications = false;
+            }
         }
         public void CancelAllNotifications()
         {
@@ -145,5 +165,12 @@ namespace LiveDisplay.Servicios.Notificaciones
         //also when the List of notifications has items, 
         //So Lockscreen can react to this event and Hide/Show the 'Clear all' button depending
         //on if either there are or there aren't notifications on the list
+
+        private void OnNotificationListSizeChanged(NotificationListSizeChangedEventArgs e)
+        {
+            //TODO: Implement me 
+            NotificationListSizeChanged?.Invoke(this, e);
+        }
+
     }
 }

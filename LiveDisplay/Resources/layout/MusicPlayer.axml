@@ -1,23 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:animateLayoutChanges="true"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <TextView
+        android:text="Music Title"
+        android:fontFamily="sans-serif-condensed"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tvSongName" />
+        android:id="@+id/tvSongName"
+        android:textStyle="normal" />
     <TextView
+        android:text="Artist Name"
+        android:fontFamily="sans-serif-condensed"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tvArtistName" />
+        android:id="@+id/tvArtistName"
+        android:textStyle="normal" />
     <TextView
+        android:text="Album Name"
+        android:fontFamily="sans-serif-condensed"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tvAlbumName" />
+        android:id="@+id/tvAlbumName"
+        android:textStyle="italic" />
+    <SeekBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/seeksongTime" />
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"

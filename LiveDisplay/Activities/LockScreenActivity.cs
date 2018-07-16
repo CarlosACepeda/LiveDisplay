@@ -48,10 +48,14 @@ namespace LiveDisplay
         private Button btnClearAll;
         private Fragment notificationFragment;
         public event EventHandler<NotificationItemClickedEventArgs> NotificationItemClicked;
+        
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+
+            
+
 
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.LockScreen);
@@ -126,7 +130,7 @@ namespace LiveDisplay
             }
 
         }
-        
+       
         //Deprecated.
         public void OnNotificationUpdated()
         {
@@ -165,12 +169,11 @@ namespace LiveDisplay
         private void BindEvents()
         {
             //Click events
-            //TODO: Move to Fragment:
-            //v.Click += OnNotificationClicked;
             reloj.Click += Reloj_Click;
             btnClearAll.Click += BtnClearAll_Click;
             //TouchEvents
             unlocker.Touch += Unlocker_Touch;
+            //event from CatcherHelper
             
 
         }
@@ -311,16 +314,28 @@ namespace LiveDisplay
                 else
                 {
                     wallpaperManager = WallpaperManager.GetInstance(this);
-                    papelTapiz = wallpaperManager.Drawable;
-                    backgroundFactory = new BackgroundFactory();
-                    ThreadPool.QueueUserWorkItem(o =>
-                    {
-                        Drawable background = backgroundFactory.Difuminar(papelTapiz);
+                papelTapiz = wallpaperManager.Drawable;
+                BitmapDrawable bitmap = (BitmapDrawable)papelTapiz;
 
-                            RunOnUiThread(() => Window.DecorView.Background = background);
-                       
-                    });
-                }
+                Com.JackAndPhantom.BlurImage blurImage = new Com.JackAndPhantom.BlurImage(this);
+                blurImage.Load(bitmap.Bitmap);
+                blurImage.Intensity(25);
+                
+
+                BitmapDrawable drawable=  new BitmapDrawable(blurImage.GetImageBlur());
+
+                RunOnUiThread(() => Window.DecorView.Background = drawable);
+                
+
+                    //backgroundFactory = new BackgroundFactory();
+                    //ThreadPool.QueueUserWorkItem(o =>
+                    //{
+                    //    Drawable background = backgroundFactory.Difuminar(papelTapiz);
+
+                //        RunOnUiThread(() => Window.DecorView.Background = background);
+
+                //});
+            }
         }
         private void LoadNotificationFragment()
         {

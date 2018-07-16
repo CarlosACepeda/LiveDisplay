@@ -20,16 +20,16 @@ namespace LiveDisplay.Servicios.Music
     class Jukebox
     {
         private static Jukebox jukeboxInstance;
-        private Android.Media.Session.MediaController.TransportControls transportControls;
-        private Jukebox(Android.Media.Session.MediaController.TransportControls transportControls)
+        public Android.Media.Session.MediaController.TransportControls transportControls;
+        private Jukebox()
         {
-            this.transportControls = transportControls;
+            
         }
-        public static Jukebox JukeboxInstance(Android.Media.Session.MediaController.TransportControls transportControls)
+        public static Jukebox JukeboxInstance()
         {
             if (jukeboxInstance == null)
             {
-                jukeboxInstance = new Jukebox(transportControls);
+                jukeboxInstance = new Jukebox();
                 
             }
 

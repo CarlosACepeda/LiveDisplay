@@ -5,6 +5,9 @@ using System.Text;
 
 using Android.App;
 using Android.Content;
+using Android.Graphics;
+using Android.Graphics.Drawables;
+using Android.Media;
 using Android.Media.Session;
 using Android.OS;
 using Android.Runtime;
@@ -25,6 +28,8 @@ namespace LiveDisplay.Servicios.Music
         private Android.Media.Session.MediaController mediaController;
         public static event EventHandler MediaSessionStarted;
         public static event EventHandler MediaSessionStopped;
+        OpenSong song = OpenSong.OpenSongInstance();
+        private Bitmap bitmap;
 
         //Al parecer hay varios controladores de Multimedia y toca recuperarlos.
         public void OnActiveSessionsChanged(IList<Android.Media.Session.MediaController> controllers)
@@ -34,6 +39,8 @@ namespace LiveDisplay.Servicios.Music
                 Console.WriteLine("There is 1 or more active Sessions");
                 mediaController = controllers[0];
                 mediaController.RegisterCallback(MusicController.MusicControllerInstance());
+                //Retrieve current media information
+                GetCurrentMetadata();
                 //To control current media playing
                 GetMusicControls(mediaController.GetTransportControls());
                 isASessionActive = true;
@@ -47,6 +54,29 @@ namespace LiveDisplay.Servicios.Music
             }
         }
 
+        private void GetCurrentMetadata()
+        {
+            int size = (int)Application.Context.Resources.GetDimension(Resource.Dimension.albumartsize);
+            try
+            {
+                bitmap = Bitmap.CreateScaledBitmap(mediaController.Metadata.GetBitmap(MediaMetadata.MetadataKeyAlbumArt), size, size, true);
+            }
+            catch
+            {
+                //There is not bitmap
+            }
+            
+
+
+            song.Title =  mediaController.Metadata.GetText(MediaMetadata.MetadataKeyTitle);
+            song.Artist = mediaController.Metadata.GetText(MediaMetadata.MetadataKeyArtist);
+            song.Album = mediaController.Metadata.GetText(MediaMetadata.MetadataKeyAlbum);
+            song.PlaybackState = mediaController.PlaybackState.State;
+            song.AlbumArt = bitmap;
+            //clear bitmap, so if a new Album art is 
+            bitmap = null;
+        }
+
         protected virtual void OnMediaSessionStarted()
         {
             MediaSessionStarted?.Invoke(this, EventArgs.Empty);
@@ -57,8 +87,11 @@ namespace LiveDisplay.Servicios.Music
         }
         private void GetMusicControls(TransportControls mediaTransportControls)
         {
-            Jukebox jukebox = Jukebox.JukeboxInstance(mediaTransportControls);
+            Jukebox jukebox = Jukebox.JukeboxInstance();
+            jukebox.transportControls = mediaTransportControls;
             OnMediaSessionStarted();
+            
         }
+        
     }
 }

@@ -43,7 +43,7 @@ namespace LiveDisplay.BroadcastReceivers
                     ThreadPool.QueueUserWorkItem(m =>
                         {
                                                      
-                            Thread.Sleep(delaytolockscreen);//5 Seconds of delay before locking screen(Start the LockScreen Activity)
+                            Thread.Sleep(delaytolockscreen);//Seconds of delay before locking screen(Start the LockScreen Activity)
                             //The reason to check if the Screen is turned off is because User can Turn off device screen,
                             //then turn it on before the delay to lock screen is finished. 
                             //So, the Activity will start even if the screen is On, so,

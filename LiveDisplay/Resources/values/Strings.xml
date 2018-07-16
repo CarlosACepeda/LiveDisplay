@@ -26,7 +26,9 @@
   <string name="fiveseconds">5 seconds</string>
   <string name="hidesystemicons">Do not show system icons</string>
   <string name="idk">¯\_(ツ)_/¯</string>
-  <string name="lockdelay">Automatically lock</string>
+  <string name="immediately">Immediately</string>
+  <string name="lockdelay">Automatic lock</string>
+  <string name="lockdelay_desc">Lock the screen in the given time</string>
   <string name="lockscreensettings">Lockscreen</string>
   <string name="modoactivo">Active Mode</string>
   <string name="notificationsettings">Notifications</string>
@@ -42,12 +44,22 @@
   <string name="stickynotificationwarn">You can\'t delete a sticky notification</string>
   <string name="tenseconds">10 seconds</string>
   <string name="turnoffdelay">Automatically turn screen off</string>
+  <string name="turnoffdelay_desc">If the screen turns on(e.g.: A new notification is posted) and there is not user interaction, turn off the screen in...</string>
   <string name="turnonnewnotification">Turn on screen</string>
   <string name="turnonnewnotification_desc">Turn on screen if a new notification incomes</string>
   <string name="turnonusermovement">Turn on screen on device pick up</string>
   <string name="uselockscreennonotifications">Use the lockscreen without notifications</string>
   <string name="uselockscreennonotificationsdesc">For better usage, turn off the default Android lockscreen</string>
-  <string name="immediately">Immediately</string>
-  <string name="lockdelay_desc">Block the screen in the given time</string>
-  <string name="turnoffdelay_desc">If the screen turns on(e.g.: A new notification is posted) and there is not user interaction, turn off the screen in...</string>
+  <string name="translations">Translations</string>
+  <string name="eng">English</string>
+  <string name="esp">Spanish</string>
+  <string name="rus">Russian</string>
+  <string name="me">Carlos Cepeda</string>
+  <string name="acknowledgments">Acknowledgments</string>
+  <string name="yasujizr">Yazujizr</string>
+  <string name="yasujizr_ty">App icon design!</string>
+  <string name="achep">Artem Chepurnoy</string>
+  <string name="achep_ty">The AcDisplay man himself, help and guidance!</string>
+  <string name="askfortranslations">Want to help with translations?</string>
+  <string name="contactme">Contact me</string>
 </resources>

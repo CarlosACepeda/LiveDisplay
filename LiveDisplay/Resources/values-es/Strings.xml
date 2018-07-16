@@ -26,7 +26,9 @@
   <string name="fiveseconds">5 segundos</string>
   <string name="hidesystemicons">No mostrar iconos del sistema</string>
   <string name="idk">¯\_(ツ)_/¯</string>
+  <string name="immediately">De inmediato</string>
   <string name="lockdelay">Bloquear automaticamente</string>
+  <string name="lockdelay_desc">Bloquear la pantalla después del tiempo dado</string>
   <string name="lockscreensettings">Lockscreen</string>
   <string name="modoactivo">Modo Activo</string>
   <string name="notificationsettings">Notificaciones</string>
@@ -42,12 +44,20 @@
   <string name="stickynotificationwarn">No puedes eliminar notificaciones pegasosas</string>
   <string name="tenseconds">10 segundos</string>
   <string name="turnoffdelay">Apagar pantalla automaticamente</string>
+  <string name="turnoffdelay_desc">Si la pantalla se enciende(p.e.j. una nueva notificación llega) y no hay interaccion por parte del usuario, apagar la pantalla en...</string>
   <string name="turnonnewnotification">Encender pantalla</string>
   <string name="turnonnewnotification_desc">Prender la pantalla si una nueva notificacion llega</string>
   <string name="turnonusermovement">Prender la pantalla al levantar el dispositivo</string>
   <string name="uselockscreennonotifications">Usar la pantalla de bloqueo sin notificaciones</string>
   <string name="uselockscreennonotificationsdesc">Para mejor usabilidad, desactiva la pantalla de bloqueo por defecto de Android</string>
-  <string name="immediately">De inmediato</string>
-  <string name="lockdelay_desc">Bloquear la pantalla después del tiempo dado</string>
-  <string name="turnoffdelay_desc">Si la pantalla se enciende(p.e.j. una nueva notificación llega) y no hay interaccion por parte del usuario, apagar la pantalla en...</string>
+  <string name="translations">Traducciones</string>
+  <string name="eng">Inglés</string>
+  <string name="esp">Español</string>
+  <string name="rus">Ruso</string>
+  <string name="acknowledgments">Agradecimientos</string>
+  <string name="yasujizr">Yasujizr</string>
+  <string name="yasujizr_ty">Diseño del icono de esta app!</string>
+  <string name="achep_ty">El hombre detrás de AcDisplay, ayuda y guía!</string>
+  <string name="askfortranslations">Quieres ayudar con las traducciones?</string>
+  <string name="contactme">Contáctame</string>
 </resources>

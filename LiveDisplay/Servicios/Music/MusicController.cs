@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using Android.App;
+using Android.Graphics;
+using Android.Graphics.Drawables;
 using Android.Media;
 using Android.Media.Session;
 using Android.OS;
+using LiveDisplay.Factories;
 using LiveDisplay.Servicios.Music.MediaEventArgs;
 
 namespace LiveDisplay.Servicios.Music
@@ -17,11 +21,16 @@ namespace LiveDisplay.Servicios.Music
         private static MusicController instance;
         public static event EventHandler<MediaPlaybackStateChangedEventArgs> MediaPlaybackChanged;
         public static event EventHandler<MediaMetadataChangedEventArgs> MediaMetadataChanged;
-        private OpenSong song = OpenSong.OpenSongInstance();
+        private OpenSong song;
+        Com.JackAndPhantom.BlurImage blurImage;
+        Bitmap bitmap;
         private MusicController()
         {
-
+            song = OpenSong.OpenSongInstance();
+            blurImage = new Com.JackAndPhantom.BlurImage(Application.Context);
+            
         }
+        
         public static MusicController MusicControllerInstance()
         {
             if (instance == null)
@@ -31,9 +40,12 @@ namespace LiveDisplay.Servicios.Music
             return instance;
             
         }
+        
         public override void OnPlaybackStateChanged(PlaybackState state)
         {
+            
             song.PlaybackState = state.State;
+            Console.Write(state.Position);
             //Estado del playback:
             //Pausado, Comenzado, Avanzando, Retrocediendo, etc.    
                 OnMediaPlaybackChanged(new MediaPlaybackStateChangedEventArgs
@@ -44,22 +56,33 @@ namespace LiveDisplay.Servicios.Music
         }
         public override void OnMetadataChanged(MediaMetadata metadata)
         {
+            int size = (int)Application.Context.Resources.GetDimension(Resource.Dimension.albumartsize);
+            try
+            {
+                bitmap = Bitmap.CreateScaledBitmap(metadata.GetBitmap(MediaMetadata.MetadataKeyAlbumArt), size, size, true);
+            }
+            catch
+            {
+                //There is not albumart
+            }
             
+
             song.Title = metadata.GetText(MediaMetadata.MetadataKeyTitle);
             song.Artist = metadata.GetText(MediaMetadata.MetadataKeyArtist);
             song.Album = metadata.GetText(MediaMetadata.MetadataKeyAlbum);
+            song.AlbumArt = bitmap; /*blurImage.GetImageBlur();*/
 
             OnMediaMetadataChanged(new MediaMetadataChangedEventArgs
-                    {
-                        Artist = metadata.GetText(MediaMetadata.MetadataKeyArtist),
-                        Title = metadata.GetText(MediaMetadata.MetadataKeyTitle),
-                        Album = metadata.GetText(MediaMetadata.MetadataKeyAlbum),
-                        AlbumArt = metadata.GetBitmap(MediaMetadata.MetadataKeyAlbumArt)
+            {
+                Artist = metadata.GetText(MediaMetadata.MetadataKeyArtist),
+                Title = metadata.GetText(MediaMetadata.MetadataKeyTitle),
+                Album = metadata.GetText(MediaMetadata.MetadataKeyAlbum),
+                AlbumArt = bitmap
 
-                    });
-            
+            });
+
             //Datos de la Media que se está reproduciendo.            
-
+            bitmap = null;
             base.OnMetadataChanged(metadata);
         }
         //Raise Events:

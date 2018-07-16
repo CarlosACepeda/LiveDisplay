@@ -14,7 +14,7 @@ namespace LiveDisplay.Factories
 {
     internal class BackgroundFactory
     {
-        //Retrieves a default lockscreen
+        //Retrieves a blurred image
         public Drawable Difuminar(Drawable papelTapiz)
         {
             //Fondo de escritorio provista por el Argumento que se pasa en <papelTapiz>
@@ -83,6 +83,34 @@ namespace LiveDisplay.Factories
             blurredBitmap = null;
             blurredBitMapResized = null;
             return papelTapizDifuminado;
+        }
+        public Bitmap DifuminarBitmap(Bitmap image)
+        {
+            Bitmap blurredBitmap;
+            //Asignar a este bitmap la imagen original para trabajar con ella.
+            blurredBitmap = image;
+            //Crear la instancia de RenderScript que hará el trabajo
+            RenderScript rs = RenderScript.Create(Application.Context);
+            //Alocar memoria para que RenderScript trabaje.
+            Allocation input = Allocation.CreateFromBitmap(rs, image, Allocation.MipmapControl.MipmapFull, AllocationUsage.Script);
+            Allocation output = Allocation.CreateTyped(rs, input.Type);
+
+            // Load up an instance of the specific script that we want to use.
+            ScriptIntrinsicBlur script = ScriptIntrinsicBlur.Create(rs, Element.U8_4(rs));
+            script.SetInput(input);
+
+            // Set the blur radius
+            script.SetRadius(25);
+
+            // Start the ScriptIntrinisicBlur
+            script.ForEach(output);
+
+            // Copy the output to the blurred bitmap
+            output.CopyTo(blurredBitmap);
+
+            //Scale the bitmap:
+            Bitmap blurredBitMapResized = Bitmap.CreateScaledBitmap(blurredBitmap, 70, 80, false);
+            return blurredBitMapResized;
         }
         public string SaveImagePath(Uri uri)
         {

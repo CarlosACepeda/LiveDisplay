@@ -26,7 +26,7 @@ namespace LiveDisplay.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            View v = inflater.Inflate(Resource.Layout.NotificiationFrag, container, false);
+            View v = inflater.Inflate(Resource.Layout.NotificationFrag, container, false);
             notificationActions = v.FindViewById<LinearLayout>(Resource.Id.notificationActions);
             tvTexto = v.FindViewById<TextView>(Resource.Id.tvTexto);
             tvTitulo = v.FindViewById<TextView>(Resource.Id.tvTitulo);
@@ -89,11 +89,22 @@ namespace LiveDisplay.Fragments
             {
                 foreach (var a in OpenNotification.RetrieveActionButtons(e.Position))
                 {
+                    
                     notificationActions.AddView(a);
                 }
             }
             
             notification = null;
+        }
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+            LockScreenActivity.lockScreenInstance.NotificationItemClicked -= LockScreenInstance_NotificationItemClicked;
+            notificationActions = null;
+            tvTexto = null;
+            tvTitulo = null;
+            llNotification = null;
+
         }
     }
 }
