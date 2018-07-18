@@ -20,7 +20,6 @@ namespace LiveDisplay.Fragments
         {
             SubscribeToEvents();
             base.OnCreate(savedInstanceState);
-            
             // Create your fragment here
         }
 
@@ -32,8 +31,7 @@ namespace LiveDisplay.Fragments
             tvTitulo = v.FindViewById<TextView>(Resource.Id.tvTitulo);
             llNotification = v.FindViewById<LinearLayout>(Resource.Id.llNotification);
 
-            llNotification.Click += LlNotification_Click;
-
+            llNotification.Click += LlNotification_Click;  
             return v;
         }
 
@@ -72,6 +70,11 @@ namespace LiveDisplay.Fragments
 
         private void LockScreenInstance_NotificationItemClicked(object sender, Servicios.Notificaciones.NotificationEventArgs.NotificationItemClickedEventArgs e)
         {
+            ///This fragment starts invisible.
+            if (llNotification.Visibility != ViewStates.Visible)
+            {
+                llNotification.Visibility = ViewStates.Visible;
+            }
             position = e.Position;
             //Define events to communicate with the Notification Widget:
             //When this method is called, tell NotificationWidget to update itself with data provided

@@ -37,13 +37,10 @@ namespace LiveDisplay
         private RecyclerView recycler;
         private RecyclerView.LayoutManager layoutManager;
         private BackgroundFactory backgroundFactory;
-        private TextView tvTitulo;
-        private TextView tvTexto;
-        private string dia, mes = null;
+        private string dia, mes;
         private Calendar fecha;
         private TextView tvFecha;
         private LinearLayout reloj;
-        private int position;
         private ImageView unlocker;
         private Button btnClearAll;
         private Fragment notificationFragment;
@@ -53,20 +50,14 @@ namespace LiveDisplay
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-
-            
-
-
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.LockScreen);
             BindViews();
             BindMediaControllerEvents();
             ThreadPool.QueueUserWorkItem(o =>
             InicializarValores());
-            //<Start is sensible to configuration LockScreen Settings>
             ThreadPool.QueueUserWorkItem(o => LoadConfiguration());
         }
-
         protected override void OnResume()
         {
             base.OnResume();
@@ -75,9 +66,6 @@ namespace LiveDisplay
             StartTimerToLockScreen();
             CheckIfMusicIsPlaying();
         }
-
-        
-
         protected override void OnPause()
         {
             base.OnPause();
@@ -94,6 +82,7 @@ namespace LiveDisplay
         //Los siguientes 2 métodos son Callbacks desde el Adaptador del RecyclerView
         public void OnItemClick(int position)
         {
+            
             //TODO: Dont call this if the Music is playing
             OnNotificationItemClicked(position);
             
@@ -135,25 +124,17 @@ namespace LiveDisplay
         public void OnNotificationUpdated()
         {
             //TODO: Make a Event listener to Update the information instead of Clicking the Item again
-
-            OnItemClick(position);
         }
         private void BindViews()
         {
 
-            recycler = FindViewById<RecyclerView>(Resource.Id.NotificationListRecyclerView);
-            //TODO: Move to Fragment
-            tvTitulo = (TextView)FindViewById(Resource.Id.tvTitulo);
-            tvTexto = (TextView)FindViewById(Resource.Id.tvTexto);
+            recycler = FindViewById<RecyclerView>(Resource.Id.NotificationListRecyclerView);            
             tvFecha = (TextView)FindViewById(Resource.Id.txtFechaLock);
             reloj = FindViewById<LinearLayout>(Resource.Id.clockLock);
             unlocker = FindViewById<ImageView>(Resource.Id.unlocker);
             btnClearAll = FindViewById<Button>(Resource.Id.btnClearAllNotifications);
             linearLayout = FindViewById<LinearLayout>(Resource.Id.contenedorPrincipal);
-            LoadNotificationFragment();
-        }
-
-        
+        }      
         private void UnbindViews()
         {
             linearLayout = FindViewById<LinearLayout>(Resource.Id.contenedorPrincipal);
@@ -173,7 +154,6 @@ namespace LiveDisplay
             btnClearAll.Click += BtnClearAll_Click;
             //TouchEvents
             unlocker.Touch += Unlocker_Touch;
-            //event from CatcherHelper
             
 
         }
@@ -198,15 +178,17 @@ namespace LiveDisplay
             {
                 recycler.Visibility = ViewStates.Visible;
             }
+            //TODO: Once Stopped, set the background image again.
         }
        
         private void BtnClearAll_Click(object sender, EventArgs e)
         {
             NotificationSlave notificationSlave = NotificationSlave.NotificationSlaveInstance();
-            notificationSlave.CancelAll();
-            //TODO:Move to fragment:
-            //v.Visibility = ViewStates.Invisible;
-            notificationSlave = null; 
+            FragmentTransaction fragmentManager = FragmentManager.BeginTransaction();
+            fragmentManager.Remove(notificationFragment);
+            fragmentManager.Commit();
+            fragmentManager.Dispose();
+            notificationSlave = null;
         }
         private void Reloj_Click(object sender, EventArgs e)
         {
@@ -254,8 +236,6 @@ namespace LiveDisplay
         
         private void UnbindEvents()
         {
-            //TODO: Move to Fragment
-            //v.Click -= OnNotificationClicked;
             reloj.Click -= Reloj_Click;
             unlocker.Touch -= Unlocker_Touch;
             btnClearAll.Click -= BtnClearAll_Click;
@@ -313,29 +293,8 @@ namespace LiveDisplay
                 }
                 else
                 {
-                    wallpaperManager = WallpaperManager.GetInstance(this);
-                papelTapiz = wallpaperManager.Drawable;
-                BitmapDrawable bitmap = (BitmapDrawable)papelTapiz;
-
-                Com.JackAndPhantom.BlurImage blurImage = new Com.JackAndPhantom.BlurImage(this);
-                blurImage.Load(bitmap.Bitmap);
-                blurImage.Intensity(25);
-                
-
-                BitmapDrawable drawable=  new BitmapDrawable(blurImage.GetImageBlur());
-
-                RunOnUiThread(() => Window.DecorView.Background = drawable);
-                
-
-                    //backgroundFactory = new BackgroundFactory();
-                    //ThreadPool.QueueUserWorkItem(o =>
-                    //{
-                    //    Drawable background = backgroundFactory.Difuminar(papelTapiz);
-
-                //        RunOnUiThread(() => Window.DecorView.Background = background);
-
-                //});
-            }
+                LoadDefaultWallpaper();                  
+                }
         }
         private void LoadNotificationFragment()
         {
@@ -349,7 +308,7 @@ namespace LiveDisplay
 
         private void AddFlags()
         {
-            View view = Window.DecorView;
+           View view = Window.DecorView;
             var uiOptions = (int)view.SystemUiVisibility;
             var newUiOptions = uiOptions;
 
@@ -384,8 +343,9 @@ namespace LiveDisplay
             }
             else if (ActiveMediaSessionsListener.isASessionActive == false)
             {
+
                 StopMusicController();
-                //Reenable NotificationList to show-
+                              
                 recycler.Visibility = ViewStates.Visible;
             }
         }
@@ -395,12 +355,13 @@ namespace LiveDisplay
         /// </summary>
         private void StartMusicController()
         {
+            
             try
             {
             Fragment fragment = new MusicFragment();
             FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction();
             fragmentTransaction.Replace(Resource.Id.MusicNotificationPlaceholder, fragment);
-            fragmentTransaction.AddToBackStack(null);
+            fragmentTransaction.DisallowAddToBackStack();
             fragmentTransaction.Commit();
             }
             catch
@@ -414,17 +375,32 @@ namespace LiveDisplay
         {
             try
             {
-            Fragment fragment = new NotificationFragment();
-            FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction();
-            fragmentTransaction.Replace(Resource.Id.MusicNotificationPlaceholder, fragment);
-                fragmentTransaction.DisallowAddToBackStack();
-            fragmentTransaction.Commit();
+                LoadNotificationFragment();
+                LoadDefaultWallpaper();
             }
             catch
             {
+                
                 Console.WriteLine("Failed to Stop Music Controller");
             }
             
+        }
+
+        private void LoadDefaultWallpaper()
+        {
+            wallpaperManager = WallpaperManager.GetInstance(this);
+            papelTapiz = wallpaperManager.Drawable;
+            BitmapDrawable bitmap = (BitmapDrawable)papelTapiz;
+
+            Com.JackAndPhantom.BlurImage blurImage = new Com.JackAndPhantom.BlurImage(this);
+            blurImage.Load(bitmap.Bitmap);
+            blurImage.Intensity(25);
+
+
+            BitmapDrawable drawable = new BitmapDrawable(blurImage.GetImageBlur());
+
+            RunOnUiThread(() => Window.DecorView.Background = drawable);
+
         }
     }
 

@@ -50,10 +50,9 @@ namespace LiveDisplay.BroadcastReceivers
                             //in summary the Lockscreen only can start when screen is off
                             if (isScreenOn == false)
                             {
-                                Intent lockScreenIntent = new Intent(Application.Context, typeof(LockScreenActivity));
-                                PendingIntent pendingIntent = PendingIntent.GetActivity(Application.Context, 0, lockScreenIntent, 0);
-
-                                pendingIntent.Send();
+                                Intent lockScreenIntent = new Intent();
+                                lockScreenIntent.SetClassName(context.PackageName, Java.Lang.Class.FromType(typeof(LockScreenActivity)).Name);
+                                context.StartActivity(lockScreenIntent);
                             }
                         });
                     

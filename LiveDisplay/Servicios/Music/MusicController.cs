@@ -84,6 +84,8 @@ namespace LiveDisplay.Servicios.Music
             //Datos de la Media que se está reproduciendo.            
             bitmap = null;
             base.OnMetadataChanged(metadata);
+            //Memory is growing until making a GC.
+            GC.Collect();
         }
         //Raise Events:
         protected virtual void OnMediaPlaybackChanged(MediaPlaybackStateChangedEventArgs e)
