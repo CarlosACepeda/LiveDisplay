@@ -19,5 +19,10 @@ namespace LiveDisplay.Servicios.Music
     /// </summary>
     class JukeboxKitkat
     {
+        public JukeboxKitkat()
+        {
+
+        }
+
     }
 }

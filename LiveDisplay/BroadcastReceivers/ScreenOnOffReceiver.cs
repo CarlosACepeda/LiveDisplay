@@ -52,6 +52,7 @@ namespace LiveDisplay.BroadcastReceivers
                             {
                                 Intent lockScreenIntent = new Intent();
                                 lockScreenIntent.SetClassName(context.PackageName, Java.Lang.Class.FromType(typeof(LockScreenActivity)).Name);
+                                lockScreenIntent.AddFlags(ActivityFlags.NewTask);
                                 context.StartActivity(lockScreenIntent);
                             }
                         });

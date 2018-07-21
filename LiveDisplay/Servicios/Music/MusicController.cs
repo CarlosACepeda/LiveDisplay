@@ -45,12 +45,14 @@ namespace LiveDisplay.Servicios.Music
         {
             
             song.PlaybackState = state.State;
-            Console.Write(state.Position);
+            Console.WriteLine("the state is:" + state.State.ToString());
+            song.CurrentPosition = (int)(state.Position / 1000);
             //Estado del playback:
             //Pausado, Comenzado, Avanzando, Retrocediendo, etc.    
                 OnMediaPlaybackChanged(new MediaPlaybackStateChangedEventArgs
                 {
-                PlaybackState = state.State
+                PlaybackState = state.State,
+                CurrentTime= (int)(state.Position/1000)
                 });
             base.OnPlaybackStateChanged(state);
         }

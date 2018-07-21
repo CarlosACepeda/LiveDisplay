@@ -19,6 +19,7 @@ namespace LiveDisplay.Servicios.Music.MediaEventArgs
         /// Argument indicating the current playback state of the media, playing, stopped, etc-
         /// </summary>
         public PlaybackStateCode PlaybackState { get; set; }
+        public int CurrentTime { get; set; }
 
     }
 }

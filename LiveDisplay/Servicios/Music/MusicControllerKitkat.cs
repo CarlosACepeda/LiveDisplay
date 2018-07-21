@@ -22,9 +22,11 @@ namespace LiveDisplay.Servicios.Music
     class MusicControllerKitkat :Java.Lang.Object, RemoteController.IOnClientUpdateListener
 #pragma warning restore CS0618 // El tipo o el miembro están obsoletos
     {
+       
         public void OnClientChange(bool clearing)
         {
             Console.WriteLine("OnClientChange called");
+            
         }
 
 #pragma warning disable CS0618 // El tipo o el miembro están obsoletos
@@ -37,6 +39,7 @@ namespace LiveDisplay.Servicios.Music
         public void OnClientPlaybackStateUpdateSimple([GeneratedEnum] RemoteControlPlayState stateSimple)
         {
             Console.WriteLine("OnClientPlaybackStateUpdateSimple called");
+            
         }
 
         public void OnClientPlaybackStateUpdate([GeneratedEnum] RemoteControlPlayState state, long stateChangeTimeMs, long currentPosMs, float speed)
@@ -46,6 +49,7 @@ namespace LiveDisplay.Servicios.Music
 
         public void OnClientTransportControlUpdate([GeneratedEnum] RemoteControlFlags transportControlFlags)
         {
+            
             Console.WriteLine("OnClientTransportControlUpdate called");
         }
 

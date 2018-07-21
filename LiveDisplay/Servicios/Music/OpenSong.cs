@@ -10,6 +10,8 @@ namespace LiveDisplay.Servicios.Music
         public string Album { get; set; }
         public Bitmap AlbumArt { get; set; }
         public PlaybackStateCode PlaybackState { get; set; }
+        public int Duration { get; internal set; }
+        public int CurrentPosition { get; set; }
 
         private static OpenSong instance;
         private OpenSong()

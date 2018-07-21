@@ -7,6 +7,7 @@ using Android.Media.Session;
 using Android.OS;
 using Android.Preferences;
 using Android.Provider;
+using Android.Runtime;
 using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
@@ -31,8 +32,6 @@ namespace LiveDisplay
     public class LockScreenActivity : Activity
     {
         public static LockScreenActivity lockScreenInstance;
-        private WallpaperManager wallpaperManager = null;
-        private Drawable papelTapiz;
         private LinearLayout linearLayout;
         private RecyclerView recycler;
         private RecyclerView.LayoutManager layoutManager;
@@ -79,12 +78,19 @@ namespace LiveDisplay
             GC.Collect();
         }
 
+        public override void OnBackPressed()
+        {
+            //Do nothing.
+            //base.OnBackPressed();
+        }
+
         //Los siguientes 2 métodos son Callbacks desde el Adaptador del RecyclerView
         public void OnItemClick(int position)
         {
             
             //TODO: Dont call this if the Music is playing
             OnNotificationItemClicked(position);
+            //Instead, show another view.
             
         }
 
@@ -245,7 +251,6 @@ namespace LiveDisplay
         {
             lockScreenInstance = this;
             layoutManager = new LinearLayoutManager(this);
-            
             fecha = Calendar.GetInstance(Locale.Default);
             dia = fecha.Get(CalendarField.DayOfMonth).ToString();
             mes = fecha.GetDisplayName(2, 2, Locale.Default);
@@ -284,7 +289,7 @@ namespace LiveDisplay
                     //Found an image, use it as wallpaper.
                     Bitmap bm = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.imagePath, ""));
 
-                        backgroundFactory = new BackgroundFactory();
+                backgroundFactory = new BackgroundFactory();
                         Drawable background = backgroundFactory.Difuminar(bm);
                         RunOnUiThread(() => Window.DecorView.Background = background);
                         backgroundFactory = null;
@@ -312,7 +317,6 @@ namespace LiveDisplay
             var uiOptions = (int)view.SystemUiVisibility;
             var newUiOptions = uiOptions;
 
-            newUiOptions |= (int)SystemUiFlags.LowProfile;
             newUiOptions |= (int)SystemUiFlags.Fullscreen;
             newUiOptions |= (int)SystemUiFlags.HideNavigation;
             newUiOptions |= (int)SystemUiFlags.Immersive;
@@ -388,20 +392,24 @@ namespace LiveDisplay
 
         private void LoadDefaultWallpaper()
         {
-            wallpaperManager = WallpaperManager.GetInstance(this);
-            papelTapiz = wallpaperManager.Drawable;
-            BitmapDrawable bitmap = (BitmapDrawable)papelTapiz;
+            WallpaperManager wallpaperManager = WallpaperManager.GetInstance(this);
+            //Forget the loaded wallpaper because it will be the one that is blurred.
+            //so, it will blur the already blurred wallpaper, so, causing so much blur that 
+            //the app will explode, LOL.
+            wallpaperManager.ForgetLoadedWallpaper();
+            BitmapDrawable bitmap = (BitmapDrawable)wallpaperManager.Drawable;
 
             Com.JackAndPhantom.BlurImage blurImage = new Com.JackAndPhantom.BlurImage(this);
             blurImage.Load(bitmap.Bitmap);
             blurImage.Intensity(25);
 
-
+            
             BitmapDrawable drawable = new BitmapDrawable(blurImage.GetImageBlur());
-
+            drawable.SetAlpha(255);
             RunOnUiThread(() => Window.DecorView.Background = drawable);
-
+            wallpaperManager = null;
         }
+
     }
 
 }

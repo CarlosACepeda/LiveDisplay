@@ -18,6 +18,9 @@ namespace LiveDisplay.Servicios
     /// </summary>
     internal class Awake
     {
+        //TODO: This class should Raise events instead of reacting to events!
+        //The one that should react to events coming from this class is LockScreen.
+
         private static ConfigurationManager configurationManager = new ConfigurationManager(Application.Context.GetSharedPreferences("livedisplayconfig", FileCreationMode.Private));
 
         /// <summary>
@@ -28,6 +31,9 @@ namespace LiveDisplay.Servicios
         public static void WakeUpScreen()
         {
             //Only wake up the device if this setting is enabled.
+
+            //TODO: LockScreen should implement this because, what if the Lockscreen is disabled? This method will turn on the screen anyways.
+            //to show a notification, that is not available because the user maybe disabled the lockscreen.
             if (configurationManager.RetrieveAValue(ConfigurationParameters.turnonusermovement) == true)
             {
                 PowerManager pm = ((PowerManager)Application.Context.GetSystemService(Context.PowerService));

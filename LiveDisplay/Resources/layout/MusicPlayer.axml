@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/musicPlayerContainer"
+    android:background="?android:attr/selectableItemBackground"
     android:animateLayoutChanges="true"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -11,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/tvSongName"
+        android:textColor="@color/primary_text_default_material_dark"
         android:textStyle="normal" />
     <TextView
         android:text="Artist Name"
@@ -19,6 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/tvArtistName"
+        android:textColor="@color/primary_text_default_material_dark"
         android:textStyle="normal" />
     <TextView
         android:text="Album Name"
@@ -27,8 +31,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/tvAlbumName"
-        android:textStyle="italic" />
+        android:textStyle="italic"
+        android:textColor="@color/primary_text_default_material_dark" />
     <SeekBar
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/seeksongTime" />
@@ -42,18 +48,18 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:id="@+id/btnMediaPrevious"
-            android:background="@android:color/transparent" />
+            android:background="?android:attr/selectableItemBackground" />
         <Button
             android:drawableTop="@drawable/ic_play_arrow_white_24dp"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:id="@+id/btnMediaPlayPlause"
-            android:background="@android:color/transparent" />
+            android:background="?android:attr/selectableItemBackground" />
         <Button
             android:drawableTop="@drawable/ic_skip_next_white_24dp"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:id="@+id/btnMediaNext"
-            android:background="@android:color/transparent" />
+            android:background="?android:attr/selectableItemBackground" />
     </LinearLayout>
 </LinearLayout>

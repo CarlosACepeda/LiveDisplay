@@ -13,11 +13,12 @@ using LiveDisplay.Servicios.Music.MediaEventArgs;
 namespace LiveDisplay.Fragments
 {
     public class MusicFragment : Fragment
-    {
+
+    { 
         private Jukebox instance;
         private TextView tvTitle, tvArtist, tvAlbum;
         private Button btnSkipPrevious, btnPlayPause, btnSkipNext;
-        private LinearLayout lockscreenContainer;
+        private LinearLayout musicPlayerContainer;
         private SeekBar skbSeekSongTime;
         Window window;
         BitmapDrawable bitmapDrawable;
@@ -49,14 +50,43 @@ namespace LiveDisplay.Fragments
         private void BindViewEvents()
         {
             btnSkipPrevious.Click += BtnSkipPrevious_Click;
+            btnSkipPrevious.LongClick += BtnSkipPrevious_LongClick;
             btnPlayPause.Click += BtnPlayPause_Click;
             btnSkipNext.Click += BtnSkipNext_Click;
+            btnSkipNext.LongClick += BtnSkipNext_LongClick;
             skbSeekSongTime.ProgressChanged += SkbSeekSongTime_ProgressChanged;
+            skbSeekSongTime.StopTrackingTouch += SkbSeekSongTime_StopTrackingTouch;
+            musicPlayerContainer.LongClick += MusicPlayerContainer_LongClick;
         }
-
+        private void BtnSkipNext_LongClick(object sender, View.LongClickEventArgs e)
+        {
+            instance.FastFoward();
+        }
+        private void BtnSkipPrevious_LongClick(object sender, View.LongClickEventArgs e)
+        {
+            instance.Rewind();
+        }
+        private void MusicPlayerContainer_LongClick(object sender, View.LongClickEventArgs e)
+        {
+            if (skbSeekSongTime.Visibility == ViewStates.Gone || skbSeekSongTime.Visibility == ViewStates.Invisible)
+            {
+                skbSeekSongTime.Visibility = ViewStates.Visible;
+            }
+            else
+            {
+                skbSeekSongTime.Visibility = ViewStates.Gone;
+            }
+        }
+        private void SkbSeekSongTime_StopTrackingTouch(object sender, SeekBar.StopTrackingTouchEventArgs e)
+        {
+            //When user stop dragging then seek to the position previously saved in ProgressChangedEvent
+            instance.SeekTo(e.SeekBar.Progress*1000);
+            skbSeekSongTime.SetProgress(e.SeekBar.Progress, true);
+        }
         private void SkbSeekSongTime_ProgressChanged(object sender, SeekBar.ProgressChangedEventArgs e)
         {
-            //TODO: Implement seekbar to seek time in the song.
+            //This will save the current song time.
+            skbSeekSongTime.SetProgress(e.Progress, true);          
         }
 
         //Events-
@@ -126,25 +156,23 @@ namespace LiveDisplay.Fragments
                 case PlaybackStateCode.Paused:
                     btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0,Resource.Drawable.ic_play_arrow_white_24dp,  0, 0);
                     playbackState = PlaybackStateCode.Paused;
-                    Console.Write("Media is paused");
 
                     break;
                 case PlaybackStateCode.Playing:
                     btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0,Resource.Drawable.ic_pause_white_24dp, 0, 0);
                     playbackState = PlaybackStateCode.Playing;
-                    Console.Write("MEdia is playinh");
+                    
                     break;
                 case PlaybackStateCode.Stopped:
                     btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0,Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
                     playbackState = PlaybackStateCode.Stopped;
-                    Console.Write("Media is Stopped");
                     break;
                 default:
                     break;
+                    
             }
-
+            skbSeekSongTime.SetProgress(e.CurrentTime, true);
         }
-
 
         //Views
         private void BindViews(View view)
@@ -159,7 +187,7 @@ namespace LiveDisplay.Fragments
             btnSkipNext = view.FindViewById<Button>(Resource.Id.btnMediaNext);
             skbSeekSongTime = view.FindViewById<SeekBar>(Resource.Id.seeksongTime);
 
-            lockscreenContainer = view.FindViewById<LinearLayout>(Resource.Id.contenedorPrincipal);
+            musicPlayerContainer = view.FindViewById<LinearLayout>(Resource.Id.musicPlayerContainer);
             window = Activity.Window;
         }
         private void RetrieveMediaInformation()
@@ -179,6 +207,10 @@ namespace LiveDisplay.Fragments
             }
             bitmapDrawable = null;
 
+            //Set a custom length for seekbar based on song length
+
+            skbSeekSongTime.Max = song.Duration / 1000;//Because the length is given in ms, I want it in seconds.
+            skbSeekSongTime.Progress = song.CurrentPosition;
             switch (song.PlaybackState)
             {
                 case PlaybackStateCode.Paused:

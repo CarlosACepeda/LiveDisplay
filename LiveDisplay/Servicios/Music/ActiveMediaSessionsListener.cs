@@ -49,8 +49,21 @@ namespace LiveDisplay.Servicios.Music
             }
             else if(controllers.Count==0)
             {
-                isASessionActive = false;
-                Console.WriteLine("No hay sesiones Activas");
+                //When catcher is activated Il will register this call back, if mediacontroller is null, then it will crash
+                //due that there are not mediacontrollers.
+                try
+                {
+                    mediaController.UnregisterCallback(MusicController.MusicControllerInstance());
+                    isASessionActive = false;
+                    Console.WriteLine("No hay sesiones Activas");
+                }
+                catch
+                {
+                    //Nothing.
+                }
+                
+                
+                
             }
         }
 
@@ -71,9 +84,9 @@ namespace LiveDisplay.Servicios.Music
             song.Title =  mediaController.Metadata.GetText(MediaMetadata.MetadataKeyTitle);
             song.Artist = mediaController.Metadata.GetText(MediaMetadata.MetadataKeyArtist);
             song.Album = mediaController.Metadata.GetText(MediaMetadata.MetadataKeyAlbum);
+            song.Duration= (int)mediaController.Metadata.GetLong(MediaMetadata.MetadataKeyDuration);
             song.PlaybackState = mediaController.PlaybackState.State;
             song.AlbumArt = bitmap;
-            //clear bitmap, so if a new Album art is 
             bitmap = null;
         }
 

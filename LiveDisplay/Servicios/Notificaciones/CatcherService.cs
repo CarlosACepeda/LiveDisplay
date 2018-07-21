@@ -56,10 +56,14 @@ namespace LiveDisplay.Servicios
 
 #pragma warning disable CS0618 // El tipo o el miembro están obsoletos
                 remoteController = new RemoteController(Application.Context, new MusicControllerKitkat());
+                remoteController.SetArtworkConfiguration(450, 450);
+                
 #pragma warning restore CS0618 // El tipo o el miembro están obsoletos
                 var audioService = (AudioManager)Application.Context.GetSystemService(AudioService);
+                
 #pragma warning disable CS0618 // El tipo o el miembro están obsoletos
                 audioService.RegisterRemoteController(remoteController);
+                
 #pragma warning restore CS0618 // El tipo o el miembro están obsoletos
             }
             return base.OnBind(intent);
