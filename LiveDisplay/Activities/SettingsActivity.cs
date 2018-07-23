@@ -32,9 +32,12 @@ namespace LiveDisplay.Activities
 
             // Create your application here
             SetContentView(Resource.Layout.Settings);
-            toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
-            SetSupportActionBar(toolbar);
-
+            using (toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar))
+            {
+                SetSupportActionBar(toolbar);
+            }
+                
+            
             FragmentManager.BeginTransaction().Replace(Resource.Id.content, new LiveDisplayPreferencesFragment()).Commit();
         }
         protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
@@ -65,6 +68,10 @@ namespace LiveDisplay.Activities
             intent.SetType("image/*");
             intent.SetAction(Intent.ActionGetContent);
             StartActivityForResult(Intent.CreateChooser(intent, "Pick image"), requestCode);
+        }
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
         }
     }
 }

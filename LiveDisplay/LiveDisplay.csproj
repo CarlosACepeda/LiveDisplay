@@ -144,6 +144,7 @@
     <Compile Include="BroadcastReceivers\AdminReceiver.cs" />
     <Compile Include="BroadcastReceivers\BootCompleteReceiver.cs" />
     <Compile Include="BroadcastReceivers\ScreenOnOffReceiver.cs" />
+    <Compile Include="DataRepository\NotificationList.cs" />
     <Compile Include="Factories\BackgroundFactory.cs" />
     <Compile Include="Factories\IconFactory.cs" />
     <Compile Include="Fragments\LiveDisplayPreferencesFragment.cs" />
@@ -162,14 +163,14 @@
     <Compile Include="Servicios\Music\MediaEventArgs\MediaPlaybackStateChangedEventArgs.cs" />
     <Compile Include="Servicios\Music\MusicControllerKitkat.cs" />
     <Compile Include="Servicios\Music\ActiveMediaSessionsListener.cs" />
-    <Compile Include="Servicios\Music\OpenSong.cs" />
+    <Compile Include="DataRepository\OpenSong.cs" />
     <Compile Include="Servicios\Notificaciones\CatcherHelper.cs" />
     <Compile Include="Servicios\Notificaciones\CatcherService.cs" />
     <Compile Include="Servicios\ConfigurationManager.cs" />
     <Compile Include="Servicios\Music\MusicController.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationItemClickedEventArgs.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationListSizeChangedEventArgs.cs" />
-    <Compile Include="Servicios\Notificaciones\OpenNotification.cs" />
+    <Compile Include="DataRepository\OpenNotification.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationCancelledEventArgsKitkat.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationCancelledEventArgsLollipop.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationSlave.cs" />

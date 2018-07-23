@@ -6,7 +6,7 @@ using System;
 namespace LiveDisplay.Servicios
 {
     //Esta clase sirve para manipular las notificaciones, como quitarlas o agregarlas.
-    internal class NotificationSlave
+    internal class NotificationSlave: Java.Lang.Object
     {
         public static NotificationSlave instance;
         public event EventHandler<NotificationCancelledEventArgsKitkat> NotificationCancelled;

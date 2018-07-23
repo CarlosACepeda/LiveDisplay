@@ -28,21 +28,19 @@ using System.Threading;
 
 namespace LiveDisplay
 {
-    [Activity(Label = "LockScreen", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, LaunchMode = Android.Content.PM.LaunchMode.SingleTop, ExcludeFromRecents = true)]
+    [Activity(Label = "LockScreen", Theme ="@style/LiveDisplayTheme.NoActionBar", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, LaunchMode = Android.Content.PM.LaunchMode.SingleTop, ExcludeFromRecents = true)]
     public class LockScreenActivity : Activity
     {
         public static LockScreenActivity lockScreenInstance;
         private LinearLayout linearLayout;
         private RecyclerView recycler;
         private RecyclerView.LayoutManager layoutManager;
-        private BackgroundFactory backgroundFactory;
         private string dia, mes;
         private Calendar fecha;
         private TextView tvFecha;
         private LinearLayout reloj;
         private ImageView unlocker;
         private Button btnClearAll;
-        private Fragment notificationFragment;
         public event EventHandler<NotificationItemClickedEventArgs> NotificationItemClicked;
         
 
@@ -106,23 +104,26 @@ namespace LiveDisplay
         {
             //TODO: When this is called communicate with Notification Widget
             //and tell it to Unload the data and make itself invisible
-            NotificationSlave slave = NotificationSlave.NotificationSlaveInstance();
-            if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+            using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())
             {
-                int notiId = CatcherHelper.statusBarNotifications[position].Id;
-                string notiTag = CatcherHelper.statusBarNotifications[position].Tag;
-                string notiPack = CatcherHelper.statusBarNotifications[position].PackageName;
-                slave.CancelNotification(notiPack, notiTag, notiId);
-                //TODO: Tell the Fragment to unload the data instead
-                //v.Visibility = ViewStates.Invisible;
+                if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+                {
+                    int notiId = CatcherHelper.statusBarNotifications[position].Id;
+                    string notiTag = CatcherHelper.statusBarNotifications[position].Tag;
+                    string notiPack = CatcherHelper.statusBarNotifications[position].PackageName;
+                    slave.CancelNotification(notiPack, notiTag, notiId);
+                    //TODO: Tell the Fragment to unload the data instead
+                    //v.Visibility = ViewStates.Invisible;
+                }
+                else
+                {
+                    slave.CancelNotification(CatcherHelper.statusBarNotifications[position].Key);
+                    //TODO: Tell the Fragment to unload the data instead
+                    //v.Visibility = ViewStates.Invisible;
+
+                }
             }
-            else
-            {
-                slave.CancelNotification(CatcherHelper.statusBarNotifications[position].Key);
-                //TODO: Tell the Fragment to unload the data instead
-                //v.Visibility = ViewStates.Invisible;
-              
-            }
+            
 
         }
        
@@ -139,19 +140,21 @@ namespace LiveDisplay
             reloj = FindViewById<LinearLayout>(Resource.Id.clockLock);
             unlocker = FindViewById<ImageView>(Resource.Id.unlocker);
             btnClearAll = FindViewById<Button>(Resource.Id.btnClearAllNotifications);
-            linearLayout = FindViewById<LinearLayout>(Resource.Id.contenedorPrincipal);
+            
         }      
         private void UnbindViews()
         {
-            linearLayout = FindViewById<LinearLayout>(Resource.Id.contenedorPrincipal);
-            for (int i = 0; i < linearLayout.ChildCount; i++)
+            using (linearLayout = FindViewById<LinearLayout>(Resource.Id.contenedorPrincipal))
             {
-                View view = linearLayout.GetChildAt(i);
-                view.Dispose();
-                view = null;
+                for (int i = 0; i < linearLayout.ChildCount; i++)
+                {
+                    View view = linearLayout.GetChildAt(i);
+                    view.Dispose();
+                    view = null;
+                }
+                lockScreenInstance.Dispose();
             }
-            lockScreenInstance.Dispose();
-            lockScreenInstance = null;
+            
         }
         private void BindEvents()
         {
@@ -189,17 +192,22 @@ namespace LiveDisplay
        
         private void BtnClearAll_Click(object sender, EventArgs e)
         {
-            NotificationSlave notificationSlave = NotificationSlave.NotificationSlaveInstance();
-            FragmentTransaction fragmentManager = FragmentManager.BeginTransaction();
-            fragmentManager.Remove(notificationFragment);
-            fragmentManager.Commit();
-            fragmentManager.Dispose();
-            notificationSlave = null;
+            using (NotificationSlave notificationSlave = NotificationSlave.NotificationSlaveInstance())
+            {
+                //TODO: Invoke an event that NotificationFragment will be subscribed to.
+                //This method will say: Hey, hide! All the notifications are removed.
+                //You don't need to exist anymore
+            }
+            
+            
         }
         private void Reloj_Click(object sender, EventArgs e)
         {
-            Intent intent = new Intent(AlarmClock.ActionShowAlarms);
-            StartActivity(intent);
+            using (Intent intent = new Intent(AlarmClock.ActionShowAlarms))
+            {
+                StartActivity(intent);
+            }
+               
         }
 
         private void Unlocker_Touch(object sender, View.TouchEventArgs e)
@@ -268,17 +276,18 @@ namespace LiveDisplay
         private void LoadConfiguration()
         {
             //Load configurations based on User configs.
-            ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(this));
-                if (configurationManager.RetrieveAValue(ConfigurationParameters.hiddenclock)==true)
+            using (ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(this)))
+            {
+                if (configurationManager.RetrieveAValue(ConfigurationParameters.hiddenclock) == true)
                 {
                     //Hide the clock
-                    RunOnUiThread(() => reloj.Visibility = ViewStates.Gone);                   
+                    RunOnUiThread(() => reloj.Visibility = ViewStates.Gone);
                 }
                 if (configurationManager.RetrieveAValue(ConfigurationParameters.hiddensystemicons) == true)
                 {
                     //Hide system icons, when available, FIX ME.
                 }
-                               
+
                 if (configurationManager.RetrieveAValue(ConfigurationParameters.dynamicwallpaperenabled) == true)
                 {
                     //Allow the app to show Album art.
@@ -287,45 +296,54 @@ namespace LiveDisplay
                 if (String.Equals(configurationManager.RetrieveAValue(ConfigurationParameters.imagePath, "imagenotfound"), "imagenotfound") == false)
                 {
                     //Found an image, use it as wallpaper.
-                    Bitmap bm = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.imagePath, ""));
+                    using (Bitmap bm = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.imagePath, "")))
+                    {
+                        using (var backgroundFactory = new BackgroundFactory())
+                        {
+                            var background = backgroundFactory.Difuminar(bm);
+                            RunOnUiThread(() => Window.DecorView.Background = background);
+                        }
+                    }           
 
-                backgroundFactory = new BackgroundFactory();
-                        Drawable background = backgroundFactory.Difuminar(bm);
-                        RunOnUiThread(() => Window.DecorView.Background = background);
-                        backgroundFactory = null;
-                        bm = null;
-                    
                 }
                 else
                 {
-                LoadDefaultWallpaper();                  
+                    //LoadDefaultWallpaper();
                 }
+            }
+                
         }
         private void LoadNotificationFragment()
         {
-            notificationFragment = new NotificationFragment();
-            FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction();
-            fragmentTransaction.Replace(Resource.Id.MusicNotificationPlaceholder, notificationFragment);
-            fragmentTransaction.DisallowAddToBackStack();
-            fragmentTransaction.Commit();
+            var notificationFragment = new NotificationFragment();
+            {
+                using (FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction())
+                {
+                    fragmentTransaction.Replace(Resource.Id.MusicNotificationPlaceholder, notificationFragment);
+                    fragmentTransaction.DisallowAddToBackStack();
+                    fragmentTransaction.Commit();
+                }
+            }
         }
-
 
         private void AddFlags()
         {
-           View view = Window.DecorView;
-            var uiOptions = (int)view.SystemUiVisibility;
-            var newUiOptions = uiOptions;
+            using (var view = Window.DecorView)
+            {
+                var uiOptions = (int)view.SystemUiVisibility;
+                var newUiOptions = uiOptions;
 
-            newUiOptions |= (int)SystemUiFlags.Fullscreen;
-            newUiOptions |= (int)SystemUiFlags.HideNavigation;
-            newUiOptions |= (int)SystemUiFlags.Immersive;
-            // This option will make bars disappear by themselves
-            newUiOptions |= (int)SystemUiFlags.ImmersiveSticky;
+                newUiOptions |= (int)SystemUiFlags.Fullscreen;
+                newUiOptions |= (int)SystemUiFlags.HideNavigation;
+                newUiOptions |= (int)SystemUiFlags.Immersive;
+                // This option will make bars disappear by themselves
+                newUiOptions |= (int)SystemUiFlags.ImmersiveSticky;
 
-            view.SystemUiVisibility = (StatusBarVisibility)newUiOptions;
-            Window.AddFlags(WindowManagerFlags.DismissKeyguard);
-            Window.AddFlags(WindowManagerFlags.ShowWhenLocked);
+                view.SystemUiVisibility = (StatusBarVisibility)newUiOptions;
+                Window.AddFlags(WindowManagerFlags.DismissKeyguard);
+                Window.AddFlags(WindowManagerFlags.ShowWhenLocked);
+            }
+                
         }
         /// <summary>
         /// This method calls Awake#LockScreen
@@ -359,19 +377,18 @@ namespace LiveDisplay
         /// </summary>
         private void StartMusicController()
         {
+            using (Fragment fragment = new MusicFragment())
+            {
+                using (FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction())
+                {
+                    fragmentTransaction.Replace(Resource.Id.MusicNotificationPlaceholder, fragment);
+                    fragmentTransaction.DisallowAddToBackStack();
+                    fragmentTransaction.Commit();
+                }
+            }
+                
             
-            try
-            {
-            Fragment fragment = new MusicFragment();
-            FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction();
-            fragmentTransaction.Replace(Resource.Id.MusicNotificationPlaceholder, fragment);
-            fragmentTransaction.DisallowAddToBackStack();
-            fragmentTransaction.Commit();
-            }
-            catch
-            {
-                Console.WriteLine("Failed to start music widget");
-            }
+           
             
         }
         //When music is stopped, call this.
@@ -380,7 +397,7 @@ namespace LiveDisplay
             try
             {
                 LoadNotificationFragment();
-                LoadDefaultWallpaper();
+                //LoadDefaultWallpaper();
             }
             catch
             {
@@ -392,22 +409,28 @@ namespace LiveDisplay
 
         private void LoadDefaultWallpaper()
         {
-            WallpaperManager wallpaperManager = WallpaperManager.GetInstance(this);
-            //Forget the loaded wallpaper because it will be the one that is blurred.
-            //so, it will blur the already blurred wallpaper, so, causing so much blur that 
-            //the app will explode, LOL.
-            wallpaperManager.ForgetLoadedWallpaper();
-            BitmapDrawable bitmap = (BitmapDrawable)wallpaperManager.Drawable;
+            using (WallpaperManager wallpaperManager = WallpaperManager.GetInstance(this))
+            {
+                wallpaperManager.ForgetLoadedWallpaper();//Forget the loaded wallpaper because it will be the one that is blurred.
+                //so, it will blur the already blurred wallpaper, so, causing so much blur that 
+                //the app will explode, LOL.
 
-            Com.JackAndPhantom.BlurImage blurImage = new Com.JackAndPhantom.BlurImage(this);
-            blurImage.Load(bitmap.Bitmap);
-            blurImage.Intensity(25);
-
+                using (BitmapDrawable bitmap = (BitmapDrawable)wallpaperManager.Drawable)
+                {
+                    Com.JackAndPhantom.BlurImage blurImage = new Com.JackAndPhantom.BlurImage(this);
+                    blurImage.Load(bitmap.Bitmap);
+                    blurImage.Intensity(25);
+                    using (BitmapDrawable drawable = new BitmapDrawable(blurImage.GetImageBlur()))
+                    {
+                        RunOnUiThread(() => Window.DecorView.Background = drawable);
+                    }
+                    blurImage = null;
+                }
+            }
+                
+                
+          
             
-            BitmapDrawable drawable = new BitmapDrawable(blurImage.GetImageBlur());
-            drawable.SetAlpha(255);
-            RunOnUiThread(() => Window.DecorView.Background = drawable);
-            wallpaperManager = null;
         }
 
     }

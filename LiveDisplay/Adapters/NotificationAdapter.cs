@@ -55,6 +55,7 @@ namespace LiveDisplay.Adapters
 
         public ImageView Icono { get; set; }
 
+
         public NotificationAdapterViewHolder(View itemView) : base(itemView)
         {
             Icono = itemView.FindViewById<ImageView>(Resource.Id.ivNotificationIcon);

@@ -12,7 +12,7 @@ using LiveDisplay.Servicios;
 
 namespace LiveDisplay.Factories
 {
-    internal class BackgroundFactory
+    internal class BackgroundFactory:Java.Lang.Object
     {
         //Retrieves a blurred image
         public Drawable Difuminar(Drawable papelTapiz)

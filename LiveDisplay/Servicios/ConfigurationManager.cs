@@ -3,7 +3,7 @@ using System;
 
 namespace LiveDisplay.Servicios
 {
-    internal class ConfigurationManager
+    internal class ConfigurationManager: Java.Lang.Object
     {
         private ISharedPreferences sharedPreferences;
         private ISharedPreferencesEditor sharedPreferencesEditor;

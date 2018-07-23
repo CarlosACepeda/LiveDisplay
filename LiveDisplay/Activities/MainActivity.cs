@@ -34,11 +34,14 @@ namespace LiveDisplay.Activities
             SetContentView(Resource.Layout.Main);
             BindViews();
             StartVariables();
-            sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(this);
-            configurationManager = new ConfigurationManager(sharedPreferences);           
-            if (sharedPreferences.GetBoolean(ConfigurationParameters.istheappconfigured, false)==false)
+            using (sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(this))
             {
-                LoadDefaultConfiguration();
+                configurationManager = new ConfigurationManager(sharedPreferences);
+                if (sharedPreferences.GetBoolean(ConfigurationParameters.istheappconfigured, false) == false)
+                {
+                    LoadDefaultConfiguration();
+                }
+                configurationManager.Dispose();
             }
             ShowDialog();
             
@@ -57,15 +60,11 @@ namespace LiveDisplay.Activities
         protected override void OnPause()
         {
             base.OnPause();
-            UnbindClickEvents();
         }
 
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            UnbindViews();
-            //Workaround, Memory is never released.
-            GC.Collect();
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
@@ -78,8 +77,10 @@ namespace LiveDisplay.Activities
             int id = item.ItemId;
             if (id == Resource.Id.action_settings)
             {
-                Intent intent = new Intent(this, typeof(SettingsActivity));
-                StartActivity(intent);
+                using (Intent intent = new Intent(this, typeof(SettingsActivity)))
+                {
+                    StartActivity(intent);
+                }              
                 return true;
             }
 
@@ -87,20 +88,12 @@ namespace LiveDisplay.Activities
         }
 
 
-        protected void UnbindViews()
-        {
-            toolbar.Dispose();
-            
-        }
-
-        protected void UnbindClickEvents()
-        {
-        }
-
         protected void BindViews()
         {
-            toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.mainToolbar);
-            SetSupportActionBar(toolbar);
+            using (toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.mainToolbar))
+            {
+                SetSupportActionBar(toolbar);
+            }
         }
 
         private void StartVariables()
@@ -118,26 +111,34 @@ namespace LiveDisplay.Activities
         //TODO: CHANGE THIS, maybe with a single notification to the user, or not letting him to open the app?
         private void ShowDialog()
         {
-        if (NLChecker.IsNotificationListenerEnabled() == false)
-        {
-            //Prompt a message to go to NotificationListenerService.
-            Android.Support.V7.App.AlertDialog.Builder builder = new Android.Support.V7.App.AlertDialog.Builder(this);
-            builder.SetMessage(Resource.String.dialognldisabledmessage);
-            builder.SetPositiveButton(Resource.String.dialognldisabledpositivebutton, new EventHandler<DialogClickEventArgs>(OnDialogPositiveButtonEventArgs));
-            builder.SetNegativeButton(Resource.String.dialognldisablednegativebutton, new EventHandler<DialogClickEventArgs>(OnDialogNegativeButtonEventArgs));
-            builder.Show();
-        }
+            if (NLChecker.IsNotificationListenerEnabled() == false)
+            {
+                //Prompt a message to go to NotificationListenerService.
+                using (Android.Support.V7.App.AlertDialog.Builder builder = new Android.Support.V7.App.AlertDialog.Builder(this))
+                {
+                    builder.SetMessage(Resource.String.dialognldisabledmessage);
+                    builder.SetPositiveButton(Resource.String.dialognldisabledpositivebutton, new EventHandler<DialogClickEventArgs>(OnDialogPositiveButtonEventArgs));
+                    builder.SetNegativeButton(Resource.String.dialognldisablednegativebutton, new EventHandler<DialogClickEventArgs>(OnDialogNegativeButtonEventArgs));
+                    builder.Show();
+                }
+
+            }
         }
         private void OnDialogNegativeButtonEventArgs(object sender, DialogClickEventArgs e)
         {
-            Toast.MakeText(this, Resource.String.dialogcancelledclick, ToastLength.Long).Show();
+           Toast.MakeText(this, Resource.String.dialogcancelledclick, ToastLength.Long).Show();
         }
         private void OnDialogPositiveButtonEventArgs(object sender, DialogClickEventArgs e)
         {
-            string lel = Android.Provider.Settings.ActionNotificationListenerSettings;
-            Intent intent = new Intent(lel).AddFlags(ActivityFlags.NewTask);
-            StartActivity(intent);
-            intent = null;
+
+            using (Intent intent = new Intent())
+            {
+                string lel = Android.Provider.Settings.ActionNotificationListenerSettings;
+                intent.AddFlags(ActivityFlags.NewTask);
+                intent.SetAction(lel);
+                StartActivity(intent);
+            }
+            
         }
     }
 }
