@@ -26,7 +26,7 @@ namespace LiveDisplay.Servicios.Notificaciones
     /// Also is made to allow more funcionality and keep the Catcher Service readable and understandable 
     /// (for me and others, gracias al cielo) 
     /// </summary>
-    class CatcherHelper
+    class CatcherHelper:Java.Lang.Object
     {
         public static NotificationAdapter notificationAdapter;
         public static List<StatusBarNotification> statusBarNotifications;

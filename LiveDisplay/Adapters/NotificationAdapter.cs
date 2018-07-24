@@ -66,14 +66,17 @@ namespace LiveDisplay.Adapters
         //TODO: Invoke these events on the Fragment? Don't use activity for this callbacks?
         private void ItemView_LongClick(object sender, View.LongClickEventArgs e)
         {
-            new ItemOnLongClickListener(LockScreenActivity.lockScreenInstance.OnItemLongClick).Invoke(LayoutPosition);
+            //Invoke a Event instead //new ItemOnLongClickListener(LockScreenActivity.lockScreenInstance.OnItemLongClick).Invoke(LayoutPosition);
         }
 
         private void ItemView_Click(object sender, EventArgs e)
         {
             NotificationAdapter.selectedItem = LayoutPosition;
             CatcherHelper.notificationAdapter.NotifyDataSetChanged();
-            new ItemOnClickListener(LockScreenActivity.lockScreenInstance.OnItemClick).Invoke(LayoutPosition);
+
+            //Invoke an event Instead
+
+            //new ItemOnClickListener(LockScreenActivity.lockScreenInstance.OnItemClick).Invoke(LayoutPosition);
         }
     }
 }

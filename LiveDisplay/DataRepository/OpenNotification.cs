@@ -86,7 +86,7 @@ namespace LiveDisplay.Servicios.Notificaciones
                             a.GetRemoteInputs();
                             a.ActionIntent.Send();
                             //TODO: Move to fragment
-                            LockScreenActivity.lockScreenInstance.OnNotificationUpdated();
+                            //FIX ME: LockScreenActivity.lockScreenInstance.OnNotificationUpdated();
                         }
                         catch (Exception ex)
                         {

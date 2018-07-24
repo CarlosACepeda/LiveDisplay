@@ -24,7 +24,7 @@ namespace LiveDisplay.Servicios.Music
     /// </summary>
     class ActiveMediaSessionsListener : Java.Lang.Object, MediaSessionManager.IOnActiveSessionsChangedListener
     {
-        public static bool isASessionActive = false;
+        public static bool IsASessionActive {get; set; }
         private Android.Media.Session.MediaController mediaController;
         public static event EventHandler MediaSessionStarted;
         public static event EventHandler MediaSessionStopped;
@@ -43,7 +43,7 @@ namespace LiveDisplay.Servicios.Music
                 GetCurrentMetadata();
                 //To control current media playing
                 GetMusicControls(mediaController.GetTransportControls());
-                isASessionActive = true;
+                IsASessionActive = true;
 
                 Console.WriteLine("RemoteController registered Lollipop");
             }
@@ -54,7 +54,7 @@ namespace LiveDisplay.Servicios.Music
                 try
                 {
                     mediaController.UnregisterCallback(MusicController.MusicControllerInstance());
-                    isASessionActive = false;
+                    IsASessionActive = false;
                     Console.WriteLine("No hay sesiones Activas");
                 }
                 catch

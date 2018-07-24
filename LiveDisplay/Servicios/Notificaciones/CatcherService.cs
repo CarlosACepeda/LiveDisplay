@@ -21,6 +21,9 @@ namespace LiveDisplay.Servicios
     [IntentFilter(new[] { "android.service.notification.NotificationListenerService" })]
     internal class Catcher : NotificationListenerService, ISensorEventListener
     {
+
+        private ScreenOnOffReceiver screenOnOffReceiver;
+
         //Manipular las sesiones-
         private MediaSessionManager mediaSessionManager;
         //el controlador actual de media.
@@ -55,16 +58,15 @@ namespace LiveDisplay.Servicios
                 //New remote controller for Kitkat
 
 #pragma warning disable CS0618 // El tipo o el miembro están obsoletos
-                remoteController = new RemoteController(Application.Context, new MusicControllerKitkat());
-                remoteController.SetArtworkConfiguration(450, 450);
-                
+                using (remoteController = new RemoteController(Application.Context, new MusicControllerKitkat()))
+                {
+                    remoteController.SetArtworkConfiguration(450, 450);
 #pragma warning restore CS0618 // El tipo o el miembro están obsoletos
-                var audioService = (AudioManager)Application.Context.GetSystemService(AudioService);
-                
+                    var audioService = (AudioManager)Application.Context.GetSystemService(AudioService);
 #pragma warning disable CS0618 // El tipo o el miembro están obsoletos
-                audioService.RegisterRemoteController(remoteController);
-                
+                    audioService.RegisterRemoteController(remoteController);
 #pragma warning restore CS0618 // El tipo o el miembro están obsoletos
+                }
             }
             return base.OnBind(intent);
         }
@@ -72,9 +74,11 @@ namespace LiveDisplay.Servicios
         public override void OnListenerConnected()
         {
             //RemoteController Lollipop and Beyond Implementation
-            mediaSessionManager = (MediaSessionManager)GetSystemService(Context.MediaSessionService);
-            //Listener para Sesiones
-            mediaSessionManager.AddOnActiveSessionsChangedListener(new ActiveMediaSessionsListener(), new ComponentName(this, Java.Lang.Class.FromType(typeof(Catcher))));
+            using (mediaSessionManager = (MediaSessionManager)GetSystemService(MediaSessionService))
+            {
+                //Listener para Sesiones
+                mediaSessionManager.AddOnActiveSessionsChangedListener(new ActiveMediaSessionsListener(), new ComponentName(this, Java.Lang.Class.FromType(typeof(Catcher))));
+            }
             SubscribeToEvents();
             RegisterReceivers();
             RetrieveNotificationFromStatusBar();
@@ -97,7 +101,8 @@ namespace LiveDisplay.Servicios
 
         public override void OnListenerDisconnected()
         {
-            catcherHelper = null;
+            catcherHelper.Dispose();
+            UnregisterReceivers();
             base.OnListenerDisconnected();
         }
 
@@ -105,7 +110,8 @@ namespace LiveDisplay.Servicios
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
             {
-                catcherHelper = null;
+                catcherHelper.Dispose();
+                UnregisterReceivers();
             }
 
             return base.OnUnbind(intent);
@@ -133,11 +139,17 @@ namespace LiveDisplay.Servicios
             notificationSlave.NotificationCancelled += NotificationSlave_NotificationCancelled;
             notificationSlave.NotificationCancelledLollipop += NotificationSlave_NotificationCancelledLollipop;
         }
-
         private void RegisterReceivers()
         {
-            RegisterReceiver(new ScreenOnOffReceiver(), new IntentFilter(Intent.ActionScreenOn));
-            RegisterReceiver(new ScreenOnOffReceiver(), new IntentFilter(Intent.ActionScreenOff));
+                using (IntentFilter intentFilter = new IntentFilter())
+                {
+                    screenOnOffReceiver = new ScreenOnOffReceiver();
+                    intentFilter.AddAction(Intent.ActionScreenOff);
+                    intentFilter.AddAction(Intent.ActionScreenOn);
+                    RegisterReceiver(screenOnOffReceiver, intentFilter);
+                }
+            
+                        
         }
 
         //Events:
@@ -224,5 +236,9 @@ namespace LiveDisplay.Servicios
             }
         }
 
+        private void UnregisterReceivers()
+        {
+            UnregisterReceiver(screenOnOffReceiver);
+        }
     }
 }

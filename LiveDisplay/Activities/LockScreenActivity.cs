@@ -28,52 +28,114 @@ using System.Threading;
 
 namespace LiveDisplay
 {
-    [Activity(Label = "LockScreen", Theme ="@style/LiveDisplayTheme.NoActionBar", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, LaunchMode = Android.Content.PM.LaunchMode.SingleTop, ExcludeFromRecents = true)]
+    [Activity(Label = "LockScreen", Theme ="@style/LiveDisplayTheme.NoActionBar", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, LaunchMode = Android.Content.PM.LaunchMode.SingleTask, ExcludeFromRecents = true)]
     public class LockScreenActivity : Activity
     {
-        public static LockScreenActivity lockScreenInstance;
-        private LinearLayout linearLayout;
         private RecyclerView recycler;
         private RecyclerView.LayoutManager layoutManager;
-        private string dia, mes;
-        private Calendar fecha;
+        private Calendar calendar;
         private TextView tvFecha;
         private LinearLayout reloj;
         private ImageView unlocker;
         private Button btnClearAll;
+        private NotificationFragment notificationFragment;
+        private MusicFragment musicFragment;
+
         public event EventHandler<NotificationItemClickedEventArgs> NotificationItemClicked;
         
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            Console.Write("OnCreate called");
             base.OnCreate(savedInstanceState);
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.LockScreen);
-            BindViews();
-            BindMediaControllerEvents();
-            ThreadPool.QueueUserWorkItem(o =>
-            InicializarValores());
+            //Views
+            
+            tvFecha = FindViewById<TextView>(Resource.Id.txtFechaLock);
+            reloj = FindViewById<LinearLayout>(Resource.Id.clockLock);
+            unlocker = FindViewById<ImageView>(Resource.Id.unlocker);
+            btnClearAll = FindViewById<Button>(Resource.Id.btnClearAllNotifications);
+            notificationFragment = new NotificationFragment();
+            musicFragment = new MusicFragment();
+
+            //View Events
+            reloj.Click += Reloj_Click;
+            btnClearAll.Click += BtnClearAll_Click;
+            unlocker.Touch += Unlocker_Touch;
+
+            //Media Controller events
+            ActiveMediaSessionsListener.MediaSessionStarted += MusicController_MediaSessionStarted;
+            ActiveMediaSessionsListener.MediaSessionStopped += MusicController_MediaSessionStopped;
+
+            
+
+            //Load date
+            using (calendar = Calendar.GetInstance(Locale.Default))
+            {
+                tvFecha.Text = string.Format(calendar.Get(CalendarField.DayOfMonth).ToString() + ", " + calendar.GetDisplayName((int)CalendarField.Month, (int)CalendarStyle.Long, Locale.Default));
+            }
+
+            //Load RecyclerView
+
+            using (recycler = FindViewById<RecyclerView>(Resource.Id.NotificationListRecyclerView))
+            {
+                using (layoutManager = new LinearLayoutManager(Application.Context))
+                {
+                    recycler.SetLayoutManager(layoutManager);
+                    recycler.SetAdapter(CatcherHelper.notificationAdapter);
+                }
+            }
+            
+
+            //Load Default Wallpaper
+            LoadDefaultWallpaper();
+            //Load User Configs.
             ThreadPool.QueueUserWorkItem(o => LoadConfiguration());
+            
+            LoadNotificationFragment();
+            CheckIfMusicIsPlaying();
+            
         }
         protected override void OnResume()
         {
             base.OnResume();
-            BindEvents();
+            //StartTimerToLockScreen();
+            //Add Immersive Flags
             AddFlags();
-            StartTimerToLockScreen();
-            CheckIfMusicIsPlaying();
+
+
         }
         protected override void OnPause()
         {
+            GC.Collect();
             base.OnPause();
-            UnbindEvents();
 
         }
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            UnbindViews();
-            GC.Collect();
+
+            //Unbind events
+            reloj.Click -= Reloj_Click;
+            unlocker.Touch -= Unlocker_Touch;
+            btnClearAll.Click -= BtnClearAll_Click;
+            ActiveMediaSessionsListener.MediaSessionStarted -= MusicController_MediaSessionStarted;
+            ActiveMediaSessionsListener.MediaSessionStopped -= MusicController_MediaSessionStopped;
+
+            //Dispose Views
+            //Views
+            recycler.Dispose();
+            tvFecha.Dispose();
+            reloj.Dispose();
+            unlocker.Dispose();
+            btnClearAll.Dispose();
+
+            //Dispose Fragments
+            notificationFragment.Dispose();
+            musicFragment.Dispose();
+
+
         }
 
         public override void OnBackPressed()
@@ -132,46 +194,8 @@ namespace LiveDisplay
         {
             //TODO: Make a Event listener to Update the information instead of Clicking the Item again
         }
-        private void BindViews()
-        {
 
-            recycler = FindViewById<RecyclerView>(Resource.Id.NotificationListRecyclerView);            
-            tvFecha = (TextView)FindViewById(Resource.Id.txtFechaLock);
-            reloj = FindViewById<LinearLayout>(Resource.Id.clockLock);
-            unlocker = FindViewById<ImageView>(Resource.Id.unlocker);
-            btnClearAll = FindViewById<Button>(Resource.Id.btnClearAllNotifications);
-            
-        }      
-        private void UnbindViews()
-        {
-            using (linearLayout = FindViewById<LinearLayout>(Resource.Id.contenedorPrincipal))
-            {
-                for (int i = 0; i < linearLayout.ChildCount; i++)
-                {
-                    View view = linearLayout.GetChildAt(i);
-                    view.Dispose();
-                    view = null;
-                }
-                lockScreenInstance.Dispose();
-            }
-            
-        }
-        private void BindEvents()
-        {
-            //Click events
-            reloj.Click += Reloj_Click;
-            btnClearAll.Click += BtnClearAll_Click;
-            //TouchEvents
-            unlocker.Touch += Unlocker_Touch;
-            
 
-        }
-        private void BindMediaControllerEvents()
-        {
-            ActiveMediaSessionsListener.MediaSessionStarted += MusicController_MediaSessionStarted;
-            ActiveMediaSessionsListener.MediaSessionStopped += MusicController_MediaSessionStopped;
-            Console.WriteLine("Eventos enlazados");
-        }
         private void MusicController_MediaSessionStarted(object sender, EventArgs e)
         {
             StartMusicController();
@@ -248,30 +272,6 @@ namespace LiveDisplay
                
             //}
         
-        private void UnbindEvents()
-        {
-            reloj.Click -= Reloj_Click;
-            unlocker.Touch -= Unlocker_Touch;
-            btnClearAll.Click -= BtnClearAll_Click;
-            
-        }
-        private void InicializarValores()
-        {
-            lockScreenInstance = this;
-            layoutManager = new LinearLayoutManager(this);
-            fecha = Calendar.GetInstance(Locale.Default);
-            dia = fecha.Get(CalendarField.DayOfMonth).ToString();
-            mes = fecha.GetDisplayName(2, 2, Locale.Default);
-            RunOnUiThread(() =>
-            {
-                AddFlags();
-                recycler.SetLayoutManager(layoutManager);
-                recycler.SetAdapter(CatcherHelper.notificationAdapter);
-                tvFecha.Text = string.Format(dia + ", " + mes);
-            });
-            
-            
-        }       
        
         private void LoadConfiguration()
         {
@@ -300,29 +300,35 @@ namespace LiveDisplay
                     {
                         using (var backgroundFactory = new BackgroundFactory())
                         {
-                            var background = backgroundFactory.Difuminar(bm);
-                            RunOnUiThread(() => Window.DecorView.Background = background);
+                            using (BackgroundFactory blurImage = new BackgroundFactory())
+                            {
+                                ThreadPool.QueueUserWorkItem(m =>
+                                {
+                                    var drawable = blurImage.Difuminar(bm);
+                                    RunOnUiThread(() =>
+                                    Window.DecorView.Background = drawable);
+                                    drawable.Dispose();
+                                }
+                                );
+
+                            }
+
                         }
                     }           
 
-                }
-                else
-                {
-                    //LoadDefaultWallpaper();
                 }
             }
                 
         }
         private void LoadNotificationFragment()
         {
-            var notificationFragment = new NotificationFragment();
+
+            using (FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction())
             {
-                using (FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction())
-                {
-                    fragmentTransaction.Replace(Resource.Id.MusicNotificationPlaceholder, notificationFragment);
-                    fragmentTransaction.DisallowAddToBackStack();
-                    fragmentTransaction.Commit();
-                }
+
+                fragmentTransaction.Replace(Resource.Id.MusicNotificationPlaceholder, notificationFragment);
+                fragmentTransaction.DisallowAddToBackStack();
+                fragmentTransaction.Commit();
             }
         }
 
@@ -357,18 +363,11 @@ namespace LiveDisplay
 
         private void CheckIfMusicIsPlaying()
         {
-            if (ActiveMediaSessionsListener.isASessionActive == true)
+            if (ActiveMediaSessionsListener.IsASessionActive == true)
             {
                 StartMusicController();
                 //Also disable the NotificationList to show.
                 recycler.Visibility = ViewStates.Invisible;
-            }
-            else if (ActiveMediaSessionsListener.isASessionActive == false)
-            {
-
-                StopMusicController();
-                              
-                recycler.Visibility = ViewStates.Visible;
             }
         }
 
@@ -377,11 +376,11 @@ namespace LiveDisplay
         /// </summary>
         private void StartMusicController()
         {
-            using (Fragment fragment = new MusicFragment())
+            using (musicFragment = new MusicFragment())
             {
                 using (FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction())
                 {
-                    fragmentTransaction.Replace(Resource.Id.MusicNotificationPlaceholder, fragment);
+                    fragmentTransaction.Replace(Resource.Id.MusicNotificationPlaceholder, musicFragment);
                     fragmentTransaction.DisallowAddToBackStack();
                     fragmentTransaction.Commit();
                 }
@@ -397,7 +396,7 @@ namespace LiveDisplay
             try
             {
                 LoadNotificationFragment();
-                //LoadDefaultWallpaper();
+                
             }
             catch
             {
@@ -409,29 +408,27 @@ namespace LiveDisplay
 
         private void LoadDefaultWallpaper()
         {
-            using (WallpaperManager wallpaperManager = WallpaperManager.GetInstance(this))
+            using (BackgroundFactory blurImage = new BackgroundFactory())
             {
-                wallpaperManager.ForgetLoadedWallpaper();//Forget the loaded wallpaper because it will be the one that is blurred.
-                //so, it will blur the already blurred wallpaper, so, causing so much blur that 
-                //the app will explode, LOL.
-
-                using (BitmapDrawable bitmap = (BitmapDrawable)wallpaperManager.Drawable)
+                using (WallpaperManager wallpaperManager = WallpaperManager.GetInstance(Application.Context))
                 {
-                    Com.JackAndPhantom.BlurImage blurImage = new Com.JackAndPhantom.BlurImage(this);
-                    blurImage.Load(bitmap.Bitmap);
-                    blurImage.Intensity(25);
-                    using (BitmapDrawable drawable = new BitmapDrawable(blurImage.GetImageBlur()))
+                    wallpaperManager.ForgetLoadedWallpaper();//Forget the loaded wallpaper because it will be the one that is blurred.
+                                                             //so, it will blur the already blurred wallpaper, so, causing so much blur that 
+                                                         //the app will explode, LOL.
+                    using (BitmapDrawable bitmap = (BitmapDrawable)wallpaperManager.Drawable)
                     {
-                        RunOnUiThread(() => Window.DecorView.Background = drawable);
+                            var drawable = blurImage.Difuminar(bitmap.Bitmap);
+                            RunOnUiThread(() =>
+                            Window.DecorView.Background = drawable);
+                            drawable.Dispose();
+
                     }
-                    blurImage = null;
                 }
+
             }
-                
-                
-          
+            }
             
-        }
+        
 
     }
 

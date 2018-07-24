@@ -9,6 +9,7 @@ using Android.Renderscripts;
 using Android.Util;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
+using System.Threading.Tasks;
 
 namespace LiveDisplay.Factories
 {
@@ -52,7 +53,7 @@ namespace LiveDisplay.Factories
             return papelTapizDifuminado;
         }
         public Drawable Difuminar(Bitmap image)
-        {            
+        {
             Bitmap blurredBitmap;
             //Asignar a este bitmap la imagen original para trabajar con ella.
             blurredBitmap = image;
@@ -79,11 +80,13 @@ namespace LiveDisplay.Factories
             Bitmap blurredBitMapResized = Bitmap.CreateScaledBitmap(blurredBitmap, 70, 80, false);
 
             Drawable papelTapizDifuminado = new BitmapDrawable(blurredBitMapResized);
-            image = null;
-            blurredBitmap = null;
-            blurredBitMapResized = null;
+            image.Dispose();
+            blurredBitmap.Dispose();
+            blurredBitMapResized.Dispose();
             return papelTapizDifuminado;
         }
+            
+        
         public Bitmap DifuminarBitmap(Bitmap image)
         {
             Bitmap blurredBitmap;
