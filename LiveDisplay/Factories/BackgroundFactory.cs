@@ -1,19 +1,16 @@
 ﻿using Android.App;
 using Android.Content;
-using Android.Database;
 using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.Net;
 using Android.Preferences;
 using Android.Renderscripts;
-using Android.Util;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
-using System.Threading.Tasks;
 
 namespace LiveDisplay.Factories
 {
-    internal class BackgroundFactory:Java.Lang.Object
+    internal class BackgroundFactory : Java.Lang.Object
     {
         //Retrieves a blurred image
         public Drawable Difuminar(Drawable papelTapiz)
@@ -52,6 +49,7 @@ namespace LiveDisplay.Factories
             blurredBitMapResized = null;
             return papelTapizDifuminado;
         }
+
         public Drawable Difuminar(Bitmap image)
         {
             Bitmap blurredBitmap;
@@ -85,8 +83,7 @@ namespace LiveDisplay.Factories
             blurredBitMapResized.Dispose();
             return papelTapizDifuminado;
         }
-            
-        
+
         public Bitmap DifuminarBitmap(Bitmap image)
         {
             Bitmap blurredBitmap;
@@ -115,10 +112,12 @@ namespace LiveDisplay.Factories
             Bitmap blurredBitMapResized = Bitmap.CreateScaledBitmap(blurredBitmap, 70, 80, false);
             return blurredBitMapResized;
         }
+
         public string SaveImagePath(Uri uri)
         {
             ContextWrapper contextWrapper = new ContextWrapper(Application.Context);
-            ConfigurationManager configuration = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(contextWrapper));
+            ISharedPreferences sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(contextWrapper);
+            ISharedPreferencesEditor sharedPreferencesEditor = sharedPreferences.Edit();
             string doc_id = "";
             using (var c1 = Application.Context.ContentResolver.Query(uri, null, null, null, null))
             {
@@ -137,10 +136,9 @@ namespace LiveDisplay.Factories
                 var columnIndex = cursor.GetColumnIndexOrThrow(Android.Provider.MediaStore.Images.Media.InterfaceConsts.Data);
                 cursor.MoveToFirst();
                 path = cursor.GetString(columnIndex);
-                configuration.SaveAValue(ConfigurationParameters.imagePath, path);
+                sharedPreferencesEditor.PutString(ConfigurationParameters.imagePath, path);
             }
             return path;
-            
         }
     }
 }

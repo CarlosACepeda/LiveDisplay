@@ -86,21 +86,28 @@
             a:gravity="bottom"
             a:id="@+id/txtFechaLock" />
     </LinearLayout>
-    <LinearLayout
-        a:orientation="horizontal"
+    <FrameLayout
         a:minWidth="25px"
         a:minHeight="25px"
         a:layout_width="match_parent"
-        a:weightSum="0.9"
-        a:layout_height="wrap_content"
+        a:layout_height="@dimen/unlockerheight"
         a:layout_weight="0.05">
-        <ImageView
-            a:src="@drawable/ic_unlock"
+        <Button
             a:alpha="0.7"
-            a:layout_width="0dp"
+            a:drawableTop="@drawable/ic_camera_48"
+            a:background="?android:selectableItemBackground"
+            a:layout_gravity="right"
+            a:layout_width="@dimen/camerabuttonwidth"
+            a:layout_height="match_parent"
+            a:id="@+id/btnStartCamera" />
+        <ImageView
+            a:alpha="0.7"
+            a:layout_gravity="center_vertical"
+            a:src="@drawable/ic_unlock"
+            a:layout_width="match_parent"
             a:layout_height="match_parent"
             a:background="@android:color/transparent"
             a:layout_weight="0.9"
             a:id="@+id/unlocker" />
-    </LinearLayout>
+    </FrameLayout>
 </LinearLayout>

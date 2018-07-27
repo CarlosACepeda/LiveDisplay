@@ -2,6 +2,7 @@
 using Android.App.Admin;
 using Android.Content;
 using Android.OS;
+using Android.Preferences;
 using LiveDisplay.Misc;
 using System;
 using System.Threading;
@@ -21,7 +22,7 @@ namespace LiveDisplay.Servicios
         //TODO: This class should Raise events instead of reacting to events!
         //The one that should react to events coming from this class is LockScreen.
 
-        private static ConfigurationManager configurationManager = new ConfigurationManager(Application.Context.GetSharedPreferences("livedisplayconfig", FileCreationMode.Private));
+        private static ISharedPreferences configurationManager = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
 
         /// <summary>
         /// Method that will wake up the screen when user picks up the phone from a plain surface
@@ -34,7 +35,7 @@ namespace LiveDisplay.Servicios
 
             //TODO: LockScreen should implement this because, what if the Lockscreen is disabled? This method will turn on the screen anyways.
             //to show a notification, that is not available because the user maybe disabled the lockscreen.
-            if (configurationManager.RetrieveAValue(ConfigurationParameters.turnonusermovement) == true)
+            if (configurationManager.GetBoolean(ConfigurationParameters.turnonusermovement, false) == true)
             {
                 PowerManager pm = ((PowerManager)Application.Context.GetSystemService(Context.PowerService));
                 var screenLock = pm.NewWakeLock(WakeLockFlags.ScreenDim | WakeLockFlags.AcquireCausesWakeup, "Turn On Lockscreen");

@@ -15,7 +15,7 @@ using LiveDisplay.Factories;
 
 namespace LiveDisplay.Servicios.Notificaciones
 {
-    class OpenNotification: IDisposable
+    class OpenNotification: Java.Lang.Object
     {
         private int position;
         public OpenNotification(int position)
@@ -110,6 +110,19 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
             return null;
         }
+
+        internal static bool IsRemovable(int position)
+        {
+            if (CatcherHelper.statusBarNotifications[position].IsClearable == true)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public static bool NotificationHasActionButtons(int position)
         {
             if (CatcherHelper.statusBarNotifications[position].Notification.Actions!=null)
@@ -128,10 +141,6 @@ namespace LiveDisplay.Servicios.Notificaciones
                 return true;
             }
             return false;
-        }
-        public void Dispose()
-        {
-            
         }
         
     }

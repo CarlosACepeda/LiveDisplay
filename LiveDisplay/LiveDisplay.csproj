@@ -142,11 +142,13 @@
     <Compile Include="Activities\SettingsActivity.cs" />
     <Compile Include="Adapters\NotificationAdapter.cs" />
     <Compile Include="BroadcastReceivers\AdminReceiver.cs" />
+    <Compile Include="BroadcastReceivers\BatteryReceiver.cs" />
     <Compile Include="BroadcastReceivers\BootCompleteReceiver.cs" />
     <Compile Include="BroadcastReceivers\ScreenOnOffReceiver.cs" />
     <Compile Include="DataRepository\NotificationList.cs" />
     <Compile Include="Factories\BackgroundFactory.cs" />
     <Compile Include="Factories\IconFactory.cs" />
+    <Compile Include="Fragments\ClockFragment.cs" />
     <Compile Include="Fragments\LiveDisplayPreferencesFragment.cs" />
     <Compile Include="Fragments\MusicFragment.cs" />
     <Compile Include="Fragments\NotificationFragment.cs" />
@@ -166,7 +168,6 @@
     <Compile Include="DataRepository\OpenSong.cs" />
     <Compile Include="Servicios\Notificaciones\CatcherHelper.cs" />
     <Compile Include="Servicios\Notificaciones\CatcherService.cs" />
-    <Compile Include="Servicios\ConfigurationManager.cs" />
     <Compile Include="Servicios\Music\MusicController.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationItemClickedEventArgs.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationListSizeChangedEventArgs.cs" />
@@ -448,6 +449,21 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values\dimens.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_camera_48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_camera_48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_camera_48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\ic_camera_48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\ic_camera_48.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Import Project="..\packages\Xamarin.Android.Support.Compat.25.4.0.2\build\MonoAndroid70\Xamarin.Android.Support.Compat.targets" Condition="Exists('..\packages\Xamarin.Android.Support.Compat.25.4.0.2\build\MonoAndroid70\Xamarin.Android.Support.Compat.targets')" />

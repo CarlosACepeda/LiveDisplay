@@ -34,46 +34,51 @@ namespace LiveDisplay
         private RecyclerView recycler;
         private RecyclerView.LayoutManager layoutManager;
         private Calendar calendar;
-        private TextView tvFecha;
+        private TextView fecha;
         private LinearLayout reloj;
         private ImageView unlocker;
-        private Button btnClearAll;
+        private Button clearAll;
         private NotificationFragment notificationFragment;
         private MusicFragment musicFragment;
-
-        public event EventHandler<NotificationItemClickedEventArgs> NotificationItemClicked;
+        private bool thereAreNotifications = false;
+        private Button startCamera;
         
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
-            Console.Write("OnCreate called");
+            Log.Info("Alert: ","OnCreate called");
             base.OnCreate(savedInstanceState);
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.LockScreen);
             //Views
             
-            tvFecha = FindViewById<TextView>(Resource.Id.txtFechaLock);
+            fecha = FindViewById<TextView>(Resource.Id.txtFechaLock);
             reloj = FindViewById<LinearLayout>(Resource.Id.clockLock);
             unlocker = FindViewById<ImageView>(Resource.Id.unlocker);
-            btnClearAll = FindViewById<Button>(Resource.Id.btnClearAllNotifications);
+            startCamera = FindViewById<Button>(Resource.Id.btnStartCamera);
+            clearAll = FindViewById<Button>(Resource.Id.btnClearAllNotifications);
             notificationFragment = new NotificationFragment();
             musicFragment = new MusicFragment();
+            
+
 
             //View Events
             reloj.Click += Reloj_Click;
-            btnClearAll.Click += BtnClearAll_Click;
+            clearAll.Click += BtnClearAll_Click;
             unlocker.Touch += Unlocker_Touch;
+            startCamera.Click += StartCamera_Click;
 
             //Media Controller events
             ActiveMediaSessionsListener.MediaSessionStarted += MusicController_MediaSessionStarted;
             ActiveMediaSessionsListener.MediaSessionStopped += MusicController_MediaSessionStopped;
 
-            
+            //CatcherHelper events
+            CatcherHelper.NotificationListSizeChanged += CatcherHelper_NotificationListSizeChanged;
 
             //Load date
             using (calendar = Calendar.GetInstance(Locale.Default))
             {
-                tvFecha.Text = string.Format(calendar.Get(CalendarField.DayOfMonth).ToString() + ", " + calendar.GetDisplayName((int)CalendarField.Month, (int)CalendarStyle.Long, Locale.Default));
+                fecha.Text = string.Format(calendar.Get(CalendarField.DayOfMonth).ToString() + ", " + calendar.GetDisplayName((int)CalendarField.Month, (int)CalendarStyle.Long, Locale.Default));
             }
 
             //Load RecyclerView
@@ -87,16 +92,35 @@ namespace LiveDisplay
                 }
             }
             
-
             //Load Default Wallpaper
             LoadDefaultWallpaper();
+
             //Load User Configs.
             ThreadPool.QueueUserWorkItem(o => LoadConfiguration());
             
+            //Load Notification Fragment
             LoadNotificationFragment();
+
+            //Check if music is playing
             CheckIfMusicIsPlaying();
-            
+
+            //Check the Notification List Size
+            CheckNotificationListSize();            
         }
+       
+
+        private void CheckNotificationListSize()
+        {
+            if (CatcherHelper.thereAreNotifications == true)
+            {
+                clearAll.Visibility = ViewStates.Visible;
+            }
+            else
+            {
+                clearAll.Visibility = ViewStates.Invisible;
+            }
+        }        
+
         protected override void OnResume()
         {
             base.OnResume();
@@ -119,17 +143,18 @@ namespace LiveDisplay
             //Unbind events
             reloj.Click -= Reloj_Click;
             unlocker.Touch -= Unlocker_Touch;
-            btnClearAll.Click -= BtnClearAll_Click;
+            clearAll.Click -= BtnClearAll_Click;
             ActiveMediaSessionsListener.MediaSessionStarted -= MusicController_MediaSessionStarted;
             ActiveMediaSessionsListener.MediaSessionStopped -= MusicController_MediaSessionStopped;
+            CatcherHelper.NotificationListSizeChanged -= CatcherHelper_NotificationListSizeChanged;
 
             //Dispose Views
             //Views
             recycler.Dispose();
-            tvFecha.Dispose();
+            fecha.Dispose();
             reloj.Dispose();
             unlocker.Dispose();
-            btnClearAll.Dispose();
+            clearAll.Dispose();
 
             //Dispose Fragments
             notificationFragment.Dispose();
@@ -137,83 +162,46 @@ namespace LiveDisplay
 
 
         }
-
         public override void OnBackPressed()
         {
             //Do nothing.
             //base.OnBackPressed();
         }
-
-        //Los siguientes 2 métodos son Callbacks desde el Adaptador del RecyclerView
-        public void OnItemClick(int position)
-        {
-            
-            //TODO: Dont call this if the Music is playing
-            OnNotificationItemClicked(position);
-            //Instead, show another view.
-            
-        }
-
-        private void OnNotificationItemClicked(int position)
-        {
-            NotificationItemClicked?.Invoke(this, new NotificationItemClickedEventArgs
-            {
-                Position = position
-            });
-        }
-
-        public void OnItemLongClick(int position)
-        {
-            //TODO: When this is called communicate with Notification Widget
-            //and tell it to Unload the data and make itself invisible
-            using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())
-            {
-                if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
-                {
-                    int notiId = CatcherHelper.statusBarNotifications[position].Id;
-                    string notiTag = CatcherHelper.statusBarNotifications[position].Tag;
-                    string notiPack = CatcherHelper.statusBarNotifications[position].PackageName;
-                    slave.CancelNotification(notiPack, notiTag, notiId);
-                    //TODO: Tell the Fragment to unload the data instead
-                    //v.Visibility = ViewStates.Invisible;
-                }
-                else
-                {
-                    slave.CancelNotification(CatcherHelper.statusBarNotifications[position].Key);
-                    //TODO: Tell the Fragment to unload the data instead
-                    //v.Visibility = ViewStates.Invisible;
-
-                }
-            }
-            
-
-        }
-       
-        //Deprecated.
-        public void OnNotificationUpdated()
-        {
-            //TODO: Make a Event listener to Update the information instead of Clicking the Item again
-        }
-
-
         private void MusicController_MediaSessionStarted(object sender, EventArgs e)
         {
             StartMusicController();
-            if (recycler != null)
-            {
-                recycler.Visibility = ViewStates.Invisible;
-            }
         }
         private void MusicController_MediaSessionStopped(object sender, EventArgs e)
         {
             StopMusicController();
-            if (recycler != null)
-            {
-                recycler.Visibility = ViewStates.Visible;
-            }
-            //TODO: Once Stopped, set the background image again.
         }
-       
+        private void CatcherHelper_NotificationListSizeChanged(object sender, NotificationListSizeChangedEventArgs e)
+        {
+            if (e.ThereAreNotifications == true)
+            {
+                try
+                {
+                    clearAll.Visibility = ViewStates.Visible;
+                }
+                catch
+                {
+                    thereAreNotifications = e.ThereAreNotifications;
+                }
+            }
+            else
+            {
+                try
+                {
+                    clearAll.Visibility = ViewStates.Invisible;
+                }
+                catch
+                {
+                    thereAreNotifications = e.ThereAreNotifications;
+                }
+            }
+
+        }
+
         private void BtnClearAll_Click(object sender, EventArgs e)
         {
             using (NotificationSlave notificationSlave = NotificationSlave.NotificationSlaveInstance())
@@ -221,9 +209,9 @@ namespace LiveDisplay
                 //TODO: Invoke an event that NotificationFragment will be subscribed to.
                 //This method will say: Hey, hide! All the notifications are removed.
                 //You don't need to exist anymore
-            }
-            
-            
+                notificationSlave.CancelAll();
+
+            }         
         }
         private void Reloj_Click(object sender, EventArgs e)
         {
@@ -257,46 +245,53 @@ namespace LiveDisplay
             }
 
         }
-        
-            //switch (e.Event.Action)
-            //{
-            //    case MotionEventActions.Down:
-            //        x = linearLayout.GetX()- e.Event.RawX;
-            //        break;
-            //    case MotionEventActions.Move:
-            //        linearLayout.Animate().X(e.Event.RawX + x)
-            //            .SetDuration(0)
-            //            .Start();
-                    
-            //        break;
-               
-            //}
-        
-       
+
+        //switch (e.Event.Action)
+        //{
+        //    case MotionEventActions.Down:
+        //        x = linearLayout.GetX()- e.Event.RawX;
+        //        break;
+        //    case MotionEventActions.Move:
+        //        linearLayout.Animate().X(e.Event.RawX + x)
+        //            .SetDuration(0)
+        //            .Start();
+
+        //        break;
+
+        //}
+        private void StartCamera_Click(object sender, EventArgs e)
+        {
+            using (Intent intent = new Intent("android.media.action.IMAGE_CAPTURE"))
+            {
+                StartActivity(intent);
+            }
+        }
+
+
         private void LoadConfiguration()
         {
             //Load configurations based on User configs.
-            using (ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(this)))
+            using (ISharedPreferences sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(this))
             {
-                if (configurationManager.RetrieveAValue(ConfigurationParameters.hiddenclock) == true)
+                if (sharedPreferences.GetBoolean(ConfigurationParameters.hiddenclock,false) == true)
                 {
                     //Hide the clock
                     RunOnUiThread(() => reloj.Visibility = ViewStates.Gone);
                 }
-                if (configurationManager.RetrieveAValue(ConfigurationParameters.hiddensystemicons) == true)
+                if (sharedPreferences.GetBoolean(ConfigurationParameters.hiddensystemicons,false) == true)
                 {
                     //Hide system icons, when available, FIX ME.
                 }
 
-                if (configurationManager.RetrieveAValue(ConfigurationParameters.dynamicwallpaperenabled) == true)
+                if (sharedPreferences.GetBoolean(ConfigurationParameters.dynamicwallpaperenabled, false) == true)
                 {
                     //Allow the app to show Album art.
                     //:TODO move to Music Fragment, not here.
                 }
-                if (String.Equals(configurationManager.RetrieveAValue(ConfigurationParameters.imagePath, "imagenotfound"), "imagenotfound") == false)
+                if (String.Equals(sharedPreferences.GetString(ConfigurationParameters.imagePath, "imagenotfound"), "imagenotfound") == false)
                 {
                     //Found an image, use it as wallpaper.
-                    using (Bitmap bm = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.imagePath, "")))
+                    using (Bitmap bm = BitmapFactory.DecodeFile(sharedPreferences.GetString(ConfigurationParameters.imagePath, "")))
                     {
                         using (var backgroundFactory = new BackgroundFactory())
                         {
@@ -314,7 +309,7 @@ namespace LiveDisplay
                             }
 
                         }
-                    }           
+                    }
 
                 }
             }
@@ -366,8 +361,6 @@ namespace LiveDisplay
             if (ActiveMediaSessionsListener.IsASessionActive == true)
             {
                 StartMusicController();
-                //Also disable the NotificationList to show.
-                recycler.Visibility = ViewStates.Invisible;
             }
         }
 
@@ -376,34 +369,19 @@ namespace LiveDisplay
         /// </summary>
         private void StartMusicController()
         {
-            using (musicFragment = new MusicFragment())
-            {
                 using (FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction())
                 {
                     fragmentTransaction.Replace(Resource.Id.MusicNotificationPlaceholder, musicFragment);
                     fragmentTransaction.DisallowAddToBackStack();
                     fragmentTransaction.Commit();
                 }
-            }
+            
                 
-            
-           
-            
         }
         //When music is stopped, call this.
         private void StopMusicController()
         {
-            try
-            {
-                LoadNotificationFragment();
-                
-            }
-            catch
-            {
-                
-                Console.WriteLine("Failed to Stop Music Controller");
-            }
-            
+            LoadNotificationFragment();                         
         }
 
         private void LoadDefaultWallpaper()

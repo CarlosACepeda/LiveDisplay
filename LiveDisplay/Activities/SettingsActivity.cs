@@ -16,6 +16,8 @@ using Android.Provider;
 using Android.Util;
 using LiveDisplay.Factories;
 using LiveDisplay.Fragments;
+using static Android.Preferences.Preference;
+using Android.Preferences;
 
 namespace LiveDisplay.Activities
 {
@@ -29,6 +31,7 @@ namespace LiveDisplay.Activities
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+            
 
             // Create your application here
             SetContentView(Resource.Layout.Settings);
@@ -73,5 +76,7 @@ namespace LiveDisplay.Activities
         {
             base.OnDestroy();
         }
+
+        
     }
 }

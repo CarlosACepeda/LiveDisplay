@@ -22,6 +22,7 @@ namespace LiveDisplay.Servicios
     internal class Catcher : NotificationListenerService, ISensorEventListener
     {
 
+        private BatteryReceiver batteryReceiver;
         private ScreenOnOffReceiver screenOnOffReceiver;
 
         //Manipular las sesiones-
@@ -141,14 +142,19 @@ namespace LiveDisplay.Servicios
         }
         private void RegisterReceivers()
         {
-                using (IntentFilter intentFilter = new IntentFilter())
-                {
+            using (IntentFilter intentFilter = new IntentFilter())
+            {
                     screenOnOffReceiver = new ScreenOnOffReceiver();
                     intentFilter.AddAction(Intent.ActionScreenOff);
                     intentFilter.AddAction(Intent.ActionScreenOn);
                     RegisterReceiver(screenOnOffReceiver, intentFilter);
-                }
-            
+            }
+            using (IntentFilter intentFilter = new IntentFilter())
+            {
+                batteryReceiver = new BatteryReceiver();
+                intentFilter.AddAction(Intent.ActionBatteryChanged);
+                RegisterReceiver(batteryReceiver, intentFilter);
+            }
                         
         }
 
@@ -239,6 +245,7 @@ namespace LiveDisplay.Servicios
         private void UnregisterReceivers()
         {
             UnregisterReceiver(screenOnOffReceiver);
+            UnregisterReceiver(batteryReceiver);
         }
     }
 }

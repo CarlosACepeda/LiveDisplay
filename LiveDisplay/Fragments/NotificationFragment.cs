@@ -3,7 +3,10 @@ using Android.OS;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using LiveDisplay.Adapters;
+using LiveDisplay.Servicios;
 using LiveDisplay.Servicios.Notificaciones;
+using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
 using System;
 
 namespace LiveDisplay.Fragments
@@ -15,7 +18,6 @@ namespace LiveDisplay.Fragments
         TextView tvTitulo;
         TextView tvTexto;
         LinearLayout llNotification;
-        LockScreenActivity lockScreenActivity;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
@@ -27,33 +29,36 @@ namespace LiveDisplay.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            using (View v = inflater.Inflate(Resource.Layout.NotificationFrag, container, false))
-            {
+            View v = inflater.Inflate(Resource.Layout.NotificationFrag, container, false);
+            
                 notificationActions = v.FindViewById<LinearLayout>(Resource.Id.notificationActions);
                 tvTexto = v.FindViewById<TextView>(Resource.Id.tvTexto);
                 tvTitulo = v.FindViewById<TextView>(Resource.Id.tvTitulo);
                 llNotification = v.FindViewById<LinearLayout>(Resource.Id.llNotification);
 
+                //Subscribe to events raised by several types.
                 llNotification.Click += LlNotification_Click;
-                lockScreenActivity = (LockScreenActivity)Activity;
-                SubscribeToEvents();
+                NotificationAdapterViewHolder.ItemClicked += ItemClicked;
+                NotificationAdapterViewHolder.ItemLongClicked += ItemLongClicked;
                 return v;
-            }
+            
         }
 
         private void LlNotification_Click(object sender, EventArgs e)
         {
+            llNotification.Visibility = ViewStates.Visible;
             try
             {
                 Activity.RunOnUiThread(() =>
                 OpenNotification.ClickNotification(position)
                 );
-                //TODO: Manage this In Fragment
                 if (OpenNotification.NotificationIsAutoCancel(position) == true)
                 {
                     llNotification.Visibility = ViewStates.Invisible;
+                    tvTitulo.Text = null;
+                    tvTexto.Text = null;
+                    notificationActions = null;
                 }
-                llNotification.Visibility = ViewStates.Visible;
 
             }
             catch
@@ -62,23 +67,40 @@ namespace LiveDisplay.Fragments
             }
         }
 
-        private void SubscribeToEvents()
+        private void ItemLongClicked(object sender, NotificationItemClickedEventArgs e)
         {
-            lockScreenActivity.NotificationItemClicked += LockScreenInstance_NotificationItemClicked;
+            llNotification.Visibility = ViewStates.Visible;
+            //If the notification is removable...
+            if (OpenNotification.IsRemovable(e.Position) == true)
+            {
+                //Then remove the notification
+                using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())
+                {
+                    if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+                    {
+                        int notiId = CatcherHelper.statusBarNotifications[position].Id;
+                        string notiTag = CatcherHelper.statusBarNotifications[position].Tag;
+                        string notiPack = CatcherHelper.statusBarNotifications[position].PackageName;
+                        slave.CancelNotification(notiPack, notiTag, notiId);
+
+                    }
+                    else
+                    {
+                        slave.CancelNotification(CatcherHelper.statusBarNotifications[position].Key);
+
+                    }
+                }
+                llNotification.Visibility = ViewStates.Invisible;
+                tvTitulo.Text = null;
+                tvTexto.Text = null;
+                notificationActions.RemoveAllViews();
+            }
         }
 
-        private void LockScreenInstance_NotificationItemClicked(object sender, Servicios.Notificaciones.NotificationEventArgs.NotificationItemClickedEventArgs e)
+        private void ItemClicked(object sender, NotificationItemClickedEventArgs e)
         {
-            ///This fragment starts invisible.
-            if (llNotification.Visibility != ViewStates.Visible)
-            {
-                llNotification.Visibility = ViewStates.Visible;
-            }
             position = e.Position;
-            //Define events to communicate with the Notification Widget:
-            //When this method is called, tell NotificationWidget to update itself with data provided
-            //by this method.
-
+            //When an item of the list is clicked, then fill A notification with the position of the item.
             using (OpenNotification notification = new OpenNotification(e.Position))
             {
                 tvTitulo.Text = notification.GetTitle();
@@ -94,18 +116,19 @@ namespace LiveDisplay.Fragments
                         notificationActions.AddView(a);
                     }
                 }
-            }    
-
+            }
+            if (llNotification.Visibility != ViewStates.Visible)
+            {
+                llNotification.Visibility = ViewStates.Visible;
+            }
+        }
+        public override void OnDestroyView()
+        {
+            base.OnDestroyView();
         }
         public override void OnDestroy()
         {
             base.OnDestroy();
-            lockScreenActivity.NotificationItemClicked -= LockScreenInstance_NotificationItemClicked;
-            notificationActions.Dispose();
-            tvTexto.Dispose();
-            tvTitulo.Dispose();
-            llNotification.Dispose();
-
         }
     }
 }

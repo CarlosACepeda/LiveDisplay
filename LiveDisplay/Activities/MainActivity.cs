@@ -25,8 +25,6 @@ namespace LiveDisplay.Activities
     internal class MainActivity : AppCompatActivity
     {
         private Android.Support.V7.Widget.Toolbar toolbar;
-        private ConfigurationManager configurationManager;
-        ISharedPreferences sharedPreferences;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -34,24 +32,9 @@ namespace LiveDisplay.Activities
             SetContentView(Resource.Layout.Main);
             BindViews();
             StartVariables();
-            using (sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(this))
-            {
-                configurationManager = new ConfigurationManager(sharedPreferences);
-                if (sharedPreferences.GetBoolean(ConfigurationParameters.istheappconfigured, false) == false)
-                {
-                    LoadDefaultConfiguration();
-                }
-                configurationManager.Dispose();
-            }
             ShowDialog();
             
         }
-
-        private void LoadDefaultConfiguration()
-        {
-            configurationManager.SaveAValue(ConfigurationParameters.istheappconfigured, true);
-        }
-
         protected override void OnResume()
         {
             base.OnResume();

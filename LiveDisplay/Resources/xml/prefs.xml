@@ -21,6 +21,13 @@
       android:title="@string/activarwallpaperdinamico"
       android:summary="@string/activarwallpaperdinamico_description"
   />
+    <Preference
+      android:key="changewallpaper"
+      android:title="Change wallpaper"
+      android:text="bash"
+      >
+      
+    </Preference>
   </PreferenceCategory>
 </PreferenceScreen>
   <!--This is the Second preference screen-->
