@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<resources>
+  <string-array name="listentrieschangewallpaper">
+    <item>@string/defaultwallpaper</item>
+    <item>@string/pickwallpaper</item>
+  </string-array>
+  <string-array name="listvalueschangewallpaper">
+    <item>0</item>
+    <item>1</item>
+  </string-array>
+</resources>
+

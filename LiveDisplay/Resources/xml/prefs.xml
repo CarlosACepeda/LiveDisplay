@@ -1,7 +1,6 @@
 ﻿<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
   <!--This is the first preference screen-->
   <PreferenceScreen android:title="@string/lockscreensettings"
-                    android:key="lockscreenkey"
   >
   <PreferenceCategory android:title="@string/opciones">
     <SwitchPreference
@@ -21,30 +20,34 @@
       android:title="@string/activarwallpaperdinamico"
       android:summary="@string/activarwallpaperdinamico_description"
   />
-    <Preference
+    <ListPreference
       android:key="changewallpaper"
-      android:title="Change wallpaper"
-      android:text="bash"
-      >
+      android:title="@string/changewallpaper"
+      android:text="@string/changewallpaperdesc"
+      android:entries="@array/listentrieschangewallpaper"
+      android:entryValues="@array/listvalueschangewallpaper">
       
-    </Preference>
+    </ListPreference>
+  />
   </PreferenceCategory>
 </PreferenceScreen>
   <!--This is the Second preference screen-->
   <PreferenceScreen
     android:title="@string/notificationsettings"
-    android:key="notificationskey"
     >
     
     <PreferenceCategory android:title="@string/notificationsettings">
       <!--Custom list, fill with all the apps installed. for now selectable is false-->
-      <Preference
+      <ListPreference
+        android:key="blacklist"
         android:title="@string/blacklist"
         android:summary="@string/blacklistdesc"
-        android:selectable="false"
+        android:entries="@array/listentriesblacklist"
+        android:entryValues="@array/listvaluesblacklist"
+        android:selectable="true"
         >
         
-      </Preference>
+      </ListPreference>
       <SwitchPreference
         android:key="enablequickreply?"
         android:title="@string/enablequickreply"
@@ -89,8 +92,7 @@
         android:summary="@string/aboutinfo"
         android:persistent="false"
         android:selectable="false"
-        >
-        
+        >        
       </Preference>
   </PreferenceCategory>
     <PreferenceCategory android:title="@string/translations" >

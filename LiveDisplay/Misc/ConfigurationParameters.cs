@@ -19,9 +19,9 @@ namespace LiveDisplay.Misc
 
         //For LockScreenSettings:
         public const string imagePath = "imagePath";
-        //Deleted one string, useless.
         public const string hiddenclock = "hiddenclock?";
         public const string hiddensystemicons = "hiddensystemicons?";
+        public const string changewallpaper = "changewallpaper";
         //Functional
         public const string enabledlockscreennonotifications = "enabledlockscreennonotifications?";
         public const string dynamicwallpaperenabled = "dynamicwallpaperenabled?";

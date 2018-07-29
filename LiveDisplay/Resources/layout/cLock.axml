@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:a="http://schemas.android.com/apk/res/android"
+    a:orientation="vertical"
+    a:layout_width="match_parent"
+    a:layout_height="wrap_content"
+    a:gravity="bottom"
+    a:alpha="1"
+    a:background="?android:selectableItemBackground"
+    a:id="@+id/clockLock"
+    a:layout_weight="0.02">
+    <TextClock
+        a:layout_width="match_parent"
+        a:layout_height="wrap_content"
+        a:textSize="60dp"
+        a:typeface="sans"
+        a:textStyle="normal"
+        a:gravity="bottom"
+        a:format12Hour="h:mm a" />
+    <TextView
+        a:layout_width="match_parent"
+        a:layout_height="wrap_content"
+        a:gravity="bottom"
+        a:id="@+id/txtFechaLock" />
+</LinearLayout>

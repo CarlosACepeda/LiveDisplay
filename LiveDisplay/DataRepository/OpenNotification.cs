@@ -11,7 +11,9 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Java.IO;
+using Java.Util;
 using LiveDisplay.Factories;
+using LiveDisplay.Misc;
 
 namespace LiveDisplay.Servicios.Notificaciones
 {
@@ -134,6 +136,32 @@ namespace LiveDisplay.Servicios.Notificaciones
                 return false;
             }
         }
+
+        internal string GetWhen()
+        {
+            try
+            {
+                 return CatcherHelper.statusBarNotifications[position].Notification.When.ToString();
+            }
+            catch
+            {
+                return "";
+            }
+            
+        }
+
+        internal string GetAppName()
+        {
+            try
+            {
+                return PackageUtils.GetTheAppName(CatcherHelper.statusBarNotifications[position].PackageName);
+            }
+            catch
+            {
+                return "";
+            }
+        }
+
         public static bool NotificationIsAutoCancel(int position)
         {
             if (CatcherHelper.statusBarNotifications[position].Notification.Flags.HasFlag(NotificationFlags.AutoCancel) == true)

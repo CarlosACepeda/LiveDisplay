@@ -43,35 +43,7 @@ namespace LiveDisplay.Activities
             
             FragmentManager.BeginTransaction().Replace(Resource.Id.content, new LiveDisplayPreferencesFragment()).Commit();
         }
-        protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
-        {
-            base.OnActivityResult(requestCode, resultCode, data);
-            if (this.requestCode == requestCode && resultCode == Result.Ok && data != null)
-            {
-                Android.Net.Uri uri = data.Data;
-                try
-                {
-                    
-                    BackgroundFactory background = new BackgroundFactory();
-                    background.SaveImagePath(uri);
-                    background = null;
-
-                }
-                catch
-                {
-
-                }
-            }
-        }
         
-        //TODO: replace this event handler to handle PReferenceScreen click, instead.
-        private void BtnChangeWallpaper_Click(object sender, EventArgs e)
-        {
-            Intent intent = new Intent();
-            intent.SetType("image/*");
-            intent.SetAction(Intent.ActionGetContent);
-            StartActivityForResult(Intent.CreateChooser(intent, "Pick image"), requestCode);
-        }
         protected override void OnDestroy()
         {
             base.OnDestroy();

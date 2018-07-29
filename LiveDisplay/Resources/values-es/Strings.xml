@@ -3,18 +3,22 @@
   <string name="about">Acerca de...</string>
   <string name="aboutinfo">Esta aplicación es desarrollada con &lt;3 por Carlos Cepeda, puedes ayudarme a través de una donación!, espero que disfrutes mucho esta app como yo desarrollandola!</string>
   <string name="aboutinfotitle">Acerca de esta aplicación:</string>
+  <string name="achep_ty">El hombre detrás de AcDisplay, ayuda y guía!</string>
+  <string name="acknowledgments">Agradecimientos</string>
   <string name="activarawake">Activar Awake</string>
   <string name="activarlockscreen">Activar pantalla de bloqueo</string>
   <string name="activarwallpaperdinamico">Wallpaper dinámico</string>
   <string name="activarwallpaperdinamico_description">Al reproducir multimedia, mostrar en el Wallpaper el album art de la canción que está sonando</string>
   <string name="app_name">LiveDisplay</string>
   <string name="app_title">Configuración</string>
+  <string name="askfortranslations">Quieres ayudar con las traducciones?</string>
   <string name="awakesettings">Awake</string>
   <string name="blacklist">Bloquear aplicaciones</string>
   <string name="blacklistdesc">No mostrar notificaciones de las apps seleccionadas, estas se quitaran también de la barra de estado, a menos que sean notificaciones pegajosas (que no pueden ser removidas por el sistema)</string>
   <string name="changewallpaper">Cambiar fondo de pantalla</string>
   <string name="changewallpaperdesc">El fondo de pantalla actual se usa por defecto</string>
   <string name="clearallnotifications">Descartar todas</string>
+  <string name="contactme">Contáctame</string>
   <string name="dialogcancelledclick">Muy bien, puedes cambiar esta opción después en la sección \'Notificaciones\'</string>
   <string name="dialognldisabledmessage">Debes permitir que esta app acceda a las notificaciones primero!</string>
   <string name="dialognldisablednegativebutton">Cancelar</string>
@@ -22,6 +26,8 @@
   <string name="enablenotificationlistener">Activar el agente de escucha de Notificaciones</string>
   <string name="enablequickreply">Activar la respuesta rápida</string>
   <string name="enablequickreplydesc">Contesta directamente a mensajes desde la notificación como se muestra en Nougat y versiones superiores</string>
+  <string name="eng">Inglés</string>
+  <string name="esp">Español</string>
   <string name="fifteenseconds">15 segundos</string>
   <string name="fiveseconds">5 segundos</string>
   <string name="hidesystemicons">No mostrar iconos del sistema</string>
@@ -34,6 +40,7 @@
   <string name="notificationsettings">Notificaciones</string>
   <string name="opciones">Opciones</string>
   <string name="placeholder">Inserta una cadena aquí</string>
+  <string name="rus">Ruso</string>
   <string name="settings">Ajustes</string>
   <string name="showclock">No mostrar el reloj</string>
   <string name="showstickynotifications">Mostrar también las notificaciones que no se pueden remover</string>
@@ -43,6 +50,7 @@
   <string name="splashscreentitle">Bienvenido, configura la app!</string>
   <string name="stickynotificationwarn">No puedes eliminar notificaciones pegasosas</string>
   <string name="tenseconds">10 segundos</string>
+  <string name="translations">Traducciones</string>
   <string name="turnoffdelay">Apagar pantalla automaticamente</string>
   <string name="turnoffdelay_desc">Si la pantalla se enciende(p.e.j. una nueva notificación llega) y no hay interaccion por parte del usuario, apagar la pantalla en...</string>
   <string name="turnonnewnotification">Encender pantalla</string>
@@ -50,14 +58,8 @@
   <string name="turnonusermovement">Prender la pantalla al levantar el dispositivo</string>
   <string name="uselockscreennonotifications">Usar la pantalla de bloqueo sin notificaciones</string>
   <string name="uselockscreennonotificationsdesc">Para mejor usabilidad, desactiva la pantalla de bloqueo por defecto de Android</string>
-  <string name="translations">Traducciones</string>
-  <string name="eng">Inglés</string>
-  <string name="esp">Español</string>
-  <string name="rus">Ruso</string>
-  <string name="acknowledgments">Agradecimientos</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">Diseño del icono de esta app!</string>
-  <string name="achep_ty">El hombre detrás de AcDisplay, ayuda y guía!</string>
-  <string name="askfortranslations">Quieres ayudar con las traducciones?</string>
-  <string name="contactme">Contáctame</string>
+  <string name="defaultwallpaper">Papel tapiz por defecto</string>
+  <string name="pickwallpaper">Elige uno</string>
 </resources>

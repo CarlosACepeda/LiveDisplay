@@ -6,72 +6,53 @@
     a:orientation="vertical"
     a:layout_width="match_parent"
     a:layout_height="match_parent"
-    a:gravity="bottom"
-    a:weightSum="1">
-    <LinearLayout
-        a:orientation="horizontal"
-        a:minWidth="25px"
-        a:minHeight="25px"
-        a:layout_width="match_parent"
-        a:layout_height="wrap_content"
+    a:weightSum="100"
+    a:gravity="bottom">
+<!--ClearAll button-->
+    <Button
+        a:layout_weight="4"
+        a:background="?android:selectableItemBackground"
+        a:text="@string/clearallnotifications"
+        a:layout_width="wrap_content"
+        a:layout_height="0dp"
+        a:layout_gravity="right"
         a:gravity="right"
-        a:layout_weight="0.03">
-        <Button
-            a:background="?android:selectableItemBackground"
-            a:text="@string/clearallnotifications"
-            a:layout_width="wrap_content"
-            a:gravity="right"
-            a:layout_height="match_parent"
-            a:id="@+id/btnClearAllNotifications"
-            a:textAllCaps="false"
-            a:alpha="0.7" />
-    </LinearLayout>
+        a:id="@+id/btnClearAllNotifications"
+        a:textAllCaps="false"
+        a:alpha="0.7" />
+<!--This linear layout contains the Framelayout used for containing Notification and Music Widgets, 
+  and also the RecyclerView containing the notification list
+  -->
     <LinearLayout
+        a:layout_weight="71"
         a:orientation="horizontal"
-        a:minWidth="25px"
-        a:minHeight="25px"
         a:layout_width="match_parent"
-        a:layout_height="wrap_content"
-        a:layout_weight="0.90"
-        a:weightSum="1">
-        <LinearLayout
-            a:orientation="vertical"
-            a:layout_height="match_parent"
-            a:layout_width="0dp"
-            a:layout_weight="0.8"
-            a:minWidth="25px"
-            a:minHeight="25px"
-            a:gravity="center">
-            <FrameLayout
-                a:layout_width="match_parent"
-                a:layout_height="wrap_content"
-                a:id="@+id/MusicNotificationPlaceholder" />
-        </LinearLayout>
-        <LinearLayout
-            a:orientation="vertical"
-            a:minWidth="25px"
-            a:minHeight="25px"
-            a:layout_weight="0.2"
-            a:layout_height="match_parent"
-            a:gravity="bottom"
-            a:layout_width="0dp">
-            <android.support.v7.widget.RecyclerView
-                a:id="@+id/NotificationListRecyclerView"
-                a:overScrollMode="never"
-                a:layout_width="wrap_content"
-                a:layout_height="wrap_content"
-                a:layout_gravity="center" />
-        </LinearLayout>
+        a:weightSum="10"
+        a:layout_height="0dp">
+        <FrameLayout
+            a:layout_weight="9"
+            a:layout_gravity="center"
+            a:layout_width="25dp"
+            a:layout_height="wrap_content"
+            a:id="@+id/MusicNotificationPlaceholder" />
+        <android.support.v7.widget.RecyclerView
+            a:layout_weight="1"
+            a:id="@+id/NotificationListRecyclerView"
+            a:overScrollMode="never"
+            a:layout_width="25dp"
+            a:layout_height="wrap_content"
+            a:layout_gravity="bottom" />
     </LinearLayout>
+<!--This Layout contains the clock and later the System icons which aren't available... yet.-->
     <LinearLayout
+        a:layout_weight="20"
         a:orientation="vertical"
         a:layout_width="match_parent"
-        a:layout_height="wrap_content"
+        a:layout_height="0dp"
         a:gravity="bottom"
         a:alpha="1"
         a:background="?android:selectableItemBackground"
-        a:id="@+id/clockLock"
-        a:layout_weight="0.02">
+        a:id="@+id/clockLock">
         <TextClock xmlns:p2="http://xamarin.com/mono/android/designer-default"
             a:layout_width="match_parent"
             a:layout_height="wrap_content"
@@ -83,15 +64,14 @@
         <TextView
             a:layout_width="match_parent"
             a:layout_height="wrap_content"
-            a:gravity="bottom"
             a:id="@+id/txtFechaLock" />
     </LinearLayout>
+<!--This FrameLayout contains the Unlocker and the Shortcut button-->
     <FrameLayout
-        a:minWidth="25px"
-        a:minHeight="25px"
         a:layout_width="match_parent"
-        a:layout_height="@dimen/unlockerheight"
-        a:layout_weight="0.05">
+        a:layout_weight="5"
+        a:layout_height="0dp">
+    <!--This button is the camera shortcut.-->
         <Button
             a:alpha="0.7"
             a:drawableTop="@drawable/ic_camera_48"
@@ -100,6 +80,7 @@
             a:layout_width="@dimen/camerabuttonwidth"
             a:layout_height="match_parent"
             a:id="@+id/btnStartCamera" />
+    <!--the actual Unlock widget.-->
         <ImageView
             a:alpha="0.7"
             a:layout_gravity="center_vertical"

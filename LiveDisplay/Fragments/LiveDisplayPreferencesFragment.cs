@@ -5,6 +5,7 @@ using System.Text;
 
 using Android.App;
 using Android.Content;
+using Android.Content.PM;
 using Android.OS;
 using Android.Preferences;
 using Android.Runtime;
@@ -26,7 +27,13 @@ namespace LiveDisplay.Fragments
             base.OnCreate(savedInstanceState);
             AddPreferencesFromResource(Resource.Xml.prefs);
             sharedPreferences.RegisterOnSharedPreferenceChangeListener(this);
+            
             //HERE I AM
+        }
+        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+        {
+            return base.OnCreateView(inflater, container, savedInstanceState);
+
         }
         public override void OnPause()
         {
@@ -56,16 +63,21 @@ namespace LiveDisplay.Fragments
         }
         public void OnSharedPreferenceChanged(ISharedPreferences sharedPreferences, string key)
         {
-            if (key == "changewallpaper")
+            //1 means 'User will pick custom wallpaper' 0 means use default.
+            if (sharedPreferences.GetInt(ConfigurationParameters.changewallpaper, 0)==1)
             {
                 using (Intent intent = new Intent())
                 {
                     intent.SetType("image/*");
                     intent.SetAction(Intent.ActionGetContent);
+                    //here 1 means the request code.
                     StartActivityForResult(Intent.CreateChooser(intent, "Pick image"), 1);
                 }
                     
             }
         }
+        
+            
+        
     }
 }
