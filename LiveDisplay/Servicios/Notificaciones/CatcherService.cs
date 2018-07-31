@@ -21,14 +21,14 @@ namespace LiveDisplay.Servicios
     [IntentFilter(new[] { "android.service.notification.NotificationListenerService" })]
     internal class Catcher : NotificationListenerService, ISensorEventListener
     {
-
+        //Move to respective fragments
         private BatteryReceiver batteryReceiver;
         private ScreenOnOffReceiver screenOnOffReceiver;
 
         //Manipular las sesiones-
         private MediaSessionManager mediaSessionManager;
         //el controlador actual de media.
-        
+        private ActiveMediaSessionsListener activeMediaSessionsListener;
 
 #pragma warning disable CS0618 // El tipo o el miembro están obsoletos
         private RemoteController remoteController;
@@ -37,7 +37,9 @@ namespace LiveDisplay.Servicios
         private List<StatusBarNotification> statusBarNotifications;
         private SensorManager sensorManager;
         private Sensor sensorAccelerometer;
+#pragma warning disable CS0414 // El campo 'Catcher.isInAPlainSurface' está asignado pero su valor nunca se usa
         bool isInAPlainSurface = false;
+#pragma warning restore CS0414 // El campo 'Catcher.isInAPlainSurface' está asignado pero su valor nunca se usa
 
         public override IBinder OnBind(Intent intent)
         {
@@ -58,6 +60,8 @@ namespace LiveDisplay.Servicios
                 StartWatchingDeviceMovement();
                 //New remote controller for Kitkat
 
+                //Fix me, I got disposed too early.
+
 #pragma warning disable CS0618 // El tipo o el miembro están obsoletos
                 using (remoteController = new RemoteController(Application.Context, new MusicControllerKitkat()))
                 {
@@ -74,12 +78,14 @@ namespace LiveDisplay.Servicios
 
         public override void OnListenerConnected()
         {
+            activeMediaSessionsListener = new ActiveMediaSessionsListener();
             //RemoteController Lollipop and Beyond Implementation
-            using (mediaSessionManager = (MediaSessionManager)GetSystemService(MediaSessionService))
-            {
-                //Listener para Sesiones
-                mediaSessionManager.AddOnActiveSessionsChangedListener(new ActiveMediaSessionsListener(), new ComponentName(this, Java.Lang.Class.FromType(typeof(Catcher))));
-            }
+            mediaSessionManager = (MediaSessionManager)GetSystemService(MediaSessionService);
+            
+            //Listener para Sesiones
+            mediaSessionManager.AddOnActiveSessionsChangedListener(activeMediaSessionsListener, new ComponentName(this, Java.Lang.Class.FromType(typeof(Catcher))));
+                
+            
             SubscribeToEvents();
             RegisterReceivers();
             RetrieveNotificationFromStatusBar();
@@ -103,6 +109,7 @@ namespace LiveDisplay.Servicios
         public override void OnListenerDisconnected()
         {
             catcherHelper.Dispose();
+            mediaSessionManager.RemoveOnActiveSessionsChangedListener(activeMediaSessionsListener);
             UnregisterReceivers();
             base.OnListenerDisconnected();
         }

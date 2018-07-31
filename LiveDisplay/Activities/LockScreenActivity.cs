@@ -33,13 +33,11 @@ namespace LiveDisplay
     {
         private RecyclerView recycler;
         private RecyclerView.LayoutManager layoutManager;
-        private Calendar calendar;
-        private TextView fecha;
-        private LinearLayout reloj;
         private ImageView unlocker;
         private Button clearAll;
         private NotificationFragment notificationFragment;
         private MusicFragment musicFragment;
+        private ClockFragment clockFragment;
         private bool thereAreNotifications = false;
         private Button startCamera;
         
@@ -52,18 +50,16 @@ namespace LiveDisplay
             SetContentView(Resource.Layout.LockScreen);
             //Views
             
-            fecha = FindViewById<TextView>(Resource.Id.txtFechaLock);
-            reloj = FindViewById<LinearLayout>(Resource.Id.clockLock);
+            
             unlocker = FindViewById<ImageView>(Resource.Id.unlocker);
             startCamera = FindViewById<Button>(Resource.Id.btnStartCamera);
             clearAll = FindViewById<Button>(Resource.Id.btnClearAllNotifications);
             notificationFragment = new NotificationFragment();
             musicFragment = new MusicFragment();
+            clockFragment = new ClockFragment();
+
+
             
-
-
-            //View Events
-            reloj.Click += Reloj_Click;
             clearAll.Click += BtnClearAll_Click;
             unlocker.Touch += Unlocker_Touch;
             startCamera.Click += StartCamera_Click;
@@ -75,11 +71,7 @@ namespace LiveDisplay
             //CatcherHelper events
             CatcherHelper.NotificationListSizeChanged += CatcherHelper_NotificationListSizeChanged;
 
-            //Load date
-            using (calendar = Calendar.GetInstance(Locale.Default))
-            {
-                fecha.Text = string.Format(calendar.Get(CalendarField.DayOfMonth).ToString() + ", " + calendar.GetDisplayName((int)CalendarField.Month, (int)CalendarStyle.Long, Locale.Default));
-            }
+            
 
             //Load RecyclerView
 
@@ -95,6 +87,9 @@ namespace LiveDisplay
             //Load Default Wallpaper
             LoadDefaultWallpaper();
 
+            //Load cLock Widget
+            LoadClockFragment();
+
             //Load User Configs.
             ThreadPool.QueueUserWorkItem(o => LoadConfiguration());
             
@@ -107,7 +102,8 @@ namespace LiveDisplay
             //Check the Notification List Size
             CheckNotificationListSize();            
         }
-       
+
+        
 
         private void CheckNotificationListSize()
         {
@@ -141,7 +137,6 @@ namespace LiveDisplay
             base.OnDestroy();
 
             //Unbind events
-            reloj.Click -= Reloj_Click;
             unlocker.Touch -= Unlocker_Touch;
             clearAll.Click -= BtnClearAll_Click;
             ActiveMediaSessionsListener.MediaSessionStarted -= MusicController_MediaSessionStarted;
@@ -151,14 +146,13 @@ namespace LiveDisplay
             //Dispose Views
             //Views
             recycler.Dispose();
-            fecha.Dispose();
-            reloj.Dispose();
             unlocker.Dispose();
             clearAll.Dispose();
 
             //Dispose Fragments
             notificationFragment.Dispose();
             musicFragment.Dispose();
+            clockFragment.Dispose();
 
 
         }
@@ -213,17 +207,9 @@ namespace LiveDisplay
 
             }         
         }
-        private void Reloj_Click(object sender, EventArgs e)
-        {
-            using (Intent intent = new Intent(AlarmClock.ActionShowAlarms))
-            {
-                StartActivity(intent);
-            }
-               
-        }
-
         private void Unlocker_Touch(object sender, View.TouchEventArgs e)
         {
+            //TODO: Document me
             float startPoint = 0;
             float finalPoint = 0;
             if (e.Event.Action == MotionEventActions.Down)
@@ -272,12 +258,7 @@ namespace LiveDisplay
         {
             //Load configurations based on User configs.
             using (ISharedPreferences sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(this))
-            {
-                if (sharedPreferences.GetBoolean(ConfigurationParameters.hiddenclock,false) == true)
-                {
-                    //Hide the clock
-                    RunOnUiThread(() => reloj.Visibility = ViewStates.Gone);
-                }
+            {               
                 if (sharedPreferences.GetBoolean(ConfigurationParameters.hiddensystemicons,false) == true)
                 {
                     //Hide system icons, when available, FIX ME.
@@ -322,6 +303,17 @@ namespace LiveDisplay
             {
 
                 fragmentTransaction.Replace(Resource.Id.MusicNotificationPlaceholder, notificationFragment);
+                fragmentTransaction.DisallowAddToBackStack();
+                fragmentTransaction.Commit();
+            }
+        }
+
+        private void LoadClockFragment()
+        {
+            using (FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction())
+            {
+
+                fragmentTransaction.Replace(Resource.Id.cLockPlaceholder, clockFragment);
                 fragmentTransaction.DisallowAddToBackStack();
                 fragmentTransaction.Commit();
             }

@@ -32,10 +32,18 @@ namespace LiveDisplay.Servicios.Notificaciones
         public static List<StatusBarNotification> statusBarNotifications;
         //Events that this class will trigger to Notify LockScreen about these
         //When RecyclerView will be removed
+#pragma warning disable CS0067 // El evento 'CatcherHelper.NotificationPosted' nunca se usa
         public static event EventHandler NotificationPosted; //NotifyItemInserted.
+#pragma warning restore CS0067 // El evento 'CatcherHelper.NotificationPosted' nunca se usa
+#pragma warning disable CS0067 // El evento 'CatcherHelper.NotificationUpdated' nunca se usa
         public static event EventHandler NotificationUpdated; //NotifyItemUpdated.
+#pragma warning restore CS0067 // El evento 'CatcherHelper.NotificationUpdated' nunca se usa
+#pragma warning disable CS0067 // El evento 'CatcherHelper.NotificationGrouped' nunca se usa
         public static event EventHandler NotificationGrouped; // TODO: Clueless (?) :'-( I don't know how to implement this in LockScreen
+#pragma warning restore CS0067 // El evento 'CatcherHelper.NotificationGrouped' nunca se usa
+#pragma warning disable CS0067 // El evento 'CatcherHelper.NotificationUngrouped' nunca se usa
         public static event EventHandler NotificationUngrouped; //TODO
+#pragma warning restore CS0067 // El evento 'CatcherHelper.NotificationUngrouped' nunca se usa
         public static event EventHandler<NotificationListSizeChangedEventArgs> NotificationListSizeChanged;
         public static bool thereAreNotifications = false;
         /// <summary>

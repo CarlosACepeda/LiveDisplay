@@ -79,7 +79,6 @@ namespace LiveDisplay.Factories
 
             Drawable papelTapizDifuminado = new BitmapDrawable(blurredBitMapResized);
             image.Dispose();
-            blurredBitmap.Dispose();
             blurredBitMapResized.Dispose();
             return papelTapizDifuminado;
         }

@@ -61,7 +61,9 @@ namespace LiveDisplay.Servicios
             builder.SetContentTitle("LiveDisplay");
             builder.SetContentText("This is a test notification");
             builder.SetAutoCancel(true);
+#pragma warning disable CS0618 // 'Notification.Builder.SetPriority(int)' está obsoleto: 'deprecated'
             builder.SetPriority(Convert.ToInt32(Android.App.NotificationPriority.Low));
+#pragma warning restore CS0618 // 'Notification.Builder.SetPriority(int)' está obsoleto: 'deprecated'
             builder.SetSmallIcon(Resource.Drawable.ic_stat_default_appicon);
             notificationManager.Notify(1, builder.Build());
         }

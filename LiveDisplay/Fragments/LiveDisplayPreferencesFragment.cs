@@ -27,8 +27,6 @@ namespace LiveDisplay.Fragments
             base.OnCreate(savedInstanceState);
             AddPreferencesFromResource(Resource.Xml.prefs);
             sharedPreferences.RegisterOnSharedPreferenceChangeListener(this);
-            
-            //HERE I AM
         }
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {

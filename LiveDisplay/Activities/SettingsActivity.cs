@@ -26,7 +26,6 @@ namespace LiveDisplay.Activities
     public class SettingsActivity : AppCompatActivity
     {
         private Android.Support.V7.Widget.Toolbar toolbar;
-        private int requestCode = 1;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {

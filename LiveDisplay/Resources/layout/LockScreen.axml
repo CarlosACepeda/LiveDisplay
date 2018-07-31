@@ -43,29 +43,12 @@
             a:layout_height="wrap_content"
             a:layout_gravity="bottom" />
     </LinearLayout>
-<!--This Layout contains the clock and later the System icons which aren't available... yet.-->
-    <LinearLayout
+<!--This FrameLayout contains the clock and later the System icons which aren't available... yet.-->
+    <FrameLayout
         a:layout_weight="20"
-        a:orientation="vertical"
         a:layout_width="match_parent"
         a:layout_height="0dp"
-        a:gravity="bottom"
-        a:alpha="1"
-        a:background="?android:selectableItemBackground"
-        a:id="@+id/clockLock">
-        <TextClock xmlns:p2="http://xamarin.com/mono/android/designer-default"
-            a:layout_width="match_parent"
-            a:layout_height="wrap_content"
-            a:textSize="60dp"
-            a:typeface="sans"
-            a:textStyle="normal"
-            a:gravity="bottom"
-            a:format12Hour="h:mm a" />
-        <TextView
-            a:layout_width="match_parent"
-            a:layout_height="wrap_content"
-            a:id="@+id/txtFechaLock" />
-    </LinearLayout>
+        a:id="@+id/cLockPlaceholder" />
 <!--This FrameLayout contains the Unlocker and the Shortcut button-->
     <FrameLayout
         a:layout_width="match_parent"
