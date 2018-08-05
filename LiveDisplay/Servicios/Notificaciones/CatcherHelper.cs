@@ -76,7 +76,9 @@ namespace LiveDisplay.Servicios.Notificaciones
             {
                 statusBarNotifications.RemoveAt(indice);
                 statusBarNotifications.Add(sbn);
-                notificationAdapter.NotifyItemChanged(indice);
+                using (var h = new Handler(Looper.MainLooper))
+                    h.Post(() => { notificationAdapter.NotifyItemChanged(indice);});
+                
                 Console.WriteLine("Notification Updated");                          
             }
             else
@@ -84,7 +86,9 @@ namespace LiveDisplay.Servicios.Notificaciones
                 try
                 {
                     statusBarNotifications.Add(sbn);
-                    notificationAdapter.NotifyItemInserted(indice);
+                    using (var h = new Handler(Looper.MainLooper))
+                        h.Post(() => { notificationAdapter.NotifyItemInserted(indice); });
+                    
 
                     Console.WriteLine("Notification Inserted");
                     if (ScreenOnOffReceiver.isScreenOn == false)
@@ -143,8 +147,9 @@ namespace LiveDisplay.Servicios.Notificaciones
             if (position >= 0)
             {
                 statusBarNotifications.RemoveAt(position);
-
-                notificationAdapter.NotifyItemRemoved(position);
+                using (var h = new Handler(Looper.MainLooper))
+                    h.Post(() => { notificationAdapter.NotifyItemRemoved(position); });
+                
             }
             //Check if when removing this notification the list size is zero, if true, then raise an event that will
             //indicate the lockscreen to hide the 'Clear all button'

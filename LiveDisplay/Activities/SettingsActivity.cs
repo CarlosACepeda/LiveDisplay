@@ -21,7 +21,6 @@ using Android.Preferences;
 
 namespace LiveDisplay.Activities
 {
-    //prepare for deprecation, this will be Settings Screen
     [Activity(Label = "@string/settings", Theme ="@style/LiveDisplayTheme.NoActionBar")]
     public class SettingsActivity : AppCompatActivity
     {

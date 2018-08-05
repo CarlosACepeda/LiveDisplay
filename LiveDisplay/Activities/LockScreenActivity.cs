@@ -44,7 +44,6 @@ namespace LiveDisplay
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
-            Log.Info("Alert: ","OnCreate called");
             base.OnCreate(savedInstanceState);
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.LockScreen);
@@ -102,9 +101,6 @@ namespace LiveDisplay
             //Check the Notification List Size
             CheckNotificationListSize();            
         }
-
-        
-
         private void CheckNotificationListSize()
         {
             if (CatcherHelper.thereAreNotifications == true)
@@ -116,7 +112,6 @@ namespace LiveDisplay
                 clearAll.Visibility = ViewStates.Invisible;
             }
         }        
-
         protected override void OnResume()
         {
             base.OnResume();
@@ -195,7 +190,6 @@ namespace LiveDisplay
             }
 
         }
-
         private void BtnClearAll_Click(object sender, EventArgs e)
         {
             using (NotificationSlave notificationSlave = NotificationSlave.NotificationSlaveInstance())
@@ -231,7 +225,6 @@ namespace LiveDisplay
             }
 
         }
-
         //switch (e.Event.Action)
         //{
         //    case MotionEventActions.Down:
@@ -252,27 +245,25 @@ namespace LiveDisplay
                 StartActivity(intent);
             }
         }
-
-
         private void LoadConfiguration()
         {
             //Load configurations based on User configs.
-            using (ISharedPreferences sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(this))
+            using (ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context)))
             {               
-                if (sharedPreferences.GetBoolean(ConfigurationParameters.hiddensystemicons,false) == true)
+                if (configurationManager.RetrieveAValue(ConfigurationParameters.hiddensystemicons) == true)
                 {
                     //Hide system icons, when available, FIX ME.
                 }
 
-                if (sharedPreferences.GetBoolean(ConfigurationParameters.dynamicwallpaperenabled, false) == true)
+                if (configurationManager.RetrieveAValue(ConfigurationParameters.dynamicwallpaperenabled) == true)
                 {
                     //Allow the app to show Album art.
                     //:TODO move to Music Fragment, not here.
                 }
-                if (String.Equals(sharedPreferences.GetString(ConfigurationParameters.imagePath, "imagenotfound"), "imagenotfound") == false)
+                if (Equals(configurationManager.RetrieveAValue(ConfigurationParameters.imagePath, "imagepath") != "imagepath"))
                 {
                     //Found an image, use it as wallpaper.
-                    using (Bitmap bm = BitmapFactory.DecodeFile(sharedPreferences.GetString(ConfigurationParameters.imagePath, "")))
+                    using (Bitmap bm = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.imagePath, "")))
                     {
                         using (var backgroundFactory = new BackgroundFactory())
                         {
@@ -303,11 +294,11 @@ namespace LiveDisplay
             {
 
                 fragmentTransaction.Replace(Resource.Id.MusicNotificationPlaceholder, notificationFragment);
+                fragmentTransaction.SetCustomAnimations(Resource.Animation.fade_in, Resource.Animation.fade_out);
                 fragmentTransaction.DisallowAddToBackStack();
                 fragmentTransaction.Commit();
             }
         }
-
         private void LoadClockFragment()
         {
             using (FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction())
@@ -364,6 +355,7 @@ namespace LiveDisplay
                 using (FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction())
                 {
                     fragmentTransaction.Replace(Resource.Id.MusicNotificationPlaceholder, musicFragment);
+                fragmentTransaction.SetCustomAnimations(Resource.Animation.fade_in, Resource.Animation.fade_out);
                     fragmentTransaction.DisallowAddToBackStack();
                     fragmentTransaction.Commit();
                 }
@@ -375,7 +367,6 @@ namespace LiveDisplay
         {
             LoadNotificationFragment();                         
         }
-
         private void LoadDefaultWallpaper()
         {
             using (BackgroundFactory blurImage = new BackgroundFactory())
@@ -397,8 +388,6 @@ namespace LiveDisplay
 
             }
             }
-            
-        
 
     }
 

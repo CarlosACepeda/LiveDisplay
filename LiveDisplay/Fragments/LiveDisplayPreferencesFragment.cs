@@ -61,6 +61,8 @@ namespace LiveDisplay.Fragments
         }
         public void OnSharedPreferenceChanged(ISharedPreferences sharedPreferences, string key)
         {
+            if (key == ConfigurationParameters.changewallpaper)
+            {
             //1 means 'User will pick custom wallpaper' 0 means use default.
             if (sharedPreferences.GetInt(ConfigurationParameters.changewallpaper, 0)==1)
             {
@@ -73,6 +75,8 @@ namespace LiveDisplay.Fragments
                 }
                     
             }
+            }
+            
         }
         
             

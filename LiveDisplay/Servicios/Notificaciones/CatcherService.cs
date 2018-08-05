@@ -81,11 +81,13 @@ namespace LiveDisplay.Servicios
             activeMediaSessionsListener = new ActiveMediaSessionsListener();
             //RemoteController Lollipop and Beyond Implementation
             mediaSessionManager = (MediaSessionManager)GetSystemService(MediaSessionService);
-            
+
             //Listener para Sesiones
-            mediaSessionManager.AddOnActiveSessionsChangedListener(activeMediaSessionsListener, new ComponentName(this, Java.Lang.Class.FromType(typeof(Catcher))));
-                
+            using (var h = new Handler(Looper.MainLooper)) //Using UI Thread because seems to crash in some devices.
+                h.Post(() => { mediaSessionManager.AddOnActiveSessionsChangedListener(activeMediaSessionsListener, new ComponentName(this, Java.Lang.Class.FromType(typeof(Catcher)))); });
             
+
+
             SubscribeToEvents();
             RegisterReceivers();
             RetrieveNotificationFromStatusBar();
@@ -130,7 +132,7 @@ namespace LiveDisplay.Servicios
             statusBarNotifications = new List<StatusBarNotification>();
             foreach (var notification in GetActiveNotifications().ToList())
             {
-                if (notification.IsClearable == true)
+                if (notification.IsOngoing==false||notification.IsClearable==true)
                 {
                     statusBarNotifications.Add(notification);
                 }

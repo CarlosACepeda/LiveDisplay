@@ -8,6 +8,8 @@ using LiveDisplay.Servicios;
 using LiveDisplay.Servicios.Notificaciones;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
 using System;
+using System.Threading;
+using System.Timers;
 
 namespace LiveDisplay.Fragments
 {
@@ -20,12 +22,16 @@ namespace LiveDisplay.Fragments
         private TextView appName;
         private TextView when;
         private LinearLayout notification;
+        private bool timeoutStarted = false;
+        private System.Timers.Timer timer;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-
             // Create your fragment here
+            //create a timer that will be used to hide the NotificationView when the user as not clicked
+            //any Notification Item in 5 seconds.
+            
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -59,7 +65,7 @@ namespace LiveDisplay.Fragments
                     notification.Visibility = ViewStates.Invisible;
                     titulo.Text = null;
                     texto.Text = null;
-                    notificationActions = null;
+                    notificationActions.RemoveAllViews();
                 }
             }
             catch
@@ -123,5 +129,6 @@ namespace LiveDisplay.Fragments
                 notification.Visibility = ViewStates.Visible;
             }
         }
+        
     }
 }

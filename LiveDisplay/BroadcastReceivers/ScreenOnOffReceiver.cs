@@ -16,8 +16,10 @@ namespace LiveDisplay.BroadcastReceivers
     [IntentFilter(new[] { Intent.ActionScreenOn })]
     public class ScreenOnOffReceiver : BroadcastReceiver
     {
-        public static bool isScreenOn=true;       
-        
+        public static bool isScreenOn=true;
+        ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context));
+
+
         public override void OnReceive(Context context, Intent intent)
         {
             if (intent.Action == Intent.ActionScreenOn)
@@ -35,11 +37,9 @@ namespace LiveDisplay.BroadcastReceivers
                 //TODO: Add a timer to Start the lockScreen, the timer gets reset when this Intent is triggered.
                 //Because sometimes I don't want to Unlock the Lockscreen everytime I turn the screen off.
                 //Allowing to the user a more flexible experience. This setting is also configurable
-                using (ISharedPreferences sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(Application.Context))
-                {
-                    if (sharedPreferences.GetBoolean(ConfigurationParameters.enabledlockscreennonotifications, false) == true)
+                    if (configurationManager.RetrieveAValue(ConfigurationParameters.enabledlockscreennonotifications) == true)
                     {
-                        int delaytolockscreen = sharedPreferences.GetInt(ConfigurationParameters.startlockscreendelaytime, 0);
+                        int delaytolockscreen = configurationManager.RetrieveAValue(ConfigurationParameters.startlockscreendelaytime, 0);
 
 
                         ThreadPool.QueueUserWorkItem(m =>
@@ -64,8 +64,13 @@ namespace LiveDisplay.BroadcastReceivers
                         });
 
                     }
-                }
+                
             }
+        }
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            Log.Info("ScreenOnOffReceiver", "Dispose called");
         }
     }
 }

@@ -67,6 +67,7 @@ namespace LiveDisplay.Fragments
         {
             base.OnDestroyView();
             battery.Dispose();
+            BatteryReceiver.BatteryInfoChanged-= BatteryReceiver_BatteryInfoChanged;
         }
         private void BatteryReceiver_BatteryInfoChanged(object sender, Servicios.Battery.BatteryEventArgs.BatteryChangedEventArgs e)
         {

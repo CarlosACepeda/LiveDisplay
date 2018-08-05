@@ -36,7 +36,6 @@ namespace LiveDisplay.Servicios.Music
         {
             if (controllers.Count > 0)
             {
-                Console.WriteLine("There is 1 or more active Sessions");
                 mediaController = controllers[0];
                 mediaController.RegisterCallback(MusicController.MusicControllerInstance());
                 //Retrieve current media information
@@ -44,26 +43,13 @@ namespace LiveDisplay.Servicios.Music
                 //To control current media playing
                 GetMusicControls(mediaController.GetTransportControls());
                 IsASessionActive = true;
-
-                Console.WriteLine("RemoteController registered Lollipop");
             }
-            else if(controllers.Count==0)
+            else if(mediaController!=null && controllers.Count==0)
             {
-                //When catcher is activated Il will register this call back, if mediacontroller is null, then it will crash
-                //due that there are not mediacontrollers.
-                try
-                {
+                //This is probably never to happen
                     mediaController.UnregisterCallback(MusicController.MusicControllerInstance());
                     IsASessionActive = false;
-                    Console.WriteLine("No hay sesiones Activas");
-                }
-                catch
-                {
-                    //Nothing.
-                }
-                
-                
-                
+ 
             }
         }
 
@@ -78,16 +64,23 @@ namespace LiveDisplay.Servicios.Music
             {
                 //There is not bitmap
             }
+
+
+            try
+            {
+                song.Title = mediaController.Metadata.GetText(MediaMetadata.MetadataKeyTitle);
+                song.Artist = mediaController.Metadata.GetText(MediaMetadata.MetadataKeyArtist);
+                song.Album = mediaController.Metadata.GetText(MediaMetadata.MetadataKeyAlbum);
+                song.Duration = (int)mediaController.Metadata.GetLong(MediaMetadata.MetadataKeyDuration);
+                song.PlaybackState = mediaController.PlaybackState.State;
+                song.AlbumArt = bitmap;
+                bitmap = null;
+            }
+            catch
+            {
+                //Started a MediaSession without a media playing.
+            }
             
-
-
-            song.Title =  mediaController.Metadata.GetText(MediaMetadata.MetadataKeyTitle);
-            song.Artist = mediaController.Metadata.GetText(MediaMetadata.MetadataKeyArtist);
-            song.Album = mediaController.Metadata.GetText(MediaMetadata.MetadataKeyAlbum);
-            song.Duration= (int)mediaController.Metadata.GetLong(MediaMetadata.MetadataKeyDuration);
-            song.PlaybackState = mediaController.PlaybackState.State;
-            song.AlbumArt = bitmap;
-            bitmap = null;
         }
 
         protected virtual void OnMediaSessionStarted()
