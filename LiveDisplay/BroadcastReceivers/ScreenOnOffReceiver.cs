@@ -67,10 +67,5 @@ namespace LiveDisplay.BroadcastReceivers
                 
             }
         }
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-            Log.Info("ScreenOnOffReceiver", "Dispose called");
-        }
     }
 }

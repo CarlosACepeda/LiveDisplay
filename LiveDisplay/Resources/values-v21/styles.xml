@@ -20,7 +20,19 @@
     <item name="android:textColorPrimary">@android:color/white</item>
   </style>
  <!--Style for Popup menu in overflow menu-->
-  <style name="popupTheme" parent="LiveDisplayTheme">
+  <style name="popupTheme" parent="LiveDisplayTheme"> 
     
+  </style>
+
+  <!--Dark version of base Main theme-->
+  <style name="LiveDisplayThemeDark" parent="Theme.AppCompat">
+    <!-- Main theme colors -->
+    <!--   your app branding color for the app bar -->
+    <item name="colorPrimary">@color/colorPrimary</item>
+    <!--   darker variant for the status bar and contextual app bars -->
+    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    <!--   theme UI controls like checkboxes and text fields -->
+    <item name="colorAccent">@color/colorAccent</item>
+    <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
   </style>
 </resources>

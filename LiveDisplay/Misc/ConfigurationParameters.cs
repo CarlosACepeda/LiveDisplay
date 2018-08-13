@@ -14,7 +14,7 @@ namespace LiveDisplay.Misc
 {
     sealed class ConfigurationParameters
     {
-        //For Deciding if show the SplashScreen or not.
+        //For Deciding if show the SplashScreen or not. (Is this really neccesary?)
         public const string istheappconfigured = "istheappconfigured?";
 
         //For LockScreenSettings:
@@ -24,7 +24,10 @@ namespace LiveDisplay.Misc
         public const string changewallpaper = "changewallpaper";
         //Functional
         public const string enabledlockscreennonotifications = "enabledlockscreennonotifications?";
-        public const string dynamicwallpaperenabled = "dynamicwallpaperenabled?";
+
+        //For Music Widget settings
+        public const string showalbumart = "showalbumart?";
+
         //For Notifications Settings :
         //<The ListenerIsEnabled is not present because that value is get from the Actual Notification Listener (-:>
         public const string showstickynotifications = "showstickynotifications?";
@@ -35,6 +38,7 @@ namespace LiveDisplay.Misc
         public const string turnonusermovement = "turnonusermovement?";
         public const string startlockscreendelaytime = "startlockscreendelaytime";
         public const string turnoffscreendelaytime = "turnoffscreendelaytime";
+        public const string doubletaptosleep = "doubletaptosleep?";
 
 
     }

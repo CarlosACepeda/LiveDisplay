@@ -17,7 +17,7 @@ using System.Threading;
 
 namespace LiveDisplay.Servicios
 {
-    [Service(Label = "Catcher", Permission = "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE")]
+    [Service(Label = "@string/app_name", Permission = "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE")]
     [IntentFilter(new[] { "android.service.notification.NotificationListenerService" })]
     internal class Catcher : NotificationListenerService, ISensorEventListener
     {
@@ -30,9 +30,14 @@ namespace LiveDisplay.Servicios
         //el controlador actual de media.
         private ActiveMediaSessionsListener activeMediaSessionsListener;
 
+        //For Kitkat Music Controlling.
+
 #pragma warning disable CS0618 // El tipo o el miembro están obsoletos
         private RemoteController remoteController;
 #pragma warning restore CS0618 // El tipo o el miembro están obsoletos
+        
+        private AudioManager audioManager;
+
         private CatcherHelper catcherHelper;
         private List<StatusBarNotification> statusBarNotifications;
         private SensorManager sensorManager;
@@ -60,18 +65,19 @@ namespace LiveDisplay.Servicios
                 StartWatchingDeviceMovement();
                 //New remote controller for Kitkat
 
-                //Fix me, I got disposed too early.
-
 #pragma warning disable CS0618 // El tipo o el miembro están obsoletos
-                using (remoteController = new RemoteController(Application.Context, new MusicControllerKitkat()))
-                {
-                    remoteController.SetArtworkConfiguration(450, 450);
+                remoteController = new RemoteController(Application.Context, new MusicControllerKitkat());
+                
+                    //remoteController.SetArtworkConfiguration(450, 450);
+                
 #pragma warning restore CS0618 // El tipo o el miembro están obsoletos
-                    var audioService = (AudioManager)Application.Context.GetSystemService(AudioService);
+                    audioManager= (AudioManager)Application.Context.GetSystemService(AudioService);
 #pragma warning disable CS0618 // El tipo o el miembro están obsoletos
-                    audioService.RegisterRemoteController(remoteController);
+                    audioManager.RegisterRemoteController(remoteController);
+              
+                    
 #pragma warning restore CS0618 // El tipo o el miembro están obsoletos
-                }
+                
             }
             return base.OnBind(intent);
         }
@@ -92,19 +98,19 @@ namespace LiveDisplay.Servicios
             RegisterReceivers();
             RetrieveNotificationFromStatusBar();
             //TODO:This setting is sensible to user configuration and also the Inactive hours setting.
-            StartWatchingDeviceMovement();
+            //Move to NotificationFragment.
+            //StartWatchingDeviceMovement();
         }
 
         public override void OnNotificationPosted(StatusBarNotification sbn)
         {
-            catcherHelper.InsertNotification(sbn);
-
             base.OnNotificationPosted(sbn);
+            catcherHelper.OnNotificationPosted(sbn);
         }
 
         public override void OnNotificationRemoved(StatusBarNotification sbn)
         {
-            catcherHelper.RemoveNotification(sbn);
+            catcherHelper.OnNotificationRemoved(sbn);
             base.OnNotificationRemoved(sbn);
         }
 
@@ -122,6 +128,7 @@ namespace LiveDisplay.Servicios
             {
                 catcherHelper.Dispose();
                 UnregisterReceivers();
+                audioManager.UnregisterRemoteController(remoteController);
             }
 
             return base.OnUnbind(intent);
@@ -132,7 +139,7 @@ namespace LiveDisplay.Servicios
             statusBarNotifications = new List<StatusBarNotification>();
             foreach (var notification in GetActiveNotifications().ToList())
             {
-                if (notification.IsOngoing==false||notification.IsClearable==true)
+                if ((notification.IsOngoing==false||notification.Notification.Flags.HasFlag(NotificationFlags.NoClear))&&notification.IsClearable==true)
                 {
                     statusBarNotifications.Add(notification);
                 }

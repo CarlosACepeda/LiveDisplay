@@ -27,7 +27,6 @@ namespace LiveDisplay.Servicios.Music
         private MusicController()
         {
             song = OpenSong.OpenSongInstance();
-            blurImage = new Com.JackAndPhantom.BlurImage(Application.Context);
             
         }
         

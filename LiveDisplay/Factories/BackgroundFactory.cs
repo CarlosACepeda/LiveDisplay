@@ -5,11 +5,13 @@ using Android.Graphics.Drawables;
 using Android.Net;
 using Android.Preferences;
 using Android.Renderscripts;
+using Android.Util;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
 
 namespace LiveDisplay.Factories
 {
+    //TODO: Correct me, I can be optimized.
     internal class BackgroundFactory : Java.Lang.Object
     {
         //Retrieves a blurred image
@@ -116,7 +118,7 @@ namespace LiveDisplay.Factories
         {
             ContextWrapper contextWrapper = new ContextWrapper(Application.Context);
             ISharedPreferences sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(contextWrapper);
-            ISharedPreferencesEditor sharedPreferencesEditor = sharedPreferences.Edit();
+            ConfigurationManager configurationManager = new ConfigurationManager(sharedPreferences);
             string doc_id = "";
             using (var c1 = Application.Context.ContentResolver.Query(uri, null, null, null, null))
             {
@@ -135,7 +137,7 @@ namespace LiveDisplay.Factories
                 var columnIndex = cursor.GetColumnIndexOrThrow(Android.Provider.MediaStore.Images.Media.InterfaceConsts.Data);
                 cursor.MoveToFirst();
                 path = cursor.GetString(columnIndex);
-                sharedPreferencesEditor.PutString(ConfigurationParameters.imagePath, path);
+                configurationManager.SaveAValue(ConfigurationParameters.imagePath, path);
             }
             return path;
         }

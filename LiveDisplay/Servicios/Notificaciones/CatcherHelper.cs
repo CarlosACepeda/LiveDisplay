@@ -9,6 +9,7 @@ using Android.Content;
 using Android.OS;
 using Android.Runtime;
 using Android.Service.Notification;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
 using LiveDisplay.Adapters;
@@ -30,14 +31,10 @@ namespace LiveDisplay.Servicios.Notificaciones
     {
         public static NotificationAdapter notificationAdapter;
         public static List<StatusBarNotification> statusBarNotifications;
-        //Events that this class will trigger to Notify LockScreen about these
-        //When RecyclerView will be removed
-#pragma warning disable CS0067 // El evento 'CatcherHelper.NotificationPosted' nunca se usa
-        public static event EventHandler NotificationPosted; //NotifyItemInserted.
-#pragma warning restore CS0067 // El evento 'CatcherHelper.NotificationPosted' nunca se usa
-#pragma warning disable CS0067 // El evento 'CatcherHelper.NotificationUpdated' nunca se usa
-        public static event EventHandler NotificationUpdated; //NotifyItemUpdated.
-#pragma warning restore CS0067 // El evento 'CatcherHelper.NotificationUpdated' nunca se usa
+
+        public static event EventHandler NotificationRemoved;
+        public static event EventHandler<NotificationPostedEventArgs> NotificationPosted; //NotifyItemInserted.
+        public static event EventHandler<NotificationItemClickedEventArgs> NotificationUpdated; //NotifyItemUpdated.
 #pragma warning disable CS0067 // El evento 'CatcherHelper.NotificationGrouped' nunca se usa
         public static event EventHandler NotificationGrouped; // TODO: Clueless (?) :'-( I don't know how to implement this in LockScreen
 #pragma warning restore CS0067 // El evento 'CatcherHelper.NotificationGrouped' nunca se usa
@@ -68,46 +65,15 @@ namespace LiveDisplay.Servicios.Notificaciones
             //After this, fire event.
             //Find ID, if Found, Append to that notification, if not WtF. lol.
         }
-        public void InsertNotification(StatusBarNotification sbn)
+        public void OnNotificationPosted(StatusBarNotification sbn)
         {
-            int indice = GetNotificationPosition(sbn);
             
-            if (indice>=0)
+            if (!UpdateNotification(sbn))
             {
-                statusBarNotifications.RemoveAt(indice);
-                statusBarNotifications.Add(sbn);
-                using (var h = new Handler(Looper.MainLooper))
-                    h.Post(() => { notificationAdapter.NotifyItemChanged(indice);});
-                
-                Console.WriteLine("Notification Updated");                          
-            }
-            else
-            {              
-                try
-                {
-                    statusBarNotifications.Add(sbn);
-                    using (var h = new Handler(Looper.MainLooper))
-                        h.Post(() => { notificationAdapter.NotifyItemInserted(indice); });
+                InsertNotification(sbn);
                     
-
-                    Console.WriteLine("Notification Inserted");
-                    if (ScreenOnOffReceiver.isScreenOn == false)
-                    {
-                        //Awake.WakeUpScreen can be configurable by blacklist;
-                        Awake.WakeUpScreenOnNewNotification(sbn.PackageName);                     
-                        Awake.LockScreen();
-                        //Start a user configurable timer to Sleep again device;
-                        Console.WriteLine("Awake device");
-                    }
-                    
-
-                }
-                catch(Exception ex)
-                {
-                    Console.WriteLine("Error is" + ex);
-                }
-                
             }
+
             if (statusBarNotifications.Count > 0)
             {
                 OnNotificationListSizeChanged(new NotificationListSizeChangedEventArgs
@@ -118,30 +84,42 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
 
         }
-        /// <summary>
-        ///If Catcher call this, it means that the notification exist, is not part of a Group and should be UPDATED.
-        ///not Appended as seen in GroupNotification()
-        /// </summary>
-        /// <param name="whichNotification">Id of the Notification to be Updated.</param>
-        private void UpdateNotification(StatusBarNotification sbn)
+        private void InsertNotification(StatusBarNotification sbn)
         {
-            int position = GetNotificationPosition(sbn);
-            //After this, fire event.
-            //Call GroupNotification if needed.
-            if (position>=0)
-            {
-                statusBarNotifications.RemoveAt(position);
-                statusBarNotifications.Add(sbn);
-            }
             
-            notificationAdapter.NotifyItemChanged(position);
-            Console.WriteLine("NotificationUpdated");
+            statusBarNotifications.Add(sbn);
+            using (var h = new Handler(Looper.MainLooper))
+                h.Post(() => { notificationAdapter.NotifyItemInserted(statusBarNotifications.Count); });
+        }
+        private void OnNotificationUpdated(int position)
+        {
+            NotificationUpdated?.Invoke(this, new NotificationItemClickedEventArgs
+            {
+                Position = position
+            }
+                );
+        }
+        private bool UpdateNotification(StatusBarNotification sbn)
+        {
+            int indice = GetNotificationPosition(sbn);
+            if (indice >= 0)
+            {
+                statusBarNotifications.RemoveAt(indice);
+                statusBarNotifications.Add(sbn);
+                using (var h = new Handler(Looper.MainLooper))
+                    h.Post(() => { notificationAdapter.NotifyItemChanged(indice); });
+
+                
+                OnNotificationUpdated(indice);
+                return true;
+            }
+            return false;
         }
         private void RemoveNotificationFromGroup()
         {
             //After this, fire event.
         }
-        public void RemoveNotification(StatusBarNotification sbn)
+        public void OnNotificationRemoved(StatusBarNotification sbn)
         {
             int position = GetNotificationPosition(sbn);
             if (position >= 0)
@@ -165,25 +143,27 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             notificationAdapter.NotifyDataSetChanged();
         }
-
         private int GetNotificationPosition(StatusBarNotification sbn)
         {
             int index = statusBarNotifications.IndexOf(statusBarNotifications.FirstOrDefault(o => o.Id == sbn.Id && o.PackageName == sbn.PackageName));
 
             return index;
         }
-
-        //Make an method that will fire an event that Lockscreen will be subscribed to
-        //This method will Invoke the event when there are not notifications on the list
-        //also when the List of notifications has items, 
-        //So Lockscreen can react to this event and Hide/Show the 'Clear all' button depending
-        //on if either there are or there aren't notifications on the list
-
         private void OnNotificationListSizeChanged(NotificationListSizeChangedEventArgs e)
         {
             //TODO: Implement me 
             NotificationListSizeChanged?.Invoke(this, e);
         }
-
+        void OnNotificationPosted()
+        {
+            NotificationPosted?.Invoke(this, new NotificationPostedEventArgs()
+            {
+                ShouldCauseWakeUp = true //This depends on other conditions, fix me.
+            });
+        }
+        void OnNotificationRemoved()
+        {
+            NotificationRemoved?.Invoke(this, EventArgs.Empty); //Just notify the subscribers the notification was removed.
+        }
     }
 }

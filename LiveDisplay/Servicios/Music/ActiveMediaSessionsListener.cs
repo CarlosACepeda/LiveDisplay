@@ -29,7 +29,7 @@ namespace LiveDisplay.Servicios.Music
         public static event EventHandler MediaSessionStarted;
         public static event EventHandler MediaSessionStopped;
         OpenSong song = OpenSong.OpenSongInstance();
-        private Bitmap bitmap;
+        Bitmap bitmap;
 
         //Al parecer hay varios controladores de Multimedia y toca recuperarlos.
         public void OnActiveSessionsChanged(IList<Android.Media.Session.MediaController> controllers)
@@ -49,7 +49,6 @@ namespace LiveDisplay.Servicios.Music
                 //This is probably never to happen
                     mediaController.UnregisterCallback(MusicController.MusicControllerInstance());
                     IsASessionActive = false;
- 
             }
         }
 
@@ -80,7 +79,7 @@ namespace LiveDisplay.Servicios.Music
             {
                 //Started a MediaSession without a media playing.
             }
-            
+
         }
 
         protected virtual void OnMediaSessionStarted()

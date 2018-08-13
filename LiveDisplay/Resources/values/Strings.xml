@@ -6,12 +6,7 @@
   <string name="achep">Artem Chepurnoy</string>
   <string name="achep_ty">The AcDisplay man himself, help and guidance!</string>
   <string name="acknowledgments">Acknowledgments</string>
-  <string name="activarawake">Enable Awake</string>
-  <string name="activarlockscreen">Enable lockscreen</string>
-  <string name="activarwallpaperdinamico">Dynamic wallpaper</string>
-  <string name="activarwallpaperdinamico_description">When music is playing, use the Album art of the current playing song as wallpaper</string>
   <string name="app_name">LiveDisplay</string>
-  <string name="app_title">Settings</string>
   <string name="askfortranslations">Want to help with translations?</string>
   <string name="awakesettings">Awake</string>
   <string name="blacklist">Block apps</string>
@@ -20,10 +15,13 @@
   <string name="changewallpaperdesc">By default, current system wallpaper is used</string>
   <string name="clearallnotifications">Clear all</string>
   <string name="contactme">Contact me</string>
+  <string name="defaultwallpaper">Default wallpaper</string>
   <string name="dialogcancelledclick">Ok, you can change this setting later in Notifications section!</string>
   <string name="dialognldisabledmessage">You must allow this app to read Notifications first!</string>
   <string name="dialognldisablednegativebutton">Cancel</string>
   <string name="dialognldisabledpositivebutton">Allow</string>
+  <string name="doubletaptosleep">Double tap to sleep</string>
+  <string name="doubletaptosleepdesc">Touch twice anywhere on the lock screen to turn off the screen</string>
   <string name="enablenotificationlistener">Enable the Notification Listener</string>
   <string name="enablequickreply">Enable quick Notification Reply</string>
   <string name="enablequickreplydesc">Answer directly from Notification to messages, as seen in Nougat and beyond</string>
@@ -38,19 +36,15 @@
   <string name="lockdelay_desc">Lock the screen in the given time</string>
   <string name="lockscreensettings">Lockscreen</string>
   <string name="me">Carlos Cepeda</string>
-  <string name="modoactivo">Active Mode</string>
+  <string name="musicwidget">Music Widget</string>
   <string name="notificationsettings">Notifications</string>
   <string name="opciones">Options</string>
+  <string name="pickwallpaper">Pick one</string>
   <string name="placeholder">Insert a string here</string>
   <string name="rus">Russian</string>
   <string name="settings">Settings</string>
+  <string name="showalbumart">Show media cover art</string>
   <string name="showclock">Don\'t show the clock</string>
-  <string name="showstickynotifications">Show also notifications that can\'t be removed</string>
-  <string name="splashscreennotificationsettings">Enable notification access</string>
-  <string name="splashscreennotificationsettings_desc">Needed for retrieving notifications</string>
-  <string name="splashscreennotificationssettings_takemebutton">Okay, take me there!</string>
-  <string name="splashscreentitle">Welcome, set up the app!</string>
-  <string name="stickynotificationwarn">You can\'t delete a sticky notification</string>
   <string name="tenseconds">10 seconds</string>
   <string name="translations">Translations</string>
   <string name="turnoffdelay">Automatically turn screen off</string>
@@ -62,6 +56,5 @@
   <string name="uselockscreennonotificationsdesc">For better usage, turn off the default Android lockscreen</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
-  <string name="defaultwallpaper">Default wallpaper</string>
-  <string name="pickwallpaper">Pick one</string>
+  <string name="alertnopermissions">You must allow the required permission!</string>
 </resources>

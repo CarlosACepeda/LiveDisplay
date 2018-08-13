@@ -138,7 +138,56 @@ namespace LiveDisplay.Servicios
                 }
             }
         }
+        public static void TurnOffScreen()
+        {
+            PowerManager pm = ((PowerManager)Application.Context.GetSystemService(Context.PowerService));
+            DevicePolicyManager policy;
+            if (Build.VERSION.SdkInt < BuildVersionCodes.KitkatWatch)
+            {
+#pragma warning disable CS0618 // El tipo o el miembro están obsoletos
+                if (pm.IsScreenOn == true)
+#pragma warning restore CS0618 // El tipo o el miembro están obsoletos
+                {
+                    policy = (DevicePolicyManager)Application.Context.GetSystemService(Context.DevicePolicyService);
+                    try
+                    {
+                        policy.LockNow();
+                    }
+                    catch (Exception ex)
+                    {
+                        ex.ToString();
+                        Console.WriteLine(ex);
+                        //Toast.MakeText(Application.Context, "Must enable dev admin", ToastLength.Long).Show();
+                        //ComponentName admin = new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(AdminReceiver)));
+                        //Intent intent = new Intent(DevicePolicyManager.ActionAddDeviceAdmin).PutExtra(DevicePolicyManager.ExtraDeviceAdmin, admin);
+                        //Application.Context.StartActivity(intent);
+                    }
+                }
+            }
+            else
+            {
+                if (pm.IsInteractive == true)
+                {
+                    policy = (DevicePolicyManager)Application.Context.GetSystemService(Context.DevicePolicyService);
+                    try
+                    {
+                        policy.LockNow();
+                    }
+                    catch (Exception ex)
+                    {
 
+                        //Should never happen, this setting is setted up on first launch of the app.
+                        //TODO: This doesn't work, fix it man.
+                        ex.ToString();
+                        Console.WriteLine(ex);
+                        //Toast.MakeText(Application.Context, "Must enable dev admin", ToastLength.Long).Show();
+                        //ComponentName admin = new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(AdminReceiver)));
+                        //Intent intent = new Intent(DevicePolicyManager.ActionAddDeviceAdmin).PutExtra(DevicePolicyManager.ExtraDeviceAdmin, admin);
+                        //Application.Context.StartActivity(intent);
+                    }
+                }
+            }
+        }
 
     }
 }

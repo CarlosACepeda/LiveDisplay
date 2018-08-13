@@ -24,6 +24,7 @@ namespace LiveDisplay.Activities
         private Android.Support.V7.Widget.Toolbar toolbar;
         private TextView status;
         private Button enableNotificationAccess, enableDeviceAdmin;
+        private bool isApplicationHealthy;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -41,13 +42,13 @@ namespace LiveDisplay.Activities
             {
                 enableNotificationAccess.Visibility = ViewStates.Gone;
                 enableDeviceAdmin.Visibility = ViewStates.Gone;
+                isApplicationHealthy = true;
                 status.Text = ":)";
-                status.Click -= Status_Click;
             }
             else
             {
+                isApplicationHealthy = false;
                 status.Text = ":(";
-                status.Click += Status_Click;
                 CheckNotificationAccess();
                 CheckDeviceAdminAccess();
             }
@@ -56,8 +57,7 @@ namespace LiveDisplay.Activities
 
         private void Status_Click(object sender, EventArgs e)
         {
-            View view = (View)sender;
-            Snackbar.Make(view, "you must allow the required permissions", Snackbar.LengthLong).Show();
+            
 
         }
 
@@ -113,10 +113,18 @@ namespace LiveDisplay.Activities
             int id = item.ItemId;
             if (id == Resource.Id.action_settings)
             {
-                using (Intent intent = new Intent(this, typeof(SettingsActivity)))
+                if (isApplicationHealthy == true)
                 {
-                    StartActivity(intent);
-                }              
+                    using (Intent intent = new Intent(this, typeof(SettingsActivity)))
+                    {
+                        StartActivity(intent);
+                    }
+                }
+                else
+                {
+                    Snackbar.Make(Window.DecorView.RootView, Resource.String.alertnopermissions, Snackbar.LengthLong).Show();
+                }
+                          
                 return true;
             }
 
@@ -164,41 +172,6 @@ namespace LiveDisplay.Activities
                 AppCenter.Start("0ec5320c-34b4-498b-a9c2-dae7614997fa",typeof(Analytics), typeof(Crashes));
                 
             });
-            
-        }
-
-        //TODO: CHANGE THIS, maybe with a single notification to the user, or not letting him to open the app?
-        private void PromptDialog(int reason)
-        {
-            if (NLChecker.IsNotificationListenerEnabled() == false)
-            {
-                //Prompt a message to go to NotificationListenerService.
-                using (Android.Support.V7.App.AlertDialog.Builder builder = new Android.Support.V7.App.AlertDialog.Builder(this))
-                {
-                    
-                    builder.SetMessage(Resource.String.dialognldisabledmessage);
-                    builder.SetPositiveButton(Resource.String.dialognldisabledpositivebutton, new EventHandler<DialogClickEventArgs>(OnDialogPositiveButtonEventArgs));
-                    builder.SetNegativeButton(Resource.String.dialognldisablednegativebutton, new EventHandler<DialogClickEventArgs>(OnDialogNegativeButtonEventArgs));
-                    builder.Show();
-                }
-
-            }
-        }
-        private void OnDialogNegativeButtonEventArgs(object sender, DialogClickEventArgs e)
-        {
-           Toast.MakeText(this, Resource.String.dialogcancelledclick, ToastLength.Long).Show();
-        }
-        private void OnDialogPositiveButtonEventArgs(object sender, DialogClickEventArgs e)
-        {
-
-            using (Intent intent = new Intent())
-            {
-                string lel = Android.Provider.Settings.ActionNotificationListenerSettings;
-                
-                intent.AddFlags(ActivityFlags.NewTask);
-                intent.SetAction(lel);
-                StartActivity(intent);
-            }
             
         }
     }

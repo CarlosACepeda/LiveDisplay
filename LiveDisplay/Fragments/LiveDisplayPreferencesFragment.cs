@@ -14,6 +14,7 @@ using Android.Views;
 using Android.Widget;
 using LiveDisplay.Factories;
 using LiveDisplay.Misc;
+using LiveDisplay.Servicios;
 using static Android.Preferences.Preference;
 
 namespace LiveDisplay.Fragments
@@ -47,15 +48,23 @@ namespace LiveDisplay.Fragments
                 Android.Net.Uri uri = data.Data;
                 try
                 {
-
                     BackgroundFactory background = new BackgroundFactory();
                     background.SaveImagePath(uri);
                     background = null;
+                    Log.Info("tag","Path sent to BackgroundFactory");
 
                 }
                 catch
                 {
-
+                    
+                }
+            }
+            else
+            {
+                Log.Info("tag", "Data was null");
+                using (ConfigurationManager configurationManager = new ConfigurationManager(sharedPreferences))
+                {
+                    configurationManager.SaveAValue(ConfigurationParameters.changewallpaper, "0");
                 }
             }
         }
@@ -64,7 +73,7 @@ namespace LiveDisplay.Fragments
             if (key == ConfigurationParameters.changewallpaper)
             {
             //1 means 'User will pick custom wallpaper' 0 means use default.
-            if (sharedPreferences.GetInt(ConfigurationParameters.changewallpaper, 0)==1)
+            if (sharedPreferences.GetString(ConfigurationParameters.changewallpaper, "0")=="1")
             {
                 using (Intent intent = new Intent())
                 {

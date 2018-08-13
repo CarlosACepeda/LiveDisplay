@@ -17,18 +17,18 @@ using LiveDisplay.Misc;
 
 namespace LiveDisplay.Servicios.Notificaciones
 {
-    class OpenNotification: Java.Lang.Object
+    class OpenNotification : Java.Lang.Object
     {
         private int position;
         public OpenNotification(int position)
-        { 
+        {
             this.position = position;
         }
         public string GetTitle()
         {
             try
             {
-                return CatcherHelper.statusBarNotifications[position].Notification.Extras.Get("android.title").ToString();
+                return CatcherHelper.statusBarNotifications[position].Notification.Extras.Get(Notification.ExtraTitle).ToString();
             }
             catch
             {
@@ -39,7 +39,7 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             try
             {
-                return CatcherHelper.statusBarNotifications[position].Notification.Extras.Get("android.text").ToString();
+                return CatcherHelper.statusBarNotifications[position].Notification.Extras.Get(Notification.ExtraText).ToString();
             }
             catch
             {
@@ -75,7 +75,7 @@ namespace LiveDisplay.Servicios.Notificaciones
                     Button anActionButton = new Button(Application.Context)
                     {
                         LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WrapContent, weightfloat),
-                        
+
                         Text = a.Title.ToString(),
 
                     };
@@ -84,8 +84,7 @@ namespace LiveDisplay.Servicios.Notificaciones
                     {
                         try
                         {
-                            
-                            a.GetRemoteInputs();
+
                             a.ActionIntent.Send();
                             //TODO: Move to fragment
                             //FIX ME: LockScreenActivity.lockScreenInstance.OnNotificationUpdated();
@@ -127,7 +126,7 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         public static bool NotificationHasActionButtons(int position)
         {
-            if (CatcherHelper.statusBarNotifications[position].Notification.Actions!=null)
+            if (CatcherHelper.statusBarNotifications[position].Notification.Actions != null)
             {
                 return true;
             }
@@ -141,13 +140,13 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             try
             {
-                 return CatcherHelper.statusBarNotifications[position].Notification.When.ToString();
+                return CatcherHelper.statusBarNotifications[position].Notification.When.ToString();
             }
             catch
             {
                 return "";
             }
-            
+
         }
 
         internal string GetAppName()
@@ -161,7 +160,6 @@ namespace LiveDisplay.Servicios.Notificaciones
                 return "";
             }
         }
-
         public static bool NotificationIsAutoCancel(int position)
         {
             if (CatcherHelper.statusBarNotifications[position].Notification.Flags.HasFlag(NotificationFlags.AutoCancel) == true)
@@ -170,6 +168,10 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
             return false;
         }
-        
+
+        public static void SendInlineText(string text)
+        {
+            //Implement me.
+        }
     }
 }

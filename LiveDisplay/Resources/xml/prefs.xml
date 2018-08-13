@@ -1,6 +1,7 @@
 ﻿<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
   <!--This is the first preference screen-->
   <PreferenceScreen android:title="@string/lockscreensettings"
+                    android:icon="@drawable/ic_lockscreen_24dp"
   >
   <PreferenceCategory android:title="@string/opciones">
     <SwitchPreference
@@ -15,10 +16,6 @@
       android:title="@string/uselockscreennonotifications"
       android:summary="@string/uselockscreennonotificationsdesc"
     />
-    <SwitchPreference
-      android:key="dynamicwallpaperenabled?"
-      android:title="@string/activarwallpaperdinamico"
-      android:summary="@string/activarwallpaperdinamico_description"
   />
     <ListPreference
       android:key="changewallpaper"
@@ -30,10 +27,22 @@
     </ListPreference>
   />
   </PreferenceCategory>
+    <PreferenceCategory
+      android:title="@string/musicwidget"
+      >
+      <SwitchPreference
+        android:key="showalbumart?"
+        android:title="@string/showalbumart"
+        >
+        
+      </SwitchPreference>
+      
+    </PreferenceCategory>
 </PreferenceScreen>
   <!--This is the Second preference screen-->
   <PreferenceScreen
     android:title="@string/notificationsettings"
+    android:icon="@drawable/ic_notifications_white_24dp"
     >
     
     <PreferenceCategory android:title="@string/notificationsettings">
@@ -62,6 +71,13 @@
       >
       </SwitchPreference>
       <SwitchPreference
+        android:key="doubletaptosleep?"
+        android:title="@string/doubletaptosleep"
+        android:summary="@string/doubletaptosleepdesc"
+        >
+        
+      </SwitchPreference>
+      <SwitchPreference
         android:key="turnonusermovement?"
         android:title="@string/turnonusermovement"
         >
@@ -85,7 +101,9 @@
     </PreferenceCategory>
   </PreferenceScreen>
   <!--This is the third preference screen-->
-  <PreferenceScreen android:title="@string/about">
+  <PreferenceScreen android:title="@string/about"
+                    android:icon="@drawable/ic_info_white_24dp"
+                    >
     <PreferenceCategory android:title="@string/about">
       <Preference
         android:title="@string/about"

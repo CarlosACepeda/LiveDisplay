@@ -13,6 +13,7 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Java.Util;
+using LiveDisplay.Adapters;
 using LiveDisplay.BroadcastReceivers;
 using LiveDisplay.Factories;
 using LiveDisplay.Fragments;
@@ -28,7 +29,7 @@ using System.Threading;
 
 namespace LiveDisplay
 {
-    [Activity(Label = "LockScreen", Theme ="@style/LiveDisplayTheme.NoActionBar", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, LaunchMode = Android.Content.PM.LaunchMode.SingleTask, ExcludeFromRecents = true)]
+    [Activity(Label = "LockScreen", Theme ="@style/LiveDisplayThemeDark", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, LaunchMode = Android.Content.PM.LaunchMode.SingleTask, ExcludeFromRecents = true)]
     public class LockScreenActivity : Activity
     {
         private RecyclerView recycler;
@@ -40,7 +41,11 @@ namespace LiveDisplay
         private ClockFragment clockFragment;
         private bool thereAreNotifications = false;
         private Button startCamera;
-        
+        private LinearLayout lockscreen; //The root linear layout, used to implement double tap to sleep.
+        float firstTouchTime = -1;
+        float finalTouchTime;
+        readonly float threshold = 1000; //1 second of threshold.(used to implement the double tap.)
+        bool timeoutStarted;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -53,6 +58,7 @@ namespace LiveDisplay
             unlocker = FindViewById<ImageView>(Resource.Id.unlocker);
             startCamera = FindViewById<Button>(Resource.Id.btnStartCamera);
             clearAll = FindViewById<Button>(Resource.Id.btnClearAllNotifications);
+            lockscreen= FindViewById<LinearLayout>(Resource.Id.contenedorPrincipal);
             notificationFragment = new NotificationFragment();
             musicFragment = new MusicFragment();
             clockFragment = new ClockFragment();
@@ -62,6 +68,7 @@ namespace LiveDisplay
             clearAll.Click += BtnClearAll_Click;
             unlocker.Touch += Unlocker_Touch;
             startCamera.Click += StartCamera_Click;
+            lockscreen.Touch += Lockscreen_Touch;
 
             //Media Controller events
             ActiveMediaSessionsListener.MediaSessionStarted += MusicController_MediaSessionStarted;
@@ -69,8 +76,6 @@ namespace LiveDisplay
 
             //CatcherHelper events
             CatcherHelper.NotificationListSizeChanged += CatcherHelper_NotificationListSizeChanged;
-
-            
 
             //Load RecyclerView
 
@@ -100,6 +105,30 @@ namespace LiveDisplay
 
             //Check the Notification List Size
             CheckNotificationListSize();            
+        }
+        private void Lockscreen_Touch(object sender, View.TouchEventArgs e)
+        {
+            
+            
+            if (e.Event.Action == MotionEventActions.Up)
+            {
+                if (firstTouchTime == -1)
+                {
+                    firstTouchTime = e.Event.DownTime;
+                }
+                else if (firstTouchTime != -1)
+                {
+                    finalTouchTime = e.Event.DownTime;
+                    if (firstTouchTime + threshold > finalTouchTime)
+                    {
+                        Awake.LockScreen();
+                        //Reset the values of touch
+                        firstTouchTime = -1;
+                        finalTouchTime = -1;
+                    }
+                }
+                
+            }
         }
         private void CheckNotificationListSize()
         {
@@ -137,12 +166,14 @@ namespace LiveDisplay
             ActiveMediaSessionsListener.MediaSessionStarted -= MusicController_MediaSessionStarted;
             ActiveMediaSessionsListener.MediaSessionStopped -= MusicController_MediaSessionStopped;
             CatcherHelper.NotificationListSizeChanged -= CatcherHelper_NotificationListSizeChanged;
+            lockscreen.Touch -= Lockscreen_Touch;
 
             //Dispose Views
             //Views
             recycler.Dispose();
             unlocker.Dispose();
             clearAll.Dispose();
+            lockscreen.Dispose();
 
             //Dispose Fragments
             notificationFragment.Dispose();
@@ -155,7 +186,32 @@ namespace LiveDisplay
         {
             //Do nothing.
             //base.OnBackPressed();
+            //In Nougat this actually doesnt work after several tries to go back, I can't fix that.
         }
+        //It simply means that a Touch has been registered, no matter where, it was on the lockscreen.
+        //used to detect if the user is interacting with the lockscreen.
+        public override bool OnTouchEvent(MotionEvent e)
+        {
+            using (var handler = new Handler())
+            {
+                void turnOffAndLock()
+                { Awake.LockScreen(); timeoutStarted = false; }
+                if (timeoutStarted == true)
+                {
+                    handler?.RemoveCallbacks(turnOffAndLock);
+                    handler?.PostDelayed(turnOffAndLock, 10000); //10 seconds.
+                }
+                else
+                {
+                    timeoutStarted = true;
+                    handler?.PostDelayed(turnOffAndLock, 10000);
+                }
+                
+            }
+                return base.OnTouchEvent(e);
+            
+        }
+        
         private void MusicController_MediaSessionStarted(object sender, EventArgs e)
         {
             StartMusicController();
@@ -194,9 +250,6 @@ namespace LiveDisplay
         {
             using (NotificationSlave notificationSlave = NotificationSlave.NotificationSlaveInstance())
             {
-                //TODO: Invoke an event that NotificationFragment will be subscribed to.
-                //This method will say: Hey, hide! All the notifications are removed.
-                //You don't need to exist anymore
                 notificationSlave.CancelAll();
 
             }         
@@ -249,18 +302,14 @@ namespace LiveDisplay
         {
             //Load configurations based on User configs.
             using (ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context)))
-            {               
+            {
+                //TODO: Move to fragment.
                 if (configurationManager.RetrieveAValue(ConfigurationParameters.hiddensystemicons) == true)
                 {
-                    //Hide system icons, when available, FIX ME.
-                }
 
-                if (configurationManager.RetrieveAValue(ConfigurationParameters.dynamicwallpaperenabled) == true)
-                {
-                    //Allow the app to show Album art.
-                    //:TODO move to Music Fragment, not here.
                 }
-                if (Equals(configurationManager.RetrieveAValue(ConfigurationParameters.imagePath, "imagepath") != "imagepath"))
+                //0 means, use default wallpaper, 1 means user picked a wallpaper
+                if (configurationManager.RetrieveAValue(ConfigurationParameters.changewallpaper, "0") == "1")
                 {
                     //Found an image, use it as wallpaper.
                     using (Bitmap bm = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.imagePath, "")))
@@ -269,14 +318,11 @@ namespace LiveDisplay
                         {
                             using (BackgroundFactory blurImage = new BackgroundFactory())
                             {
-                                ThreadPool.QueueUserWorkItem(m =>
-                                {
+                              
                                     var drawable = blurImage.Difuminar(bm);
                                     RunOnUiThread(() =>
                                     Window.DecorView.Background = drawable);
                                     drawable.Dispose();
-                                }
-                                );
 
                             }
 
@@ -329,15 +375,6 @@ namespace LiveDisplay
             }
                 
         }
-        /// <summary>
-        /// This method calls Awake#LockScreen
-        /// </summary>
-        private void StartTimerToLockScreen()
-        {
-            Awake.LockScreen();
-        }
-        //TODO:
-        //If Lockscreen register a click, reset the timer.
 
         private void CheckIfMusicIsPlaying()
         {
@@ -375,15 +412,14 @@ namespace LiveDisplay
                 {
                     wallpaperManager.ForgetLoadedWallpaper();//Forget the loaded wallpaper because it will be the one that is blurred.
                                                              //so, it will blur the already blurred wallpaper, so, causing so much blur that 
-                                                         //the app will explode, LOL.
-                    using (BitmapDrawable bitmap = (BitmapDrawable)wallpaperManager.Drawable)
-                    {
-                            var drawable = blurImage.Difuminar(bitmap.Bitmap);
+                                                             //the app will explode, LOL.
+
+                            var drawable = blurImage.Difuminar(wallpaperManager.Drawable);
                             RunOnUiThread(() =>
                             Window.DecorView.Background = drawable);
                             drawable.Dispose();
 
-                    }
+                    
                 }
 
             }

@@ -23,14 +23,12 @@ namespace LiveDisplay.Fragments
         private TextView when;
         private LinearLayout notification;
         private bool timeoutStarted = false;
-        private System.Timers.Timer timer;
 
+        #region Lifecycle events
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             // Create your fragment here
-            //create a timer that will be used to hide the NotificationView when the user as not clicked
-            //any Notification Item in 5 seconds.
             
         }
 
@@ -49,7 +47,30 @@ namespace LiveDisplay.Fragments
             notification.Click += LlNotification_Click;
             NotificationAdapterViewHolder.ItemClicked += ItemClicked;
             NotificationAdapterViewHolder.ItemLongClicked += ItemLongClicked;
+            CatcherHelper.NotificationUpdated += CatcherHelper_NotificationUpdated;
+            CatcherHelper.NotificationRemoved += CatcherHelper_NotificationRemoved;
             return v;
+        }
+        public override void OnDestroy()
+        {
+            NotificationAdapterViewHolder.ItemClicked -= ItemClicked;
+            NotificationAdapterViewHolder.ItemLongClicked -= ItemLongClicked;
+            CatcherHelper.NotificationUpdated -= CatcherHelper_NotificationUpdated;
+            CatcherHelper.NotificationRemoved -= CatcherHelper_NotificationRemoved;
+            base.OnDestroy();
+        }
+
+        #endregion Lifecycle events end.
+
+        #region Events Implementation:
+        private void CatcherHelper_NotificationRemoved(object sender, EventArgs e)
+        {           
+            notification.Visibility = ViewStates.Gone; //Fix me? but test me first.
+        }
+
+        private void CatcherHelper_NotificationUpdated(object sender, NotificationItemClickedEventArgs e)
+        {
+            ItemClicked(this, e);
         }
 
         private void LlNotification_Click(object sender, EventArgs e)
@@ -128,7 +149,30 @@ namespace LiveDisplay.Fragments
             {
                 notification.Visibility = ViewStates.Visible;
             }
+            StartTimeout();
+            
+            
         }
-        
+        #endregion Events Implementation end.
+        //THis works like a charm :)
+        void StartTimeout()
+        {
+            //This action is: 'Hide the notification, and set the timeoutStarted as finished(false) 
+            //because this action will be invoked only when the timeout has finished.
+            Action hideNotification = () => { notification.Visibility = ViewStates.Gone; timeoutStarted = false; };
+            //If the timeout has started, then cancel the action, and start again.
+            if (timeoutStarted == true)
+            {
+                notification?.RemoveCallbacks(hideNotification);
+                notification?.PostDelayed(hideNotification, 5000);
+            }
+            //If not, simply wait 5 seconds then hide the notification, in that span of time, the timeout is 
+            //marked as Started(true)
+            else
+            {
+                timeoutStarted = true;
+                notification?.PostDelayed(hideNotification, 5000);
+            }
+        }
     }
 }

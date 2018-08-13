@@ -54,13 +54,11 @@ namespace LiveDisplay.Adapters
         public static event EventHandler<NotificationItemClickedEventArgs> ItemClicked;
         public static event EventHandler<NotificationItemClickedEventArgs> ItemLongClicked;
 
-        private delegate void ItemOnLongClickListener(int position);
-
         public ImageView Icono { get; set; }
-
 
         public NotificationAdapterViewHolder(View itemView) : base(itemView)
         {
+
             Icono = itemView.FindViewById<ImageView>(Resource.Id.ivNotificationIcon);
             itemView.Click += ItemView_Click;
             itemView.LongClick += ItemView_LongClick;
