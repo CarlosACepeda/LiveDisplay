@@ -122,7 +122,6 @@ namespace LiveDisplay.Fragments
                 notificationActions.RemoveAllViews();
             }
         }
-
         private void ItemClicked(object sender, NotificationItemClickedEventArgs e)
         {
             position = e.Position;
@@ -135,13 +134,13 @@ namespace LiveDisplay.Fragments
                 //Fix me:
                 //when.Text = notification.GetWhen();
                 notificationActions.RemoveAllViews();
-                notificationActions.WeightSum = 1f;
 
                 if (OpenNotification.NotificationHasActionButtons(e.Position) == true)
                 {
-                    foreach (var a in OpenNotification.RetrieveActionButtons(e.Position))
+                    foreach (Button a in OpenNotification.RetrieveActionButtons(e.Position))
                     {
                         notificationActions.AddView(a);
+                        
                     }
                 }
             }

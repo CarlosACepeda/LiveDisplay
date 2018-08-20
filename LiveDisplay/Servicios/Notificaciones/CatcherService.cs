@@ -19,7 +19,7 @@ namespace LiveDisplay.Servicios
 {
     [Service(Label = "@string/app_name", Permission = "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE")]
     [IntentFilter(new[] { "android.service.notification.NotificationListenerService" })]
-    internal class Catcher : NotificationListenerService, ISensorEventListener
+    internal class Catcher : NotificationListenerService
     {
         //Move to respective fragments
         private BatteryReceiver batteryReceiver;
@@ -61,8 +61,6 @@ namespace LiveDisplay.Servicios
 
                 SubscribeToEvents();
                 RegisterReceivers();
-                //TODO: This setting is sensible to user configuration and also the Inactive hours setting.
-                StartWatchingDeviceMovement();
                 //New remote controller for Kitkat
 
 #pragma warning disable CS0618 // El tipo o el miembro están obsoletos
@@ -110,8 +108,9 @@ namespace LiveDisplay.Servicios
 
         public override void OnNotificationRemoved(StatusBarNotification sbn)
         {
-            catcherHelper.OnNotificationRemoved(sbn);
             base.OnNotificationRemoved(sbn);
+            catcherHelper.OnNotificationRemoved(sbn);
+            
         }
 
         public override void OnListenerDisconnected()
@@ -191,71 +190,6 @@ namespace LiveDisplay.Servicios
         {
             CancelAllNotifications();
             catcherHelper.CancelAllNotifications();
-        }
-
-        //Sensor Implementation
-        private void StartWatchingDeviceMovement()
-        {
-            sensorManager = (SensorManager)GetSystemService(SensorService);
-            sensorAccelerometer = sensorManager.GetDefaultSensor(SensorType.Accelerometer);
-            sensorManager.RegisterListener(this, sensorAccelerometer, SensorDelay.Normal);
-        }
-
-        public void OnAccuracyChanged(Sensor sensor, [GeneratedEnum] SensorStatus accuracy)
-        {
-            //Nothing yet.
-        }
-
-        public void OnSensorChanged(SensorEvent e)
-        {
-
-            if (e.Sensor.Type == SensorType.Accelerometer)
-            {
-                //Console.WriteLine("X= " + e.Values[0]);//Aceleración en el eje X- Gx;
-                //Console.WriteLine("Y= " + e.Values[1]);//Aceleración en el eje Y- Gy;
-                //Console.WriteLine("Z= " + e.Values[2]);//Aceleración en el eje Z- Gz;
-
-                //TODO:
-
-                //Detect phone on plain surface:
-                //Z axis must have the following value:
-                //>10 m/s2;
-                //Y axis must be less than 3m/s2 so, the device can be slightly tilted and still being
-                //in a Plain surface.
-
-                //This will be true if above conditions match
-                if (e.Values[2] > 10 && e.Values[1] < 3)
-                {
-
-                }
-
-                //after, use this value to decide if wake up or not the screen.
-                //We don't want to awake the screen if the device is already vertical for some reason.
-
-                //Put a timer of 3 seconds, and if the device is still with these values,
-                //the phone is left in a plain surface.
-                //New feature? Don't awake phone on new Notification while phone is left alone
-                //To avoid Unnecesary awake if the user won't see it.
-
-                //Detect if User has grabbed the phone back up:
-                //Z axis must be less than 10 m/s2("Example: 9.5") it means that Z  axis is not being
-                //Accelerated and
-                //Y axis must be greater than 3m/s2
-                //if (ScreenOnOffReceiver.isScreenOn == false)//&& isInAPlainSurface=true
-                //{
-                //    if (e.Values[2] < 9.6f && e.Values[1] > 3)
-                //    {
-                //        //Awake the phone:
-                //        Awake.WakeUpScreen();
-                //        Awake.LockScreen();
-                //    }
-                //}
-
-                //The less Z axis m/s2 value is, and the more Y axis m/s2 value is, the phone more vertically is.
-
-                //Notes:
-                //X axis is not necessary as I don't need to know if the phone is being moved Horizontally.
-            }
         }
 
         private void UnregisterReceivers()

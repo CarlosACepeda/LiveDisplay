@@ -88,8 +88,6 @@ namespace LiveDisplay
                 }
             }
             
-            //Load Default Wallpaper
-            LoadDefaultWallpaper();
 
             //Load cLock Widget
             LoadClockFragment();
@@ -190,12 +188,15 @@ namespace LiveDisplay
         }
         //It simply means that a Touch has been registered, no matter where, it was on the lockscreen.
         //used to detect if the user is interacting with the lockscreen.
+
+            //FIx me: I don't work, because Im getting called if there is not any view handling touch events.
+            //and there are several views handling touch events, so, I wont be called never.
         public override bool OnTouchEvent(MotionEvent e)
         {
             using (var handler = new Handler())
             {
                 void turnOffAndLock()
-                { Awake.LockScreen(); timeoutStarted = false; }
+                { Awake.TurnOffScreen(); timeoutStarted = false; }
                 if (timeoutStarted == true)
                 {
                     handler?.RemoveCallbacks(turnOffAndLock);
@@ -210,8 +211,7 @@ namespace LiveDisplay
             }
                 return base.OnTouchEvent(e);
             
-        }
-        
+        }       
         private void MusicController_MediaSessionStarted(object sender, EventArgs e)
         {
             StartMusicController();
@@ -303,32 +303,35 @@ namespace LiveDisplay
             //Load configurations based on User configs.
             using (ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context)))
             {
-                //TODO: Move to fragment.
-                if (configurationManager.RetrieveAValue(ConfigurationParameters.hiddensystemicons) == true)
+                switch (configurationManager.RetrieveAValue(ConfigurationParameters.changewallpaper, "0"))
                 {
-
-                }
-                //0 means, use default wallpaper, 1 means user picked a wallpaper
-                if (configurationManager.RetrieveAValue(ConfigurationParameters.changewallpaper, "0") == "1")
-                {
-                    //Found an image, use it as wallpaper.
-                    using (Bitmap bm = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.imagePath, "")))
-                    {
-                        using (var backgroundFactory = new BackgroundFactory())
+                    case "0":
+                        Window.DecorView.SetBackgroundColor(Color.Black);
+                        break;
+                    case "1":
+                        LoadDefaultWallpaper();
+                        break;
+                    case "2":
+                        using (Bitmap bm = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.imagePath, "")))
                         {
-                            using (BackgroundFactory blurImage = new BackgroundFactory())
+                            using (var backgroundFactory = new BackgroundFactory())
                             {
-                              
+                                using (BackgroundFactory blurImage = new BackgroundFactory())
+                                {
+
                                     var drawable = blurImage.Difuminar(bm);
                                     RunOnUiThread(() =>
                                     Window.DecorView.Background = drawable);
                                     drawable.Dispose();
 
+                                }
+
                             }
-
                         }
-                    }
-
+                        break;
+                    default:
+                        Window.DecorView.SetBackgroundColor(Color.Black);
+                        break;
                 }
             }
                 
@@ -417,13 +420,12 @@ namespace LiveDisplay
                             var drawable = blurImage.Difuminar(wallpaperManager.Drawable);
                             RunOnUiThread(() =>
                             Window.DecorView.Background = drawable);
-                            drawable.Dispose();
-
-                    
+                    //Disposing the wallpaper after this point causes a Weird behavior with background.
+                    //What should I do?
                 }
 
             }
-            }
+        }
 
     }
 

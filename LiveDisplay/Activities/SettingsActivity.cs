@@ -21,7 +21,7 @@ namespace LiveDisplay.Activities
                 SetSupportActionBar(toolbar);
             }
 
-            FragmentManager.BeginTransaction().Replace(Resource.Id.content, new LiveDisplayPreferencesFragment()).Commit();
+            FragmentManager.BeginTransaction().Replace(Resource.Id.content, new PreferencesFragment()).Commit();
         }
 
         protected override void OnDestroy()

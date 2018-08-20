@@ -1,25 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
+﻿
 using Android.App;
 using Android.Content;
-using Android.Content.PM;
 using Android.OS;
 using Android.Preferences;
 using Android.Runtime;
 using Android.Util;
 using Android.Views;
-using Android.Widget;
 using LiveDisplay.Factories;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
-using static Android.Preferences.Preference;
 
 namespace LiveDisplay.Fragments
 {
-    public class LiveDisplayPreferencesFragment : PreferenceFragment, ISharedPreferencesOnSharedPreferenceChangeListener
+    public class PreferencesFragment : PreferenceFragment, ISharedPreferencesOnSharedPreferenceChangeListener
     {
         ISharedPreferences sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
         public override void OnCreate(Bundle savedInstanceState)
@@ -72,8 +65,8 @@ namespace LiveDisplay.Fragments
         {
             if (key == ConfigurationParameters.changewallpaper)
             {
-            //1 means 'User will pick custom wallpaper' 0 means use default.
-            if (sharedPreferences.GetString(ConfigurationParameters.changewallpaper, "0")=="1")
+            //2 means 'User will pick custom wallpaper' 0 means black.
+            if (sharedPreferences.GetString(ConfigurationParameters.changewallpaper, "0")=="2")
             {
                 using (Intent intent = new Intent())
                 {

@@ -16,7 +16,6 @@
     <AndroidResgenFile>Resources\Resource.Designer.cs</AndroidResgenFile>
     <AndroidResgenClass>Resource</AndroidResgenClass>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <AndroidUseLatestPlatformSdk>true</AndroidUseLatestPlatformSdk>
     <TargetFrameworkVersion>v7.1</TargetFrameworkVersion>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
@@ -155,7 +154,7 @@
     <Compile Include="Factories\BackgroundFactory.cs" />
     <Compile Include="Factories\IconFactory.cs" />
     <Compile Include="Fragments\ClockFragment.cs" />
-    <Compile Include="Fragments\LiveDisplayPreferencesFragment.cs" />
+    <Compile Include="Fragments\PreferencesFragment.cs" />
     <Compile Include="Fragments\MusicFragment.cs" />
     <Compile Include="Fragments\NotificationFragment.cs" />
     <Compile Include="Misc\BatteryLevelFlags.cs" />

@@ -69,25 +69,23 @@ namespace LiveDisplay.Servicios.Notificaciones
                 float weightfloat =
                 float.Parse(weight.ToString());
                 string paquete = CatcherHelper.statusBarNotifications[position].PackageName;
-                foreach (var a in actions)
+                foreach (var action in actions)
                 {
-
                     Button anActionButton = new Button(Application.Context)
                     {
                         LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WrapContent, weightfloat),
-
-                        Text = a.Title.ToString(),
-
+                        Text = action.Title.ToString(),
+                        
+                        
                     };
                     anActionButton.SetMaxLines(1);
+                    anActionButton.SetTextColor(Android.Graphics.Color.White);
                     anActionButton.Click += (o, e) =>
                     {
                         try
                         {
 
-                            a.ActionIntent.Send();
-                            //TODO: Move to fragment
-                            //FIX ME: LockScreenActivity.lockScreenInstance.OnNotificationUpdated();
+                            action.ActionIntent.Send();                 
                         }
                         catch (Exception ex)
                         {
@@ -101,7 +99,7 @@ namespace LiveDisplay.Servicios.Notificaciones
                     anActionButton.SetBackgroundResource(typedValue.ResourceId);
                     if (Build.VERSION.SdkInt > BuildVersionCodes.M)
                     {
-                        anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(IconFactory.ReturnActionIconDrawable(a.Icon, paquete), null, null, null);
+                        anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(IconFactory.ReturnActionIconDrawable(action.Icon, paquete), null, null, null);
 
                     }
                     buttons.Add(anActionButton);

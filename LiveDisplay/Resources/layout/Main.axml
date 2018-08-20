@@ -39,15 +39,15 @@
             android:gravity="center_horizontal" />
         <Button
             android:id="@+id/enableNotificationAccess"
-            android:visibility="gone"
+			android:background="?android:attr/selectableItemBackground"
             android:text="Notification Access"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:gravity="center_horizontal" />
         <Button
-            android:visibility="gone"
             android:id="@+id/enableDeviceAdmin"
-            android:text="Device Admin Access"
+			android:background="?android:attr/selectableItemBackground"
+            android:text="Device Access"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:gravity="center_horizontal" />

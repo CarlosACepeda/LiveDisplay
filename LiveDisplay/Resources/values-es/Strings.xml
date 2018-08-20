@@ -5,6 +5,7 @@
   <string name="aboutinfotitle">Acerca de esta aplicación:</string>
   <string name="achep_ty">El hombre detrás de AcDisplay, ayuda y guía!</string>
   <string name="acknowledgments">Agradecimientos</string>
+  <string name="alertnopermissions">Debes permitir los permisos requeridos!</string>
   <string name="app_name">LiveDisplay</string>
   <string name="askfortranslations">Quieres ayudar con las traducciones?</string>
   <string name="awakesettings">Awake</string>
@@ -54,5 +55,6 @@
   <string name="uselockscreennonotificationsdesc">Para mejor usabilidad, desactiva la pantalla de bloqueo por defecto de Android</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">Diseño del icono de esta app!</string>
-  <string name="alertnopermissions">Debes permitir los permisos requeridos!</string>
+  <string name="lockonboot">Bloquear la pantalla al iniciar</string>
+  <string name="blackwallpaper">Negro</string>
 </resources>

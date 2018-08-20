@@ -40,6 +40,12 @@ namespace LiveDisplay.Fragments
             //    //Hide the clock
             //    RunOnUiThread(() => reloj.Visibility = ViewStates.Gone);
             //}
+
+            //TODO: Implement me too. ;)
+            //if (configurationManager.RetrieveAValue(ConfigurationParameters.hiddensystemicons) == true)
+            //{
+
+            //}
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)

@@ -6,6 +6,7 @@
   <string name="achep">Artem Chepurnoy</string>
   <string name="achep_ty">The AcDisplay man himself, help and guidance!</string>
   <string name="acknowledgments">Acknowledgments</string>
+  <string name="alertnopermissions">You must allow the required permission!</string>
   <string name="app_name">LiveDisplay</string>
   <string name="askfortranslations">Want to help with translations?</string>
   <string name="awakesettings">Awake</string>
@@ -56,5 +57,6 @@
   <string name="uselockscreennonotificationsdesc">For better usage, turn off the default Android lockscreen</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
-  <string name="alertnopermissions">You must allow the required permission!</string>
+  <string name="lockonboot">Lock the screen on device boot up</string>
+  <string name="blackwallpaper">Black</string>
 </resources>

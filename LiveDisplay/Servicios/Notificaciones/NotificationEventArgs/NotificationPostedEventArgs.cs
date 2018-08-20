@@ -16,6 +16,6 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationEventArgs
     {
             //Field to determine if the notification should wake up the device.
             public bool ShouldCauseWakeUp { get; set; }
-        }
+        
     }
 }

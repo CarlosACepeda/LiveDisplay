@@ -16,6 +16,12 @@
       android:title="@string/uselockscreennonotifications"
       android:summary="@string/uselockscreennonotificationsdesc"
     />
+    <SwitchPreference
+      android:key="lockonboot"
+      android:title="@string/lockonboot"
+      >
+      
+    </SwitchPreference>
   />
     <ListPreference
       android:key="changewallpaper"
