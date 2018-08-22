@@ -11,6 +11,7 @@ using Android.Media;
 using Android.Media.Session;
 using Android.OS;
 using Android.Runtime;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
 using static Android.Media.Session.MediaController;
@@ -28,17 +29,21 @@ namespace LiveDisplay.Servicios.Music
         private Android.Media.Session.MediaController mediaController;
         public static event EventHandler MediaSessionStarted;
         public static event EventHandler MediaSessionStopped;
+        private MusicController musicController;
         OpenSong song = OpenSong.OpenSongInstance();
         Bitmap bitmap;
 
         //Al parecer hay varios controladores de Multimedia y toca recuperarlos.
         public void OnActiveSessionsChanged(IList<Android.Media.Session.MediaController> controllers)
         {
+            Log.Info("LiveDisplay", "OnActiveSessions Changed");
             if (controllers.Count > 0)
             {
+                Log.Info("LiveDisplay", "controllers: "+ controllers.Count);
                 mediaController = controllers[0];
-                mediaController.RegisterCallback(MusicController.MusicControllerInstance());
-                //Retrieve current media information
+                mediaController.RegisterCallback(musicController = new MusicController());
+                
+                //Retrieve current media information if any, because it could be that an app starts a new MediaSession without media playing.
                 GetCurrentMetadata();
                 //To control current media playing
                 GetMusicControls(mediaController.GetTransportControls());
@@ -46,14 +51,16 @@ namespace LiveDisplay.Servicios.Music
             }
             else if(mediaController!=null && controllers.Count==0)
             {
+                Log.Info("LiveDisplay", "mediacontroller null or no controllers.");
                 //This is probably never to happen
-                    mediaController.UnregisterCallback(MusicController.MusicControllerInstance());
+                mediaController.UnregisterCallback(musicController);
                     IsASessionActive = false;
             }
         }
 
         private void GetCurrentMetadata()
         {
+            
             int size = (int)Application.Context.Resources.GetDimension(Resource.Dimension.albumartsize);
             try
             {
@@ -74,10 +81,11 @@ namespace LiveDisplay.Servicios.Music
                 song.PlaybackState = mediaController.PlaybackState.State;
                 song.AlbumArt = bitmap;
                 bitmap = null;
+                Log.Info("LiveDisplay", "Metadata Retrieved");
             }
             catch
             {
-                //Started a MediaSession without a media playing.
+                Log.Info("LiveDisplay", "Failed to get Metadata/Started a mediaSession without media playing.");
             }
 
         }
@@ -92,6 +100,7 @@ namespace LiveDisplay.Servicios.Music
         }
         private void GetMusicControls(TransportControls mediaTransportControls)
         {
+            Log.Info("LiveDisplay", "Get Music Controls.");
             Jukebox jukebox = Jukebox.JukeboxInstance();
             jukebox.transportControls = mediaTransportControls;
             OnMediaSessionStarted();

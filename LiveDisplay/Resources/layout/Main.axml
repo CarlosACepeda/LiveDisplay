@@ -1,55 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:a="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:minWidth="25px"
-    android:minHeight="25px">
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/mainToolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:theme="@style/AppToolbar"
-        a:popupTheme="@style/popupTheme"
-        android:background="?attr/colorPrimary">
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="right">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:background="@android:color/transparent"
-                android:text="beta" />
-        </LinearLayout>
-    </android.support.v7.widget.Toolbar>
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingTop="?android:attr/actionBarSize">
-        <TextView
-            android:id="@+id/healthstatus"
-            android:textSize="60dp"
-            android:text=":("
-            android:textColor="@color/colorPrimary"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:gravity="center_horizontal" />
-        <Button
-            android:id="@+id/enableNotificationAccess"
-			android:background="?android:attr/selectableItemBackground"
-            android:text="Notification Access"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:gravity="center_horizontal" />
-        <Button
-            android:id="@+id/enableDeviceAdmin"
-			android:background="?android:attr/selectableItemBackground"
-            android:text="Device Access"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:gravity="center_horizontal" />
-    </LinearLayout>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:a="http://schemas.android.com/apk/res-auto"
+	android:orientation="vertical"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:minWidth="25px"
+	android:minHeight="25px">
+	<android.support.v7.widget.Toolbar
+		android:id="@+id/mainToolbar"
+		android:layout_width="match_parent"
+		android:layout_height="?attr/actionBarSize"
+		android:theme="@style/AppToolbar"
+		a:popupTheme="@style/popupTheme"
+		android:background="?attr/colorPrimary">
+		<LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:gravity="right">
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:background="@android:color/transparent"
+				android:text="beta" />
+		</LinearLayout>
+	</android.support.v7.widget.Toolbar>
+	<FrameLayout
+		android:minWidth="25px"
+		android:minHeight="25px"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content">
+		<ScrollView
+			android:minWidth="25px"
+			android:minHeight="25px"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent">
+			<LinearLayout
+				android:orientation="vertical"
+				android:minWidth="25px"
+				android:minHeight="25px"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent">
+				<TextView
+					android:text="LiveDisplay Access"
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:padding="10dp"
+				/>
+				<RelativeLayout
+					android:background="?android:attr/selectableItemBackground"
+					android:minWidth="25px"
+					android:minHeight="25px"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+					<TextView
+						android:padding="10dp"
+						android:text="Enable Notification Access"
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:id="@+id/enableNotificationAccess"/>
+					<ImageView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:id="@+id/notificationAccessCheckbox"
+						android:layout_alignParentRight="true" />
+				</RelativeLayout>
+				<RelativeLayout
+					android:background="?android:attr/selectableItemBackground"
+					android:minWidth="25px"
+					android:minHeight="25px"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+					<TextView
+						android:padding="10dp"			
+						android:text="Enable Device Access"
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:id="@+id/enableDeviceAccess"/>
+					<ImageView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:id="@+id/deviceAccessCheckbox"
+						android:layout_alignParentRight="true" />
+				</RelativeLayout>
+				<TextView
+					
+					android:padding="10dp"
+					android:text="Accesses are enabled."
+					android:textAppearance="?android:attr/textAppearanceSmall"
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:id="@+id/health" />
+			</LinearLayout>
+			
+		</ScrollView>
+	</FrameLayout>
+	
 </LinearLayout>

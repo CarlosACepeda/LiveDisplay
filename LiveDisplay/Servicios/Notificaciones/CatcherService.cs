@@ -6,6 +6,7 @@ using Android.Media.Session;
 using Android.OS;
 using Android.Runtime;
 using Android.Service.Notification;
+using Android.Util;
 using LiveDisplay.BroadcastReceivers;
 using LiveDisplay.Servicios.Music;
 using LiveDisplay.Servicios.Notificaciones;
@@ -40,8 +41,6 @@ namespace LiveDisplay.Servicios
 
         private CatcherHelper catcherHelper;
         private List<StatusBarNotification> statusBarNotifications;
-        private SensorManager sensorManager;
-        private Sensor sensorAccelerometer;
 #pragma warning disable CS0414 // El campo 'Catcher.isInAPlainSurface' está asignado pero su valor nunca se usa
         bool isInAPlainSurface = false;
 #pragma warning restore CS0414 // El campo 'Catcher.isInAPlainSurface' está asignado pero su valor nunca se usa
@@ -88,7 +87,9 @@ namespace LiveDisplay.Servicios
 
             //Listener para Sesiones
             using (var h = new Handler(Looper.MainLooper)) //Using UI Thread because seems to crash in some devices.
-                h.Post(() => { mediaSessionManager.AddOnActiveSessionsChangedListener(activeMediaSessionsListener, new ComponentName(this, Java.Lang.Class.FromType(typeof(Catcher)))); });
+                h.Post(() => { mediaSessionManager.AddOnActiveSessionsChangedListener(activeMediaSessionsListener, new ComponentName(this, Java.Lang.Class.FromType(typeof(Catcher))));
+                    Log.Info("LiveDisplay", "Added Media Sess. Changed Listener");
+                });
             
 
 

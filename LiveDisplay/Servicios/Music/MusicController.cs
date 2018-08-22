@@ -6,6 +6,7 @@ using Android.Graphics.Drawables;
 using Android.Media;
 using Android.Media.Session;
 using Android.OS;
+using Android.Util;
 using LiveDisplay.Factories;
 using LiveDisplay.Servicios.Music.MediaEventArgs;
 
@@ -18,33 +19,20 @@ namespace LiveDisplay.Servicios.Music
     /// </summary>
     internal class MusicController : MediaController.Callback
     {
-        private static MusicController instance;
         public static event EventHandler<MediaPlaybackStateChangedEventArgs> MediaPlaybackChanged;
         public static event EventHandler<MediaMetadataChangedEventArgs> MediaMetadataChanged;
         private OpenSong song;
-        Com.JackAndPhantom.BlurImage blurImage;
         Bitmap bitmap;
-        private MusicController()
+        public MusicController()
         {
             song = OpenSong.OpenSongInstance();
             
-        }
-        
-        public static MusicController MusicControllerInstance()
-        {
-            if (instance == null)
-            {
-                instance=new MusicController();
-            }
-            return instance;
-            
-        }
+        }   
         
         public override void OnPlaybackStateChanged(PlaybackState state)
         {
-            
+            Log.Info("LiveDisplay", "PlaybackStateChanged");
             song.PlaybackState = state.State;
-            Console.WriteLine("the state is:" + state.State.ToString());
             song.CurrentPosition = (int)(state.Position / 1000);
             //Estado del playback:
             //Pausado, Comenzado, Avanzando, Retrocediendo, etc.    
@@ -58,6 +46,10 @@ namespace LiveDisplay.Servicios.Music
         public override void OnMetadataChanged(MediaMetadata metadata)
         {
             int size = (int)Application.Context.Resources.GetDimension(Resource.Dimension.albumartsize);
+            if (metadata != null)
+            {
+
+            }
             try
             {
                 bitmap = Bitmap.CreateScaledBitmap(metadata.GetBitmap(MediaMetadata.MetadataKeyAlbumArt), size, size, true);
@@ -66,24 +58,33 @@ namespace LiveDisplay.Servicios.Music
             {
                 //There is not albumart
             }
+            try
+            {
+                song.Title = metadata.GetText(MediaMetadata.MetadataKeyTitle);
+                song.Artist = metadata.GetText(MediaMetadata.MetadataKeyArtist);
+                song.Album = metadata.GetText(MediaMetadata.MetadataKeyAlbum);
+                song.AlbumArt = bitmap;
+                //
+
+                OnMediaMetadataChanged(new MediaMetadataChangedEventArgs
+                {
+                    Artist = metadata.GetText(MediaMetadata.MetadataKeyArtist),
+                    Title = metadata.GetText(MediaMetadata.MetadataKeyTitle),
+                    Album = metadata.GetText(MediaMetadata.MetadataKeyAlbum),
+                    AlbumArt = bitmap
+
+                });
+                bitmap = null;
+            }
+            catch
+            {
+                Log.Info("LiveDisplay", "Failed getting metadata MusicController.");
+                //Don't do anything.
+            }
             
 
-            song.Title = metadata.GetText(MediaMetadata.MetadataKeyTitle);
-            song.Artist = metadata.GetText(MediaMetadata.MetadataKeyArtist);
-            song.Album = metadata.GetText(MediaMetadata.MetadataKeyAlbum);
-            song.AlbumArt = bitmap; /*blurImage.GetImageBlur();*/
-
-            OnMediaMetadataChanged(new MediaMetadataChangedEventArgs
-            {
-                Artist = metadata.GetText(MediaMetadata.MetadataKeyArtist),
-                Title = metadata.GetText(MediaMetadata.MetadataKeyTitle),
-                Album = metadata.GetText(MediaMetadata.MetadataKeyAlbum),
-                AlbumArt = bitmap
-
-            });
-
             //Datos de la Media que se está reproduciendo.            
-            bitmap = null;
+            
             base.OnMetadataChanged(metadata);
             //Memory is growing until making a GC.
             GC.Collect();

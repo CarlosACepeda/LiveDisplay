@@ -7,7 +7,6 @@ using Android.Views;
 using Android.Widget;
 using LiveDisplay.BroadcastReceivers;
 using LiveDisplay.Misc;
-using Android.Support.Design.Widget;
 
 //for CI.
 using Microsoft.AppCenter;
@@ -18,13 +17,12 @@ using System.Threading;
 
 namespace LiveDisplay.Activities
 {
-    [Activity(Label = "@string/app_name", Theme ="@style/LiveDisplayTheme.NoActionBar",  MainLauncher = true)]
+    [Activity(Label = "@string/app_name", Theme = "@style/LiveDisplayTheme.NoActionBar", MainLauncher = true)]
     internal class MainActivity : AppCompatActivity
     {
         private Android.Support.V7.Widget.Toolbar toolbar;
         private TextView status;
-        private Button enableNotificationAccess, enableDeviceAdmin;
-        private bool isApplicationHealthy;
+        private TextView enableNotificationAccess, enableDeviceAdmin;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -32,40 +30,20 @@ namespace LiveDisplay.Activities
             SetContentView(Resource.Layout.Main);
             BindViews();
             StartVariables();
-            //ShowDialog();
-            
-            
         }
+
         protected override void OnResume()
         {
-            if (IsApplicationHealthy() == true)
-            {
-                enableNotificationAccess.Visibility = ViewStates.Gone;
-                enableDeviceAdmin.Visibility = ViewStates.Gone;
-                isApplicationHealthy = true;
-                status.Text = ":)";
-            }
-            else
-            {
-                isApplicationHealthy = false;
-                status.Text = ":(";
-                CheckNotificationAccess();
-                CheckDeviceAdminAccess();
-            }
+            CheckNotificationAccess();
+            CheckDeviceAdminAccess();
             base.OnResume();
-        }
-
-        private void Status_Click(object sender, EventArgs e)
-        {
-            
-
         }
 
         private void CheckDeviceAdminAccess()
         {
             if (AdminReceiver.isAdminGiven == false)
             {
-                enableDeviceAdmin.Visibility = ViewStates.Visible;
+
             }
         }
 
@@ -73,7 +51,6 @@ namespace LiveDisplay.Activities
         {
             if (NLChecker.IsNotificationListenerEnabled() == false)
             {
-                enableNotificationAccess.Visibility = ViewStates.Visible;
             }
         }
 
@@ -81,12 +58,10 @@ namespace LiveDisplay.Activities
         {
             if (NLChecker.IsNotificationListenerEnabled() == true && AdminReceiver.isAdminGiven == true)
             {
-                
                 return true;
             }
 
             return false;
-
         }
 
         protected override void OnPause()
@@ -108,29 +83,22 @@ namespace LiveDisplay.Activities
             MenuInflater.Inflate(Resource.Menu.menu_main, menu);
             return true;
         }
+
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
             int id = item.ItemId;
             if (id == Resource.Id.action_settings)
             {
-                if (isApplicationHealthy == true)
+                using (Intent intent = new Intent(this, typeof(SettingsActivity)))
                 {
-                    using (Intent intent = new Intent(this, typeof(SettingsActivity)))
-                    {
-                        StartActivity(intent);
-                    }
+                    StartActivity(intent);
                 }
-                else
-                {
-                    Snackbar.Make(Window.DecorView.RootView, Resource.String.alertnopermissions, Snackbar.LengthLong).Show();
-                }
-                          
+
                 return true;
             }
 
             return base.OnOptionsItemSelected(item);
         }
-
 
         protected void BindViews()
         {
@@ -138,9 +106,10 @@ namespace LiveDisplay.Activities
             {
                 SetSupportActionBar(toolbar);
             }
-            status = FindViewById<TextView>(Resource.Id.healthstatus);
-            enableDeviceAdmin = FindViewById<Button>(Resource.Id.enableDeviceAdmin);
-            enableNotificationAccess = FindViewById<Button>(Resource.Id.enableNotificationAccess);
+            
+            status = FindViewById<TextView>(Resource.Id.health);
+            enableDeviceAdmin = FindViewById<TextView>(Resource.Id.enableDeviceAccess);
+            enableNotificationAccess = FindViewById<TextView>(Resource.Id.enableNotificationAccess);
             enableNotificationAccess.Click += EnableNotificationAccess_Click;
             enableDeviceAdmin.Click += EnableDeviceAdmin_Click;
         }
@@ -169,10 +138,8 @@ namespace LiveDisplay.Activities
             ////CI
             ThreadPool.QueueUserWorkItem(m =>
             {
-                AppCenter.Start("0ec5320c-34b4-498b-a9c2-dae7614997fa",typeof(Analytics), typeof(Crashes));
-                
+                AppCenter.Start("0ec5320c-34b4-498b-a9c2-dae7614997fa", typeof(Analytics), typeof(Crashes));
             });
-            
         }
     }
 }
