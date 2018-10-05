@@ -145,7 +145,7 @@ namespace LiveDisplay.Fragments
                     Activity.RunOnUiThread(()=> window.DecorView.Background = bitmapDrawable); 
                 }
                 //clear bitmap.
-            bitmapDrawable = null;
+            //bitmapDrawable = null; //NO: maybe this causes the album art to be removed immediately after it was set as wallpaper.
                 
         }
 
