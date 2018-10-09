@@ -13,6 +13,10 @@ It's easier.
 Report bugs with detailed description and if you can, steps to reproduce them, and everything,
 so here I can find a solution as quick as possible, :)
 
+## Pull Requests
+* Fork the repo and make changes to the code.
+* Test your code and be sure it works.
+
 ## I want to help coding...
 
 You're more than welcome! Just fork the project and start coding and submitting PR's!
