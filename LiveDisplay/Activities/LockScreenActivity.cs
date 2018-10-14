@@ -120,10 +120,11 @@ namespace LiveDisplay
                     if (firstTouchTime + threshold > finalTouchTime)
                     {
                         Awake.LockScreen();
-                        //Reset the values of touch
-                        firstTouchTime = -1;
-                        finalTouchTime = -1;
+                        
                     }
+                    //Reset the values of touch
+                    firstTouchTime = -1;
+                    finalTouchTime = -1;
                 }
                 
             }
@@ -422,6 +423,7 @@ namespace LiveDisplay
                             Window.DecorView.Background = drawable);
                     //Disposing the wallpaper after this point causes a Weird behavior with background.
                     //What should I do?
+                    //Nothing lol, this is saved to stack memory so, it's freed after this method gets executed.
                 }
 
             }
