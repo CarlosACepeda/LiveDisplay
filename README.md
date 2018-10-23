@@ -46,9 +46,13 @@ This Application shows the list of current notifications on Screen, remove them,
 
 * Beta testing is now available for anyone who wants to test my app and give feedback! Send me a e-mail for details!
 
+## Contributing
+
+* See [Contributing](https://github.com/CarlosACepeda/LiveDisplay/tree/master/CONTRIBUTING.md) for details!
+
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning
+I use [Semantic Versioning ](http://semver.org/) for versioning, sometimes I don't follow it because I'm lazy, but, I try in all the cases to stick with semantic versioning.
 
 ## Authors & Collaborators
 
