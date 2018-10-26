@@ -6,6 +6,7 @@ using System.Text;
 using Android.App;
 using Android.Content;
 using Android.Graphics;
+using Android.Media;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
@@ -15,9 +16,6 @@ namespace LiveDisplay.Servicios.Music.MediaEventArgs
 {
     class MediaMetadataChangedEventArgs: EventArgs
     {
-        public string Title { get; set; }
-        public string Album { get; set; }
-        public string Artist { get; set; }
-        public Bitmap AlbumArt { get; set; }
+        public MediaMetadata MediaMetadata { get; set; }
     }
 }

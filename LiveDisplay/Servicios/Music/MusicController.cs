@@ -25,8 +25,7 @@ namespace LiveDisplay.Servicios.Music
         Bitmap bitmap;
         public MusicController()
         {
-            song = OpenSong.OpenSongInstance();
-            
+
         }   
         
         public override void OnPlaybackStateChanged(PlaybackState state)

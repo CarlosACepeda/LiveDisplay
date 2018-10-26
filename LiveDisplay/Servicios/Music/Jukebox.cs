@@ -19,51 +19,45 @@ namespace LiveDisplay.Servicios.Music
     /// </summary>
     class Jukebox
     {
-        private static Jukebox jukeboxInstance;
-        public Android.Media.Session.MediaController.TransportControls transportControls;
-        private Jukebox()
-        {
-            
-        }
-        public static Jukebox JukeboxInstance()
-        {
-            if (jukeboxInstance == null)
-            {
-                jukeboxInstance = new Jukebox();
-                
-            }
-
-            return jukeboxInstance;
-        }
-
-        public void Play()
+        
+        public static void Play()
         {
             transportControls.Play();
         }
-        public void Pause()
+        public static void Pause()
         {
             transportControls.Pause();
         }
-        public void PlayNext()
+        public static void PlayNext()
         {
             transportControls.SkipToNext();
         }
-        public void PlayPrevious()
+        public static void PlayPrevious()
         {
             transportControls.SkipToPrevious();
         }
-        public void SeekTo(long time)
+        public static void SeekTo(long time)
         {
             transportControls.SeekTo(time);
             
         }
-        public void FastFoward()
+        public static void FastFoward()
         {
             transportControls.FastForward();
         }
-        public void Rewind()
+        public static void Rewind()
         {
             transportControls.Rewind();
+        }
+
+        internal static void SkipNext()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal static void Stop()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -98,14 +98,6 @@ namespace LiveDisplay.Servicios.Music
         {
             MediaSessionStopped?.Invoke(this, EventArgs.Empty);
         }
-        private void GetMusicControls(TransportControls mediaTransportControls)
-        {
-            Log.Info("LiveDisplay", "Get Music Controls.");
-            Jukebox jukebox = Jukebox.JukeboxInstance();
-            jukebox.transportControls = mediaTransportControls;
-            OnMediaSessionStarted();
-            
-        }
         
     }
 }
