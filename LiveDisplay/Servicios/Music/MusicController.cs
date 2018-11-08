@@ -19,8 +19,18 @@ namespace LiveDisplay.Servicios.Music
     /// </summary>
     internal class MusicController : MediaController.Callback
     {
+    #region events
         public static event EventHandler<MediaPlaybackStateChangedEventArgs> MediaPlaybackChanged;
         public static event EventHandler<MediaMetadataChangedEventArgs> MediaMetadataChanged;
+        #endregion
+        
+        #region Class members
+        public PlaybackState PlaybackState {get;set;}|
+        public TransportControls TransportControls {get; set;}
+        public MediaMetadata MediaMetadata {get; set;}
+        
+        #endregion
+        
         private OpenSong song;
         Bitmap bitmap;
         public MusicController()
@@ -30,7 +40,7 @@ namespace LiveDisplay.Servicios.Music
         
         public override void OnPlaybackStateChanged(PlaybackState state)
         {
-            Log.Info("LiveDisplay", "PlaybackStateChanged");
+        PlaybackState= state;
             song.PlaybackState = state.State;
             song.CurrentPosition = (int)(state.Position / 1000);
             //Estado del playback:
