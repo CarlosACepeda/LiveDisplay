@@ -5,7 +5,6 @@ using Android.Graphics.Drawables;
 using Android.Net;
 using Android.Preferences;
 using Android.Renderscripts;
-using Android.Util;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
 

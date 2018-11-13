@@ -125,7 +125,6 @@ namespace LiveDisplay.Servicios
                     }
                     catch (Exception ex)
                     {
-
                         //Should never happen, this setting is setted up on first launch of the app.
                         //TODO: This doesn't work, fix it man.
                         ex.ToString();
@@ -138,6 +137,7 @@ namespace LiveDisplay.Servicios
                 }
             }
         }
+
         public static void TurnOffScreen()
         {
             PowerManager pm = ((PowerManager)Application.Context.GetSystemService(Context.PowerService));
@@ -175,7 +175,6 @@ namespace LiveDisplay.Servicios
                     }
                     catch (Exception ex)
                     {
-
                         //Should never happen, this setting is setted up on first launch of the app.
                         //TODO: This doesn't work, fix it man.
                         ex.ToString();
@@ -188,6 +187,5 @@ namespace LiveDisplay.Servicios
                 }
             }
         }
-
     }
 }

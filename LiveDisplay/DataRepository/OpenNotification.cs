@@ -1,29 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
+﻿using Android.App;
 using Android.OS;
-using Android.Runtime;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
-using Java.IO;
-using Java.Util;
 using LiveDisplay.Factories;
 using LiveDisplay.Misc;
+using System;
+using System.Collections.Generic;
 
 namespace LiveDisplay.Servicios.Notificaciones
 {
-    class OpenNotification : Java.Lang.Object
+    internal class OpenNotification : Java.Lang.Object
     {
         private int position;
+
         public OpenNotification(int position)
         {
             this.position = position;
         }
+
         public string GetTitle()
         {
             try
@@ -35,6 +30,7 @@ namespace LiveDisplay.Servicios.Notificaciones
                 return "";
             }
         }
+
         public string GetText()
         {
             try
@@ -46,6 +42,7 @@ namespace LiveDisplay.Servicios.Notificaciones
                 return "";
             }
         }
+
         public static void ClickNotification(int position)
         {
             var pendingIntent = CatcherHelper.statusBarNotifications[position].Notification.ContentIntent;
@@ -59,6 +56,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
             pendingIntent.Dispose();
         }
+
         public static List<Button> RetrieveActionButtons(int position)
         {
             List<Button> buttons = new List<Button>();
@@ -75,8 +73,6 @@ namespace LiveDisplay.Servicios.Notificaciones
                     {
                         LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WrapContent, weightfloat),
                         Text = action.Title.ToString(),
-                        
-                        
                     };
                     anActionButton.SetMaxLines(1);
                     anActionButton.SetTextColor(Android.Graphics.Color.White);
@@ -84,8 +80,7 @@ namespace LiveDisplay.Servicios.Notificaciones
                     {
                         try
                         {
-
-                            action.ActionIntent.Send();                 
+                            action.ActionIntent.Send();
                         }
                         catch (Exception ex)
                         {
@@ -100,10 +95,8 @@ namespace LiveDisplay.Servicios.Notificaciones
                     if (Build.VERSION.SdkInt > BuildVersionCodes.M)
                     {
                         anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(IconFactory.ReturnActionIconDrawable(action.Icon, paquete), null, null, null);
-
                     }
                     buttons.Add(anActionButton);
-
                 }
                 return buttons;
             }
@@ -144,7 +137,6 @@ namespace LiveDisplay.Servicios.Notificaciones
             {
                 return "";
             }
-
         }
 
         internal string GetAppName()
@@ -158,6 +150,7 @@ namespace LiveDisplay.Servicios.Notificaciones
                 return "";
             }
         }
+
         public static bool NotificationIsAutoCancel(int position)
         {
             if (CatcherHelper.statusBarNotifications[position].Notification.Flags.HasFlag(NotificationFlags.AutoCancel) == true)

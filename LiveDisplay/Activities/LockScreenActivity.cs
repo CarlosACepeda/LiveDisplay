@@ -1,20 +1,12 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.Graphics;
-using Android.Graphics.Drawables;
-using Android.Media;
-using Android.Media.Session;
 using Android.OS;
 using Android.Preferences;
-using Android.Provider;
-using Android.Runtime;
 using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
-using Java.Util;
-using LiveDisplay.Adapters;
-using LiveDisplay.BroadcastReceivers;
 using LiveDisplay.Factories;
 using LiveDisplay.Fragments;
 using LiveDisplay.Misc;
@@ -23,13 +15,11 @@ using LiveDisplay.Servicios.Music;
 using LiveDisplay.Servicios.Notificaciones;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 
 namespace LiveDisplay
 {
-    [Activity(Label = "LockScreen", Theme ="@style/LiveDisplayThemeDark", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, LaunchMode = Android.Content.PM.LaunchMode.SingleTask, ExcludeFromRecents = true)]
+    [Activity(Label = "LockScreen", Theme = "@style/LiveDisplayThemeDark", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, LaunchMode = Android.Content.PM.LaunchMode.SingleTask, ExcludeFromRecents = true)]
     public class LockScreenActivity : Activity
     {
         private RecyclerView recycler;
@@ -42,10 +32,10 @@ namespace LiveDisplay
         private bool thereAreNotifications = false;
         private Button startCamera;
         private LinearLayout lockscreen; //The root linear layout, used to implement double tap to sleep.
-        float firstTouchTime = -1;
-        float finalTouchTime;
-        readonly float threshold = 1000; //1 second of threshold.(used to implement the double tap.)
-        bool timeoutStarted;
+        private float firstTouchTime = -1;
+        private float finalTouchTime;
+        private readonly float threshold = 1000; //1 second of threshold.(used to implement the double tap.)
+        private bool timeoutStarted;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -53,18 +43,15 @@ namespace LiveDisplay
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.LockScreen);
             //Views
-            
-            
+
             unlocker = FindViewById<ImageView>(Resource.Id.unlocker);
             startCamera = FindViewById<Button>(Resource.Id.btnStartCamera);
             clearAll = FindViewById<Button>(Resource.Id.btnClearAllNotifications);
-            lockscreen= FindViewById<LinearLayout>(Resource.Id.contenedorPrincipal);
+            lockscreen = FindViewById<LinearLayout>(Resource.Id.contenedorPrincipal);
             notificationFragment = new NotificationFragment();
             musicFragment = new MusicFragment();
             clockFragment = new ClockFragment();
 
-
-            
             clearAll.Click += BtnClearAll_Click;
             unlocker.Touch += Unlocker_Touch;
             startCamera.Click += StartCamera_Click;
@@ -87,14 +74,13 @@ namespace LiveDisplay
                     recycler.SetAdapter(CatcherHelper.notificationAdapter);
                 }
             }
-            
 
             //Load cLock Widget
             LoadClockFragment();
 
             //Load User Configs.
             ThreadPool.QueueUserWorkItem(o => LoadConfiguration());
-            
+
             //Load Notification Fragment
             LoadNotificationFragment();
 
@@ -102,12 +88,11 @@ namespace LiveDisplay
             CheckIfMusicIsPlaying();
 
             //Check the Notification List Size
-            CheckNotificationListSize();            
+            CheckNotificationListSize();
         }
+
         private void Lockscreen_Touch(object sender, View.TouchEventArgs e)
         {
-            
-            
             if (e.Event.Action == MotionEventActions.Up)
             {
                 if (firstTouchTime == -1)
@@ -120,15 +105,14 @@ namespace LiveDisplay
                     if (firstTouchTime + threshold > finalTouchTime)
                     {
                         Awake.LockScreen();
-                        
                     }
                     //Reset the values of touch
                     firstTouchTime = -1;
                     finalTouchTime = -1;
                 }
-                
             }
         }
+
         private void CheckNotificationListSize()
         {
             if (CatcherHelper.thereAreNotifications == true)
@@ -139,22 +123,22 @@ namespace LiveDisplay
             {
                 clearAll.Visibility = ViewStates.Invisible;
             }
-        }        
+        }
+
         protected override void OnResume()
         {
             base.OnResume();
             //StartTimerToLockScreen();
             //Add Immersive Flags
             AddFlags();
-
-
         }
+
         protected override void OnPause()
         {
             GC.Collect();
             base.OnPause();
-
         }
+
         protected override void OnDestroy()
         {
             base.OnDestroy();
@@ -178,20 +162,20 @@ namespace LiveDisplay
             notificationFragment.Dispose();
             musicFragment.Dispose();
             clockFragment.Dispose();
-
-
         }
+
         public override void OnBackPressed()
         {
             //Do nothing.
             //base.OnBackPressed();
             //In Nougat this actually doesnt work after several tries to go back, I can't fix that.
         }
+
         //It simply means that a Touch has been registered, no matter where, it was on the lockscreen.
         //used to detect if the user is interacting with the lockscreen.
 
-            //FIx me: I don't work, because Im getting called if there is not any view handling touch events.
-            //and there are several views handling touch events, so, I wont be called never.
+        //FIx me: I don't work, because Im getting called if there is not any view handling touch events.
+        //and there are several views handling touch events, so, I wont be called never.
         public override bool OnTouchEvent(MotionEvent e)
         {
             using (var handler = new Handler())
@@ -208,19 +192,20 @@ namespace LiveDisplay
                     timeoutStarted = true;
                     handler?.PostDelayed(turnOffAndLock, 10000);
                 }
-                
             }
-                return base.OnTouchEvent(e);
-            
-        }       
+            return base.OnTouchEvent(e);
+        }
+
         private void MusicController_MediaSessionStarted(object sender, EventArgs e)
         {
             StartMusicController();
         }
+
         private void MusicController_MediaSessionStopped(object sender, EventArgs e)
         {
             StopMusicController();
         }
+
         private void CatcherHelper_NotificationListSizeChanged(object sender, NotificationListSizeChangedEventArgs e)
         {
             if (e.ThereAreNotifications == true)
@@ -245,16 +230,16 @@ namespace LiveDisplay
                     thereAreNotifications = e.ThereAreNotifications;
                 }
             }
-
         }
+
         private void BtnClearAll_Click(object sender, EventArgs e)
         {
             using (NotificationSlave notificationSlave = NotificationSlave.NotificationSlaveInstance())
             {
                 notificationSlave.CancelAll();
-
-            }         
+            }
         }
+
         private void Unlocker_Touch(object sender, View.TouchEventArgs e)
         {
             //TODO: Document me
@@ -268,17 +253,17 @@ namespace LiveDisplay
             if (e.Event.Action == MotionEventActions.Up)
             {
                 Log.Info("Up", e.Event.GetY().ToString());
-                finalPoint= e.Event.GetY();
+                finalPoint = e.Event.GetY();
             }
-            if (startPoint > finalPoint && finalPoint<0)
+            if (startPoint > finalPoint && finalPoint < 0)
             {
                 Log.Info("Swipe", "Up");
 
                 Finish();
                 OverridePendingTransition(Resource.Animation.slidetounlockanim, Resource.Animation.slidetounlockanim);
             }
-
         }
+
         //switch (e.Event.Action)
         //{
         //    case MotionEventActions.Down:
@@ -299,6 +284,7 @@ namespace LiveDisplay
                 StartActivity(intent);
             }
         }
+
         private void LoadConfiguration()
         {
             //Load configurations based on User configs.
@@ -309,9 +295,11 @@ namespace LiveDisplay
                     case "0":
                         Window.DecorView.SetBackgroundColor(Color.Black);
                         break;
+
                     case "1":
                         LoadDefaultWallpaper();
                         break;
+
                     case "2":
                         using (Bitmap bm = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.imagePath, "")))
                         {
@@ -319,41 +307,37 @@ namespace LiveDisplay
                             {
                                 using (BackgroundFactory blurImage = new BackgroundFactory())
                                 {
-
                                     var drawable = blurImage.Difuminar(bm);
                                     RunOnUiThread(() =>
                                     Window.DecorView.Background = drawable);
                                     drawable.Dispose();
-
                                 }
-
                             }
                         }
                         break;
+
                     default:
                         Window.DecorView.SetBackgroundColor(Color.Black);
                         break;
                 }
             }
-                
         }
+
         private void LoadNotificationFragment()
         {
-
             using (FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction())
             {
-
                 fragmentTransaction.Replace(Resource.Id.MusicNotificationPlaceholder, notificationFragment);
                 fragmentTransaction.SetCustomAnimations(Resource.Animation.fade_in, Resource.Animation.fade_out);
                 fragmentTransaction.DisallowAddToBackStack();
                 fragmentTransaction.Commit();
             }
         }
+
         private void LoadClockFragment()
         {
             using (FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction())
             {
-
                 fragmentTransaction.Replace(Resource.Id.cLockPlaceholder, clockFragment);
                 fragmentTransaction.DisallowAddToBackStack();
                 fragmentTransaction.Commit();
@@ -377,7 +361,6 @@ namespace LiveDisplay
                 Window.AddFlags(WindowManagerFlags.DismissKeyguard);
                 Window.AddFlags(WindowManagerFlags.ShowWhenLocked);
             }
-                
         }
 
         private void CheckIfMusicIsPlaying()
@@ -393,21 +376,21 @@ namespace LiveDisplay
         /// </summary>
         private void StartMusicController()
         {
-                using (FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction())
-                {
-                    fragmentTransaction.Replace(Resource.Id.MusicNotificationPlaceholder, musicFragment);
+            using (FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction())
+            {
+                fragmentTransaction.Replace(Resource.Id.MusicNotificationPlaceholder, musicFragment);
                 fragmentTransaction.SetCustomAnimations(Resource.Animation.fade_in, Resource.Animation.fade_out);
-                    fragmentTransaction.DisallowAddToBackStack();
-                    fragmentTransaction.Commit();
-                }
-            
-                
+                fragmentTransaction.DisallowAddToBackStack();
+                fragmentTransaction.Commit();
+            }
         }
+
         //When music is stopped, call this.
         private void StopMusicController()
         {
-            LoadNotificationFragment();                         
+            LoadNotificationFragment();
         }
+
         private void LoadDefaultWallpaper()
         {
             using (BackgroundFactory blurImage = new BackgroundFactory())
@@ -415,20 +398,17 @@ namespace LiveDisplay
                 using (WallpaperManager wallpaperManager = WallpaperManager.GetInstance(Application.Context))
                 {
                     wallpaperManager.ForgetLoadedWallpaper();//Forget the loaded wallpaper because it will be the one that is blurred.
-                                                             //so, it will blur the already blurred wallpaper, so, causing so much blur that 
+                                                             //so, it will blur the already blurred wallpaper, so, causing so much blur that
                                                              //the app will explode, LOL.
 
-                            var drawable = blurImage.Difuminar(wallpaperManager.Drawable);
-                            RunOnUiThread(() =>
-                            Window.DecorView.Background = drawable);
+                    var drawable = blurImage.Difuminar(wallpaperManager.Drawable);
+                    RunOnUiThread(() =>
+                    Window.DecorView.Background = drawable);
                     //Disposing the wallpaper after this point causes a Weird behavior with background.
                     //What should I do?
                     //Nothing lol, this is saved to stack memory so, it's freed after this method gets executed.
                 }
-
             }
         }
-
     }
-
 }

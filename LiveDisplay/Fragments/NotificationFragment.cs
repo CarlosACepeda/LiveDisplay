@@ -8,8 +8,6 @@ using LiveDisplay.Servicios;
 using LiveDisplay.Servicios.Notificaciones;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
 using System;
-using System.Threading;
-using System.Timers;
 
 namespace LiveDisplay.Fragments
 {
@@ -25,11 +23,11 @@ namespace LiveDisplay.Fragments
         private bool timeoutStarted = false;
 
         #region Lifecycle events
+
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             // Create your fragment here
-            
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -51,6 +49,7 @@ namespace LiveDisplay.Fragments
             CatcherHelper.NotificationRemoved += CatcherHelper_NotificationRemoved;
             return v;
         }
+
         public override void OnDestroy()
         {
             NotificationAdapterViewHolder.ItemClicked -= ItemClicked;
@@ -60,11 +59,12 @@ namespace LiveDisplay.Fragments
             base.OnDestroy();
         }
 
-        #endregion Lifecycle events end.
+        #endregion Lifecycle events
 
         #region Events Implementation:
+
         private void CatcherHelper_NotificationRemoved(object sender, EventArgs e)
-        {           
+        {
             notification.Visibility = ViewStates.Gone; //Fix me? but test me first.
         }
 
@@ -122,6 +122,7 @@ namespace LiveDisplay.Fragments
                 notificationActions.RemoveAllViews();
             }
         }
+
         private void ItemClicked(object sender, NotificationItemClickedEventArgs e)
         {
             position = e.Position;
@@ -140,7 +141,6 @@ namespace LiveDisplay.Fragments
                     foreach (Button a in OpenNotification.RetrieveActionButtons(e.Position))
                     {
                         notificationActions.AddView(a);
-                        
                     }
                 }
             }
@@ -149,14 +149,14 @@ namespace LiveDisplay.Fragments
                 notification.Visibility = ViewStates.Visible;
             }
             StartTimeout();
-            
-            
         }
-        #endregion Events Implementation end.
+
+        #endregion Events Implementation:
+
         //THis works like a charm :)
-        void StartTimeout()
+        private void StartTimeout()
         {
-            //This action is: 'Hide the notification, and set the timeoutStarted as finished(false) 
+            //This action is: 'Hide the notification, and set the timeoutStarted as finished(false)
             //because this action will be invoked only when the timeout has finished.
             Action hideNotification = () => { notification.Visibility = ViewStates.Gone; timeoutStarted = false; };
             //If the timeout has started, then cancel the action, and start again.
@@ -165,7 +165,7 @@ namespace LiveDisplay.Fragments
                 notification?.RemoveCallbacks(hideNotification);
                 notification?.PostDelayed(hideNotification, 5000);
             }
-            //If not, simply wait 5 seconds then hide the notification, in that span of time, the timeout is 
+            //If not, simply wait 5 seconds then hide the notification, in that span of time, the timeout is
             //marked as Started(true)
             else
             {

@@ -1,7 +1,7 @@
 ﻿<resources>
   <!--Base application theme-->
   <style name="LiveDisplayTheme" parent="Theme.AppCompat.Light">
-    
+
     <!-- Main theme colors -->
     <!--   your app branding color for the app bar -->
     <item name="colorPrimary">@color/colorPrimary</item>

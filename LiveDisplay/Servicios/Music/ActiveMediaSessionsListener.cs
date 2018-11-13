@@ -1,20 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.Graphics;
-using Android.Graphics.Drawables;
-using Android.Media;
-using Android.Media.Session;
-using Android.OS;
-using Android.Runtime;
+﻿using Android.Media.Session;
 using Android.Util;
-using Android.Views;
-using Android.Widget;
-using static Android.Media.Session.MediaController;
+using System;
+using System.Collections.Generic;
 
 namespace LiveDisplay.Servicios.Music
 {
@@ -23,12 +10,15 @@ namespace LiveDisplay.Servicios.Music
     /// So, when a Session is created, I catch that Session and Use it to Control Media of tha session
     /// through the Jukebox class.
     /// </summary>
-    class ActiveMediaSessionsListener : Java.Lang.Object, MediaSessionManager.IOnActiveSessionsChangedListener
+    internal class ActiveMediaSessionsListener : Java.Lang.Object, MediaSessionManager.IOnActiveSessionsChangedListener
     {
-        public static bool IsASessionActive {get; set; }
+        public static bool IsASessionActive { get; set; }
         private Android.Media.Session.MediaController mediaController;
+
         public static event EventHandler MediaSessionStarted;
+
         public static event EventHandler MediaSessionStopped;
+
         private MusicController musicController;
 
         //Al parecer hay varios controladores de Multimedia y toca recuperarlos.
@@ -45,24 +35,23 @@ namespace LiveDisplay.Servicios.Music
                 musicController.PlaybackState = mediaController.PlaybackState;
                 IsASessionActive = true;
             }
-            else if(mediaController!=null && controllers.Count==0)
+            else if (mediaController != null && controllers.Count == 0)
             {
                 Log.Info("LiveDisplay", "mediacontroller null or no controllers.");
                 //This is probably never to happen
                 mediaController.UnregisterCallback(musicController);
-                    IsASessionActive = false;
+                IsASessionActive = false;
             }
         }
-
 
         protected virtual void OnMediaSessionStarted()
         {
             MediaSessionStarted?.Invoke(this, EventArgs.Empty);
         }
+
         protected virtual void OnMediaSessionStopped()
         {
             MediaSessionStopped?.Invoke(this, EventArgs.Empty);
         }
-        
     }
 }

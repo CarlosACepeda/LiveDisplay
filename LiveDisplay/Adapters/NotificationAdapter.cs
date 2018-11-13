@@ -3,7 +3,6 @@ using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
 using LiveDisplay.Factories;
-using LiveDisplay.Servicios;
 using LiveDisplay.Servicios.Notificaciones;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
 using System;
@@ -27,7 +26,7 @@ namespace LiveDisplay.Adapters
         {
             //Cast
             NotificationAdapterViewHolder viewHolder = holder as NotificationAdapterViewHolder;
-            viewHolder.Icono.Background = IconFactory.ReturnIconDrawable(notificaciones[position].Notification.Icon, notificaciones[position].PackageName); 
+            viewHolder.Icono.Background = IconFactory.ReturnIconDrawable(notificaciones[position].Notification.Icon, notificaciones[position].PackageName);
             //FUnciona, habrá otra forma más simple?
             if (selectedItem == position)
             {
@@ -45,20 +44,19 @@ namespace LiveDisplay.Adapters
             View itemView = layoutInflater.Inflate(Resource.Layout.NotificationItemRow, parent, false);
             return new NotificationAdapterViewHolder(itemView);
         }
-        
     }
 
     //La siguiente clase simplemente guarda referencias a las vistas de la fila, para evitar hacer llamadas a FindViewById cada vez, no se hace nada más aquí
     internal class NotificationAdapterViewHolder : RecyclerView.ViewHolder
     {
         public static event EventHandler<NotificationItemClickedEventArgs> ItemClicked;
+
         public static event EventHandler<NotificationItemClickedEventArgs> ItemLongClicked;
 
         public ImageView Icono { get; set; }
 
         public NotificationAdapterViewHolder(View itemView) : base(itemView)
         {
-
             Icono = itemView.FindViewById<ImageView>(Resource.Id.ivNotificationIcon);
             itemView.Click += ItemView_Click;
             itemView.LongClick += ItemView_LongClick;
@@ -76,9 +74,9 @@ namespace LiveDisplay.Adapters
             NotificationAdapter.selectedItem = LayoutPosition;
             CatcherHelper.notificationAdapter.NotifyDataSetChanged();
 
-
             OnItemClicked(LayoutPosition);
         }
+
         private void OnItemClicked(int position)
         {
             ItemClicked?.Invoke(this, new NotificationItemClickedEventArgs
@@ -86,6 +84,7 @@ namespace LiveDisplay.Adapters
                 Position = position
             });
         }
+
         private void OnItemLongClicked(int posiion)
         {
             ItemLongClicked?.Invoke(this, new NotificationItemClickedEventArgs

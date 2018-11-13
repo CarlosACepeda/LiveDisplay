@@ -1,5 +1,4 @@
-﻿
-using Android.App;
+﻿using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Preferences;
@@ -14,19 +13,20 @@ namespace LiveDisplay.Fragments
 {
     public class PreferencesFragment : PreferenceFragment, ISharedPreferencesOnSharedPreferenceChangeListener
     {
-        ISharedPreferences sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
+        private ISharedPreferences sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
+
         public override void OnCreate(Bundle savedInstanceState)
         {
-            
             base.OnCreate(savedInstanceState);
             AddPreferencesFromResource(Resource.Xml.prefs);
             sharedPreferences.RegisterOnSharedPreferenceChangeListener(this);
         }
+
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             return base.OnCreateView(inflater, container, savedInstanceState);
-
         }
+
         public override void OnPause()
         {
             base.OnPause();
@@ -44,12 +44,10 @@ namespace LiveDisplay.Fragments
                     BackgroundFactory background = new BackgroundFactory();
                     background.SaveImagePath(uri);
                     background = null;
-                    Log.Info("tag","Path sent to BackgroundFactory");
-
+                    Log.Info("tag", "Path sent to BackgroundFactory");
                 }
                 catch
                 {
-                    
                 }
             }
             else
@@ -61,27 +59,23 @@ namespace LiveDisplay.Fragments
                 }
             }
         }
+
         public void OnSharedPreferenceChanged(ISharedPreferences sharedPreferences, string key)
         {
             if (key == ConfigurationParameters.changewallpaper)
             {
-            //2 means 'User will pick custom wallpaper' 0 means black.
-            if (sharedPreferences.GetString(ConfigurationParameters.changewallpaper, "0")=="2")
-            {
-                using (Intent intent = new Intent())
+                //2 means 'User will pick custom wallpaper' 0 means black.
+                if (sharedPreferences.GetString(ConfigurationParameters.changewallpaper, "0") == "2")
                 {
-                    intent.SetType("image/*");
-                    intent.SetAction(Intent.ActionGetContent);
-                    //here 1 means the request code.
-                    StartActivityForResult(Intent.CreateChooser(intent, "Pick image"), 1);
+                    using (Intent intent = new Intent())
+                    {
+                        intent.SetType("image/*");
+                        intent.SetAction(Intent.ActionGetContent);
+                        //here 1 means the request code.
+                        StartActivityForResult(Intent.CreateChooser(intent, "Pick image"), 1);
+                    }
                 }
-                    
             }
-            }
-            
         }
-        
-            
-        
     }
 }

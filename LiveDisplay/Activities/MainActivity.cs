@@ -43,7 +43,6 @@ namespace LiveDisplay.Activities
         {
             if (AdminReceiver.isAdminGiven == false)
             {
-
             }
         }
 
@@ -106,7 +105,7 @@ namespace LiveDisplay.Activities
             {
                 SetSupportActionBar(toolbar);
             }
-            
+
             status = FindViewById<TextView>(Resource.Id.health);
             enableDeviceAdmin = FindViewById<TextView>(Resource.Id.enableDeviceAccess);
             enableNotificationAccess = FindViewById<TextView>(Resource.Id.enableNotificationAccess);

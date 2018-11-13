@@ -1,21 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
+﻿using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Provider;
-using Android.Runtime;
-using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Java.Util;
 using LiveDisplay.BroadcastReceivers;
 using LiveDisplay.DataRepository;
-using LiveDisplay.Factories;
 using LiveDisplay.Misc;
+using System;
 
 namespace LiveDisplay.Fragments
 {
@@ -30,7 +23,6 @@ namespace LiveDisplay.Fragments
         {
             base.OnCreate(savedInstanceState);
 
-
             // Create your fragment here
 
             // TODO: Implement me
@@ -44,7 +36,6 @@ namespace LiveDisplay.Fragments
             //TODO: Implement me too. ;)
             //if (configurationManager.RetrieveAValue(ConfigurationParameters.hiddensystemicons) == true)
             //{
-
             //}
         }
 
@@ -65,21 +56,19 @@ namespace LiveDisplay.Fragments
             BatteryReceiver.BatteryInfoChanged += BatteryReceiver_BatteryInfoChanged;
 
             return v;
-
-
         }
 
         public override void OnDestroyView()
         {
             base.OnDestroyView();
             battery.Dispose();
-            BatteryReceiver.BatteryInfoChanged-= BatteryReceiver_BatteryInfoChanged;
+            BatteryReceiver.BatteryInfoChanged -= BatteryReceiver_BatteryInfoChanged;
         }
+
         private void BatteryReceiver_BatteryInfoChanged(object sender, Servicios.Battery.BatteryEventArgs.BatteryChangedEventArgs e)
         {
             battery.Text = e.BatteryLevel.ToString() + "%";
             SetBackgroundAccordingWithBatteryLevel(e);
-
         }
 
         private void SetBackgroundAccordingWithBatteryLevel(Servicios.Battery.BatteryEventArgs.BatteryChangedEventArgs e)
@@ -89,28 +78,36 @@ namespace LiveDisplay.Fragments
                 case BatteryLevelFlags.OverZero:
                     batteryIcon.SetBackgroundResource(Resource.Drawable.battery_alert_white_18dp);
                     break;
+
                 case BatteryLevelFlags.OverTwenty:
                     batteryIcon.SetBackgroundResource(Resource.Drawable.baseline_battery_20_white_18);
                     break;
+
                 case BatteryLevelFlags.OverThirty:
                     batteryIcon.SetBackgroundResource(Resource.Drawable.baseline_battery_30_white_18);
                     break;
+
                 case BatteryLevelFlags.OverFifty:
                     batteryIcon.SetBackgroundResource(Resource.Drawable.baseline_battery_50_white_18);
                     break;
+
                 case BatteryLevelFlags.OverSixty:
                     batteryIcon.SetBackgroundResource(Resource.Drawable.baseline_battery_60_white_18);
                     break;
+
                 case BatteryLevelFlags.OverEighty:
                     batteryIcon.SetBackgroundResource(Resource.Drawable.baseline_battery_80_white_18);
                     break;
+
                 case BatteryLevelFlags.OverNinety:
                     batteryIcon.SetBackgroundResource(Resource.Drawable.baseline_battery_90_white_18);
                     break;
+
                 default:
                     break;
             }
         }
+
         private void SetBackgroundAccordingWithBatteryLevel(BatteryLevelFlags batteryLevelFlags)
         {
             switch (batteryLevelFlags)
@@ -118,28 +115,36 @@ namespace LiveDisplay.Fragments
                 case BatteryLevelFlags.OverZero:
                     batteryIcon.SetBackgroundResource(Resource.Drawable.battery_alert_white_18dp);
                     break;
+
                 case BatteryLevelFlags.OverTwenty:
                     batteryIcon.SetBackgroundResource(Resource.Drawable.baseline_battery_20_white_18);
                     break;
+
                 case BatteryLevelFlags.OverThirty:
                     batteryIcon.SetBackgroundResource(Resource.Drawable.baseline_battery_30_white_18);
                     break;
+
                 case BatteryLevelFlags.OverFifty:
                     batteryIcon.SetBackgroundResource(Resource.Drawable.baseline_battery_50_white_18);
                     break;
+
                 case BatteryLevelFlags.OverSixty:
                     batteryIcon.SetBackgroundResource(Resource.Drawable.baseline_battery_60_white_18);
                     break;
+
                 case BatteryLevelFlags.OverEighty:
                     batteryIcon.SetBackgroundResource(Resource.Drawable.baseline_battery_80_white_18);
                     break;
+
                 case BatteryLevelFlags.OverNinety:
                     batteryIcon.SetBackgroundResource(Resource.Drawable.baseline_battery_90_white_18);
                     break;
+
                 default:
                     break;
             }
         }
+
         private void Clock_Click(object sender, EventArgs e)
         {
             using (Intent intent = new Intent(AlarmClock.ActionShowAlarms))

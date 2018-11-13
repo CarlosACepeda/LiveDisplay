@@ -1,20 +1,10 @@
-﻿using System;
+﻿using Android.OS;
+using Android.Service.Notification;
+using LiveDisplay.Adapters;
+using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using Android.App;
-using Android.App.Admin;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Service.Notification;
-using Android.Util;
-using Android.Views;
-using Android.Widget;
-using LiveDisplay.Adapters;
-using LiveDisplay.BroadcastReceivers;
-using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
 
 namespace LiveDisplay.Servicios.Notificaciones
 {
@@ -24,25 +14,35 @@ namespace LiveDisplay.Servicios.Notificaciones
     /// Insert a Notification.
     /// Initialize the data (?) maybe.
     /// Group a notification, this is a new feature in Nougat(API Level 24+)
-    /// Also is made to allow more funcionality and keep the Catcher Service readable and understandable 
-    /// (for me and others, gracias al cielo) 
+    /// Also is made to allow more funcionality and keep the Catcher Service readable and understandable
+    /// (for me and others, gracias al cielo)
     /// </summary>
-    class CatcherHelper:Java.Lang.Object
+    internal class CatcherHelper : Java.Lang.Object
     {
         public static NotificationAdapter notificationAdapter;
         public static List<StatusBarNotification> statusBarNotifications;
 
         public static event EventHandler NotificationRemoved;
+
         public static event EventHandler<NotificationPostedEventArgs> NotificationPosted; //NotifyItemInserted.
+
         public static event EventHandler<NotificationItemClickedEventArgs> NotificationUpdated; //NotifyItemUpdated.
+
 #pragma warning disable CS0067 // El evento 'CatcherHelper.NotificationGrouped' nunca se usa
+
         public static event EventHandler NotificationGrouped; // TODO: Clueless (?) :'-( I don't know how to implement this in LockScreen
+
 #pragma warning restore CS0067 // El evento 'CatcherHelper.NotificationGrouped' nunca se usa
 #pragma warning disable CS0067 // El evento 'CatcherHelper.NotificationUngrouped' nunca se usa
+
         public static event EventHandler NotificationUngrouped; //TODO
+
 #pragma warning restore CS0067 // El evento 'CatcherHelper.NotificationUngrouped' nunca se usa
+
         public static event EventHandler<NotificationListSizeChangedEventArgs> NotificationListSizeChanged;
+
         public static bool thereAreNotifications = false;
+
         /// <summary>
         /// Constructor of the Class
         /// </summary>
@@ -57,21 +57,20 @@ namespace LiveDisplay.Servicios.Notificaciones
             {
                 thereAreNotifications = true;
             }
-
         }
+
         //If Catcher call this, it means that the notification is part of a Group of notifications and should be Grouped.
         private void GroupNotification()
         {
             //After this, fire event.
             //Find ID, if Found, Append to that notification, if not WtF. lol.
         }
+
         public void OnNotificationPosted(StatusBarNotification sbn)
         {
-            
             if (!UpdateNotification(sbn))
             {
                 InsertNotification(sbn);
-                    
             }
 
             if (statusBarNotifications.Count > 0)
@@ -82,15 +81,15 @@ namespace LiveDisplay.Servicios.Notificaciones
                 });
                 thereAreNotifications = true;
             }
-
         }
+
         private void InsertNotification(StatusBarNotification sbn)
         {
-            
             statusBarNotifications.Add(sbn);
             using (var h = new Handler(Looper.MainLooper))
                 h.Post(() => { notificationAdapter.NotifyItemInserted(statusBarNotifications.Count); });
         }
+
         private void OnNotificationUpdated(int position)
         {
             NotificationUpdated?.Invoke(this, new NotificationItemClickedEventArgs
@@ -99,6 +98,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
                 );
         }
+
         private bool UpdateNotification(StatusBarNotification sbn)
         {
             int indice = GetNotificationPosition(sbn);
@@ -109,16 +109,17 @@ namespace LiveDisplay.Servicios.Notificaciones
                 using (var h = new Handler(Looper.MainLooper))
                     h.Post(() => { notificationAdapter.NotifyItemChanged(indice); });
 
-                
                 OnNotificationUpdated(indice);
                 return true;
             }
             return false;
         }
+
         private void RemoveNotificationFromGroup()
         {
             //After this, fire event.
         }
+
         public void OnNotificationRemoved(StatusBarNotification sbn)
         {
             int position = GetNotificationPosition(sbn);
@@ -127,41 +128,46 @@ namespace LiveDisplay.Servicios.Notificaciones
                 statusBarNotifications.RemoveAt(position);
                 using (var h = new Handler(Looper.MainLooper))
                     h.Post(() => { notificationAdapter.NotifyItemRemoved(position); });
-                
             }
             //Check if when removing this notification the list size is zero, if true, then raise an event that will
             //indicate the lockscreen to hide the 'Clear all button'
             if (statusBarNotifications.Count == 0)
             {
                 OnNotificationListSizeChanged(new NotificationListSizeChangedEventArgs
-                { ThereAreNotifications=false
+                {
+                    ThereAreNotifications = false
                 });
                 thereAreNotifications = false;
             }
         }
+
         public void CancelAllNotifications()
         {
             notificationAdapter.NotifyDataSetChanged();
         }
+
         private int GetNotificationPosition(StatusBarNotification sbn)
         {
             int index = statusBarNotifications.IndexOf(statusBarNotifications.FirstOrDefault(o => o.Id == sbn.Id && o.PackageName == sbn.PackageName));
 
             return index;
         }
+
         private void OnNotificationListSizeChanged(NotificationListSizeChangedEventArgs e)
         {
-            //TODO: Implement me 
+            //TODO: Implement me
             NotificationListSizeChanged?.Invoke(this, e);
         }
-        void OnNotificationPosted()
+
+        private void OnNotificationPosted()
         {
             NotificationPosted?.Invoke(this, new NotificationPostedEventArgs()
             {
                 ShouldCauseWakeUp = true //This depends on other conditions, fix me.
             });
         }
-        void OnNotificationRemoved()
+
+        private void OnNotificationRemoved()
         {
             NotificationRemoved?.Invoke(this, EventArgs.Empty); //Just notify the subscribers the notification was removed.
         }

@@ -1,16 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-using LiveDisplay.Misc;
+﻿using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Music.MediaEventArgs;
+using System;
 
 namespace LiveDisplay.Servicios.Music
 {
@@ -19,17 +9,18 @@ namespace LiveDisplay.Servicios.Music
     /// Play/pause/forward/rewind, etc.
     /// for Lollipop and beyond
     /// </summary>
-    class Jukebox
+    internal class Jukebox
     {
         public static event EventHandler<MediaActionEventArgs> MediaEvent;
-        
+
         public static void Play()
         {
             OnMediaEvent(new MediaActionEventArgs
             {
-                MediaActionFlags= MediaActionFlags.Play
+                MediaActionFlags = MediaActionFlags.Play
             });
         }
+
         public static void Pause()
         {
             OnMediaEvent(new MediaActionEventArgs
@@ -45,16 +36,16 @@ namespace LiveDisplay.Servicios.Music
                 MediaActionFlags = MediaActionFlags.SkipToPrevious
             });
         }
+
         public static void SeekTo(long time)
         {
             OnMediaEvent(new MediaActionEventArgs
             {
                 MediaActionFlags = MediaActionFlags.SeekTo,
-                Time= time
-
+                Time = time
             });
-
         }
+
         public static void FastFoward()
         {
             OnMediaEvent(new MediaActionEventArgs
@@ -62,6 +53,7 @@ namespace LiveDisplay.Servicios.Music
                 MediaActionFlags = MediaActionFlags.FastFoward
             });
         }
+
         public static void Rewind()
         {
             OnMediaEvent(new MediaActionEventArgs
@@ -85,16 +77,18 @@ namespace LiveDisplay.Servicios.Music
                 MediaActionFlags = MediaActionFlags.Stop
             });
         }
-         internal static void RetrieveMediaInformation()
+
+        internal static void RetrieveMediaInformation()
         {
             OnMediaEvent(new MediaActionEventArgs
             {
                 MediaActionFlags = MediaActionFlags.RetrieveMediaInformation
             });
         }
-        static void OnMediaEvent(MediaActionEventArgs e)
+
+        private static void OnMediaEvent(MediaActionEventArgs e)
         {
-            MediaEvent?.Invoke(null,e);
+            MediaEvent?.Invoke(null, e);
         }
     }
 }

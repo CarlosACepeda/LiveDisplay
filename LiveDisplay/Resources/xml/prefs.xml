@@ -1,56 +1,43 @@
 ﻿<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
   <!--This is the first preference screen-->
   <PreferenceScreen android:title="@string/lockscreensettings"
-                    android:icon="@drawable/ic_lockscreen_24dp"
-  >
+                    android:icon="@drawable/ic_lockscreen_24dp">
   <PreferenceCategory android:title="@string/opciones">
     <SwitchPreference
    android:key="hiddenclock?"
    android:title="@string/showclock" />
     <SwitchPreference
       android:key="hiddensystemicons?"
-      android:title="@string/hidesystemicons"
-    />
+      android:title="@string/hidesystemicons" />
     <SwitchPreference
       android:key="enabledlockscreennonotifications?"
       android:title="@string/uselockscreennonotifications"
-      android:summary="@string/uselockscreennonotificationsdesc"
-    />
+      android:summary="@string/uselockscreennonotificationsdesc" />
     <SwitchPreference
       android:key="lockonboot"
-      android:title="@string/lockonboot"
-      >
-      
-    </SwitchPreference>
-  />
+      android:title="@string/lockonboot">
+    </SwitchPreference> />
     <ListPreference
       android:key="changewallpaper"
       android:title="@string/changewallpaper"
       android:text="@string/changewallpaperdesc"
       android:entries="@array/listentrieschangewallpaper"
       android:entryValues="@array/listvalueschangewallpaper">
-      
-    </ListPreference>
-  />
+    </ListPreference> />
   </PreferenceCategory>
     <PreferenceCategory
-      android:title="@string/musicwidget"
-      >
+      android:title="@string/musicwidget">
       <SwitchPreference
         android:key="showalbumart?"
-        android:title="@string/showalbumart"
-        >
-        
+        android:title="@string/showalbumart">
       </SwitchPreference>
-      
     </PreferenceCategory>
 </PreferenceScreen>
   <!--This is the Second preference screen-->
   <PreferenceScreen
     android:title="@string/notificationsettings"
-    android:icon="@drawable/ic_notifications_white_24dp"
-    >
-    
+    android:icon="@drawable/ic_notifications_white_24dp">
+
     <PreferenceCategory android:title="@string/notificationsettings">
       <!--Custom list, fill with all the apps installed. for now selectable is false-->
       <ListPreference
@@ -59,9 +46,7 @@
         android:summary="@string/blacklistdesc"
         android:entries="@array/listentriesblacklist"
         android:entryValues="@array/listvaluesblacklist"
-        android:selectable="true"
-        >
-        
+        android:selectable="true">
       </ListPreference>
       <SwitchPreference
         android:key="enablequickreply?"
@@ -73,21 +58,16 @@
       <SwitchPreference
       android:key="turnonnewnotification?"
       android:title="@string/turnonnewnotification"
-      android:summary="@string/turnonnewnotification_desc"
-      >
+      android:summary="@string/turnonnewnotification_desc">
       </SwitchPreference>
       <SwitchPreference
         android:key="doubletaptosleep?"
         android:title="@string/doubletaptosleep"
-        android:summary="@string/doubletaptosleepdesc"
-        >
-        
+        android:summary="@string/doubletaptosleepdesc">
       </SwitchPreference>
       <SwitchPreference
         android:key="turnonusermovement?"
-        android:title="@string/turnonusermovement"
-        >
-
+        android:title="@string/turnonusermovement">
       </SwitchPreference>
       <ListPreference
         android:key="startlockscreendelaytime"
@@ -102,71 +82,58 @@
         android:summary="@string/turnoffdelay_desc"
         android:entries="@array/listentriesturnoff"
         android:entryValues="@array/listvaluesturnoff">
-        
       </ListPreference>
     </PreferenceCategory>
   </PreferenceScreen>
   <!--This is the third preference screen-->
   <PreferenceScreen android:title="@string/about"
-                    android:icon="@drawable/ic_info_white_24dp"
-                    >
+                    android:icon="@drawable/ic_info_white_24dp">
     <PreferenceCategory android:title="@string/about">
       <Preference
         android:title="@string/about"
         android:summary="@string/aboutinfo"
         android:persistent="false"
-        android:selectable="false"
-        >        
+        android:selectable="false">
       </Preference>
   </PreferenceCategory>
-    <PreferenceCategory android:title="@string/translations" >
+    <PreferenceCategory android:title="@string/translations">
       <Preference
         android:title="@string/eng"
         android:summary="@string/me"
         android:persistent="false"
-        android:selectable="false"
-        >
+        android:selectable="false">
       </Preference>
       <Preference
         android:title="@string/esp"
         android:summary="@string/me"
         android:persistent="false"
-        android:selectable="false"
-        >
-        
+        android:selectable="false">
       </Preference>
       <Preference
       android:title="@string/askfortranslations"
       android:summary="@string/contactme"
       android:selectable="true"
-      android:persistent="false"
-      >
+      android:persistent="false">
         <intent
           android:action="android.intent.action.VIEW"
-          android:data="mailto:carlosalt5126@hotmail.es"
-        >
+          android:data="mailto:carlosalt5126@hotmail.es">
           <extra
             android:name="android.intent.extra.SUBJECT"
-            android:value="Transalations for LiveDisplay"
-          >
+            android:value="Transalations for LiveDisplay">
           </extra>
           <extra
             android:name="android.intent.extra.TEXT"
-            android:value="Hello there, I want to help with translations for [Language you want to translate]"
-          >
+            android:value="Hello there, I want to help with translations for [Language you want to translate]">
           </extra>
         </intent>
       </Preference>
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/acknowledgments"    
-      >
+    <PreferenceCategory android:title="@string/acknowledgments">
       <Preference
         android:title="@string/yasujizr"
         android:summary="@string/yasujizr_ty"
         android:persistent="false"
-        android:selectable="false"
-        >
-        
+        android:selectable="false">
       </Preference>
       <Preference
         android:title="@string/achep"
@@ -177,5 +144,3 @@
     </PreferenceCategory>
   </PreferenceScreen>
 </PreferenceScreen>
-
-

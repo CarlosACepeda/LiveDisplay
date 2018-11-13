@@ -1,10 +1,8 @@
 ﻿using Android.App;
 using Android.Content;
-using Android.Hardware;
 using Android.Media;
 using Android.Media.Session;
 using Android.OS;
-using Android.Runtime;
 using Android.Service.Notification;
 using Android.Util;
 using LiveDisplay.BroadcastReceivers;
@@ -24,10 +22,12 @@ namespace LiveDisplay.Servicios
     {
         //Move to respective fragments
         private BatteryReceiver batteryReceiver;
+
         private ScreenOnOffReceiver screenOnOffReceiver;
 
         //Manipular las sesiones-
         private MediaSessionManager mediaSessionManager;
+
         //el controlador actual de media.
         private ActiveMediaSessionsListener activeMediaSessionsListener;
 
@@ -36,13 +36,13 @@ namespace LiveDisplay.Servicios
 #pragma warning disable CS0618 // El tipo o el miembro están obsoletos
         private RemoteController remoteController;
 #pragma warning restore CS0618 // El tipo o el miembro están obsoletos
-        
+
         private AudioManager audioManager;
 
         private CatcherHelper catcherHelper;
         private List<StatusBarNotification> statusBarNotifications;
 #pragma warning disable CS0414 // El campo 'Catcher.isInAPlainSurface' está asignado pero su valor nunca se usa
-        bool isInAPlainSurface = false;
+        private bool isInAPlainSurface = false;
 #pragma warning restore CS0414 // El campo 'Catcher.isInAPlainSurface' está asignado pero su valor nunca se usa
 
         public override IBinder OnBind(Intent intent)
@@ -64,17 +64,15 @@ namespace LiveDisplay.Servicios
 
 #pragma warning disable CS0618 // El tipo o el miembro están obsoletos
                 remoteController = new RemoteController(Application.Context, new MusicControllerKitkat());
-                
-                    //remoteController.SetArtworkConfiguration(450, 450);
-                
+
+                //remoteController.SetArtworkConfiguration(450, 450);
+
 #pragma warning restore CS0618 // El tipo o el miembro están obsoletos
-                    audioManager= (AudioManager)Application.Context.GetSystemService(AudioService);
+                audioManager = (AudioManager)Application.Context.GetSystemService(AudioService);
 #pragma warning disable CS0618 // El tipo o el miembro están obsoletos
-                    audioManager.RegisterRemoteController(remoteController);
-              
-                    
+                audioManager.RegisterRemoteController(remoteController);
+
 #pragma warning restore CS0618 // El tipo o el miembro están obsoletos
-                
             }
             return base.OnBind(intent);
         }
@@ -87,11 +85,11 @@ namespace LiveDisplay.Servicios
 
             //Listener para Sesiones
             using (var h = new Handler(Looper.MainLooper)) //Using UI Thread because seems to crash in some devices.
-                h.Post(() => { mediaSessionManager.AddOnActiveSessionsChangedListener(activeMediaSessionsListener, new ComponentName(this, Java.Lang.Class.FromType(typeof(Catcher))));
+                h.Post(() =>
+                {
+                    mediaSessionManager.AddOnActiveSessionsChangedListener(activeMediaSessionsListener, new ComponentName(this, Java.Lang.Class.FromType(typeof(Catcher))));
                     Log.Info("LiveDisplay", "Added Media Sess. Changed Listener");
                 });
-            
-
 
             SubscribeToEvents();
             RegisterReceivers();
@@ -111,7 +109,6 @@ namespace LiveDisplay.Servicios
         {
             base.OnNotificationRemoved(sbn);
             catcherHelper.OnNotificationRemoved(sbn);
-            
         }
 
         public override void OnListenerDisconnected()
@@ -141,7 +138,7 @@ namespace LiveDisplay.Servicios
             statusBarNotifications = new List<StatusBarNotification>();
             foreach (var notification in GetActiveNotifications().ToList())
             {
-                if ((notification.IsOngoing==false||notification.Notification.Flags.HasFlag(NotificationFlags.NoClear))&&notification.IsClearable==true)
+                if ((notification.IsOngoing == false || notification.Notification.Flags.HasFlag(NotificationFlags.NoClear)) && notification.IsClearable == true)
                 {
                     statusBarNotifications.Add(notification);
                 }
@@ -158,14 +155,15 @@ namespace LiveDisplay.Servicios
             notificationSlave.NotificationCancelled += NotificationSlave_NotificationCancelled;
             notificationSlave.NotificationCancelledLollipop += NotificationSlave_NotificationCancelledLollipop;
         }
+
         private void RegisterReceivers()
         {
             using (IntentFilter intentFilter = new IntentFilter())
             {
-                    screenOnOffReceiver = new ScreenOnOffReceiver();
-                    intentFilter.AddAction(Intent.ActionScreenOff);
-                    intentFilter.AddAction(Intent.ActionScreenOn);
-                    RegisterReceiver(screenOnOffReceiver, intentFilter);
+                screenOnOffReceiver = new ScreenOnOffReceiver();
+                intentFilter.AddAction(Intent.ActionScreenOff);
+                intentFilter.AddAction(Intent.ActionScreenOn);
+                RegisterReceiver(screenOnOffReceiver, intentFilter);
             }
             using (IntentFilter intentFilter = new IntentFilter())
             {
@@ -173,7 +171,6 @@ namespace LiveDisplay.Servicios
                 intentFilter.AddAction(Intent.ActionBatteryChanged);
                 RegisterReceiver(batteryReceiver, intentFilter);
             }
-                        
         }
 
         //Events:

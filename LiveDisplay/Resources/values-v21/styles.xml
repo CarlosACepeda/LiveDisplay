@@ -20,8 +20,7 @@
     <item name="android:textColorPrimary">@android:color/white</item>
   </style>
  <!--Style for Popup menu in overflow menu-->
-  <style name="popupTheme" parent="LiveDisplayTheme"> 
-    
+  <style name="popupTheme" parent="LiveDisplayTheme">
   </style>
 
   <!--Dark version of base Main theme-->
