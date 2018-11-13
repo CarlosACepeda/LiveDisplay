@@ -9,6 +9,8 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using LiveDisplay.Misc;
+using LiveDisplay.Servicios.Music.MediaEventArgs;
 
 namespace LiveDisplay.Servicios.Music
 {
@@ -19,45 +21,80 @@ namespace LiveDisplay.Servicios.Music
     /// </summary>
     class Jukebox
     {
+        public static event EventHandler<MediaActionEventArgs> MediaEvent;
         
         public static void Play()
         {
-            transportControls.Play();
+            OnMediaEvent(new MediaActionEventArgs
+            {
+                MediaActionFlags= MediaActionFlags.Play
+            });
         }
         public static void Pause()
         {
-            transportControls.Pause();
+            OnMediaEvent(new MediaActionEventArgs
+            {
+                MediaActionFlags = MediaActionFlags.Pause
+            });
         }
-        public static void PlayNext()
+
+        public static void SkipToPrevious()
         {
-            transportControls.SkipToNext();
-        }
-        public static void PlayPrevious()
-        {
-            transportControls.SkipToPrevious();
+            OnMediaEvent(new MediaActionEventArgs
+            {
+                MediaActionFlags = MediaActionFlags.SkipToPrevious
+            });
         }
         public static void SeekTo(long time)
         {
-            transportControls.SeekTo(time);
-            
+            OnMediaEvent(new MediaActionEventArgs
+            {
+                MediaActionFlags = MediaActionFlags.SeekTo,
+                Time= time
+
+            });
+
         }
         public static void FastFoward()
         {
-            transportControls.FastForward();
+            OnMediaEvent(new MediaActionEventArgs
+            {
+                MediaActionFlags = MediaActionFlags.FastFoward
+            });
         }
         public static void Rewind()
         {
-            transportControls.Rewind();
+            OnMediaEvent(new MediaActionEventArgs
+            {
+                MediaActionFlags = MediaActionFlags.Rewind
+            });
         }
 
-        internal static void SkipNext()
+        internal static void SkipToNext()
         {
-            throw new NotImplementedException();
+            OnMediaEvent(new MediaActionEventArgs
+            {
+                MediaActionFlags = MediaActionFlags.SkipToNext
+            });
         }
 
         internal static void Stop()
         {
-            throw new NotImplementedException();
+            OnMediaEvent(new MediaActionEventArgs
+            {
+                MediaActionFlags = MediaActionFlags.Stop
+            });
+        }
+         internal static void RetrieveMediaInformation()
+        {
+            OnMediaEvent(new MediaActionEventArgs
+            {
+                MediaActionFlags = MediaActionFlags.RetrieveMediaInformation
+            });
+        }
+        static void OnMediaEvent(MediaActionEventArgs e)
+        {
+            MediaEvent?.Invoke(null,e);
         }
     }
 }

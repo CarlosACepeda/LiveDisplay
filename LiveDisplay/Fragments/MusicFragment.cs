@@ -100,7 +100,7 @@ namespace LiveDisplay.Fragments
 
         private void BtnSkipNext_Click(object sender, EventArgs e)
         {
-            Jukebox.SkipNext();
+            Jukebox.SkipToNext();
         }
         private void BtnPlayPause_Click(object sender, EventArgs e)
         {
@@ -123,7 +123,7 @@ namespace LiveDisplay.Fragments
         }
         private void BtnSkipPrevious_Click(object sender, EventArgs e)
         {
-            Jukebox.PlayPrevious();
+            Jukebox.SkipToPrevious();
         }
         #endregion
 

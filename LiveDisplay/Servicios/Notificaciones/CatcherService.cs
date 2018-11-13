@@ -128,7 +128,9 @@ namespace LiveDisplay.Servicios
             {
                 catcherHelper.Dispose();
                 UnregisterReceivers();
+#pragma warning disable CS0618 // El tipo o el miembro están obsoletos
                 audioManager.UnregisterRemoteController(remoteController);
+#pragma warning restore CS0618 // El tipo o el miembro están obsoletos
             }
 
             return base.OnUnbind(intent);

@@ -159,6 +159,7 @@
     <Compile Include="Fragments\NotificationFragment.cs" />
     <Compile Include="Misc\BatteryLevelFlags.cs" />
     <Compile Include="Misc\ConfigurationParameters.cs" />
+    <Compile Include="Misc\MediaActionFlags.cs" />
     <Compile Include="Misc\NLChecker.cs" />
     <Compile Include="Activities\MainActivity.cs" />
     <Compile Include="Activities\LockScreenActivity.cs" />
@@ -171,11 +172,11 @@
     <Compile Include="Servicios\ConfigurationManager.cs" />
     <Compile Include="Servicios\Music\Jukebox.cs" />
     <Compile Include="Servicios\Music\JukeboxKitkat.cs" />
+    <Compile Include="Servicios\Music\MediaEventArgs\MediaActionEventArgs.cs" />
     <Compile Include="Servicios\Music\MediaEventArgs\MediaMetadataChangedEventArgs.cs" />
     <Compile Include="Servicios\Music\MediaEventArgs\MediaPlaybackStateChangedEventArgs.cs" />
     <Compile Include="Servicios\Music\MusicControllerKitkat.cs" />
     <Compile Include="Servicios\Music\ActiveMediaSessionsListener.cs" />
-    <Compile Include="DataRepository\OpenSong.cs" />
     <Compile Include="Servicios\Notificaciones\CatcherHelper.cs" />
     <Compile Include="Servicios\Notificaciones\CatcherService.cs" />
     <Compile Include="Servicios\Music\MusicController.cs" />

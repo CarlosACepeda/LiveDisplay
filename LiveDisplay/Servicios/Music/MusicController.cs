@@ -13,36 +13,87 @@ using LiveDisplay.Servicios.Music.MediaEventArgs;
 namespace LiveDisplay.Servicios.Music
 {
     /// <summary>
-    /// This class receives Callbacks with Media metadata and other information about media playing.
+    /// This class acts as a media session, receives Callbacks with Media metadata and other information about media playing.
     /// This class is registered in Catcher to receive callbacks 
     /// For Lollipop and beyond.
     /// </summary>
-    internal class MusicController : MediaController.Callback
+    internal class MusicController : MediaController.Callback, IDisposable
     {
-    #region events
+        
+        
+        #region Class members 
+        public PlaybackState PlaybackState {get;set;}
+        public MediaController.TransportControls TransportControls {get; set;}
+        public MediaMetadata MediaMetadata {get; set;}
+        private static MusicController instance;
+
+        #region events
         public static event EventHandler<MediaPlaybackStateChangedEventArgs> MediaPlaybackChanged;
         public static event EventHandler<MediaMetadataChangedEventArgs> MediaMetadataChanged;
         #endregion
-        
-        #region Class members
-        public PlaybackState PlaybackState {get;set;}|
-        public TransportControls TransportControls {get; set;}
-        public MediaMetadata MediaMetadata {get; set;}
-        
         #endregion
-        
-        private OpenSong song;
-        Bitmap bitmap;
-        public MusicController()
-        {
 
-        }   
-        
+        internal static MusicController GetInstance()
+        {
+            if (instance == null)
+            {
+                instance = new MusicController();
+            }
+            return instance;
+        }
+        private MusicController()
+        {
+            Jukebox.MediaEvent += Jukebox_MediaEvent; //Subscribe to this event only once because this class is a Singleton.
+        }
+        private void Jukebox_MediaEvent(object sender, MediaActionEventArgs e)
+        {
+            switch (e.MediaActionFlags)
+            {
+                case Misc.MediaActionFlags.Play:
+                    TransportControls.Play();
+                    break;
+                case Misc.MediaActionFlags.Pause:
+                    TransportControls.Pause();
+                    break;
+                case Misc.MediaActionFlags.SkipToNext:
+                    TransportControls.SkipToNext();
+                    break;
+                case Misc.MediaActionFlags.SkipToPrevious:
+                    TransportControls.SkipToPrevious();
+                    break;
+                case Misc.MediaActionFlags.SeekTo:
+                    TransportControls.SeekTo(e.Time);
+                    break;
+                case Misc.MediaActionFlags.FastFoward:
+                    TransportControls.FastForward();
+                    break;
+                case Misc.MediaActionFlags.Rewind:
+                    TransportControls.Rewind();
+                    break;
+                case Misc.MediaActionFlags.Stop:
+                    TransportControls.Stop();
+                    break;
+                case Misc.MediaActionFlags.RetrieveMediaInformation:
+                    //Send media information.
+                    OnMediaMetadataChanged(new MediaMetadataChangedEventArgs
+                    {
+                        MediaMetadata = MediaMetadata
+                    });
+                    //Send Playbackstate of the media.
+                    OnMediaPlaybackChanged(new MediaPlaybackStateChangedEventArgs
+                    {
+                        PlaybackState= PlaybackState.State,
+                        CurrentTime= PlaybackState.Position
+                    });
+                    
+                    break;
+                default:
+                    break;
+            }
+        }
         public override void OnPlaybackStateChanged(PlaybackState state)
         {
-        PlaybackState= state;
-            song.PlaybackState = state.State;
-            song.CurrentPosition = (int)(state.Position / 1000);
+                PlaybackState= state;
             //Estado del playback:
             //Pausado, Comenzado, Avanzando, Retrocediendo, etc.    
                 OnMediaPlaybackChanged(new MediaPlaybackStateChangedEventArgs
@@ -54,36 +105,15 @@ namespace LiveDisplay.Servicios.Music
         }
         public override void OnMetadataChanged(MediaMetadata metadata)
         {
-            int size = (int)Application.Context.Resources.GetDimension(Resource.Dimension.albumartsize);
-            if (metadata != null)
-            {
-
-            }
             try
             {
-                bitmap = Bitmap.CreateScaledBitmap(metadata.GetBitmap(MediaMetadata.MetadataKeyAlbumArt), size, size, true);
-            }
-            catch
-            {
-                //There is not albumart
-            }
-            try
-            {
-                song.Title = metadata.GetText(MediaMetadata.MetadataKeyTitle);
-                song.Artist = metadata.GetText(MediaMetadata.MetadataKeyArtist);
-                song.Album = metadata.GetText(MediaMetadata.MetadataKeyAlbum);
-                song.AlbumArt = bitmap;
-                //
+                MediaMetadata = metadata;
 
                 OnMediaMetadataChanged(new MediaMetadataChangedEventArgs
                 {
-                    Artist = metadata.GetText(MediaMetadata.MetadataKeyArtist),
-                    Title = metadata.GetText(MediaMetadata.MetadataKeyTitle),
-                    Album = metadata.GetText(MediaMetadata.MetadataKeyAlbum),
-                    AlbumArt = bitmap
+                    MediaMetadata= metadata
 
                 });
-                bitmap = null;
             }
             catch
             {
@@ -98,7 +128,7 @@ namespace LiveDisplay.Servicios.Music
             //Memory is growing until making a GC.
             GC.Collect();
         }
-        //Raise Events:
+        #region Raising events.
         protected virtual void OnMediaPlaybackChanged(MediaPlaybackStateChangedEventArgs e)
         {
             MediaPlaybackChanged?.Invoke(this, e);
@@ -107,5 +137,6 @@ namespace LiveDisplay.Servicios.Music
         {
             MediaMetadataChanged?.Invoke(this, e);
         }
+        #endregion
     }
 }

@@ -30,23 +30,19 @@ namespace LiveDisplay.Servicios.Music
         public static event EventHandler MediaSessionStarted;
         public static event EventHandler MediaSessionStopped;
         private MusicController musicController;
-        OpenSong song = OpenSong.OpenSongInstance();
-        Bitmap bitmap;
 
         //Al parecer hay varios controladores de Multimedia y toca recuperarlos.
         public void OnActiveSessionsChanged(IList<Android.Media.Session.MediaController> controllers)
         {
-            Log.Info("LiveDisplay", "OnActiveSessions Changed");
             if (controllers.Count > 0)
             {
-                Log.Info("LiveDisplay", "controllers: "+ controllers.Count);
                 mediaController = controllers[0];
-                mediaController.RegisterCallback(musicController = new MusicController());
-                
-                //Retrieve current media information if any, because it could be that an app starts a new MediaSession without media playing.
-                GetCurrentMetadata();
-                //To control current media playing
-                GetMusicControls(mediaController.GetTransportControls());
+                mediaController.RegisterCallback(musicController = MusicController.GetInstance());
+
+                //Retrieve the controls to control the media, duh.
+                musicController.TransportControls = mediaController.GetTransportControls();
+                musicController.MediaMetadata = mediaController.Metadata;
+                musicController.PlaybackState = mediaController.PlaybackState;
                 IsASessionActive = true;
             }
             else if(mediaController!=null && controllers.Count==0)
@@ -58,37 +54,6 @@ namespace LiveDisplay.Servicios.Music
             }
         }
 
-        private void GetCurrentMetadata()
-        {
-            
-            int size = (int)Application.Context.Resources.GetDimension(Resource.Dimension.albumartsize);
-            try
-            {
-                bitmap = Bitmap.CreateScaledBitmap(mediaController.Metadata.GetBitmap(MediaMetadata.MetadataKeyAlbumArt), size, size, true);
-            }
-            catch
-            {
-                //There is not bitmap
-            }
-
-
-            try
-            {
-                song.Title = mediaController.Metadata.GetText(MediaMetadata.MetadataKeyTitle);
-                song.Artist = mediaController.Metadata.GetText(MediaMetadata.MetadataKeyArtist);
-                song.Album = mediaController.Metadata.GetText(MediaMetadata.MetadataKeyAlbum);
-                song.Duration = (int)mediaController.Metadata.GetLong(MediaMetadata.MetadataKeyDuration);
-                song.PlaybackState = mediaController.PlaybackState.State;
-                song.AlbumArt = bitmap;
-                bitmap = null;
-                Log.Info("LiveDisplay", "Metadata Retrieved");
-            }
-            catch
-            {
-                Log.Info("LiveDisplay", "Failed to get Metadata/Started a mediaSession without media playing.");
-            }
-
-        }
 
         protected virtual void OnMediaSessionStarted()
         {
