@@ -4,6 +4,7 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using LiveDisplay.Adapters;
+using LiveDisplay.Factories;
 using LiveDisplay.Servicios;
 using LiveDisplay.Servicios.Notificaciones;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
@@ -127,18 +128,18 @@ namespace LiveDisplay.Fragments
         {
             position = e.Position;
             //When an item of the list is clicked, then fill A notification with the position of the item.
-            using (OpenNotification notification = new OpenNotification(e.Position))
+            using (OpenNotification openNotification = new OpenNotification(e.Position))
             {
-                titulo.Text = notification.GetTitle();
-                texto.Text = notification.GetText();
-                appName.Text = notification.GetAppName();
+                titulo.Text = openNotification.GetTitle();
+                texto.Text = openNotification.GetText();
+                appName.Text = openNotification.GetAppName();
                 //Fix me:
                 //when.Text = notification.GetWhen();
                 notificationActions.RemoveAllViews();
 
                 if (OpenNotification.NotificationHasActionButtons(e.Position) == true)
                 {
-                    foreach (Button a in OpenNotification.RetrieveActionButtons(e.Position))
+                    foreach (var a in OpenNotification.RetrieveActions(e.Position))
                     {
                         notificationActions.AddView(a);
                     }

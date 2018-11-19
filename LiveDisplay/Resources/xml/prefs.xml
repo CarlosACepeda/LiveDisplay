@@ -16,14 +16,21 @@
     <SwitchPreference
       android:key="lockonboot"
       android:title="@string/lockonboot">
-    </SwitchPreference> />
+    </SwitchPreference>
     <ListPreference
       android:key="changewallpaper"
       android:title="@string/changewallpaper"
       android:text="@string/changewallpaperdesc"
       android:entries="@array/listentrieschangewallpaper"
       android:entryValues="@array/listvalueschangewallpaper">
-    </ListPreference> />
+    </ListPreference>
+    <Preference
+      android:key="wallpapersettings"
+      android:title="bash(Change wallpaper appearance)"
+      android:selectable="true"
+      >
+      
+    </Preference>
   </PreferenceCategory>
     <PreferenceCategory
       android:title="@string/musicwidget">

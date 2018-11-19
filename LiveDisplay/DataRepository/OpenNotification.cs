@@ -45,34 +45,32 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         public static void ClickNotification(int position)
         {
-            var pendingIntent = CatcherHelper.statusBarNotifications[position].Notification.ContentIntent;
+            
             try
             {
-                pendingIntent.Send();
+                CatcherHelper.statusBarNotifications[position].Notification.ContentIntent.Send();
             }
             catch
             {
                 System.Console.WriteLine("Click Notification failed, fail in pending intent");
             }
-            pendingIntent.Dispose();
         }
 
-        public static List<Button> RetrieveActionButtons(int position)
+        public static List<Button> RetrieveActions(int position)
         {
-            List<Button> buttons = new List<Button>();
             var actions = CatcherHelper.statusBarNotifications[position].Notification.Actions;
             if (actions != null)
             {
-                double weight = (double)1 / actions.Count;
-                float weightfloat =
-                float.Parse(weight.ToString());
+                var buttons = new List<Button>();
+                float weight = (float)1 / actions.Count;
                 string paquete = CatcherHelper.statusBarNotifications[position].PackageName;
                 foreach (var action in actions)
                 {
                     Button anActionButton = new Button(Application.Context)
                     {
-                        LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WrapContent, weightfloat),
+                        LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WrapContent, weight),
                         Text = action.Title.ToString(),
+                        Visibility= ViewStates.Visible
                     };
                     anActionButton.SetMaxLines(1);
                     anActionButton.SetTextColor(Android.Graphics.Color.White);
@@ -89,9 +87,6 @@ namespace LiveDisplay.Servicios.Notificaciones
                     };
 
                     anActionButton.Gravity = GravityFlags.CenterVertical;
-                    TypedValue typedValue = new TypedValue();
-                    Application.Context.Theme.ResolveAttribute(Resource.Attribute.selectableItemBackground, typedValue, true);
-                    anActionButton.SetBackgroundResource(typedValue.ResourceId);
                     if (Build.VERSION.SdkInt > BuildVersionCodes.M)
                     {
                         anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(IconFactory.ReturnActionIconDrawable(action.Icon, paquete), null, null, null);

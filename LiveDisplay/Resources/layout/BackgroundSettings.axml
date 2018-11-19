@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+	<ImageView
+		android:id="@+id/wallpaperPreview"
+		android:layout_height="match_parent"
+		android:layout_width="match_parent">
+	</ImageView>
+	<LinearLayout
+		android:orientation="vertical"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
+		<TextView
+			android:text="bash(Opacity)"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:layout_height="wrap_content"
+			android:layout_width="match_parent">
+		</TextView>
+		<SeekBar
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+		</SeekBar>
+		<TextView
+			android:text="bash(Blur)"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:layout_height="wrap_content"
+			android:layout_width="match_parent">
+		</TextView>
+		<SeekBar
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+		</SeekBar>
+	</LinearLayout>
+</FrameLayout>

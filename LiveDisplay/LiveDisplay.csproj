@@ -145,6 +145,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Activities\BackgroundSettingsActivity.cs" />
     <Compile Include="Activities\SettingsActivity.cs" />
     <Compile Include="Adapters\NotificationAdapter.cs" />
     <Compile Include="BroadcastReceivers\AdminReceiver.cs" />
@@ -711,6 +712,11 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\FloatingNotification.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\BackgroundSettings.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

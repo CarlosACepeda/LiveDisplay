@@ -5,6 +5,7 @@ using Android.Preferences;
 using Android.Runtime;
 using Android.Util;
 using Android.Views;
+using LiveDisplay.Activities;
 using LiveDisplay.Factories;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
@@ -20,6 +21,14 @@ namespace LiveDisplay.Fragments
             base.OnCreate(savedInstanceState);
             AddPreferencesFromResource(Resource.Xml.prefs);
             sharedPreferences.RegisterOnSharedPreferenceChangeListener(this);
+            Preference preference = FindPreference("wallpapersettings");
+            preference.PreferenceClick += Preference_PreferenceClick;
+        }
+
+        private void Preference_PreferenceClick(object sender, Preference.PreferenceClickEventArgs e)
+        {
+            Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(BackgroundSettingsActivity)));
+            StartActivity(intent);
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -75,6 +84,10 @@ namespace LiveDisplay.Fragments
                         StartActivityForResult(Intent.CreateChooser(intent, "Pick image"), 1);
                     }
                 }
+            }
+            if(key== "wallpapersettings") //Make me a constant
+            {
+                
             }
         }
     }
