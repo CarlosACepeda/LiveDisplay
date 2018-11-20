@@ -12,7 +12,9 @@
   <string name="awakesettings">Awake</string>
   <string name="blacklist">Block apps</string>
   <string name="blacklistdesc">Don\'t show notifications from the apps selected, these won\'t appear in the status bar too, unless the notifications are Sticky notifications(that can\'t be removed by the system itself)</string>
+  <string name="blackwallpaper">Black</string>
   <string name="changewallpaper">Change wallpaper</string>
+  <string name="changewallpaperappearance">Wallpaper appearance</string>
   <string name="changewallpaperdesc">By default, current system wallpaper is used</string>
   <string name="clearallnotifications">Clear all</string>
   <string name="contactme">Contact me</string>
@@ -35,6 +37,7 @@
   <string name="immediately">Immediately</string>
   <string name="lockdelay">Automatic lock</string>
   <string name="lockdelay_desc">Lock the screen in the given time</string>
+  <string name="lockonboot">Lock the screen on device boot up</string>
   <string name="lockscreensettings">Lockscreen</string>
   <string name="me">Carlos Cepeda</string>
   <string name="musicwidget">Music Widget</string>
@@ -57,6 +60,6 @@
   <string name="uselockscreennonotificationsdesc">For better usage, turn off the default Android lockscreen</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
-  <string name="lockonboot">Lock the screen on device boot up</string>
-  <string name="blackwallpaper">Black</string>
+  <string name="wallpaperopacity">Opacity</string>
+  <string name="wallpaperblur">Blur</string>
 </resources>

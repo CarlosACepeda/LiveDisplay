@@ -55,10 +55,8 @@ namespace LiveDisplay.Servicios
         /// This method awakes the screen when a new notification is posted, except when the app that
         /// publishes it, is Blacklisted by the user, so this notification has forbbiden to wake the device
         /// </summary>
-        /// <param name="appPackage">the package of the app to check if it's blacklisted</param>
-        public static void WakeUpScreenOnNewNotification(string appPackage)
+        public static void WakeUpScreenOnNewNotification()
         {
-            //TODO: Check if App is blacklisted
 
             PowerManager pm = ((PowerManager)Application.Context.GetSystemService(Context.PowerService));
             var screenLock = pm.NewWakeLock(WakeLockFlags.ScreenDim | WakeLockFlags.AcquireCausesWakeup, "Turn On Lockscreen");

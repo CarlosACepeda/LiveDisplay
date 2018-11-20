@@ -170,6 +170,7 @@
     <Compile Include="Servicios\Awake.cs" />
     <Compile Include="DataRepository\Battery.cs" />
     <Compile Include="Servicios\Battery\BatteryEventArgs\BatteryChangedEventArgs.cs" />
+    <Compile Include="Servicios\Blacklist.cs" />
     <Compile Include="Servicios\ConfigurationManager.cs" />
     <Compile Include="Servicios\Music\Jukebox.cs" />
     <Compile Include="Servicios\Music\JukeboxKitkat.cs" />

@@ -11,7 +11,9 @@
   <string name="awakesettings">Awake</string>
   <string name="blacklist">Bloquear aplicaciones</string>
   <string name="blacklistdesc">No mostrar notificaciones de las apps seleccionadas, estas se quitaran también de la barra de estado, a menos que sean notificaciones pegajosas (que no pueden ser removidas por el sistema)</string>
+  <string name="blackwallpaper">Negro</string>
   <string name="changewallpaper">Cambiar fondo de pantalla</string>
+  <string name="changewallpaperappearance">Apariencia del papel tapiz</string>
   <string name="changewallpaperdesc">El fondo de pantalla actual se usa por defecto</string>
   <string name="clearallnotifications">Descartar todas</string>
   <string name="contactme">Contáctame</string>
@@ -34,6 +36,7 @@
   <string name="immediately">De inmediato</string>
   <string name="lockdelay">Bloquear automaticamente</string>
   <string name="lockdelay_desc">Bloquear la pantalla después del tiempo dado</string>
+  <string name="lockonboot">Bloquear la pantalla al iniciar</string>
   <string name="lockscreensettings">Lockscreen</string>
   <string name="musicwidget">Widget de Musica</string>
   <string name="notificationsettings">Notificaciones</string>
@@ -55,6 +58,6 @@
   <string name="uselockscreennonotificationsdesc">Para mejor usabilidad, desactiva la pantalla de bloqueo por defecto de Android</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">Diseño del icono de esta app!</string>
-  <string name="lockonboot">Bloquear la pantalla al iniciar</string>
-  <string name="blackwallpaper">Negro</string>
+  <string name="wallpaperopacity">Opacidad</string>
+  <string name="wallpaperblur">Difuminación</string>
 </resources>

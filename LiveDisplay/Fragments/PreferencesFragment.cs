@@ -85,10 +85,6 @@ namespace LiveDisplay.Fragments
                     }
                 }
             }
-            if(key== "wallpapersettings") //Make me a constant
-            {
-                
-            }
         }
     }
 }

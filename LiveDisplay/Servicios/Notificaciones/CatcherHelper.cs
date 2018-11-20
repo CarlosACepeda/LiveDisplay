@@ -155,7 +155,6 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         private void OnNotificationListSizeChanged(NotificationListSizeChangedEventArgs e)
         {
-            //TODO: Implement me
             NotificationListSizeChanged?.Invoke(this, e);
         }
 
@@ -163,7 +162,7 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             NotificationPosted?.Invoke(this, new NotificationPostedEventArgs()
             {
-                ShouldCauseWakeUp = true //This depends on other conditions, fix me.
+                ShouldCauseWakeUp = true //Implementing blacklist...
             });
         }
 

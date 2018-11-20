@@ -26,7 +26,7 @@
     </ListPreference>
     <Preference
       android:key="wallpapersettings"
-      android:title="bash(Change wallpaper appearance)"
+      android:title="@string/changewallpaperappearance"
       android:selectable="true"
       >
       

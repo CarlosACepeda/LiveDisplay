@@ -46,9 +46,18 @@ namespace LiveDisplay.Fragments
             notification.Click += LlNotification_Click;
             NotificationAdapterViewHolder.ItemClicked += ItemClicked;
             NotificationAdapterViewHolder.ItemLongClicked += ItemLongClicked;
+            CatcherHelper.NotificationPosted += CatcherHelper_NotificationPosted;
             CatcherHelper.NotificationUpdated += CatcherHelper_NotificationUpdated;
             CatcherHelper.NotificationRemoved += CatcherHelper_NotificationRemoved;
             return v;
+        }
+
+        private void CatcherHelper_NotificationPosted(object sender, NotificationPostedEventArgs e)
+        {
+            if (e.ShouldCauseWakeUp == true)
+            {
+                Awake.WakeUpScreenOnNewNotification();
+            }
         }
 
         public override void OnDestroy()
@@ -57,6 +66,7 @@ namespace LiveDisplay.Fragments
             NotificationAdapterViewHolder.ItemLongClicked -= ItemLongClicked;
             CatcherHelper.NotificationUpdated -= CatcherHelper_NotificationUpdated;
             CatcherHelper.NotificationRemoved -= CatcherHelper_NotificationRemoved;
+            CatcherHelper.NotificationPosted -= CatcherHelper_NotificationPosted;
             base.OnDestroy();
         }
 
