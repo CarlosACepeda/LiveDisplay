@@ -21,11 +21,19 @@ namespace LiveDisplay.Fragments
             base.OnCreate(savedInstanceState);
             AddPreferencesFromResource(Resource.Xml.prefs);
             sharedPreferences.RegisterOnSharedPreferenceChangeListener(this);
-            Preference preference = FindPreference("wallpapersettings");
-            preference.PreferenceClick += Preference_PreferenceClick;
+            Preference wallpapersettingspreference = FindPreference("wallpapersettings");
+            Preference blacklistpreference = FindPreference("blacklist");
+            wallpapersettingspreference.PreferenceClick += WallpaperSettingsPreference_PreferenceClick;
+            blacklistpreference.PreferenceClick += Blacklistpreference_PreferenceClick;
         }
 
-        private void Preference_PreferenceClick(object sender, Preference.PreferenceClickEventArgs e)
+        private void Blacklistpreference_PreferenceClick(object sender, Preference.PreferenceClickEventArgs e)
+        {
+            Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(BlacklistActivity)));
+            StartActivity(intent);
+        }
+
+        private void WallpaperSettingsPreference_PreferenceClick(object sender, Preference.PreferenceClickEventArgs e)
         {
             Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(BackgroundSettingsActivity)));
             StartActivity(intent);

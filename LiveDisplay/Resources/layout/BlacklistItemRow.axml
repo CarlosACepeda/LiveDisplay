@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+	<android.support.v4.widget.CardView
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		app:cardElevation="1dp"
+		app:cardCornerRadius="5dp"
+		app:cardUseCompatPadding="true"
+		app:contentPadding="4dp"
+		>
+		<LinearLayout
+			android:weightSum="1"
+			android:orientation="horizontal"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent">
+			<TextView
+				android:layout_weight="8"
+				android:id="@+id/applicationname"
+				android:layout_width="0dp"
+				android:layout_height="match_parent"
+				android:text="bash(appname)"
+				android:textAppearance="?android:attr/textAppearanceMedium"
+				android:fontFamily="sans-serif-condensed"
+				>
+			</TextView>
+			<CheckBox
+				android:layout_weight="2"
+				android:id="@+id/istheappblacklisted"
+				android:layout_width="0dp"
+				android:layout_height="match_parent"
+				
+				>
+			</CheckBox>
+		</LinearLayout>
+	</android.support.v4.widget.CardView>
+</LinearLayout>

@@ -54,17 +54,18 @@ namespace LiveDisplay.Servicios
             OnAllNotificationsCancelled();
         }
 
-        public void PostNotification()
+        public void PostNotification(string title, string text, bool autoCancellable, NotificationPriority notificationPriority)
         {
-            //TODO: Change Hardcoded values to parameters.
+            //For android Oreo I must Specify a NotificationChannel
             //USe SetPriority/SetImportance on Different Android devices.
             Notification.Builder builder = new Notification.Builder(Application.Context);
-            builder.SetContentTitle("LiveDisplay");
-            builder.SetContentText("This is a test notification");
-            builder.SetAutoCancel(true);
+            builder.SetContentTitle(title);
+            builder.SetContentText(text);
+            builder.SetAutoCancel(autoCancellable);
 #pragma warning disable CS0618 // 'Notification.Builder.SetPriority(int)' está obsoleto: 'deprecated'
-            builder.SetPriority(Convert.ToInt32(Android.App.NotificationPriority.Low));
+            builder.SetPriority(Convert.ToInt32(NotificationPriority.Low));
 #pragma warning restore CS0618 // 'Notification.Builder.SetPriority(int)' está obsoleto: 'deprecated'
+            
             builder.SetSmallIcon(Resource.Drawable.ic_stat_default_appicon);
             notificationManager.Notify(1, builder.Build());
         }

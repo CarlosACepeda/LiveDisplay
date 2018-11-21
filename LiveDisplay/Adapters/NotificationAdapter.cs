@@ -62,7 +62,7 @@ namespace LiveDisplay.Adapters
             itemView.LongClick += ItemView_LongClick;
         }
 
-        //TODO: Invoke these events on the Fragment? Don't use activity for this callbacks?
+        
         private void ItemView_LongClick(object sender, View.LongClickEventArgs e)
         {
             OnItemLongClicked(LayoutPosition);

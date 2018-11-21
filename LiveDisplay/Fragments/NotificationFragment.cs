@@ -43,6 +43,7 @@ namespace LiveDisplay.Fragments
             notification = v.FindViewById<LinearLayout>(Resource.Id.llNotification);
 
             //Subscribe to events raised by several types.
+            notification.Drag += Notification_Drag;
             notification.Click += LlNotification_Click;
             NotificationAdapterViewHolder.ItemClicked += ItemClicked;
             NotificationAdapterViewHolder.ItemLongClicked += ItemLongClicked;
@@ -50,6 +51,11 @@ namespace LiveDisplay.Fragments
             CatcherHelper.NotificationUpdated += CatcherHelper_NotificationUpdated;
             CatcherHelper.NotificationRemoved += CatcherHelper_NotificationRemoved;
             return v;
+        }
+
+        private void Notification_Drag(object sender, View.DragEventArgs e)
+        {
+            StartTimeout(); //To keep the notification visible while the user touches the notification fragment
         }
 
         private void CatcherHelper_NotificationPosted(object sender, NotificationPostedEventArgs e)
@@ -153,6 +159,7 @@ namespace LiveDisplay.Fragments
                     {
                         notificationActions.AddView(a);
                     }
+                    notificationActions.Invalidate();
                 }
             }
             if (notification.Visibility != ViewStates.Visible)

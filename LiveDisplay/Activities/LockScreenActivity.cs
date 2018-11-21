@@ -1,8 +1,10 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.Graphics;
+using Android.Hardware;
 using Android.OS;
 using Android.Preferences;
+using Android.Runtime;
 using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
@@ -20,7 +22,7 @@ using System.Threading;
 namespace LiveDisplay
 {
     [Activity(Label = "LockScreen", Theme = "@style/LiveDisplayThemeDark", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, LaunchMode = Android.Content.PM.LaunchMode.SingleTask, ExcludeFromRecents = true)]
-    public class LockScreenActivity : Activity
+    public class LockScreenActivity : Activity, ISensorEventListener
     {
         private RecyclerView recycler;
         private RecyclerView.LayoutManager layoutManager;
@@ -36,9 +38,11 @@ namespace LiveDisplay
         private float finalTouchTime;
         private readonly float threshold = 1000; //1 second of threshold.(used to implement the double tap.)
         private bool timeoutStarted;
-
+        private Sensor sensor;
+        private SensorManager sensorManager;
         protected override void OnCreate(Bundle savedInstanceState)
         {
+           
             base.OnCreate(savedInstanceState);
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.LockScreen);
@@ -409,6 +413,16 @@ namespace LiveDisplay
                     //Nothing lol, this is saved to stack memory so, it's freed after this method gets executed.
                 }
             }
+        }
+
+        public void OnAccuracyChanged(Sensor sensor, [GeneratedEnum] SensorStatus accuracy)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnSensorChanged(SensorEvent e)
+        {
+            throw new NotImplementedException();
         }
     }
 }

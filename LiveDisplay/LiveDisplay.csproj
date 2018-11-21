@@ -146,7 +146,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Activities\BackgroundSettingsActivity.cs" />
+    <Compile Include="Activities\BlacklistActivity.cs" />
     <Compile Include="Activities\SettingsActivity.cs" />
+    <Compile Include="Adapters\AppsToBeBlacklistedAdapter.cs" />
     <Compile Include="Adapters\NotificationAdapter.cs" />
     <Compile Include="BroadcastReceivers\AdminReceiver.cs" />
     <Compile Include="BroadcastReceivers\BatteryReceiver.cs" />
@@ -158,6 +160,7 @@
     <Compile Include="Fragments\PreferencesFragment.cs" />
     <Compile Include="Fragments\MusicFragment.cs" />
     <Compile Include="Fragments\NotificationFragment.cs" />
+    <Compile Include="Fragments\WeatherFragment.cs" />
     <Compile Include="Misc\BatteryLevelFlags.cs" />
     <Compile Include="Misc\ConfigurationParameters.cs" />
     <Compile Include="Misc\MediaActionFlags.cs" />
@@ -189,6 +192,7 @@
     <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationCancelledEventArgsLollipop.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationPostedEventArgs.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationSlave.cs" />
+    <Compile Include="Servicios\Weather\Weather.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="GettingStarted.Xamarin" />
@@ -480,9 +484,6 @@
     <AndroidResource Include="Resources\values\arrays_changewallpaper.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\values\arrays_blacklist.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\layout\cLock.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
@@ -718,6 +719,16 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\BackgroundSettings.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\BlackList.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\BlacklistItemRow.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
