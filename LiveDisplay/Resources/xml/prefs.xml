@@ -100,6 +100,14 @@
         android:persistent="false"
         android:selectable="false">
       </Preference>
+     <Preference
+      android:title="@string/version"
+      android:summary="@string/versionnumber"
+      android:selectable="false"
+      android:persistent="false"
+      >
+      
+    </Preference>
   </PreferenceCategory>
     <PreferenceCategory android:title="@string/translations">
       <Preference

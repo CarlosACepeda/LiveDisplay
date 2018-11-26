@@ -56,8 +56,10 @@
   <string name="turnonusermovement">Prender la pantalla al levantar el dispositivo</string>
   <string name="uselockscreennonotifications">Usar la pantalla de bloqueo sin notificaciones</string>
   <string name="uselockscreennonotificationsdesc">Para mejor usabilidad, desactiva la pantalla de bloqueo por defecto de Android</string>
+  <string name="versionnumber">0.6.4</string>
+  <string name="wallpaperblur">Difuminación</string>
+  <string name="wallpaperopacity">Opacidad</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">Diseño del icono de esta app!</string>
-  <string name="wallpaperopacity">Opacidad</string>
-  <string name="wallpaperblur">Difuminación</string>
+  <string name="version">Versión</string>
 </resources>

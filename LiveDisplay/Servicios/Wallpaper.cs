@@ -12,7 +12,9 @@ using Android.Widget;
 
 namespace LiveDisplay.Servicios
 {
-    class Blacklist
+    class Wallpaper
     {
+        //To be used as a manager for all Wallpaper events, like replacing, quit, add etc.
+        //
     }
 }

@@ -9,7 +9,7 @@ namespace LiveDisplay.Misc
         {
             using (PackageManager packageManager = Application.Context.PackageManager)
             {
-                ApplicationInfo applicationInfo = packageManager.GetApplicationInfo(package, 0); //What is zero for?
+                ApplicationInfo applicationInfo = packageManager.GetApplicationInfo(package, 0); //Zero means: No specific PackageInfoFlags specified.
                 package = packageManager.GetApplicationLabel(applicationInfo);
             }
             return package;

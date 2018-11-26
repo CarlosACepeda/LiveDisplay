@@ -58,8 +58,10 @@
   <string name="turnonusermovement">Turn on screen on device pick up</string>
   <string name="uselockscreennonotifications">Use the lockscreen without notifications</string>
   <string name="uselockscreennonotificationsdesc">For better usage, turn off the default Android lockscreen</string>
+  <string name="versionnumber">0.6.4</string>
+  <string name="wallpaperblur">Blur</string>
+  <string name="wallpaperopacity">Opacity</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
-  <string name="wallpaperopacity">Opacity</string>
-  <string name="wallpaperblur">Blur</string>
+  <string name="version">Version</string>
 </resources>
