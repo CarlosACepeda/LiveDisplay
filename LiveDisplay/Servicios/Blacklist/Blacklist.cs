@@ -12,7 +12,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 
-namespace LiveDisplay.Servicios.Blacklist
+namespace LiveDisplay.Servicios
 {
     class Blacklist
     {

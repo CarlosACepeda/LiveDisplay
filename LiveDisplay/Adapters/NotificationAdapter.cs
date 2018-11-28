@@ -17,8 +17,10 @@ namespace LiveDisplay.Adapters
 
         public override int ItemCount => notificaciones.Count;
 
+        
         public NotificationAdapter(List<StatusBarNotification> notificaciones)
         {
+            
             this.notificaciones = notificaciones;
         }
 

@@ -2,6 +2,7 @@
 using Android.Service.Notification;
 using LiveDisplay.Adapters;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
+using LiveDisplay.Servicios;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -85,9 +86,27 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         private void InsertNotification(StatusBarNotification sbn)
         {
-            statusBarNotifications.Add(sbn);
-            using (var h = new Handler(Looper.MainLooper))
-                h.Post(() => { notificationAdapter.NotifyItemInserted(statusBarNotifications.Count); });
+            if (Blacklist.IsAppBlacklisted(sbn.PackageName))
+            {
+                statusBarNotifications.Add(sbn);
+                using (var h = new Handler(Looper.MainLooper))
+                    h.Post(() => { notificationAdapter.NotifyItemInserted(statusBarNotifications.Count); });
+
+            }
+            else
+            {
+                var notificationSlave = NotificationSlave.NotificationSlaveInstance();
+                if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
+                {
+                    notificationSlave.CancelNotification(sbn.Key);
+
+                }
+                else
+                {
+                    notificationSlave.CancelNotification(sbn.PackageName, sbn.Tag, sbn.Id);
+                }
+
+            }
         }
 
         private void OnNotificationUpdated(int position)
@@ -102,7 +121,7 @@ namespace LiveDisplay.Servicios.Notificaciones
         private bool UpdateNotification(StatusBarNotification sbn)
         {
             int indice = GetNotificationPosition(sbn);
-            if (indice >= 0)
+            if (indice >= 0 && Blacklist.IsAppBlacklisted(sbn.PackageName) == false)
             {
                 statusBarNotifications.RemoveAt(indice);
                 statusBarNotifications.Add(sbn);
@@ -112,7 +131,21 @@ namespace LiveDisplay.Servicios.Notificaciones
                 OnNotificationUpdated(indice);
                 return true;
             }
-            return false;
+            else
+            {
+                var notificationSlave = NotificationSlave.NotificationSlaveInstance();
+                if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
+                {
+                    notificationSlave.CancelNotification(sbn.Key);
+
+                }
+                else
+                {
+                    notificationSlave.CancelNotification(sbn.PackageName, sbn.Tag, sbn.Id);
+                }
+                return false;
+            }
+            
         }
 
         private void RemoveNotificationFromGroup()

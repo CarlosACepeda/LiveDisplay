@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 		<LinearLayout
+			android:padding="5dp"
 			android:weightSum="10"
 			android:orientation="horizontal"
 			android:layout_width="match_parent"

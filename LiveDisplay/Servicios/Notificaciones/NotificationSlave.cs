@@ -7,7 +7,7 @@ namespace LiveDisplay.Servicios
     //Esta clase sirve para manipular las notificaciones, como quitarlas o agregarlas.
     internal class NotificationSlave : Java.Lang.Object
     {
-        public static NotificationSlave instance;
+        private static NotificationSlave instance;
 
         public event EventHandler<NotificationCancelledEventArgsKitkat> NotificationCancelled;
 
@@ -56,9 +56,9 @@ namespace LiveDisplay.Servicios
 
         public void PostNotification(string title, string text, bool autoCancellable, NotificationPriority notificationPriority)
         {
-            //For android Oreo I must Specify a NotificationChannel
-            //USe SetPriority/SetImportance on Different Android devices.
+#pragma warning disable CS0618 // 'Notification.Builder(Context) está obsoleto
             Notification.Builder builder = new Notification.Builder(Application.Context);
+#pragma warning restore
             builder.SetContentTitle(title);
             builder.SetContentText(text);
             builder.SetAutoCancel(autoCancellable);
@@ -68,6 +68,21 @@ namespace LiveDisplay.Servicios
             
             builder.SetSmallIcon(Resource.Drawable.ic_stat_default_appicon);
             notificationManager.Notify(1, builder.Build());
+        }
+        public void PostNotification(string title, string text, bool autoCancellable, NotificationImportance notificationImportance)
+        {
+            NotificationChannel notificationChannel = new NotificationChannel("livedisplaynotificationchannel", "LiveDisplay", notificationImportance);
+            notificationManager.CreateNotificationChannel(notificationChannel);
+            Notification.Builder builder = new Notification.Builder(Application.Context, "livedisplaynotificationchannel");
+            builder.SetContentTitle(title);
+            builder.SetContentText(text);
+            builder.SetAutoCancel(autoCancellable);
+            builder.SetSmallIcon(Resource.Drawable.ic_stat_default_appicon);
+            notificationManager.Notify(1, builder.Build());
+        }
+        public void SendDumbNotification()
+        {
+
         }
 
         //Raising events.

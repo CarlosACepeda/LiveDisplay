@@ -5,15 +5,14 @@ using Android.Widget;
 using Android.Support.V7.Widget;
 using System.Collections.Generic;
 using Android.Content.PM;
-using LiveDisplay.Servicios.Blacklist;
 using LiveDisplay.Misc;
+using LiveDisplay.Servicios;
 
 namespace LiveDisplay.Adapters
 {
     class AppsToBeBlacklistedAdapter : RecyclerView.Adapter
     {
-        public event EventHandler<AppsToBeBlacklistedAdapterClickEventArgs> ItemClick;
-        public event EventHandler<AppsToBeBlacklistedAdapterClickEventArgs> ItemLongClick;
+
         List<PackageInfo> items;
 
         public AppsToBeBlacklistedAdapter(List<PackageInfo> listofapppackages)
@@ -28,7 +27,7 @@ namespace LiveDisplay.Adapters
             //Setup your layout here
             LayoutInflater layoutInflater = LayoutInflater.From(parent.Context);
             View itemView = layoutInflater.Inflate(Resource.Layout.BlacklistItemRow, parent, false);
-            return new AppsToBeBlacklistedAdapterViewHolder(itemView, OnClick, OnLongClick);
+            return new AppsToBeBlacklistedAdapterViewHolder(itemView);
         }
 
         // Replace the contents of a view (invoked by the layout manager)
@@ -38,36 +37,34 @@ namespace LiveDisplay.Adapters
             // Replace the contents of the view with that element
             var holder = viewHolder as AppsToBeBlacklistedAdapterViewHolder;
             holder.App.Text = PackageUtils.GetTheAppName(items[position].PackageName);
-            holder.blacklistToggle.Checked = Blacklist.IsAppBlacklisted(items[position].PackageName);
+            holder.BlacklistToggle.Checked = Blacklist.IsAppBlacklisted(items[position].PackageName);
         }
 
         public override int ItemCount => items.Count;
-
-        void OnClick(AppsToBeBlacklistedAdapterClickEventArgs args) => ItemClick?.Invoke(this, args);
-        void OnLongClick(AppsToBeBlacklistedAdapterClickEventArgs args) => ItemLongClick?.Invoke(this, args);
 
     }
 
     public class AppsToBeBlacklistedAdapterViewHolder : RecyclerView.ViewHolder
     {
         public TextView App { get; set; }
-        public CheckBox blacklistToggle { get; set; }
+        public CheckBox BlacklistToggle { get; set; }
 
 
-        public AppsToBeBlacklistedAdapterViewHolder(View itemView, Action<AppsToBeBlacklistedAdapterClickEventArgs> clickListener,
-                            Action<AppsToBeBlacklistedAdapterClickEventArgs> longClickListener) : base(itemView)
+        public AppsToBeBlacklistedAdapterViewHolder(View itemView) : base(itemView)
         {
             App= itemView.FindViewById<TextView>(Resource.Id.applicationname);
-            blacklistToggle = itemView.FindViewById<CheckBox>(Resource.Id.istheappblacklisted);
+            BlacklistToggle = itemView.FindViewById<CheckBox>(Resource.Id.istheappblacklisted);
+            BlacklistToggle.CheckedChange += BlacklistToggle_CheckedChange;
+           
+        }
 
-            itemView.Click += (sender, e) => clickListener(new AppsToBeBlacklistedAdapterClickEventArgs { View = itemView, Position = AdapterPosition });
-            itemView.LongClick += (sender, e) => longClickListener(new AppsToBeBlacklistedAdapterClickEventArgs { View = itemView, Position = AdapterPosition });
+        private void BlacklistToggle_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
+        {
+            if (e.IsChecked)
+            {
+               
+            }
         }
     }
 
-    public class AppsToBeBlacklistedAdapterClickEventArgs : EventArgs
-    {
-        public View View { get; set; }
-        public int Position { get; set; }
-    }
 }

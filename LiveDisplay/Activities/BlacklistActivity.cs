@@ -12,7 +12,7 @@ using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
 using LiveDisplay.Adapters;
-using LiveDisplay.Servicios.Blacklist;
+using LiveDisplay.Servicios;
 
 namespace LiveDisplay.Activities
 {
