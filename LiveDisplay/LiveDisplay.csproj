@@ -184,6 +184,7 @@
     <Compile Include="Servicios\Battery\BatteryEventArgs\BatteryChangedEventArgs.cs" />
     <Compile Include="Servicios\Blacklist\Blacklist.cs" />
     <Compile Include="Servicios\ConfigurationManager.cs" />
+    <Compile Include="Servicios\FloatingNotification\FloatingNotification.cs" />
     <Compile Include="Servicios\Music\Jukebox.cs" />
     <Compile Include="Servicios\Music\JukeboxKitkat.cs" />
     <Compile Include="Servicios\Music\MediaEventArgs\MediaActionEventArgs.cs" />
