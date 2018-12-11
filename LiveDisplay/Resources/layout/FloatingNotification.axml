@@ -3,8 +3,6 @@
     android:id="@+id/llNotification"
     android:animateLayoutChanges="true"
     android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
     android:minHeight="70dp"
     android:background="?android:selectableItemBackground"
     android:visibility="visible">
@@ -19,7 +17,7 @@
             android:textStyle="italic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/tvAppName"
+            android:id="@+id/floatingappname"
             android:textSize="12dp" />
         <Space
             android:layout_width="3dp"
@@ -32,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="12dp"
-            android:id="@+id/tvWhen" />
+            android:id="@+id/floatingwhen" />
     </LinearLayout>
     <TextView
         android:fontFamily="sans-serif-condensed"
@@ -40,18 +38,18 @@
         android:textColor="@color/primary_text_default_material_light"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tvTitulo" />
+        android:id="@+id/floatingtitle" />
     <TextView
         android:fontFamily="sans-serif-condensed"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="@color/primary_text_default_material_light"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tvTexto"
+        android:id="@+id/floatingtext"
         android:maxLines="4"
         android:minLines="0" />
     <LinearLayout
-        android:id="@+id/notificationActions"
+        android:id="@+id/floatingNotificationActions"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

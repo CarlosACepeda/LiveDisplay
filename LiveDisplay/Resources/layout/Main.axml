@@ -56,7 +56,7 @@
 					android:layout_height="wrap_content">
 					<TextView
 						android:padding="10dp"
-						android:text="Enable Notification Access"
+						android:text="@string/enablenotificationlistener"
 						android:textAppearance="?android:attr/textAppearanceLarge"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
@@ -75,7 +75,7 @@
 					android:layout_height="wrap_content">
 					<TextView
 						android:padding="10dp"			
-						android:text="Enable Device Access"
+						android:text="@string/enabledeviceaccess"
 						android:textAppearance="?android:attr/textAppearanceLarge"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
@@ -87,9 +87,7 @@
 						android:layout_alignParentRight="true" />
 				</RelativeLayout>
 				<TextView
-					
 					android:padding="10dp"
-					android:text="Accesses are enabled."
 					android:textAppearance="?android:attr/textAppearanceSmall"
 		            android:layout_width="match_parent"
 		            android:layout_height="wrap_content"

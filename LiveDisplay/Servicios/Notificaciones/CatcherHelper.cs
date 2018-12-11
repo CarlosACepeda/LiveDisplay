@@ -86,7 +86,7 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         private void InsertNotification(StatusBarNotification sbn)
         {
-            if (Blacklist.IsAppBlacklisted(sbn.PackageName))
+            if (Blacklist.IsAppBlacklisted(sbn.PackageName)==false)
             {
                 statusBarNotifications.Add(sbn);
                 using (var h = new Handler(Looper.MainLooper))

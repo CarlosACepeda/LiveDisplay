@@ -3,6 +3,7 @@ using Android.OS;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using Java.Util;
 using LiveDisplay.Factories;
 using LiveDisplay.Misc;
 using System;
@@ -126,7 +127,9 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             try
             {
-                return CatcherHelper.statusBarNotifications[position].Notification.When.ToString();
+                var lol= CatcherHelper.statusBarNotifications[position].Notification.When.ToString();
+                DateTime dateTime = new DateTime(Convert.ToInt64(lol));
+                return dateTime.Hour + ":" + dateTime.Minute;
             }
             catch
             {

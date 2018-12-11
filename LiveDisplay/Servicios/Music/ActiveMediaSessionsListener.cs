@@ -12,17 +12,12 @@ namespace LiveDisplay.Servicios.Music
     /// </summary>
     internal class ActiveMediaSessionsListener : Java.Lang.Object, MediaSessionManager.IOnActiveSessionsChangedListener
     {
-        public static bool IsASessionActive { get; set; }
-        private Android.Media.Session.MediaController mediaController;
-
-        public static event EventHandler MediaSessionStarted;
-
-        public static event EventHandler MediaSessionStopped;
+        private MediaController mediaController;
 
         private MusicController musicController;
 
         //Al parecer hay varios controladores de Multimedia y toca recuperarlos.
-        public void OnActiveSessionsChanged(IList<Android.Media.Session.MediaController> controllers)
+        public void OnActiveSessionsChanged(IList<MediaController> controllers)
         {
             if (controllers.Count > 0)
             {
@@ -33,25 +28,15 @@ namespace LiveDisplay.Servicios.Music
                 musicController.TransportControls = mediaController.GetTransportControls();
                 musicController.MediaMetadata = mediaController.Metadata;
                 musicController.PlaybackState = mediaController.PlaybackState;
-                IsASessionActive = true;
             }
             else if (mediaController != null && controllers.Count == 0)
             {
                 Log.Info("LiveDisplay", "mediacontroller null or no controllers.");
                 //This is probably never to happen
                 mediaController.UnregisterCallback(musicController);
-                IsASessionActive = false;
+                musicController.Dispose();
             }
         }
 
-        protected virtual void OnMediaSessionStarted()
-        {
-            MediaSessionStarted?.Invoke(this, EventArgs.Empty);
-        }
-
-        protected virtual void OnMediaSessionStopped()
-        {
-            MediaSessionStopped?.Invoke(this, EventArgs.Empty);
-        }
     }
 }

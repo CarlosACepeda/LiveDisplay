@@ -7,6 +7,7 @@ using Android.Views;
 using Android.Widget;
 using LiveDisplay.Servicios.Music;
 using LiveDisplay.Servicios.Music.MediaEventArgs;
+using LiveDisplay.Servicios.Wallpaper;
 using System;
 
 namespace LiveDisplay.Fragments
@@ -17,8 +18,6 @@ namespace LiveDisplay.Fragments
         private Button btnSkipPrevious, btnPlayPause, btnSkipNext;
         private LinearLayout musicPlayerContainer;
         private SeekBar skbSeekSongTime;
-        private ImageView wallpaper;
-
         private PlaybackStateCode playbackState;
 
         #region Fragment Lifecycle
@@ -54,7 +53,7 @@ namespace LiveDisplay.Fragments
         }
 
         #endregion Fragment Lifecycle
-
+ 
         #region Fragment Views events
 
         private void BindViewEvents()
@@ -150,7 +149,10 @@ namespace LiveDisplay.Fragments
             tvAlbum.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyAlbum);
             tvArtist.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyArtist);
             skbSeekSongTime.Max = (int)e.MediaMetadata.GetLong(MediaMetadata.MetadataKeyDuration);
-            wallpaper.Background = new BitmapDrawable(e.MediaMetadata.GetBitmap(MediaMetadata.MetadataKeyAlbumArt));
+            WallpaperPublisher.OnWallpaperChanged(new WallpaperChangedEventArgs
+            {
+                Wallpaper = new BitmapDrawable(Resources ,e.MediaMetadata.GetBitmap(MediaMetadata.MetadataKeyAlbumArt))
+            });
             GC.Collect(0);
         }
 
@@ -197,7 +199,7 @@ namespace LiveDisplay.Fragments
             skbSeekSongTime = view.FindViewById<SeekBar>(Resource.Id.seeksongTime);
 
             musicPlayerContainer = view.FindViewById<LinearLayout>(Resource.Id.musicPlayerContainer);
-            wallpaper = Activity.FindViewById<ImageView>(Resource.Id.wallpaper);
+            
         }
 
         private void RetrieveMediaInformation()

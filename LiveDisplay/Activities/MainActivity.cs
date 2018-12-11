@@ -2,11 +2,13 @@
 using Android.App.Admin;
 using Android.Content;
 using Android.OS;
+using Android.Runtime;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
 using LiveDisplay.BroadcastReceivers;
 using LiveDisplay.Misc;
+using LiveDisplay.Servicios.FloatingNotification;
 
 //for CI.
 using Microsoft.AppCenter;
@@ -21,7 +23,6 @@ namespace LiveDisplay.Activities
     internal class MainActivity : AppCompatActivity
     {
         private Android.Support.V7.Widget.Toolbar toolbar;
-        private TextView status;
         private TextView enableNotificationAccess, enableDeviceAdmin;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -29,38 +30,72 @@ namespace LiveDisplay.Activities
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.Main);
             BindViews();
-            StartVariables();
+            StartAppCenterMonotoring();
         }
 
         protected override void OnResume()
         {
             CheckNotificationAccess();
             CheckDeviceAdminAccess();
+            IsApplicationHealthy();
             base.OnResume();
         }
 
         private void CheckDeviceAdminAccess()
         {
-            if (AdminReceiver.isAdminGiven == false)
+            using (var adminGivenImageView = FindViewById<ImageView>(Resource.Id.deviceAccessCheckbox))
             {
+                switch (AdminReceiver.isAdminGiven)
+                {
+                    case true:
+                        adminGivenImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
+                        break;
+                    case false:
+                        adminGivenImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
+
+                        break;
+                    default:
+                        break;
+                }
             }
         }
 
         private void CheckNotificationAccess()
         {
-            if (NLChecker.IsNotificationListenerEnabled() == false)
+            using (var notificationAccessGivenImageView = FindViewById<ImageView>(Resource.Id.notificationAccessCheckbox))
             {
+                switch (NLChecker.IsNotificationListenerEnabled())
+                {
+                    case true:
+                        notificationAccessGivenImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
+
+                        break;
+                    case false:
+                        notificationAccessGivenImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
+                        break;
+                    default:
+                        break;
+                }
             }
         }
 
-        private bool IsApplicationHealthy()
+        private void IsApplicationHealthy()
         {
-            if (NLChecker.IsNotificationListenerEnabled() == true && AdminReceiver.isAdminGiven == true)
+            using (var accessestext = FindViewById<TextView>(Resource.Id.health))
             {
-                return true;
+                if (NLChecker.IsNotificationListenerEnabled() == true && AdminReceiver.isAdminGiven == true)
+                {
+
+                    accessestext.SetText(Resource.String.accessesstatusenabled);
+                    accessestext.SetTextColor(Android.Graphics.Color.Green);
+                }
+                else
+                {
+                    accessestext.SetText(Resource.String.accessesstatusdisabled);
+                    accessestext.SetTextColor(Android.Graphics.Color.Red);
+                }
             }
 
-            return false;
         }
 
         protected override void OnPause()
@@ -77,6 +112,19 @@ namespace LiveDisplay.Activities
             base.OnDestroy();
         }
 
+        protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
+        {
+            base.OnActivityResult(requestCode, resultCode, data);
+            if (requestCode == 25)
+            {
+                using (Intent intent = new Intent(this, typeof(FloatingNotification)))
+                {
+                    StartService(intent);
+                }
+
+            }
+        }
+
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
             MenuInflater.Inflate(Resource.Menu.menu_main, menu);
@@ -88,10 +136,16 @@ namespace LiveDisplay.Activities
             int id = item.ItemId;
             if (id == Resource.Id.action_settings)
             {
+                //using (var intent = new Intent(Android.Provider.Settings.ActionManageOverlayPermission))
+                //{
+                //    StartActivityForResult(intent, 25);
+                //}
                 using (Intent intent = new Intent(this, typeof(SettingsActivity)))
                 {
                     StartActivity(intent);
                 }
+
+
 
                 return true;
             }
@@ -106,7 +160,6 @@ namespace LiveDisplay.Activities
                 SetSupportActionBar(toolbar);
             }
 
-            status = FindViewById<TextView>(Resource.Id.health);
             enableDeviceAdmin = FindViewById<TextView>(Resource.Id.enableDeviceAccess);
             enableNotificationAccess = FindViewById<TextView>(Resource.Id.enableNotificationAccess);
             enableNotificationAccess.Click += EnableNotificationAccess_Click;
@@ -132,9 +185,8 @@ namespace LiveDisplay.Activities
             }
         }
 
-        private void StartVariables()
+        private void StartAppCenterMonotoring()
         {
-            ////CI
             ThreadPool.QueueUserWorkItem(m =>
             {
                 AppCenter.Start("0ec5320c-34b4-498b-a9c2-dae7614997fa", typeof(Analytics), typeof(Crashes));

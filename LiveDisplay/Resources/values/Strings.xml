@@ -25,7 +25,8 @@
   <string name="dialognldisabledpositivebutton">Allow</string>
   <string name="doubletaptosleep">Double tap to sleep</string>
   <string name="doubletaptosleepdesc">Touch twice anywhere on the lock screen to turn off the screen</string>
-  <string name="enablenotificationlistener">Enable the Notification Listener</string>
+  <string name="enabledeviceaccess">Enable device Access</string>
+  <string name="enablenotificationlistener">Enable Notification Access</string>
   <string name="enablequickreply">Enable quick Notification Reply</string>
   <string name="enablequickreplydesc">Answer directly from Notification to messages, as seen in Nougat and beyond</string>
   <string name="eng">English</string>
@@ -58,10 +59,12 @@
   <string name="turnonusermovement">Turn on screen on device pick up</string>
   <string name="uselockscreennonotifications">Use the lockscreen without notifications</string>
   <string name="uselockscreennonotificationsdesc">For better usage, turn off the default Android lockscreen</string>
+  <string name="version">Version</string>
   <string name="versionnumber">0.6.4</string>
   <string name="wallpaperblur">Blur</string>
   <string name="wallpaperopacity">Opacity</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
-  <string name="version">Version</string>
+  <string name="accessesstatusdisabled">Accesses are disabled</string>
+  <string name="accessesstatusenabled">Accesses are enabled!</string>
 </resources>

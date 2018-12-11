@@ -56,7 +56,7 @@
             a:layout_weight="20"
             a:layout_width="match_parent"
             a:layout_height="0dp"
-            a:id="@+id/cLockPlaceholder" />
+            a:id="@+id/weatherandcLockplaceholder" />
     <!--This FrameLayout contains the Unlocker and the Shortcut button-->
         <FrameLayout
             a:layout_width="match_parent"

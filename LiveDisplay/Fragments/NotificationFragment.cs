@@ -103,6 +103,7 @@ namespace LiveDisplay.Fragments
                     notification.Visibility = ViewStates.Invisible;
                     titulo.Text = null;
                     texto.Text = null;
+                    when.Text = null;
                     notificationActions.RemoveAllViews();
                 }
             }
@@ -149,8 +150,7 @@ namespace LiveDisplay.Fragments
                 titulo.Text = openNotification.GetTitle();
                 texto.Text = openNotification.GetText();
                 appName.Text = openNotification.GetAppName();
-                //Fix me:
-                //when.Text = notification.GetWhen();
+                when.Text = openNotification.GetWhen();
                 notificationActions.RemoveAllViews();
 
                 if (OpenNotification.NotificationHasActionButtons(e.Position) == true)

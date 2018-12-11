@@ -5,16 +5,16 @@ using System.Text;
 
 using Android.App;
 using Android.Content;
+using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 
-namespace LiveDisplay.Servicios
+namespace LiveDisplay.Servicios.Wallpaper
 {
-    class Wallpaper
+    public class WallpaperChangedEventArgs: EventArgs
     {
-        //To be used as a manager for all Wallpaper events, like replacing, quit, add etc.
-        //
+        public Drawable Wallpaper { get; set; }
     }
 }

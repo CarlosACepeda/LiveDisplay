@@ -1,6 +1,7 @@
 ﻿using Android.Media;
 using Android.Media.Session;
 using Android.Util;
+using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Music.MediaEventArgs;
 using System;
 
@@ -14,7 +15,7 @@ namespace LiveDisplay.Servicios.Music
     internal class MusicController : MediaController.Callback, IDisposable
     {
         #region Class members
-
+        public static PlaybackStateCode MusicStatus { get; private set; }
         public PlaybackState PlaybackState { get; set; }
         public MediaController.TransportControls TransportControls { get; set; }
         public MediaMetadata MediaMetadata { get; set; }
@@ -22,8 +23,10 @@ namespace LiveDisplay.Servicios.Music
 
         #region events
 
+        public static event EventHandler MusicPlaying;
+        public static event EventHandler MusicStopped;
+        public static event EventHandler MusicPaused;
         public static event EventHandler<MediaPlaybackStateChangedEventArgs> MediaPlaybackChanged;
-
         public static event EventHandler<MediaMetadataChangedEventArgs> MediaMetadataChanged;
 
         #endregion events
@@ -48,31 +51,31 @@ namespace LiveDisplay.Servicios.Music
         {
             switch (e.MediaActionFlags)
             {
-                case Misc.MediaActionFlags.Play:
+                case MediaActionFlags.Play:
                     TransportControls.Play();
                     break;
 
-                case Misc.MediaActionFlags.Pause:
+                case MediaActionFlags.Pause:
                     TransportControls.Pause();
                     break;
 
-                case Misc.MediaActionFlags.SkipToNext:
+                case MediaActionFlags.SkipToNext:
                     TransportControls.SkipToNext();
                     break;
 
-                case Misc.MediaActionFlags.SkipToPrevious:
+                case MediaActionFlags.SkipToPrevious:
                     TransportControls.SkipToPrevious();
                     break;
 
-                case Misc.MediaActionFlags.SeekTo:
+                case MediaActionFlags.SeekTo:
                     TransportControls.SeekTo(e.Time);
                     break;
 
-                case Misc.MediaActionFlags.FastFoward:
+                case MediaActionFlags.FastFoward:
                     TransportControls.FastForward();
                     break;
 
-                case Misc.MediaActionFlags.Rewind:
+                case MediaActionFlags.Rewind:
                     TransportControls.Rewind();
                     break;
 
@@ -103,8 +106,8 @@ namespace LiveDisplay.Servicios.Music
         public override void OnPlaybackStateChanged(PlaybackState state)
         {
             PlaybackState = state;
-            //Estado del playback:
-            //Pausado, Comenzado, Avanzando, Retrocediendo, etc.
+            MusicStatus = state.State;
+
             OnMediaPlaybackChanged(new MediaPlaybackStateChangedEventArgs
             {
                 PlaybackState = state.State,
@@ -139,6 +142,7 @@ namespace LiveDisplay.Servicios.Music
 
         #region Raising events.
 
+
         protected virtual void OnMediaPlaybackChanged(MediaPlaybackStateChangedEventArgs e)
         {
             MediaPlaybackChanged?.Invoke(this, e);
@@ -150,5 +154,15 @@ namespace LiveDisplay.Servicios.Music
         }
 
         #endregion Raising events.
+        protected override void Dispose(bool disposing)
+        {
+            //release resources.
+
+            base.Dispose(disposing);
+            Jukebox.MediaEvent -= Jukebox_MediaEvent;
+            PlaybackState.Dispose();
+            TransportControls.Dispose();
+            MediaMetadata.Dispose();
+        }
     }
 }

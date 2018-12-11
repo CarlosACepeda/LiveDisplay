@@ -12,7 +12,7 @@ namespace LiveDisplay.Adapters
 {
     class AppsToBeBlacklistedAdapter : RecyclerView.Adapter
     {
-
+        private int SelectedItem = -1;
         List<PackageInfo> items;
 
         public AppsToBeBlacklistedAdapter(List<PackageInfo> listofapppackages)
@@ -38,6 +38,13 @@ namespace LiveDisplay.Adapters
             var holder = viewHolder as AppsToBeBlacklistedAdapterViewHolder;
             holder.App.Text = PackageUtils.GetTheAppName(items[position].PackageName);
             holder.BlacklistToggle.Checked = Blacklist.IsAppBlacklisted(items[position].PackageName);
+            SelectedItem = position;
+            holder.BlacklistToggle.CheckedChange += BlacklistToggle_CheckedChange;
+        }
+
+        private void BlacklistToggle_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
+        {
+
         }
 
         public override int ItemCount => items.Count;
@@ -62,7 +69,13 @@ namespace LiveDisplay.Adapters
         {
             if (e.IsChecked)
             {
-               
+                
+                Blacklist.ToggleAppBlacklistState("", true);
+            }
+            else
+            {
+                Blacklist.ToggleAppBlacklistState("", false);
+
             }
         }
     }

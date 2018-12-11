@@ -16,8 +16,10 @@ using LiveDisplay.Servicios;
 using LiveDisplay.Servicios.Music;
 using LiveDisplay.Servicios.Notificaciones;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
+using LiveDisplay.Servicios.Wallpaper;
 using System;
 using System.Threading;
+using Android.Media.Session;
 
 namespace LiveDisplay
 {
@@ -28,9 +30,11 @@ namespace LiveDisplay
         private RecyclerView.LayoutManager layoutManager;
         private ImageView unlocker;
         private Button clearAll;
+        private FrameLayout weatherandclockcontainer;
         private NotificationFragment notificationFragment;
         private MusicFragment musicFragment;
         private ClockFragment clockFragment;
+        private WeatherFragment weatherFragment;
         private bool thereAreNotifications = false;
         private Button startCamera;
         private LinearLayout lockscreen; //The root linear layout, used to implement double tap to sleep.
@@ -40,6 +44,9 @@ namespace LiveDisplay
         private bool timeoutStarted;
         private Sensor sensor;
         private SensorManager sensorManager;
+
+
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
            
@@ -52,18 +59,24 @@ namespace LiveDisplay
             startCamera = FindViewById<Button>(Resource.Id.btnStartCamera);
             clearAll = FindViewById<Button>(Resource.Id.btnClearAllNotifications);
             lockscreen = FindViewById<LinearLayout>(Resource.Id.contenedorPrincipal);
+            weatherandclockcontainer = FindViewById<FrameLayout>(Resource.Id.weatherandcLockplaceholder);
             notificationFragment = new NotificationFragment();
             musicFragment = new MusicFragment();
             clockFragment = new ClockFragment();
-
+            weatherFragment = new WeatherFragment();
             clearAll.Click += BtnClearAll_Click;
             unlocker.Touch += Unlocker_Touch;
             startCamera.Click += StartCamera_Click;
             lockscreen.Touch += Lockscreen_Touch;
+            weatherandclockcontainer.LongClick += Weatherandclockcontainer_LongClick;
 
-            //Media Controller events
-            ActiveMediaSessionsListener.MediaSessionStarted += MusicController_MediaSessionStarted;
-            ActiveMediaSessionsListener.MediaSessionStopped += MusicController_MediaSessionStopped;
+            WallpaperPublisher.WallpaperChanged += Wallpaper_WallpaperChanged;
+
+            //Music Controller Events
+
+            MusicController.MusicPlaying += MusicController_MusicPlaying;
+            MusicController.MusicPaused += MusicController_MusicPaused;
+            MusicController.MusicStopped += MusicController_MusicStopped;
 
             //CatcherHelper events
             CatcherHelper.NotificationListSizeChanged += CatcherHelper_NotificationListSizeChanged;
@@ -79,20 +92,64 @@ namespace LiveDisplay
                 }
             }
 
-            //Load cLock Widget
+
             LoadClockFragment();
 
             //Load User Configs.
             ThreadPool.QueueUserWorkItem(o => LoadConfiguration());
 
-            //Load Notification Fragment
+            
             LoadNotificationFragment();
 
             //Check if music is playing
             CheckIfMusicIsPlaying();
 
-            //Check the Notification List Size
+            
             CheckNotificationListSize();
+
+
+        }
+
+        private void MusicController_MusicStopped(object sender, EventArgs e)
+        {
+            StopMusicController();
+        }
+
+        private void MusicController_MusicPaused(object sender, EventArgs e)
+        {
+            ThreadPool.QueueUserWorkItem(m => CheckIfMusicIsStillPaused());
+
+
+        }
+
+        private void CheckIfMusicIsStillPaused()
+        {
+            Thread.Sleep(5000); //Wait 5 seconds.
+
+            if(MusicController.MusicStatus!= PlaybackStateCode.Playing)
+            {
+                StopMusicController();
+                Log.Info("LiveDisplay", "Musicfragment stopped");
+            }
+        }
+
+        private void MusicController_MusicPlaying(object sender, EventArgs e)
+        {
+            StartMusicController();
+        }
+
+        private void Weatherandclockcontainer_LongClick(object sender, View.LongClickEventArgs e)
+        {
+            using (var fragmentTransaction = FragmentManager.BeginTransaction())
+            {
+                fragmentTransaction.Replace(Resource.Id.weatherandcLockplaceholder, weatherFragment);
+                fragmentTransaction.Commit();
+            }
+        }
+
+        private void Wallpaper_WallpaperChanged(object sender, WallpaperChangedEventArgs e)
+        {
+            Window.DecorView.Background = e.Wallpaper;
         }
 
         private void Lockscreen_Touch(object sender, View.TouchEventArgs e)
@@ -139,6 +196,10 @@ namespace LiveDisplay
 
         protected override void OnPause()
         {
+            MusicController.MusicPlaying -= MusicController_MusicPlaying;
+            MusicController.MusicPaused -= MusicController_MusicPaused;
+            MusicController.MusicStopped -= MusicController_MusicStopped;
+
             GC.Collect();
             base.OnPause();
         }
@@ -150,8 +211,7 @@ namespace LiveDisplay
             //Unbind events
             unlocker.Touch -= Unlocker_Touch;
             clearAll.Click -= BtnClearAll_Click;
-            ActiveMediaSessionsListener.MediaSessionStarted -= MusicController_MediaSessionStarted;
-            ActiveMediaSessionsListener.MediaSessionStopped -= MusicController_MediaSessionStopped;
+            WallpaperPublisher.WallpaperChanged -= Wallpaper_WallpaperChanged;
             CatcherHelper.NotificationListSizeChanged -= CatcherHelper_NotificationListSizeChanged;
             lockscreen.Touch -= Lockscreen_Touch;
 
@@ -166,13 +226,14 @@ namespace LiveDisplay
             notificationFragment.Dispose();
             musicFragment.Dispose();
             clockFragment.Dispose();
+            
         }
 
         public override void OnBackPressed()
         {
             //Do nothing.
             //base.OnBackPressed();
-            //In Nougat this actually doesnt work after several tries to go back, I can't fix that.
+            //In Nougat it works after several tries to go back, I can't fix that.
         }
 
         //It simply means that a Touch has been registered, no matter where, it was on the lockscreen.
@@ -200,15 +261,6 @@ namespace LiveDisplay
             return base.OnTouchEvent(e);
         }
 
-        private void MusicController_MediaSessionStarted(object sender, EventArgs e)
-        {
-            StartMusicController();
-        }
-
-        private void MusicController_MediaSessionStopped(object sender, EventArgs e)
-        {
-            StopMusicController();
-        }
 
         private void CatcherHelper_NotificationListSizeChanged(object sender, NotificationListSizeChangedEventArgs e)
         {
@@ -297,11 +349,15 @@ namespace LiveDisplay
                 switch (configurationManager.RetrieveAValue(ConfigurationParameters.changewallpaper, "0"))
                 {
                     case "0":
-                        Window.DecorView.SetBackgroundColor(Color.Black);
+
+                            WallpaperPublisher.OnWallpaperChanged(new WallpaperChangedEventArgs { Wallpaper = null });
                         break;
 
                     case "1":
-                        LoadDefaultWallpaper();
+                        using (var wallpaper = WallpaperManager.GetInstance(Application.Context))
+                        {
+                            WallpaperPublisher.OnWallpaperChanged(new WallpaperChangedEventArgs { Wallpaper = wallpaper.Drawable });
+                        }
                         break;
 
                     case "2":
@@ -342,7 +398,7 @@ namespace LiveDisplay
         {
             using (FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction())
             {
-                fragmentTransaction.Replace(Resource.Id.cLockPlaceholder, clockFragment);
+                fragmentTransaction.Replace(Resource.Id.weatherandcLockplaceholder, clockFragment);
                 fragmentTransaction.DisallowAddToBackStack();
                 fragmentTransaction.Commit();
             }
@@ -369,15 +425,16 @@ namespace LiveDisplay
 
         private void CheckIfMusicIsPlaying()
         {
-            if (ActiveMediaSessionsListener.IsASessionActive == true)
+            if (MusicController.MusicStatus == PlaybackStateCode.Playing)
             {
                 StartMusicController();
             }
+            else
+            {
+                StopMusicController();
+            }
         }
 
-        /// <summary>
-        /// Call this method automatically when Music is playing
-        /// </summary>
         private void StartMusicController()
         {
             using (FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction())
@@ -395,6 +452,7 @@ namespace LiveDisplay
             LoadNotificationFragment();
         }
 
+        [Obsolete]
         private void LoadDefaultWallpaper()
         {
             using (BackgroundFactory blurImage = new BackgroundFactory())

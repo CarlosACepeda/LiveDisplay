@@ -29,7 +29,6 @@ namespace LiveDisplay.Adapters
             //Cast
             NotificationAdapterViewHolder viewHolder = holder as NotificationAdapterViewHolder;
             viewHolder.Icono.Background = IconFactory.ReturnIconDrawable(notificaciones[position].Notification.Icon, notificaciones[position].PackageName);
-            //FUnciona, habrá otra forma más simple?
             if (selectedItem == position)
             {
                 viewHolder.Icono.Alpha = 0.5f;
