@@ -149,7 +149,15 @@ namespace LiveDisplay
 
         private void Wallpaper_WallpaperChanged(object sender, WallpaperChangedEventArgs e)
         {
-            Window.DecorView.Background = e.Wallpaper;
+            if(e.Wallpaper== null)
+            {
+                Window.DecorView.SetBackgroundColor(Color.Black);
+            }
+            else
+            {
+                Window.DecorView.Background = e.Wallpaper;
+            }
+            
         }
 
         private void Lockscreen_Touch(object sender, View.TouchEventArgs e)
