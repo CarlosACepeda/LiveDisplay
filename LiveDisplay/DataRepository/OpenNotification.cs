@@ -53,7 +53,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
             catch
             {
-                System.Console.WriteLine("Click Notification failed, fail in pending intent");
+                Console.WriteLine("Click Notification failed, fail in pending intent");
             }
         }
 

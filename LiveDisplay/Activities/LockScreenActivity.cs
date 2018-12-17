@@ -20,6 +20,7 @@ using LiveDisplay.Servicios.Wallpaper;
 using System;
 using System.Threading;
 using Android.Media.Session;
+using LiveDisplay.Servicios.FloatingNotification;
 
 namespace LiveDisplay
 {
@@ -73,11 +74,14 @@ namespace LiveDisplay
             WallpaperPublisher.WallpaperChanged += Wallpaper_WallpaperChanged;
 
             //Music Controller Events
+            if(MusicController.MusicStatus!= PlaybackStateCode.None)
+            {
+                MusicController.MusicPlaying += MusicController_MusicPlaying;
+                MusicController.MusicPaused += MusicController_MusicPaused;
+                MusicController.MusicStopped += MusicController_MusicStopped;
 
-            MusicController.MusicPlaying += MusicController_MusicPlaying;
-            MusicController.MusicPaused += MusicController_MusicPaused;
-            MusicController.MusicStopped += MusicController_MusicStopped;
 
+            }
             //CatcherHelper events
             CatcherHelper.NotificationListSizeChanged += CatcherHelper_NotificationListSizeChanged;
 
@@ -234,6 +238,8 @@ namespace LiveDisplay
             notificationFragment.Dispose();
             musicFragment.Dispose();
             clockFragment.Dispose();
+
+            StopFloatingNotificationService();
             
         }
 
@@ -436,11 +442,31 @@ namespace LiveDisplay
             if (MusicController.MusicStatus == PlaybackStateCode.Playing)
             {
                 StartMusicController();
+                StartFloatingNotificationService();
             }
             else
             {
                 StopMusicController();
+                StopFloatingNotificationService();
             }
+        }
+
+        private void StopFloatingNotificationService()
+        {
+            using (Intent intent = new Intent(this, typeof(FloatingNotification)))
+            {
+                StopService(intent);
+            }
+
+        }
+
+        private void StartFloatingNotificationService()
+        {
+            using (Intent intent = new Intent(this, typeof(FloatingNotification)))
+            {
+                StartService(intent);
+            }
+
         }
 
         private void StartMusicController()

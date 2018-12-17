@@ -117,11 +117,7 @@ namespace LiveDisplay.Activities
             base.OnActivityResult(requestCode, resultCode, data);
             if (requestCode == 25)
             {
-                using (Intent intent = new Intent(this, typeof(FloatingNotification)))
-                {
-                    StartService(intent);
-                }
-
+                //Check if the permission to add floating views is allowed
             }
         }
 

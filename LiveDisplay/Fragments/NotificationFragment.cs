@@ -82,7 +82,7 @@ namespace LiveDisplay.Fragments
 
         private void CatcherHelper_NotificationRemoved(object sender, EventArgs e)
         {
-            notification.Visibility = ViewStates.Gone; //Fix me? but test me first.
+            notification.Visibility = ViewStates.Gone;
         }
 
         private void CatcherHelper_NotificationUpdated(object sender, NotificationItemClickedEventArgs e)
@@ -117,7 +117,7 @@ namespace LiveDisplay.Fragments
         {
             notification.Visibility = ViewStates.Visible;
             //If the notification is removable...
-            if (OpenNotification.IsRemovable(e.Position) == true)
+            if (OpenNotification.IsRemovable(e.Position))
             {
                 //Then remove the notification
                 using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())

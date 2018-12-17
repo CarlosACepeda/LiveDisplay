@@ -3,6 +3,8 @@
   <string name="about">About...</string>
   <string name="aboutinfo">This app is developed with &lt;3 by Carlos Cepeda, you can support me by donating me! i hope youre enjoying this app as much as i developed it </string>
   <string name="aboutinfotitle">About this application:</string>
+  <string name="accessesstatusdisabled">Accesses are disabled</string>
+  <string name="accessesstatusenabled">Accesses are enabled!</string>
   <string name="achep">Artem Chepurnoy</string>
   <string name="achep_ty">The AcDisplay man himself, help and guidance!</string>
   <string name="acknowledgments">Acknowledgments</string>
@@ -60,11 +62,9 @@
   <string name="uselockscreennonotifications">Use the lockscreen without notifications</string>
   <string name="uselockscreennonotificationsdesc">For better usage, turn off the default Android lockscreen</string>
   <string name="version">Version</string>
-  <string name="versionnumber">0.6.4</string>
+  <string name="versionnumber">0.7.0-alpha1</string>
   <string name="wallpaperblur">Blur</string>
   <string name="wallpaperopacity">Opacity</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
-  <string name="accessesstatusdisabled">Accesses are disabled</string>
-  <string name="accessesstatusenabled">Accesses are enabled!</string>
 </resources>

@@ -7,12 +7,14 @@ using Android.Preferences;
 using Android.Renderscripts;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
+using System;
 
 namespace LiveDisplay.Factories
 {
     //TODO: Correct me, I can be optimized.
     internal class BackgroundFactory : Java.Lang.Object
     {
+        [Obsolete]
         //Retrieves a blurred image
         public Drawable Difuminar(Drawable papelTapiz)
         {
@@ -44,13 +46,14 @@ namespace LiveDisplay.Factories
             //Scale the bitmap:
             Bitmap blurredBitMapResized = Bitmap.CreateScaledBitmap(blurredBitmap, 70, 80, false);
 
-            Drawable papelTapizDifuminado = new BitmapDrawable(blurredBitMapResized);
+            Drawable papelTapizDifuminado = new BitmapDrawable(Android.Content.Res.Resources.System,blurredBitMapResized);
             originalBitmap = null;
             blurredBitmap = null;
             blurredBitMapResized = null;
             return papelTapizDifuminado;
         }
 
+        [Obsolete]
         public Drawable Difuminar(Bitmap image)
         {
             Bitmap blurredBitmap;
@@ -83,7 +86,7 @@ namespace LiveDisplay.Factories
             blurredBitMapResized.Dispose();
             return papelTapizDifuminado;
         }
-
+        [Obsolete]
         public Bitmap DifuminarBitmap(Bitmap image)
         {
             Bitmap blurredBitmap;
@@ -113,7 +116,7 @@ namespace LiveDisplay.Factories
             return blurredBitMapResized;
         }
 
-        public string SaveImagePath(Uri uri)
+        public string SaveImagePath(Android.Net.Uri uri)
         {
             ContextWrapper contextWrapper = new ContextWrapper(Application.Context);
             ISharedPreferences sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(contextWrapper);

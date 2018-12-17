@@ -10,6 +10,8 @@ using Android.Runtime;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using LiveDisplay.Adapters;
+using LiveDisplay.Servicios.Notificaciones;
 
 namespace LiveDisplay.Servicios.FloatingNotification
 {
@@ -18,8 +20,12 @@ namespace LiveDisplay.Servicios.FloatingNotification
     class FloatingNotification : Service
     {
         private IWindowManager windowManager;
-        private View floatingNotificationView;
-        private TextView floatingNotificationTitle, floatingNotificationText;
+        private LinearLayout floatingNotificationView;
+        private TextView floatingNotificationTitle;
+        private TextView floatingNotificationText;
+        private TextView floatingNotificationAppName;
+        private TextView floatingNotificationWhen;
+        private int position; //Represents the notification position in the NotificationList.
 
         public override IBinder OnBind(Intent intent)
         {
@@ -38,10 +44,10 @@ namespace LiveDisplay.Servicios.FloatingNotification
 
             var lol = LayoutInflater.From(this);
 
-            floatingNotificationView = lol.Inflate(Resource.Layout.FloatingNotification, null);
+            floatingNotificationView = (LinearLayout)lol.Inflate(Resource.Layout.FloatingNotification, null);
 
-            int lel = 200;
-            var floatingNotificationWidth= TypedValue.ApplyDimension(ComplexUnitType.Dip, lel, Resources.DisplayMetrics);
+            int width = 200;
+            var floatingNotificationWidth= TypedValue.ApplyDimension(ComplexUnitType.Dip, width, Resources.DisplayMetrics);
 
             WindowManagerLayoutParams layoutParams = new WindowManagerLayoutParams();
             layoutParams.Width = (int)floatingNotificationWidth;
@@ -52,6 +58,14 @@ namespace LiveDisplay.Servicios.FloatingNotification
             layoutParams.Gravity = GravityFlags.CenterHorizontal | GravityFlags.CenterVertical;
 
             windowManager.AddView(floatingNotificationView, layoutParams);
+            floatingNotificationAppName= floatingNotificationView.FindViewById<TextView>(Resource.Id.floatingappname);
+            floatingNotificationWhen = floatingNotificationView.FindViewById<TextView>(Resource.Id.floatingwhen);
+            floatingNotificationTitle = floatingNotificationView.FindViewById<TextView>(Resource.Id.floatingtitle);
+            floatingNotificationText = floatingNotificationView.FindViewById<TextView>(Resource.Id.floatingtext);
+
+            NotificationAdapterViewHolder.ItemClicked += NotificationAdapterViewHolder_ItemClicked;
+            NotificationAdapterViewHolder.ItemLongClicked += NotificationAdapterViewHolder_ItemLongClicked;
+
             try
             {
                 floatingNotificationView.Click += FloatingNotificationView_Click;
@@ -62,17 +76,66 @@ namespace LiveDisplay.Servicios.FloatingNotification
             }
         }
 
+
+        private void NotificationAdapterViewHolder_ItemLongClicked(object sender, Notificaciones.NotificationEventArgs.NotificationItemClickedEventArgs e)
+        {
+            if (OpenNotification.IsRemovable(e.Position))
+            {
+                using (NotificationSlave notificationSlave = NotificationSlave.NotificationSlaveInstance())
+                {
+                    if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+                    {
+                        int notiId = CatcherHelper.statusBarNotifications[position].Id;
+                        string notiTag = CatcherHelper.statusBarNotifications[position].Tag;
+                        string notiPack = CatcherHelper.statusBarNotifications[position].PackageName;
+                        notificationSlave.CancelNotification(notiPack, notiTag, notiId);
+                    }
+                    else
+                    {
+                        notificationSlave.CancelNotification(CatcherHelper.statusBarNotifications[position].Key);
+                    }
+                }
+                floatingNotificationView.Visibility = ViewStates.Gone;
+            }
+        }
+        private void NotificationAdapterViewHolder_ItemClicked(object sender, Notificaciones.NotificationEventArgs.NotificationItemClickedEventArgs e)
+        {
+            using (OpenNotification notification = new OpenNotification(e.Position))
+            {
+                position = e.Position;
+                floatingNotificationAppName.Text = notification.GetAppName();
+                floatingNotificationWhen.Text = notification.GetWhen();
+                floatingNotificationTitle.Text = notification.GetTitle();
+                floatingNotificationText.Text = notification.GetText();
+                if (floatingNotificationView.Visibility != ViewStates.Visible)
+                {
+                    floatingNotificationView.Visibility = ViewStates.Visible;
+                }
+                else
+                {
+                    floatingNotificationView.Visibility = ViewStates.Invisible;
+                }
+            };
+        }
+
         private void FloatingNotificationView_Click(object sender, EventArgs e)
         {
-            Log.Info("LiveDisplay", "FloatingNotification Clicked");
+            OpenNotification.ClickNotification(position);
         }
         public override void OnDestroy()
         {
             base.OnDestroy();
             floatingNotificationView.Click -= FloatingNotificationView_Click;
+            NotificationAdapterViewHolder.ItemClicked -= NotificationAdapterViewHolder_ItemClicked;
+            NotificationAdapterViewHolder.ItemLongClicked-=NotificationAdapterViewHolder_ItemLongClicked;
             if (floatingNotificationView != null)
             {
+                floatingNotificationAppName.Dispose();
+                floatingNotificationWhen.Dispose();
+                floatingNotificationTitle.Dispose();
+                floatingNotificationText.Dispose();
                 windowManager.RemoveView(floatingNotificationView);
+                windowManager.Dispose();
             }
         }
     }
