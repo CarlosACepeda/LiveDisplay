@@ -2,13 +2,15 @@
 using Android.App.Admin;
 using Android.Content;
 using Android.OS;
+using Android.Preferences;
 using Android.Runtime;
 using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
 using LiveDisplay.BroadcastReceivers;
 using LiveDisplay.Misc;
-using LiveDisplay.Servicios.FloatingNotification;
+using LiveDisplay.Servicios;
+using Android.Provider;
 
 //for CI.
 using Microsoft.AppCenter;
@@ -24,6 +26,7 @@ namespace LiveDisplay.Activities
     {
         private Android.Support.V7.Widget.Toolbar toolbar;
         private TextView enableNotificationAccess, enableDeviceAdmin;
+        private TextView enableDrawOverAccess;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -78,12 +81,33 @@ namespace LiveDisplay.Activities
                 }
             }
         }
+        void CheckDrawOverOtherAppsAccess()
+        {
+            ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context));
 
+            using (var drawOverOtherAppsImageView = FindViewById<ImageView>(Resource.Id.drawOverOtherAppsAccessCheckbox))
+                if (Settings.CanDrawOverlays(Application.Context))
+                {
+                    drawOverOtherAppsImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
+                }
+                else
+                {
+                    drawOverOtherAppsImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
+
+                }
+
+        }
         private void IsApplicationHealthy()
         {
+            bool canDrawOverlays = true;
+            if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1) //In Lollipop and less this permission is granted at Install time.
+            {
+                canDrawOverlays= Settings.CanDrawOverlays(Application.Context);
+            }
+
             using (var accessestext = FindViewById<TextView>(Resource.Id.health))
             {
-                if (NLChecker.IsNotificationListenerEnabled() == true && AdminReceiver.isAdminGiven == true)
+                if (NLChecker.IsNotificationListenerEnabled() == true && AdminReceiver.isAdminGiven == true && canDrawOverlays==true)
                 {
 
                     accessestext.SetText(Resource.String.accessesstatusenabled);
@@ -117,7 +141,7 @@ namespace LiveDisplay.Activities
             base.OnActivityResult(requestCode, resultCode, data);
             if (requestCode == 25)
             {
-                //Check if the permission to add floating views is allowed
+                CheckDrawOverOtherAppsAccess();
             }
         }
 
@@ -132,10 +156,7 @@ namespace LiveDisplay.Activities
             int id = item.ItemId;
             if (id == Resource.Id.action_settings)
             {
-                //using (var intent = new Intent(Android.Provider.Settings.ActionManageOverlayPermission))
-                //{
-                //    StartActivityForResult(intent, 25);
-                //}
+
                 using (Intent intent = new Intent(this, typeof(SettingsActivity)))
                 {
                     StartActivity(intent);
@@ -158,10 +179,21 @@ namespace LiveDisplay.Activities
 
             enableDeviceAdmin = FindViewById<TextView>(Resource.Id.enableDeviceAccess);
             enableNotificationAccess = FindViewById<TextView>(Resource.Id.enableNotificationAccess);
+            enableDrawOverAccess = FindViewById<TextView>(Resource.Id.enableFloatingPermission);
             enableNotificationAccess.Click += EnableNotificationAccess_Click;
             enableDeviceAdmin.Click += EnableDeviceAdmin_Click;
+            enableDrawOverAccess.Click += EnableDrawOverAccess_Click;
         }
 
+        private void EnableDrawOverAccess_Click(object sender, EventArgs e)
+        {
+            using (var intent = new Intent(Settings.ActionManageOverlayPermission))
+            {
+                StartActivityForResult(intent, 25);
+            }
+
+
+        }
         private void EnableDeviceAdmin_Click(object sender, EventArgs e)
         {
             ComponentName admin = new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(AdminReceiver)));

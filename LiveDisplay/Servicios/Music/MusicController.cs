@@ -160,9 +160,9 @@ namespace LiveDisplay.Servicios.Music
 
             base.Dispose(disposing);
             Jukebox.MediaEvent -= Jukebox_MediaEvent;
-            PlaybackState.Dispose();
-            TransportControls.Dispose();
-            MediaMetadata.Dispose();
+            PlaybackState?.Dispose();
+            TransportControls?.Dispose();
+            MediaMetadata?.Dispose();
         }
     }
 }

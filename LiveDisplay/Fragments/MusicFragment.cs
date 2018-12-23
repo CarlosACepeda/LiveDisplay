@@ -3,12 +3,14 @@ using Android.Graphics.Drawables;
 using Android.Media;
 using Android.Media.Session;
 using Android.OS;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
 using LiveDisplay.Servicios.Music;
 using LiveDisplay.Servicios.Music.MediaEventArgs;
 using LiveDisplay.Servicios.Wallpaper;
 using System;
+using System.Threading;
 
 namespace LiveDisplay.Fragments
 {
@@ -215,7 +217,12 @@ namespace LiveDisplay.Fragments
         /// <param name="move"> Boolean indicating if seekbar should start or stop moving itself automatically</param>
         private void MoveSeekbarAutomatically(bool move)
         {
-            Action moveSeekbarAutoEachSecond = () => skbSeekSongTime.SetProgress(skbSeekSongTime.Progress + 1, true);
+
+            void moveSeekbarAutoEachSecond()
+            {
+                skbSeekSongTime.SetProgress(skbSeekSongTime.Progress + 1000, true);
+                Log.Info("LiveDisplay", "Called action to advance 1 second the song.");
+                    };
             if (move == true)
             {
                 skbSeekSongTime.PostDelayed(moveSeekbarAutoEachSecond, 1000);

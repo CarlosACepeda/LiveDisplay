@@ -44,19 +44,20 @@
 			<TextView
 				android:fontFamily="sans-serif-condensed"
 				android:textAppearance="?android:attr/textAppearanceMedium"
-				android:textColor="@color/primary_text_default_material_light"
+				android:textColor="#de000000"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:id="@+id/floatingtitle" />
 			<TextView
 				android:fontFamily="sans-serif-condensed"
 				android:textAppearance="?android:attr/textAppearanceSmall"
-				android:textColor="@color/primary_text_default_material_light"
+				android:textColor="#de000000"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:id="@+id/floatingtext"
 				android:maxLines="4"
-				android:minLines="0" />
+				android:minLines="0"
+				 />
 			<LinearLayout
 				android:id="@+id/floatingNotificationActions"
 				android:orientation="horizontal"
