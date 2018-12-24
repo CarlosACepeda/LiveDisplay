@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:a="http://schemas.android.com/apk/res/android"
+    a:orientation="vertical"
+    a:layout_width="match_parent"
+    a:layout_height="match_parent">
+<!--this will hold apart from the image, the City, when this information was retrieved
+  and also the city-->
+    <ImageView
+        a:id="@+id/weatherStatusImage"
+        a:layout_width="wrap_content"
+        a:layout_height="wrap_content"
+        a:layout_toRightOf="@id/clockLock"
+        a:layout_below="@id/batteryLevel"
+        a:minWidth="20dp"
+        a:minHeight="20dp" />
+</LinearLayout>

@@ -1,102 +1,168 @@
-﻿using System;
-using System.Collections.Generic;
-using Android.App;
-using Android.Graphics;
-using Android.Graphics.Drawables;
-using Android.Media;
+﻿using Android.Media;
 using Android.Media.Session;
-using Android.OS;
-using LiveDisplay.Factories;
+using Android.Util;
+using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Music.MediaEventArgs;
+using System;
 
 namespace LiveDisplay.Servicios.Music
 {
     /// <summary>
-    /// This class receives Callbacks with Media metadata and other information about media playing.
-    /// This class is registered in Catcher to receive callbacks 
+    /// This class acts as a media session, receives Callbacks with Media metadata and other information about media playing.
+    /// This class is registered in Catcher to receive callbacks
     /// For Lollipop and beyond.
     /// </summary>
-    internal class MusicController : MediaController.Callback
+    internal class MusicController : MediaController.Callback, IDisposable
     {
+        #region Class members
+        public static PlaybackStateCode MusicStatus { get; private set; }
+        public PlaybackState PlaybackState { get; set; }
+        public MediaController.TransportControls TransportControls { get; set; }
+        public MediaMetadata MediaMetadata { get; set; }
         private static MusicController instance;
+
+        #region events
+
+        public static event EventHandler MusicPlaying;
+        public static event EventHandler MusicStopped;
+        public static event EventHandler MusicPaused;
         public static event EventHandler<MediaPlaybackStateChangedEventArgs> MediaPlaybackChanged;
         public static event EventHandler<MediaMetadataChangedEventArgs> MediaMetadataChanged;
-        private OpenSong song;
-        Com.JackAndPhantom.BlurImage blurImage;
-        Bitmap bitmap;
-        private MusicController()
-        {
-            song = OpenSong.OpenSongInstance();
-            blurImage = new Com.JackAndPhantom.BlurImage(Application.Context);
-            
-        }
-        
-        public static MusicController MusicControllerInstance()
+
+        #endregion events
+
+        #endregion Class members
+
+        internal static MusicController GetInstance()
         {
             if (instance == null)
             {
-                instance=new MusicController();
+                instance = new MusicController();
             }
             return instance;
-            
         }
-        
+
+        private MusicController()
+        {
+            Jukebox.MediaEvent += Jukebox_MediaEvent; //Subscribe to this event only once because this class is a Singleton.
+        }
+
+        private void Jukebox_MediaEvent(object sender, MediaActionEventArgs e)
+        {
+            switch (e.MediaActionFlags)
+            {
+                case MediaActionFlags.Play:
+                    TransportControls.Play();
+                    break;
+
+                case MediaActionFlags.Pause:
+                    TransportControls.Pause();
+                    break;
+
+                case MediaActionFlags.SkipToNext:
+                    TransportControls.SkipToNext();
+                    break;
+
+                case MediaActionFlags.SkipToPrevious:
+                    TransportControls.SkipToPrevious();
+                    break;
+
+                case MediaActionFlags.SeekTo:
+                    TransportControls.SeekTo(e.Time);
+                    break;
+
+                case MediaActionFlags.FastFoward:
+                    TransportControls.FastForward();
+                    break;
+
+                case MediaActionFlags.Rewind:
+                    TransportControls.Rewind();
+                    break;
+
+                case Misc.MediaActionFlags.Stop:
+                    TransportControls.Stop();
+                    break;
+
+                case Misc.MediaActionFlags.RetrieveMediaInformation:
+                    //Send media information.
+                    OnMediaMetadataChanged(new MediaMetadataChangedEventArgs
+                    {
+                        MediaMetadata = MediaMetadata
+                    });
+                    //Send Playbackstate of the media.
+                    OnMediaPlaybackChanged(new MediaPlaybackStateChangedEventArgs
+                    {
+                        PlaybackState = PlaybackState.State,
+                        CurrentTime = PlaybackState.Position
+                    });
+
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
         public override void OnPlaybackStateChanged(PlaybackState state)
         {
-            
-            song.PlaybackState = state.State;
-            Console.WriteLine("the state is:" + state.State.ToString());
-            song.CurrentPosition = (int)(state.Position / 1000);
-            //Estado del playback:
-            //Pausado, Comenzado, Avanzando, Retrocediendo, etc.    
-                OnMediaPlaybackChanged(new MediaPlaybackStateChangedEventArgs
-                {
+            PlaybackState = state;
+            MusicStatus = state.State;
+
+            OnMediaPlaybackChanged(new MediaPlaybackStateChangedEventArgs
+            {
                 PlaybackState = state.State,
-                CurrentTime= (int)(state.Position/1000)
-                });
+                CurrentTime = (int)(state.Position / 1000)
+            });
             base.OnPlaybackStateChanged(state);
         }
+
         public override void OnMetadataChanged(MediaMetadata metadata)
         {
-            int size = (int)Application.Context.Resources.GetDimension(Resource.Dimension.albumartsize);
             try
             {
-                bitmap = Bitmap.CreateScaledBitmap(metadata.GetBitmap(MediaMetadata.MetadataKeyAlbumArt), size, size, true);
+                MediaMetadata = metadata;
+
+                OnMediaMetadataChanged(new MediaMetadataChangedEventArgs
+                {
+                    MediaMetadata = metadata
+                });
             }
             catch
             {
-                //There is not albumart
+                Log.Info("LiveDisplay", "Failed getting metadata MusicController.");
+                //Don't do anything.
             }
-            
 
-            song.Title = metadata.GetText(MediaMetadata.MetadataKeyTitle);
-            song.Artist = metadata.GetText(MediaMetadata.MetadataKeyArtist);
-            song.Album = metadata.GetText(MediaMetadata.MetadataKeyAlbum);
-            song.AlbumArt = bitmap; /*blurImage.GetImageBlur();*/
+            //Datos de la Media que se está reproduciendo.
 
-            OnMediaMetadataChanged(new MediaMetadataChangedEventArgs
-            {
-                Artist = metadata.GetText(MediaMetadata.MetadataKeyArtist),
-                Title = metadata.GetText(MediaMetadata.MetadataKeyTitle),
-                Album = metadata.GetText(MediaMetadata.MetadataKeyAlbum),
-                AlbumArt = bitmap
-
-            });
-
-            //Datos de la Media que se está reproduciendo.            
-            bitmap = null;
             base.OnMetadataChanged(metadata);
             //Memory is growing until making a GC.
             GC.Collect();
         }
-        //Raise Events:
+
+        #region Raising events.
+
+
         protected virtual void OnMediaPlaybackChanged(MediaPlaybackStateChangedEventArgs e)
         {
             MediaPlaybackChanged?.Invoke(this, e);
         }
+
         protected virtual void OnMediaMetadataChanged(MediaMetadataChangedEventArgs e)
         {
             MediaMetadataChanged?.Invoke(this, e);
+        }
+
+        #endregion Raising events.
+        protected override void Dispose(bool disposing)
+        {
+            //release resources.
+
+            base.Dispose(disposing);
+            Jukebox.MediaEvent -= Jukebox_MediaEvent;
+            PlaybackState?.Dispose();
+            TransportControls?.Dispose();
+            MediaMetadata?.Dispose();
         }
     }
 }

@@ -3,8 +3,8 @@ using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
 using LiveDisplay.Factories;
-using LiveDisplay.Servicios;
 using LiveDisplay.Servicios.Notificaciones;
+using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
 using System;
 using System.Collections.Generic;
 
@@ -17,16 +17,18 @@ namespace LiveDisplay.Adapters
 
         public override int ItemCount => notificaciones.Count;
 
+        
         public NotificationAdapter(List<StatusBarNotification> notificaciones)
         {
+            
             this.notificaciones = notificaciones;
         }
 
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
+            //Cast
             NotificationAdapterViewHolder viewHolder = holder as NotificationAdapterViewHolder;
-            viewHolder.Icono.Background = IconFactory.ReturnIconDrawable(notificaciones[position].Notification.Icon, notificaciones[position].PackageName); 
-            //FUnciona, habrá otra forma más simple?
+            viewHolder.Icono.Background = IconFactory.ReturnIconDrawable(notificaciones[position].Notification.Icon, notificaciones[position].PackageName);
             if (selectedItem == position)
             {
                 viewHolder.Icono.Alpha = 0.5f;
@@ -43,15 +45,14 @@ namespace LiveDisplay.Adapters
             View itemView = layoutInflater.Inflate(Resource.Layout.NotificationItemRow, parent, false);
             return new NotificationAdapterViewHolder(itemView);
         }
-        
     }
 
     //La siguiente clase simplemente guarda referencias a las vistas de la fila, para evitar hacer llamadas a FindViewById cada vez, no se hace nada más aquí
     internal class NotificationAdapterViewHolder : RecyclerView.ViewHolder
     {
-        private delegate void ItemOnClickListener(int position);
+        public static event EventHandler<NotificationItemClickedEventArgs> ItemClicked;
 
-        private delegate void ItemOnLongClickListener(int position);
+        public static event EventHandler<NotificationItemClickedEventArgs> ItemLongClicked;
 
         public ImageView Icono { get; set; }
 
@@ -62,17 +63,36 @@ namespace LiveDisplay.Adapters
             itemView.LongClick += ItemView_LongClick;
         }
 
-        //TODO: Invoke these events on the Fragment? Don't use activity for this callbacks?
+        
         private void ItemView_LongClick(object sender, View.LongClickEventArgs e)
         {
-            new ItemOnLongClickListener(LockScreenActivity.lockScreenInstance.OnItemLongClick).Invoke(LayoutPosition);
+            OnItemLongClicked(LayoutPosition);
         }
 
         private void ItemView_Click(object sender, EventArgs e)
         {
+            //Simply indicates which item was clicked and after that call NotifyDataSetChanged to changes take effect.
             NotificationAdapter.selectedItem = LayoutPosition;
             CatcherHelper.notificationAdapter.NotifyDataSetChanged();
-            new ItemOnClickListener(LockScreenActivity.lockScreenInstance.OnItemClick).Invoke(LayoutPosition);
+
+            OnItemClicked(LayoutPosition);
+        }
+
+        private void OnItemClicked(int position)
+        {
+            ItemClicked?.Invoke(this, new NotificationItemClickedEventArgs
+            {
+                Position = position
+            });
+        }
+
+        private void OnItemLongClicked(int posiion)
+        {
+            ItemLongClicked?.Invoke(this, new NotificationItemClickedEventArgs
+            {
+                Position = posiion
+            }
+            );
         }
     }
 }

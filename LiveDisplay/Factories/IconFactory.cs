@@ -1,6 +1,5 @@
 ﻿using Android.App;
 using Android.Content;
-using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.Support.V4.Content;
 
@@ -21,10 +20,10 @@ namespace LiveDisplay.Factories
         {
             Context remotePackageContext = null;
             remotePackageContext = Application.Context.CreatePackageContext(paquete, 0);
-            
+
             return icon.LoadDrawable(remotePackageContext);
-            
         }
+
         //Overload for Retrieving Action Buttons on Lollipop an less.
         public static Drawable ReturnActionIconDrawable(int icon, string paquete)
         {

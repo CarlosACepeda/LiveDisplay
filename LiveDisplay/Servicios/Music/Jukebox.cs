@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
+﻿using LiveDisplay.Misc;
+using LiveDisplay.Servicios.Music.MediaEventArgs;
+using System;
 
 namespace LiveDisplay.Servicios.Music
 {
@@ -17,53 +9,86 @@ namespace LiveDisplay.Servicios.Music
     /// Play/pause/forward/rewind, etc.
     /// for Lollipop and beyond
     /// </summary>
-    class Jukebox
+    internal class Jukebox
     {
-        private static Jukebox jukeboxInstance;
-        public Android.Media.Session.MediaController.TransportControls transportControls;
-        private Jukebox()
+        public static event EventHandler<MediaActionEventArgs> MediaEvent;
+
+        public static void Play()
         {
-            
-        }
-        public static Jukebox JukeboxInstance()
-        {
-            if (jukeboxInstance == null)
+            OnMediaEvent(new MediaActionEventArgs
             {
-                jukeboxInstance = new Jukebox();
-                
-            }
-
-            return jukeboxInstance;
+                MediaActionFlags = MediaActionFlags.Play
+            });
         }
 
-        public void Play()
+        public static void Pause()
         {
-            transportControls.Play();
+            OnMediaEvent(new MediaActionEventArgs
+            {
+                MediaActionFlags = MediaActionFlags.Pause
+            });
         }
-        public void Pause()
+
+        public static void SkipToPrevious()
         {
-            transportControls.Pause();
+            OnMediaEvent(new MediaActionEventArgs
+            {
+                MediaActionFlags = MediaActionFlags.SkipToPrevious
+            });
         }
-        public void PlayNext()
+
+        public static void SeekTo(long time)
         {
-            transportControls.SkipToNext();
+            OnMediaEvent(new MediaActionEventArgs
+            {
+                MediaActionFlags = MediaActionFlags.SeekTo,
+                Time = time
+            });
         }
-        public void PlayPrevious()
+
+        public static void FastFoward()
         {
-            transportControls.SkipToPrevious();
+            OnMediaEvent(new MediaActionEventArgs
+            {
+                MediaActionFlags = MediaActionFlags.FastFoward
+            });
         }
-        public void SeekTo(long time)
+
+        public static void Rewind()
         {
-            transportControls.SeekTo(time);
-            
+            OnMediaEvent(new MediaActionEventArgs
+            {
+                MediaActionFlags = MediaActionFlags.Rewind
+            });
         }
-        public void FastFoward()
+
+        internal static void SkipToNext()
         {
-            transportControls.FastForward();
+            OnMediaEvent(new MediaActionEventArgs
+            {
+                MediaActionFlags = MediaActionFlags.SkipToNext
+            });
         }
-        public void Rewind()
+
+        internal static void Stop()
         {
-            transportControls.Rewind();
+            OnMediaEvent(new MediaActionEventArgs
+            {
+                MediaActionFlags = MediaActionFlags.Stop
+            });
+        }
+
+        internal static void RetrieveMediaInformation()
+        {
+            OnMediaEvent(new MediaActionEventArgs
+            {
+                MediaActionFlags = MediaActionFlags.RetrieveMediaInformation
+            });
+        }
+
+        private static void OnMediaEvent(MediaActionEventArgs e)
+        {
+            MediaEvent?.Invoke(null, e);
         }
     }
 }

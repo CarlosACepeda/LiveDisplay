@@ -1,52 +1,63 @@
-﻿using System;
-using System.Threading;
-using Android.App;
+﻿using Android.App;
 using Android.Graphics.Drawables;
+using Android.Media;
 using Android.Media.Session;
 using Android.OS;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
-using LiveDisplay.Factories;
 using LiveDisplay.Servicios.Music;
 using LiveDisplay.Servicios.Music.MediaEventArgs;
+using LiveDisplay.Servicios.Wallpaper;
+using System;
+using System.Threading;
 
 namespace LiveDisplay.Fragments
 {
     public class MusicFragment : Fragment
-
-    { 
-        private Jukebox instance;
+    {
         private TextView tvTitle, tvArtist, tvAlbum;
         private Button btnSkipPrevious, btnPlayPause, btnSkipNext;
         private LinearLayout musicPlayerContainer;
         private SeekBar skbSeekSongTime;
-        Window window;
-        BitmapDrawable bitmapDrawable;
         private PlaybackStateCode playbackState;
+
+        #region Fragment Lifecycle
+
         public override void OnCreate(Bundle savedInstanceState)
         {
             // Create your fragment here
             BindMusicControllerEvents();
-            instance = Jukebox.JukeboxInstance();
 
-            
             base.OnCreate(savedInstanceState);
         }
+
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            View view= inflater.Inflate(Resource.Layout.MusicPlayer, container, false);
-            
-            //If fails, then WTF? This fragment is called to replace the NotificationFragment when
-            //music is playing.
+            View view = inflater.Inflate(Resource.Layout.MusicPlayer, container, false);
+
             BindViews(view);
             BindViewEvents();
-            //Retrieve current Song playing.
+
             RetrieveMediaInformation();
-
-            // Use this to return your custom view for this Fragment
-
             return view;
         }
+
+        public override void OnDestroy()
+        {
+            tvAlbum = null;
+            tvArtist = null;
+            tvTitle = null;
+            skbSeekSongTime = null;
+            MusicController.MediaPlaybackChanged -= MusicController_MediaPlaybackChanged;
+            MusicController.MediaMetadataChanged -= MusicController_MediaMetadataChanged;
+            base.OnDestroy();
+        }
+
+        #endregion Fragment Lifecycle
+ 
+        #region Fragment Views events
+
         private void BindViewEvents()
         {
             btnSkipPrevious.Click += BtnSkipPrevious_Click;
@@ -58,14 +69,17 @@ namespace LiveDisplay.Fragments
             skbSeekSongTime.StopTrackingTouch += SkbSeekSongTime_StopTrackingTouch;
             musicPlayerContainer.LongClick += MusicPlayerContainer_LongClick;
         }
+
         private void BtnSkipNext_LongClick(object sender, View.LongClickEventArgs e)
         {
-            instance.FastFoward();
+            Jukebox.FastFoward();
         }
+
         private void BtnSkipPrevious_LongClick(object sender, View.LongClickEventArgs e)
         {
-            instance.Rewind();
+            Jukebox.Rewind();
         }
+
         private void MusicPlayerContainer_LongClick(object sender, View.LongClickEventArgs e)
         {
             if (skbSeekSongTime.Visibility == ViewStates.Gone || skbSeekSongTime.Visibility == ViewStates.Invisible)
@@ -77,22 +91,23 @@ namespace LiveDisplay.Fragments
                 skbSeekSongTime.Visibility = ViewStates.Gone;
             }
         }
+
         private void SkbSeekSongTime_StopTrackingTouch(object sender, SeekBar.StopTrackingTouchEventArgs e)
         {
             //When user stop dragging then seek to the position previously saved in ProgressChangedEvent
-            instance.SeekTo(e.SeekBar.Progress*1000);
+            Jukebox.SeekTo(e.SeekBar.Progress);
             skbSeekSongTime.SetProgress(e.SeekBar.Progress, true);
         }
+
         private void SkbSeekSongTime_ProgressChanged(object sender, SeekBar.ProgressChangedEventArgs e)
         {
             //This will save the current song time.
-            skbSeekSongTime.SetProgress(e.Progress, true);          
+            skbSeekSongTime.SetProgress(e.Progress, true);
         }
 
-        //Events-
         private void BtnSkipNext_Click(object sender, EventArgs e)
         {
-            instance.PlayNext();
+            Jukebox.SkipToNext();
         }
 
         private void BtnPlayPause_Click(object sender, EventArgs e)
@@ -101,52 +116,46 @@ namespace LiveDisplay.Fragments
             {
                 //If the media is paused, then Play.
                 case PlaybackStateCode.Paused:
-                    instance.Play();
+                    Jukebox.Play();
                     break;
                 //If the media is playing, then pause.
                 case PlaybackStateCode.Playing:
-                    instance.Pause();
+                    Jukebox.Pause();
+
+                    break;
+
+                default:
+                    Jukebox.Stop();
                     break;
             }
-            
         }
 
         private void BtnSkipPrevious_Click(object sender, EventArgs e)
         {
-            instance.PlayPrevious();
+            Jukebox.SkipToPrevious();
         }
-        //Bind Events Invoked by MusicController
+
+        #endregion Fragment Views events
+
+        #region Subscribing and Reacting to events
+
         private void BindMusicControllerEvents()
         {
-            //Try to bind Events from MusicController.
-            try
-            {
-                MusicController.MediaPlaybackChanged += MusicController_MediaPlaybackChanged;
-                MusicController.MediaMetadataChanged += MusicController_MediaMetadataChanged;
-            }
-            catch
-            {
-                Console.WriteLine("Media is not playing");
-            }
+            MusicController.MediaPlaybackChanged += MusicController_MediaPlaybackChanged;
+            MusicController.MediaMetadataChanged += MusicController_MediaMetadataChanged;
         }
 
         private void MusicController_MediaMetadataChanged(object sender, MediaMetadataChangedEventArgs e)
         {
-            
-            
-            tvTitle.Text = e.Title;
-            tvAlbum.Text = e.Album;
-            tvArtist.Text = e.Artist;
-
-                if (e.AlbumArt != null)
-                {
-                    bitmapDrawable = new BitmapDrawable(e.AlbumArt);
-
-                    Activity.RunOnUiThread(()=> window.DecorView.Background = bitmapDrawable); 
-                }
-                //clear bitmap.
-            bitmapDrawable = null;
-                
+            tvTitle.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyTitle);
+            tvAlbum.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyAlbum);
+            tvArtist.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyArtist);
+            skbSeekSongTime.Max = (int)e.MediaMetadata.GetLong(MediaMetadata.MetadataKeyDuration);
+            WallpaperPublisher.OnWallpaperChanged(new WallpaperChangedEventArgs
+            {
+                Wallpaper = new BitmapDrawable(Resources ,e.MediaMetadata.GetBitmap(MediaMetadata.MetadataKeyAlbumArt))
+            });
+            GC.Collect(0);
         }
 
         private void MusicController_MediaPlaybackChanged(object sender, MediaPlaybackStateChangedEventArgs e)
@@ -154,33 +163,37 @@ namespace LiveDisplay.Fragments
             switch (e.PlaybackState)
             {
                 case PlaybackStateCode.Paused:
-                    btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0,Resource.Drawable.ic_play_arrow_white_24dp,  0, 0);
+                    btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
                     playbackState = PlaybackStateCode.Paused;
+                    MoveSeekbarAutomatically(false);
+                    break;
+
+                case PlaybackStateCode.Playing:
+                    btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_pause_white_24dp, 0, 0);
+                    playbackState = PlaybackStateCode.Playing;
+                    MoveSeekbarAutomatically(true);
 
                     break;
-                case PlaybackStateCode.Playing:
-                    btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0,Resource.Drawable.ic_pause_white_24dp, 0, 0);
-                    playbackState = PlaybackStateCode.Playing;
-                    
-                    break;
+
                 case PlaybackStateCode.Stopped:
-                    btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0,Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
+                    btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
                     playbackState = PlaybackStateCode.Stopped;
+                    MoveSeekbarAutomatically(false);
                     break;
+
                 default:
                     break;
-                    
             }
-            skbSeekSongTime.SetProgress(e.CurrentTime, true);
+            skbSeekSongTime.SetProgress((int)e.CurrentTime, true);
         }
 
-        //Views
+        #endregion Subscribing and Reacting to events
+
         private void BindViews(View view)
         {
             tvTitle = view.FindViewById<TextView>(Resource.Id.tvSongName);
             tvAlbum = view.FindViewById<TextView>(Resource.Id.tvAlbumName);
             tvArtist = view.FindViewById<TextView>(Resource.Id.tvArtistName);
-            //Bind Views to control media.
 
             btnSkipPrevious = view.FindViewById<Button>(Resource.Id.btnMediaPrevious);
             btnPlayPause = view.FindViewById<Button>(Resource.Id.btnMediaPlayPlause);
@@ -188,53 +201,36 @@ namespace LiveDisplay.Fragments
             skbSeekSongTime = view.FindViewById<SeekBar>(Resource.Id.seeksongTime);
 
             musicPlayerContainer = view.FindViewById<LinearLayout>(Resource.Id.musicPlayerContainer);
-            window = Activity.Window;
+            
         }
+
         private void RetrieveMediaInformation()
         {
-            OpenSong song = OpenSong.OpenSongInstance();
-            
-            
-            tvTitle.Text = song.Title;
-            tvAlbum.Text = song.Album;
-            tvArtist.Text = song.Artist;
-
-            if (song.AlbumArt != null)
-            {
-
-                BitmapDrawable bitmapDrawable = new BitmapDrawable(song.AlbumArt);
-                window.DecorView.Background = bitmapDrawable;
-            }
-            bitmapDrawable = null;
-
-            //Set a custom length for seekbar based on song length
-
-            skbSeekSongTime.Max = song.Duration / 1000;//Because the length is given in ms, I want it in seconds.
-            skbSeekSongTime.Progress = song.CurrentPosition;
-            switch (song.PlaybackState)
-            {
-                case PlaybackStateCode.Paused:
-                    btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0,Resource.Drawable.ic_play_arrow_white_24dp,0,0);
-                    break;
-                case PlaybackStateCode.Playing:
-                    btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0,Resource.Drawable.ic_pause_white_24dp,0,0);
-                    break;
-                case PlaybackStateCode.Stopped:
-                    btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0,Resource.Drawable.ic_play_arrow_white_24dp,0,0);
-                    break;
-                default:
-                    break;
-            }
+            //Syntactic sugar, cause a MediaMetadata and a Mediaplayback event to be fired in the Publisher class.
+            //(MusicController class)
+            Jukebox.RetrieveMediaInformation();
         }
-        public override void OnDestroy()
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="move"> Boolean indicating if seekbar should start or stop moving itself automatically</param>
+        private void MoveSeekbarAutomatically(bool move)
         {
-            tvAlbum = null;
-            tvArtist = null;
-            tvTitle = null;
-            skbSeekSongTime = null;
-            MusicController.MediaPlaybackChanged -= MusicController_MediaPlaybackChanged;
-            MusicController.MediaMetadataChanged -= MusicController_MediaMetadataChanged;
-            base.OnDestroy();
-    }
+
+            void moveSeekbarAutoEachSecond()
+            {
+                skbSeekSongTime.SetProgress(skbSeekSongTime.Progress + 1000, true);
+                Log.Info("LiveDisplay", "Called action to advance 1 second the song.");
+                    };
+            if (move == true)
+            {
+                skbSeekSongTime.PostDelayed(moveSeekbarAutoEachSecond, 1000);
+            }
+            else
+            {
+                skbSeekSongTime.RemoveCallbacks(moveSeekbarAutoEachSecond);
+            }
         }
+    }
 }

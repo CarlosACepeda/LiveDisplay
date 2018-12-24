@@ -1,27 +1,29 @@
 ﻿using Android.App;
-using LiveDisplay.Servicios.Notificaciones;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
 using System;
 
 namespace LiveDisplay.Servicios
 {
     //Esta clase sirve para manipular las notificaciones, como quitarlas o agregarlas.
-    internal class NotificationSlave
+    internal class NotificationSlave : Java.Lang.Object
     {
-        public static NotificationSlave instance;
+        private static NotificationSlave instance;
+
         public event EventHandler<NotificationCancelledEventArgsKitkat> NotificationCancelled;
+
         public event EventHandler<NotificationCancelledEventArgsLollipop> NotificationCancelledLollipop;
+
         public event EventHandler AllNotificationsCancelled;
 
         private NotificationSlave()
         {
-
         }
+
         public static NotificationSlave NotificationSlaveInstance()
         {
             if (instance == null)
             {
-                instance= new NotificationSlave();
+                instance = new NotificationSlave();
             }
             return instance;
         }
@@ -41,7 +43,6 @@ namespace LiveDisplay.Servicios
 
         public void CancelNotification(string key)
         {
-
             OnNotificationCancelled(new NotificationCancelledEventArgsLollipop
             {
                 Key = key
@@ -50,31 +51,51 @@ namespace LiveDisplay.Servicios
 
         public void CancelAll()
         {
-            OnAllNotificationsCancelled();          
+            OnAllNotificationsCancelled();
         }
 
-        public void PostNotification()
+        public void PostNotification(string title, string text, bool autoCancellable, NotificationPriority notificationPriority)
         {
-            //TODO: Change Hardcoded values to parameters.
-            //USe SetPriority/SetImportance on Different Android devices.
+#pragma warning disable CS0618 // 'Notification.Builder(Context) está obsoleto
             Notification.Builder builder = new Notification.Builder(Application.Context);
-            builder.SetContentTitle("LiveDisplay");
-            builder.SetContentText("This is a test notification");
-            builder.SetAutoCancel(true);
-            builder.SetPriority(Convert.ToInt32(Android.App.NotificationPriority.Low));
+#pragma warning restore
+            builder.SetContentTitle(title);
+            builder.SetContentText(text);
+            builder.SetAutoCancel(autoCancellable);
+#pragma warning disable CS0618 // 'Notification.Builder.SetPriority(int)' está obsoleto: 'deprecated'
+            builder.SetPriority(Convert.ToInt32(NotificationPriority.Low));
+#pragma warning restore CS0618 // 'Notification.Builder.SetPriority(int)' está obsoleto: 'deprecated'
+            
             builder.SetSmallIcon(Resource.Drawable.ic_stat_default_appicon);
             notificationManager.Notify(1, builder.Build());
         }
+        public void PostNotification(string title, string text, bool autoCancellable, NotificationImportance notificationImportance)
+        {
+            NotificationChannel notificationChannel = new NotificationChannel("livedisplaynotificationchannel", "LiveDisplay", notificationImportance);
+            notificationManager.CreateNotificationChannel(notificationChannel);
+            Notification.Builder builder = new Notification.Builder(Application.Context, "livedisplaynotificationchannel");
+            builder.SetContentTitle(title);
+            builder.SetContentText(text);
+            builder.SetAutoCancel(autoCancellable);
+            builder.SetSmallIcon(Resource.Drawable.ic_stat_default_appicon);
+            notificationManager.Notify(1, builder.Build());
+        }
+        public void SendDumbNotification()
+        {
 
-       //Raising events.
+        }
+
+        //Raising events.
         protected virtual void OnNotificationCancelled(NotificationCancelledEventArgsKitkat e)
         {
             NotificationCancelled?.Invoke(this, e);
         }
+
         protected virtual void OnNotificationCancelled(NotificationCancelledEventArgsLollipop e)
         {
             NotificationCancelledLollipop?.Invoke(this, e);
         }
+
         protected virtual void OnAllNotificationsCancelled()
         {
             AllNotificationsCancelled?.Invoke(this, EventArgs.Empty);

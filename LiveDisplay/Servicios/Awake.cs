@@ -2,6 +2,7 @@
 using Android.App.Admin;
 using Android.Content;
 using Android.OS;
+using Android.Preferences;
 using LiveDisplay.Misc;
 using System;
 using System.Threading;
@@ -21,7 +22,7 @@ namespace LiveDisplay.Servicios
         //TODO: This class should Raise events instead of reacting to events!
         //The one that should react to events coming from this class is LockScreen.
 
-        private static ConfigurationManager configurationManager = new ConfigurationManager(Application.Context.GetSharedPreferences("livedisplayconfig", FileCreationMode.Private));
+        private static ISharedPreferences configurationManager = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
 
         /// <summary>
         /// Method that will wake up the screen when user picks up the phone from a plain surface
@@ -34,7 +35,7 @@ namespace LiveDisplay.Servicios
 
             //TODO: LockScreen should implement this because, what if the Lockscreen is disabled? This method will turn on the screen anyways.
             //to show a notification, that is not available because the user maybe disabled the lockscreen.
-            if (configurationManager.RetrieveAValue(ConfigurationParameters.turnonusermovement) == true)
+            if (configurationManager.GetBoolean(ConfigurationParameters.turnonusermovement, false) == true)
             {
                 PowerManager pm = ((PowerManager)Application.Context.GetSystemService(Context.PowerService));
                 var screenLock = pm.NewWakeLock(WakeLockFlags.ScreenDim | WakeLockFlags.AcquireCausesWakeup, "Turn On Lockscreen");
@@ -54,10 +55,8 @@ namespace LiveDisplay.Servicios
         /// This method awakes the screen when a new notification is posted, except when the app that
         /// publishes it, is Blacklisted by the user, so this notification has forbbiden to wake the device
         /// </summary>
-        /// <param name="appPackage">the package of the app to check if it's blacklisted</param>
-        public static void WakeUpScreenOnNewNotification(string appPackage)
+        public static void WakeUpScreenOnNewNotification()
         {
-            //TODO: Check if App is blacklisted
 
             PowerManager pm = ((PowerManager)Application.Context.GetSystemService(Context.PowerService));
             var screenLock = pm.NewWakeLock(WakeLockFlags.ScreenDim | WakeLockFlags.AcquireCausesWakeup, "Turn On Lockscreen");
@@ -124,7 +123,6 @@ namespace LiveDisplay.Servicios
                     }
                     catch (Exception ex)
                     {
-
                         //Should never happen, this setting is setted up on first launch of the app.
                         //TODO: This doesn't work, fix it man.
                         ex.ToString();
@@ -138,6 +136,54 @@ namespace LiveDisplay.Servicios
             }
         }
 
-
+        public static void TurnOffScreen()
+        {
+            PowerManager pm = ((PowerManager)Application.Context.GetSystemService(Context.PowerService));
+            DevicePolicyManager policy;
+            if (Build.VERSION.SdkInt < BuildVersionCodes.KitkatWatch)
+            {
+#pragma warning disable CS0618 // El tipo o el miembro están obsoletos
+                if (pm.IsScreenOn == true)
+#pragma warning restore CS0618 // El tipo o el miembro están obsoletos
+                {
+                    policy = (DevicePolicyManager)Application.Context.GetSystemService(Context.DevicePolicyService);
+                    try
+                    {
+                        policy.LockNow();
+                    }
+                    catch (Exception ex)
+                    {
+                        ex.ToString();
+                        Console.WriteLine(ex);
+                        //Toast.MakeText(Application.Context, "Must enable dev admin", ToastLength.Long).Show();
+                        //ComponentName admin = new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(AdminReceiver)));
+                        //Intent intent = new Intent(DevicePolicyManager.ActionAddDeviceAdmin).PutExtra(DevicePolicyManager.ExtraDeviceAdmin, admin);
+                        //Application.Context.StartActivity(intent);
+                    }
+                }
+            }
+            else
+            {
+                if (pm.IsInteractive == true)
+                {
+                    policy = (DevicePolicyManager)Application.Context.GetSystemService(Context.DevicePolicyService);
+                    try
+                    {
+                        policy.LockNow();
+                    }
+                    catch (Exception ex)
+                    {
+                        //Should never happen, this setting is setted up on first launch of the app.
+                        //TODO: This doesn't work, fix it man.
+                        ex.ToString();
+                        Console.WriteLine(ex);
+                        //Toast.MakeText(Application.Context, "Must enable dev admin", ToastLength.Long).Show();
+                        //ComponentName admin = new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(AdminReceiver)));
+                        //Intent intent = new Intent(DevicePolicyManager.ActionAddDeviceAdmin).PutExtra(DevicePolicyManager.ExtraDeviceAdmin, admin);
+                        //Application.Context.StartActivity(intent);
+                    }
+                }
+            }
+        }
     }
 }

@@ -3,7 +3,11 @@ using Android.OS;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using LiveDisplay.Adapters;
+using LiveDisplay.Factories;
+using LiveDisplay.Servicios;
 using LiveDisplay.Servicios.Notificaciones;
+using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
 using System;
 
 namespace LiveDisplay.Fragments
@@ -11,14 +15,18 @@ namespace LiveDisplay.Fragments
     public class NotificationFragment : Fragment
     {
         private int position;
-        LinearLayout notificationActions;
-        TextView tvTitulo;
-        TextView tvTexto;
-        LinearLayout llNotification;
+        private LinearLayout notificationActions;
+        private TextView titulo;
+        private TextView texto;
+        private TextView appName;
+        private TextView when;
+        private LinearLayout notification;
+        private bool timeoutStarted = false;
+
+        #region Lifecycle events
 
         public override void OnCreate(Bundle savedInstanceState)
         {
-            SubscribeToEvents();
             base.OnCreate(savedInstanceState);
             // Create your fragment here
         }
@@ -26,29 +34,78 @@ namespace LiveDisplay.Fragments
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             View v = inflater.Inflate(Resource.Layout.NotificationFrag, container, false);
-            notificationActions = v.FindViewById<LinearLayout>(Resource.Id.notificationActions);
-            tvTexto = v.FindViewById<TextView>(Resource.Id.tvTexto);
-            tvTitulo = v.FindViewById<TextView>(Resource.Id.tvTitulo);
-            llNotification = v.FindViewById<LinearLayout>(Resource.Id.llNotification);
 
-            llNotification.Click += LlNotification_Click;  
+            notificationActions = v.FindViewById<LinearLayout>(Resource.Id.notificationActions);
+            texto = v.FindViewById<TextView>(Resource.Id.tvTexto);
+            titulo = v.FindViewById<TextView>(Resource.Id.tvTitulo);
+            when = v.FindViewById<TextView>(Resource.Id.tvWhen);
+            appName = v.FindViewById<TextView>(Resource.Id.tvAppName);
+            notification = v.FindViewById<LinearLayout>(Resource.Id.llNotification);
+
+            //Subscribe to events raised by several types.
+            notification.Drag += Notification_Drag;
+            notification.Click += LlNotification_Click;
+            NotificationAdapterViewHolder.ItemClicked += ItemClicked;
+            NotificationAdapterViewHolder.ItemLongClicked += ItemLongClicked;
+            CatcherHelper.NotificationPosted += CatcherHelper_NotificationPosted;
+            CatcherHelper.NotificationUpdated += CatcherHelper_NotificationUpdated;
+            CatcherHelper.NotificationRemoved += CatcherHelper_NotificationRemoved;
             return v;
+        }
+
+        private void Notification_Drag(object sender, View.DragEventArgs e)
+        {
+            StartTimeout(); //To keep the notification visible while the user touches the notification fragment
+        }
+
+        private void CatcherHelper_NotificationPosted(object sender, NotificationPostedEventArgs e)
+        {
+            if (e.ShouldCauseWakeUp == true)
+            {
+                Awake.WakeUpScreenOnNewNotification();
+            }
+        }
+
+        public override void OnDestroy()
+        {
+            NotificationAdapterViewHolder.ItemClicked -= ItemClicked;
+            NotificationAdapterViewHolder.ItemLongClicked -= ItemLongClicked;
+            CatcherHelper.NotificationUpdated -= CatcherHelper_NotificationUpdated;
+            CatcherHelper.NotificationRemoved -= CatcherHelper_NotificationRemoved;
+            CatcherHelper.NotificationPosted -= CatcherHelper_NotificationPosted;
+            base.OnDestroy();
+        }
+
+        #endregion Lifecycle events
+
+        #region Events Implementation:
+
+        private void CatcherHelper_NotificationRemoved(object sender, EventArgs e)
+        {
+            notification.Visibility = ViewStates.Gone;
+        }
+
+        private void CatcherHelper_NotificationUpdated(object sender, NotificationItemClickedEventArgs e)
+        {
+            ItemClicked(this, e);
         }
 
         private void LlNotification_Click(object sender, EventArgs e)
         {
+            notification.Visibility = ViewStates.Visible;
             try
             {
                 Activity.RunOnUiThread(() =>
                 OpenNotification.ClickNotification(position)
                 );
-                //TODO: Manage this In Fragment
                 if (OpenNotification.NotificationIsAutoCancel(position) == true)
                 {
-                    llNotification.Visibility = ViewStates.Invisible;
+                    notification.Visibility = ViewStates.Invisible;
+                    titulo.Text = null;
+                    texto.Text = null;
+                    when.Text = null;
+                    notificationActions.RemoveAllViews();
                 }
-                llNotification.Visibility = ViewStates.Visible;
-
             }
             catch
             {
@@ -56,58 +113,83 @@ namespace LiveDisplay.Fragments
             }
         }
 
-        private void SubscribeToEvents()
+        private void ItemLongClicked(object sender, NotificationItemClickedEventArgs e)
         {
-            try
+            notification.Visibility = ViewStates.Visible;
+            //If the notification is removable...
+            if (OpenNotification.IsRemovable(e.Position))
             {
-                LockScreenActivity.lockScreenInstance.NotificationItemClicked += LockScreenInstance_NotificationItemClicked;
-            }
-            catch
-            {
-                Console.WriteLine("Falla suscripcion a evento de LockScreen");
+                //Then remove the notification
+                using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())
+                {
+                    if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+                    {
+                        int notiId = CatcherHelper.statusBarNotifications[position].Id;
+                        string notiTag = CatcherHelper.statusBarNotifications[position].Tag;
+                        string notiPack = CatcherHelper.statusBarNotifications[position].PackageName;
+                        slave.CancelNotification(notiPack, notiTag, notiId);
+                    }
+                    else
+                    {
+                        slave.CancelNotification(CatcherHelper.statusBarNotifications[position].Key);
+                    }
+                }
+                notification.Visibility = ViewStates.Invisible;
+                titulo.Text = null;
+                texto.Text = null;
+                notificationActions.RemoveAllViews();
             }
         }
 
-        private void LockScreenInstance_NotificationItemClicked(object sender, Servicios.Notificaciones.NotificationEventArgs.NotificationItemClickedEventArgs e)
+        private void ItemClicked(object sender, NotificationItemClickedEventArgs e)
         {
-            ///This fragment starts invisible.
-            if (llNotification.Visibility != ViewStates.Visible)
-            {
-                llNotification.Visibility = ViewStates.Visible;
-            }
             position = e.Position;
-            //Define events to communicate with the Notification Widget:
-            //When this method is called, tell NotificationWidget to update itself with data provided
-            //by this method.
-            
-            OpenNotification notification = new OpenNotification(e.Position);
-            tvTitulo.Text = notification.GetTitle();
-            tvTexto.Text = notification.GetText();
-
-
-            notificationActions.RemoveAllViews();
-            notificationActions.WeightSum = 1f;
-
-            if (OpenNotification.NotificationHasActionButtons(e.Position) == true)
+            //When an item of the list is clicked, then fill A notification with the position of the item.
+            using (OpenNotification openNotification = new OpenNotification(e.Position))
             {
-                foreach (var a in OpenNotification.RetrieveActionButtons(e.Position))
+                titulo.Text = openNotification.GetTitle();
+                texto.Text = openNotification.GetText();
+                appName.Text = openNotification.GetAppName();
+                when.Text = openNotification.GetWhen();
+                notificationActions.RemoveAllViews();
+
+                if (OpenNotification.NotificationHasActionButtons(e.Position) == true)
                 {
-                    
-                    notificationActions.AddView(a);
+                    foreach (var a in OpenNotification.RetrieveActions(e.Position))
+                    {
+                        notificationActions.AddView(a);
+                    }
+                    notificationActions.Invalidate();
                 }
             }
-            
-            notification = null;
+            if (notification.Visibility != ViewStates.Visible)
+            {
+                notification.Visibility = ViewStates.Visible;
+            }
+            StartTimeout();
         }
-        public override void OnDestroy()
-        {
-            base.OnDestroy();
-            LockScreenActivity.lockScreenInstance.NotificationItemClicked -= LockScreenInstance_NotificationItemClicked;
-            notificationActions = null;
-            tvTexto = null;
-            tvTitulo = null;
-            llNotification = null;
 
+        #endregion Events Implementation:
+
+        //THis works like a charm :)
+        private void StartTimeout()
+        {
+            //This action is: 'Hide the notification, and set the timeoutStarted as finished(false)
+            //because this action will be invoked only when the timeout has finished.
+            Action hideNotification = () => { notification.Visibility = ViewStates.Gone; timeoutStarted = false; };
+            //If the timeout has started, then cancel the action, and start again.
+            if (timeoutStarted == true)
+            {
+                notification?.RemoveCallbacks(hideNotification);
+                notification?.PostDelayed(hideNotification, 5000);
+            }
+            //If not, simply wait 5 seconds then hide the notification, in that span of time, the timeout is
+            //marked as Started(true)
+            else
+            {
+                timeoutStarted = true;
+                notification?.PostDelayed(hideNotification, 5000);
+            }
         }
     }
 }

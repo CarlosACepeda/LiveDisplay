@@ -2,6 +2,9 @@
 
 This Application shows the list of current notifications on Screen, remove them, with various configurable options.
 
+[![currentversion](https://img.shields.io/badge/current--version-v0.6.1-blue.svg)](https://github.com/CarlosACepeda/LiveDisplay)
+[![pre-releaseversion](https://img.shields.io/badge/pre--release-v.0.1-blue.svg)](https://github.com/CarlosACepeda/LiveDisplay/releases)
+
 |Master branch:|Laboratory branch:|
 |--------------|------------------|
 |[![currentversion](https://img.shields.io/badge/current--version-v0.3.21-blue.svg)](https://github.com/CarlosACepeda/LiveDisplay)|[![currentversion](https://img.shields.io/badge/pre--release-v0.6.2-blue.svg)](https://github.com/CarlosACepeda/LiveDisplay)
@@ -54,9 +57,13 @@ This Application shows the list of current notifications on Screen, remove them,
 
 * Beta testing is now available for anyone who wants to test my app and give feedback! Send me a e-mail for details!
 
+## Contributing
+
+* See [Contributing](https://github.com/CarlosACepeda/LiveDisplay/tree/master/CONTRIBUTING.md) for details!
+
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning
+I use [Semantic Versioning ](http://semver.org/) for versioning, sometimes I don't follow it because I'm lazy, but, I try in all the cases to stick with semantic versioning.
 
 ## Authors & Collaborators
 

@@ -1,30 +1,14 @@
 ﻿using Android.App;
-using Android.Content;
 using Android.OS;
 using Android.Support.V7.App;
-using Android.Support.V7.Widget;
-using Android.Views;
-using Android.Widget;
-using LiveDisplay.Servicios;
-using LiveDisplay.Misc;
-using System;
-using Android.Runtime;
-using Android.Graphics.Drawables;
-using Java.IO;
-using Android.Graphics;
-using Android.Provider;
-using Android.Util;
-using LiveDisplay.Factories;
 using LiveDisplay.Fragments;
 
 namespace LiveDisplay.Activities
 {
-    //prepare for deprecation, this will be Settings Screen
-    [Activity(Label = "@string/settings", Theme ="@style/LiveDisplayTheme.NoActionBar")]
+    [Activity(Label = "@string/settings", Theme = "@style/LiveDisplayTheme.NoActionBar")]
     public class SettingsActivity : AppCompatActivity
     {
         private Android.Support.V7.Widget.Toolbar toolbar;
-        private int requestCode = 1;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -32,39 +16,17 @@ namespace LiveDisplay.Activities
 
             // Create your application here
             SetContentView(Resource.Layout.Settings);
-            toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
-            SetSupportActionBar(toolbar);
-
-            FragmentManager.BeginTransaction().Replace(Resource.Id.content, new LiveDisplayPreferencesFragment()).Commit();
-        }
-        protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
-        {
-            base.OnActivityResult(requestCode, resultCode, data);
-            if (this.requestCode == requestCode && resultCode == Result.Ok && data != null)
+            using (toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar))
             {
-                Android.Net.Uri uri = data.Data;
-                try
-                {
-                    
-                    BackgroundFactory background = new BackgroundFactory();
-                    background.SaveImagePath(uri);
-                    background = null;
-
-                }
-                catch
-                {
-
-                }
+                SetSupportActionBar(toolbar);
             }
+
+            FragmentManager.BeginTransaction().Replace(Resource.Id.content, new PreferencesFragment()).Commit();
         }
-        
-        //TODO: replace this event handler to handle PReferenceScreen click, instead.
-        private void BtnChangeWallpaper_Click(object sender, EventArgs e)
+
+        protected override void OnDestroy()
         {
-            Intent intent = new Intent();
-            intent.SetType("image/*");
-            intent.SetAction(Intent.ActionGetContent);
-            StartActivityForResult(Intent.CreateChooser(intent, "Pick image"), requestCode);
+            base.OnDestroy();
         }
     }
 }

@@ -1,19 +1,20 @@
 ﻿using Android.App;
 using Android.Content;
-using Android.Database;
 using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.Net;
 using Android.Preferences;
 using Android.Renderscripts;
-using Android.Util;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
+using System;
 
 namespace LiveDisplay.Factories
 {
-    internal class BackgroundFactory
+    //TODO: Correct me, I can be optimized.
+    internal class BackgroundFactory : Java.Lang.Object
     {
+        [Obsolete]
         //Retrieves a blurred image
         public Drawable Difuminar(Drawable papelTapiz)
         {
@@ -45,14 +46,16 @@ namespace LiveDisplay.Factories
             //Scale the bitmap:
             Bitmap blurredBitMapResized = Bitmap.CreateScaledBitmap(blurredBitmap, 70, 80, false);
 
-            Drawable papelTapizDifuminado = new BitmapDrawable(blurredBitMapResized);
+            Drawable papelTapizDifuminado = new BitmapDrawable(Android.Content.Res.Resources.System,blurredBitMapResized);
             originalBitmap = null;
             blurredBitmap = null;
             blurredBitMapResized = null;
             return papelTapizDifuminado;
         }
+
+        [Obsolete]
         public Drawable Difuminar(Bitmap image)
-        {            
+        {
             Bitmap blurredBitmap;
             //Asignar a este bitmap la imagen original para trabajar con ella.
             blurredBitmap = image;
@@ -79,11 +82,11 @@ namespace LiveDisplay.Factories
             Bitmap blurredBitMapResized = Bitmap.CreateScaledBitmap(blurredBitmap, 70, 80, false);
 
             Drawable papelTapizDifuminado = new BitmapDrawable(blurredBitMapResized);
-            image = null;
-            blurredBitmap = null;
-            blurredBitMapResized = null;
+            image.Dispose();
+            blurredBitMapResized.Dispose();
             return papelTapizDifuminado;
         }
+        [Obsolete]
         public Bitmap DifuminarBitmap(Bitmap image)
         {
             Bitmap blurredBitmap;
@@ -112,10 +115,12 @@ namespace LiveDisplay.Factories
             Bitmap blurredBitMapResized = Bitmap.CreateScaledBitmap(blurredBitmap, 70, 80, false);
             return blurredBitMapResized;
         }
-        public string SaveImagePath(Uri uri)
+
+        public string SaveImagePath(Android.Net.Uri uri)
         {
             ContextWrapper contextWrapper = new ContextWrapper(Application.Context);
-            ConfigurationManager configuration = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(contextWrapper));
+            ISharedPreferences sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(contextWrapper);
+            ConfigurationManager configurationManager = new ConfigurationManager(sharedPreferences);
             string doc_id = "";
             using (var c1 = Application.Context.ContentResolver.Query(uri, null, null, null, null))
             {
@@ -134,10 +139,9 @@ namespace LiveDisplay.Factories
                 var columnIndex = cursor.GetColumnIndexOrThrow(Android.Provider.MediaStore.Images.Media.InterfaceConsts.Data);
                 cursor.MoveToFirst();
                 path = cursor.GetString(columnIndex);
-                configuration.SaveAValue(ConfigurationParameters.imagePath, path);
+                configurationManager.SaveAValue(ConfigurationParameters.imagePath, path);
             }
             return path;
-            
         }
     }
 }
