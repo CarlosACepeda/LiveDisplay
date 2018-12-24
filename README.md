@@ -42,7 +42,7 @@ This Application shows the list of current notifications on Screen, remove them,
 
 |Lockscreen:|Music Control:|App Settings/About:|
 |-----------|--------------|-------------|
-|<img src="https://i.imgur.com/or1E4B1.png" width=320>|<img src="https://i.imgur.com/E1C4JIL.png" width=320>|<img src="https://i.imgur.com/rp6diWb.png" width="320">|
+|<img src="https://i.imgur.com/e77S55q.png" width=320>|<img src="https://i.imgur.com/Pg9vFwc.png" width=320>|<img src="https://i.imgur.com/UnB2Mzj.png">|
 
 
 
