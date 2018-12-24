@@ -1,19 +1,11 @@
-# Live Display
+# LiveDisplay
 
 This Application shows the list of current notifications on Screen, remove them, with various configurable options.
-
-[![currentversion](https://img.shields.io/badge/current--version-v0.6.1-blue.svg)](https://github.com/CarlosACepeda/LiveDisplay)
-[![pre-releaseversion](https://img.shields.io/badge/pre--release-v.0.1-blue.svg)](https://github.com/CarlosACepeda/LiveDisplay/releases)
-
-|Master branch:|Laboratory branch:|
-|--------------|------------------|
-|[![currentversion](https://img.shields.io/badge/current--version-v0.3.21-blue.svg)](https://github.com/CarlosACepeda/LiveDisplay)|[![currentversion](https://img.shields.io/badge/pre--release-v0.6.2-blue.svg)](https://github.com/CarlosACepeda/LiveDisplay)
-|[![pre-releaseversion](https://img.shields.io/badge/pre--release-v.0.1-blue.svg)](https://github.com/CarlosACepeda/LiveDisplay/releases)|[![pre-releaseversion](https://img.shields.io/badge/pre--release-v.0.1-blue.svg)](https://github.com/CarlosACepeda/LiveDisplay/releases)|
 
 
 # Releases
 
-[![release](https://img.shields.io/badge/release-not%20released-lightgrey.svg)](https://github.com/CarlosACepeda/LiveDisplay)
+[![release](https://img.shields.io/badge/release-released-brightgreen.svg)](https://github.com/CarlosACepeda/LiveDisplay/releases)
 
 ## Build Status: App Center
 
@@ -42,7 +34,7 @@ This Application shows the list of current notifications on Screen, remove them,
 
 |Lockscreen:|Music Control:|App Settings/About:|
 |-----------|--------------|-------------|
-|<img src="https://i.imgur.com/e77S55q.png" width=320>|<img src="https://i.imgur.com/Pg9vFwc.png" width=320>|<img src="https://i.imgur.com/UnB2Mzj.png">|
+|<img src="https://i.imgur.com/e77S55q.png" width=320>|<img src="https://i.imgur.com/Pg9vFwc.png" width=320>|<img src="https://i.imgur.com/UnB2Mzj.png" width="320">|
 
 
 
