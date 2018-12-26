@@ -12,22 +12,24 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent">
 		<TextView
-			android:text="@string/wallpaperopacity"
-			android:textAppearance="?android:attr/textAppearanceMedium"
-			android:layout_height="wrap_content"
-			android:layout_width="match_parent">
-		</TextView>
-		<SeekBar
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content">
-		</SeekBar>
-		<TextView
 			android:text="@string/wallpaperblur"
 			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:layout_height="wrap_content"
 			android:layout_width="match_parent">
 		</TextView>
 		<SeekBar
+			android:id="@+id/blur"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+		</SeekBar>
+		<TextView
+			android:text="@string/wallpaperopacity"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:layout_height="wrap_content"
+			android:layout_width="match_parent">
+		</TextView>
+		<SeekBar
+			android:id="@+id/opacity"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content">
 		</SeekBar>

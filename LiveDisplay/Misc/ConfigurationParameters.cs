@@ -11,6 +11,8 @@
         public const string hiddenclock = "hiddenclock?";
         public const string hiddensystemicons = "hiddensystemicons?";
         public const string changewallpaper = "changewallpaper";
+        public const string blurlevel = "blurlevel";
+        public const string opacitylevel = "opacitylevel";
 
         //Functional
         public const string enabledlockscreennonotifications = "enabledlockscreennonotifications?";
@@ -32,5 +34,6 @@
         public const string startlockscreendelaytime = "startlockscreendelaytime";
         public const string turnoffscreendelaytime = "turnoffscreendelaytime";
         public const string doubletaptosleep = "doubletaptosleep?";
+
     }
 }

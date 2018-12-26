@@ -25,6 +25,12 @@ namespace LiveDisplay.Servicios
             sharedPreferencesEditor.PutString(key, value);
             sharedPreferencesEditor.Commit();
         }
+        public void SaveAValue(string key, int value)
+        {
+            sharedPreferencesEditor.PutInt(key, value);
+            sharedPreferencesEditor.Commit();
+
+        }
 
         public bool RetrieveAValue(string key)
         {
