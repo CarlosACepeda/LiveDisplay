@@ -4,11 +4,22 @@ This Application shows the list of current notifications on Screen, remove them,
 
 [![currentversion](https://img.shields.io/badge/current--version-v0.6.1-blue.svg)](https://github.com/CarlosACepeda/LiveDisplay)
 [![pre-releaseversion](https://img.shields.io/badge/pre--release-v.0.1-blue.svg)](https://github.com/CarlosACepeda/LiveDisplay/releases)
+
+|Master branch:|Laboratory branch:|
+|--------------|------------------|
+|[![currentversion](https://img.shields.io/badge/current--version-v0.3.21-blue.svg)](https://github.com/CarlosACepeda/LiveDisplay)|[![currentversion](https://img.shields.io/badge/pre--release-v0.6.2-blue.svg)](https://github.com/CarlosACepeda/LiveDisplay)
+|[![pre-releaseversion](https://img.shields.io/badge/pre--release-v.0.1-blue.svg)](https://github.com/CarlosACepeda/LiveDisplay/releases)|[![pre-releaseversion](https://img.shields.io/badge/pre--release-v.0.1-blue.svg)](https://github.com/CarlosACepeda/LiveDisplay/releases)|
+
+
+# Releases
+
 [![release](https://img.shields.io/badge/release-not%20released-lightgrey.svg)](https://github.com/CarlosACepeda/LiveDisplay)
 
-|Build Status: App Center|
-|----------|
-|[![Build status](https://build.appcenter.ms/v0.1/apps/35ff8c85-fde9-4e45-9e27-834a716fce2b/branches/master/badge)](https://appcenter.ms)|
+## Build Status: App Center
+
+|Master branch:|Laboratory branch:|
+|----------|---------|
+|[![Build status](https://build.appcenter.ms/v0.1/apps/35ff8c85-fde9-4e45-9e27-834a716fce2b/branches/master/badge)](https://appcenter.ms)|[![Build status](https://build.appcenter.ms/v0.1/apps/35ff8c85-fde9-4e45-9e27-834a716fce2b/branches/Laboratory/badge)](https://appcenter.ms)
 
 ## Features
 
