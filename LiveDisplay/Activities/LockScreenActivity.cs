@@ -122,8 +122,6 @@ namespace LiveDisplay
         private void MusicController_MusicPaused(object sender, EventArgs e)
         {
             ThreadPool.QueueUserWorkItem(m => CheckIfMusicIsStillPaused());
-
-
         }
 
         private void CheckIfMusicIsStillPaused()
@@ -166,22 +164,28 @@ namespace LiveDisplay
 
         private void Lockscreen_Touch(object sender, View.TouchEventArgs e)
         {
-            if (e.Event.Action == MotionEventActions.Up)
+            using (ConfigurationManager configuration = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context)))
             {
-                if (firstTouchTime == -1)
+                if (configuration.RetrieveAValue(ConfigurationParameters.doubletaptosleep) == true)
                 {
-                    firstTouchTime = e.Event.DownTime;
-                }
-                else if (firstTouchTime != -1)
-                {
-                    finalTouchTime = e.Event.DownTime;
-                    if (firstTouchTime + threshold > finalTouchTime)
+                    if (e.Event.Action == MotionEventActions.Up)
                     {
-                        Awake.LockScreen();
+                        if (firstTouchTime == -1)
+                        {
+                            firstTouchTime = e.Event.DownTime;
+                        }
+                        else if (firstTouchTime != -1)
+                        {
+                            finalTouchTime = e.Event.DownTime;
+                            if (firstTouchTime + threshold > finalTouchTime)
+                            {
+                                Awake.LockScreen();
+                            }
+                            //Reset the values of touch
+                            firstTouchTime = -1;
+                            finalTouchTime = -1;
+                        }
                     }
-                    //Reset the values of touch
-                    firstTouchTime = -1;
-                    finalTouchTime = -1;
                 }
             }
         }
@@ -486,26 +490,6 @@ namespace LiveDisplay
             LoadNotificationFragment();
         }
 
-        [Obsolete]
-        private void LoadDefaultWallpaper()
-        {
-            using (BackgroundFactory blurImage = new BackgroundFactory())
-            {
-                using (WallpaperManager wallpaperManager = WallpaperManager.GetInstance(Application.Context))
-                {
-                    wallpaperManager.ForgetLoadedWallpaper();//Forget the loaded wallpaper because it will be the one that is blurred.
-                                                             //so, it will blur the already blurred wallpaper, so, causing so much blur that
-                                                             //the app will explode, LOL.
-
-                    var drawable = blurImage.Difuminar(wallpaperManager.Drawable);
-                    RunOnUiThread(() =>
-                    Window.DecorView.Background = drawable);
-                    //Disposing the wallpaper after this point causes a Weird behavior with background.
-                    //What should I do?
-                    //Nothing lol, this is saved to stack memory so, it's freed after this method gets executed.
-                }
-            }
-        }
 
         public void OnAccuracyChanged(Sensor sensor, [GeneratedEnum] SensorStatus accuracy)
         {

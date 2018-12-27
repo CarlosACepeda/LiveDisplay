@@ -28,6 +28,7 @@
   <string name="doubletaptosleep">Double tap to sleep</string>
   <string name="doubletaptosleepdesc">Touch twice anywhere on the lock screen to turn off the screen</string>
   <string name="enabledeviceaccess">Enable device Access</string>
+  <string name="enablefloatingpermission">Draw over other apps</string>
   <string name="enablenotificationlistener">Enable Notification Access</string>
   <string name="enablequickreply">Enable quick Notification Reply</string>
   <string name="enablequickreplydesc">Answer directly from Notification to messages, as seen in Nougat and beyond</string>
@@ -62,10 +63,9 @@
   <string name="uselockscreennonotifications">Use the lockscreen without notifications</string>
   <string name="uselockscreennonotificationsdesc">For better usage, turn off the default Android lockscreen</string>
   <string name="version">Version</string>
-  <string name="versionnumber">0.7.0-alpha1</string>
+  <string name="versionnumber">0.7.0-alpha3</string>
   <string name="wallpaperblur">Blur</string>
   <string name="wallpaperopacity">Opacity</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
-  <string name="enablefloatingpermission">Draw over other apps</string>
 </resources>
