@@ -129,6 +129,10 @@ namespace LiveDisplay.Servicios.Notificaciones
             {
                 var lol= CatcherHelper.statusBarNotifications[position].Notification.When.ToString();
                 DateTime dateTime = new DateTime(Convert.ToInt64(lol));
+                if (dateTime.Hour == 0 && dateTime.Minute == 0)
+                {
+                    return "";
+                }
                 return dateTime.Hour + ":" + dateTime.Minute;
             }
             catch

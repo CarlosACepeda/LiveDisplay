@@ -61,7 +61,7 @@
   <string name="uselockscreennonotifications">Usar la pantalla de bloqueo sin notificaciones</string>
   <string name="uselockscreennonotificationsdesc">Para mejor usabilidad, desactiva la pantalla de bloqueo por defecto de Android</string>
   <string name="version">Versión</string>
-  <string name="versionnumber">0.7.0-alpha3</string>
+  <string name="versionnumber">0.7.0-alpha4</string>
   <string name="wallpaperblur">Difuminación</string>
   <string name="wallpaperopacity">Opacidad</string>
   <string name="yasujizr">Yasujizr</string>

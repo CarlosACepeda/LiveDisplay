@@ -63,7 +63,7 @@
   <string name="uselockscreennonotifications">Use the lockscreen without notifications</string>
   <string name="uselockscreennonotificationsdesc">For better usage, turn off the default Android lockscreen</string>
   <string name="version">Version</string>
-  <string name="versionnumber">0.7.0-alpha3</string>
+  <string name="versionnumber">0.7.0-alpha4</string>
   <string name="wallpaperblur">Blur</string>
   <string name="wallpaperopacity">Opacity</string>
   <string name="yasujizr">Yasujizr</string>

@@ -62,7 +62,6 @@ namespace LiveDisplay.Activities
 
             wallpaperPreview.Background.Alpha = savedOpacitylevel;
 
-
             blur.SetProgress(savedblurlevel, false);
             opacity.SetProgress(savedOpacitylevel, false);
             GC.Collect(0); //Helping the gc, We are manipulating bitmaps.

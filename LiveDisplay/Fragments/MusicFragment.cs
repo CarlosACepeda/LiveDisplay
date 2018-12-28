@@ -11,6 +11,7 @@ using LiveDisplay.Servicios.Music.MediaEventArgs;
 using LiveDisplay.Servicios.Wallpaper;
 using System;
 using System.Threading;
+using System.Timers;
 
 namespace LiveDisplay.Fragments
 {
@@ -21,6 +22,7 @@ namespace LiveDisplay.Fragments
         private LinearLayout musicPlayerContainer;
         private SeekBar skbSeekSongTime;
         private PlaybackStateCode playbackState;
+        private System.Timers.Timer timer;
 
         #region Fragment Lifecycle
 
@@ -28,6 +30,12 @@ namespace LiveDisplay.Fragments
         {
             // Create your fragment here
             BindMusicControllerEvents();
+
+            timer = new System.Timers.Timer();
+            timer.Interval = 1000; //1 second.
+            timer.Elapsed += Timer_Elapsed;
+            timer.Enabled = true;
+
 
             base.OnCreate(savedInstanceState);
         }
@@ -51,6 +59,8 @@ namespace LiveDisplay.Fragments
             skbSeekSongTime = null;
             MusicController.MediaPlaybackChanged -= MusicController_MediaPlaybackChanged;
             MusicController.MediaMetadataChanged -= MusicController_MediaMetadataChanged;
+            timer.Elapsed -= Timer_Elapsed;
+            timer.Dispose();
             base.OnDestroy();
         }
 
@@ -165,20 +175,20 @@ namespace LiveDisplay.Fragments
                 case PlaybackStateCode.Paused:
                     btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
                     playbackState = PlaybackStateCode.Paused;
-                    MoveSeekbarAutomatically(false);
+                    MoveSeekbar(false);
                     break;
 
                 case PlaybackStateCode.Playing:
                     btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_pause_white_24dp, 0, 0);
                     playbackState = PlaybackStateCode.Playing;
-                    MoveSeekbarAutomatically(true);
+                    MoveSeekbar(true);
 
                     break;
 
                 case PlaybackStateCode.Stopped:
                     btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
                     playbackState = PlaybackStateCode.Stopped;
-                    MoveSeekbarAutomatically(false);
+                    MoveSeekbar(false);
                     break;
 
                 default:
@@ -215,22 +225,24 @@ namespace LiveDisplay.Fragments
         ///
         /// </summary>
         /// <param name="move"> Boolean indicating if seekbar should start or stop moving itself automatically</param>
-        private void MoveSeekbarAutomatically(bool move)
+        private void MoveSeekbar(bool move)
         {
-
-            void moveSeekbarAutoEachSecond()
-            {
-                skbSeekSongTime.SetProgress(skbSeekSongTime.Progress + 1000, true);
-                Log.Info("LiveDisplay", "Called action to advance 1 second the song.");
-                    };
             if (move == true)
             {
-                skbSeekSongTime.PostDelayed(moveSeekbarAutoEachSecond, 1000);
+                timer.Start();
+                Log.Info("LiveDisplay", "TimerStarted");
             }
             else
             {
-                skbSeekSongTime.RemoveCallbacks(moveSeekbarAutoEachSecond);
+                timer.Stop();
+                Log.Info("LiveDisplay", "Timer Stopped");
             }
+        }
+
+        private void Timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            skbSeekSongTime.SetProgress(skbSeekSongTime.Progress + 1000, true);
+            Log.Info("LiveDisplay", "Elapsed 1 second");
         }
     }
 }
