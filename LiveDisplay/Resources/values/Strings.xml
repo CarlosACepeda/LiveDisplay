@@ -20,6 +20,7 @@
   <string name="changewallpaperdesc">By default, current system wallpaper is used</string>
   <string name="clearallnotifications">Clear all</string>
   <string name="contactme">Contact me</string>
+  <string name="contributetoprojectdesc">LiveDisplay on Github</string>
   <string name="defaultwallpaper">Default wallpaper</string>
   <string name="dialogcancelledclick">Ok, you can change this setting later in Notifications section!</string>
   <string name="dialognldisabledmessage">You must allow this app to read Notifications first!</string>
@@ -36,6 +37,7 @@
   <string name="esp">Spanish</string>
   <string name="fifteenseconds">15 seconds</string>
   <string name="fiveseconds">5 seconds</string>
+  <string name="githubproject">Want to help?</string>
   <string name="hidesystemicons">Do not show system icons</string>
   <string name="idk">¯\_(ツ)_/¯</string>
   <string name="immediately">Immediately</string>
@@ -60,10 +62,8 @@
   <string name="turnonnewnotification">Turn on screen</string>
   <string name="turnonnewnotification_desc">Turn on screen if a new notification incomes</string>
   <string name="turnonusermovement">Turn on screen on device pick up</string>
-  <string name="uselockscreennonotifications">Use the lockscreen without notifications</string>
-  <string name="uselockscreennonotificationsdesc">For better usage, turn off the default Android lockscreen</string>
   <string name="version">Version</string>
-  <string name="versionnumber">0.7.0-alpha4</string>
+  <string name="versionnumber">0.7.0-alpha5</string>
   <string name="wallpaperblur">Blur</string>
   <string name="wallpaperopacity">Opacity</string>
   <string name="yasujizr">Yasujizr</string>

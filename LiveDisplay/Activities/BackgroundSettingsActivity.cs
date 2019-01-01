@@ -16,6 +16,7 @@ using LiveDisplay.Misc;
 using Android.Graphics;
 using Android.Graphics.Drawables;
 using System.Threading;
+using Android.Content.PM;
 
 namespace LiveDisplay.Activities
 {
@@ -44,7 +45,23 @@ namespace LiveDisplay.Activities
             blur.Max = 25;
             blur.StopTrackingTouch += Blur_StopTrackingTouch;
             opacity.StopTrackingTouch += Opacity_StopTrackingTouch;
-            LoadPreviousValues();
+            if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1)
+            {
+                if (Application.Context.CheckSelfPermission("android.permission.READ_EXTERNAL_STORAGE") != Permission.Granted)
+                {
+                    RequestPermissions(new string[1] { "android.permission.READ_EXTERNAL_STORAGE" }, 1);
+                }
+                else
+                {
+                    LoadPreviousValues();
+                }
+
+            }
+            else
+            {
+                LoadPreviousValues();
+            }
+
         }
 
         private void LoadPreviousValues()
@@ -87,5 +104,18 @@ namespace LiveDisplay.Activities
             GC.Collect(0);
         }
 
+        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
+        {
+            base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+
+            if (requestCode == 1 && grantResults[0] == Permission.Granted)
+            {
+                LoadPreviousValues();
+            }
+            else
+            {
+                Finish();
+            }
+        }
     }
 }

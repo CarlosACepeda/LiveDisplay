@@ -19,6 +19,7 @@
   <string name="changewallpaperdesc">El fondo de pantalla actual se usa por defecto</string>
   <string name="clearallnotifications">Descartar todas</string>
   <string name="contactme">Contáctame</string>
+  <string name="contributetoprojectdesc">LiveDisplay en Github</string>
   <string name="defaultwallpaper">Papel tapiz por defecto</string>
   <string name="dialogcancelledclick">Muy bien, puedes cambiar esta opción después en la sección \'Notificaciones\'</string>
   <string name="dialognldisabledmessage">Debes permitir que esta app acceda a las notificaciones primero!</string>
@@ -35,6 +36,7 @@
   <string name="esp">Español</string>
   <string name="fifteenseconds">15 segundos</string>
   <string name="fiveseconds">5 segundos</string>
+  <string name="githubproject">Quieres ayudar?</string>
   <string name="hidesystemicons">No mostrar iconos del sistema</string>
   <string name="idk">¯\_(ツ)_/¯</string>
   <string name="immediately">De inmediato</string>
@@ -58,10 +60,8 @@
   <string name="turnonnewnotification">Encender pantalla</string>
   <string name="turnonnewnotification_desc">Prender la pantalla si una nueva notificacion llega</string>
   <string name="turnonusermovement">Prender la pantalla al levantar el dispositivo</string>
-  <string name="uselockscreennonotifications">Usar la pantalla de bloqueo sin notificaciones</string>
-  <string name="uselockscreennonotificationsdesc">Para mejor usabilidad, desactiva la pantalla de bloqueo por defecto de Android</string>
   <string name="version">Versión</string>
-  <string name="versionnumber">0.7.0-alpha4</string>
+  <string name="versionnumber">0.7.0-alpha5</string>
   <string name="wallpaperblur">Difuminación</string>
   <string name="wallpaperopacity">Opacidad</string>
   <string name="yasujizr">Yasujizr</string>

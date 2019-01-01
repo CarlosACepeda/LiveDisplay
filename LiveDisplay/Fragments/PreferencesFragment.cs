@@ -1,5 +1,6 @@
 ﻿using Android.App;
 using Android.Content;
+using Android.Net;
 using Android.OS;
 using Android.Preferences;
 using Android.Runtime;
@@ -20,11 +21,23 @@ namespace LiveDisplay.Fragments
         {
             base.OnCreate(savedInstanceState);
             AddPreferencesFromResource(Resource.Xml.prefs);
+            PreferenceManager.SetDefaultValues(Application.Context, Resource.Xml.prefs, false);
             sharedPreferences.RegisterOnSharedPreferenceChangeListener(this);
             Preference wallpapersettingspreference = FindPreference("wallpapersettings");
+            Preference githubprojectpreference = FindPreference("contributetoproject");
             Preference blacklistpreference = FindPreference("blacklist");
             wallpapersettingspreference.PreferenceClick += WallpaperSettingsPreference_PreferenceClick;
             blacklistpreference.PreferenceClick += Blacklistpreference_PreferenceClick;
+            githubprojectpreference.PreferenceClick += Githubprojectpreference_PreferenceClick;
+        }
+
+        private void Githubprojectpreference_PreferenceClick(object sender, Preference.PreferenceClickEventArgs e)
+        {
+            string url = "https://github.com/CarlosACepeda/LiveDisplay/";
+            Intent intent = new Intent(Intent.ActionView);
+            intent.SetData(Uri.Parse(url));
+            StartActivity(intent);
+
         }
 
         private void Blacklistpreference_PreferenceClick(object sender, Preference.PreferenceClickEventArgs e)

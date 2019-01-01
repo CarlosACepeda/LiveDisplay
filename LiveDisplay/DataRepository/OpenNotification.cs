@@ -1,4 +1,5 @@
 ﻿using Android.App;
+using Android.Graphics;
 using Android.OS;
 using Android.Util;
 using Android.Views;
@@ -64,17 +65,18 @@ namespace LiveDisplay.Servicios.Notificaciones
             {
                 var buttons = new List<Button>();
                 float weight = (float)1 / actions.Count;
+
                 string paquete = CatcherHelper.statusBarNotifications[position].PackageName;
                 foreach (var action in actions)
                 {
                     Button anActionButton = new Button(Application.Context)
                     {
-                        LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WrapContent, weight),
+                        LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MatchParent, weight),
                         Text = action.Title.ToString(),
-                        Visibility= ViewStates.Visible
                     };
+                    anActionButton.SetTypeface(Typeface.Create("sans-serif-condensed", TypefaceStyle.Normal), TypefaceStyle.Normal);
                     anActionButton.SetMaxLines(1);
-                    anActionButton.SetTextColor(Android.Graphics.Color.White);
+                    anActionButton.SetTextColor(Color.White);
                     anActionButton.Click += (o, e) =>
                     {
                         try
@@ -88,6 +90,9 @@ namespace LiveDisplay.Servicios.Notificaciones
                     };
 
                     anActionButton.Gravity = GravityFlags.CenterVertical;
+                    TypedValue outValue = new TypedValue();
+                    Application.Context.Theme.ResolveAttribute(Android.Resource.Attribute.SelectableItemBackgroundBorderless, outValue, true);
+                    anActionButton.SetBackgroundResource(outValue.ResourceId);
                     if (Build.VERSION.SdkInt > BuildVersionCodes.M)
                     {
                         anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(IconFactory.ReturnActionIconDrawable(action.Icon, paquete), null, null, null);

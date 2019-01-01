@@ -18,10 +18,14 @@ namespace LiveDisplay.Fragments
         private TextClock clock;
         private TextView battery;
         private ImageView batteryIcon;
+        private BatteryReceiver batteryReceiver;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+
+            RegisterBatteryReceiver();
+
 
             // Create your fragment here
 
@@ -39,6 +43,16 @@ namespace LiveDisplay.Fragments
             //}
         }
 
+        private void RegisterBatteryReceiver()
+        {
+            using (IntentFilter intentFilter = new IntentFilter())
+            {
+                batteryReceiver = new BatteryReceiver();
+                intentFilter.AddAction(Intent.ActionBatteryChanged);
+                Application.Context.RegisterReceiver(batteryReceiver, intentFilter);
+            }
+        }
+
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             View v = inflater.Inflate(Resource.Layout.cLock, container, false);
@@ -47,9 +61,6 @@ namespace LiveDisplay.Fragments
             battery = v.FindViewById<TextView>(Resource.Id.batteryLevel);
             batteryIcon = v.FindViewById<ImageView>(Resource.Id.batteryIcon);
             LoadDate();
-
-            battery.Text = Battery.ReturnBatteryLevel().ToString() + "%";
-            SetBackgroundAccordingWithBatteryLevel(Battery.BatteryLevelFlags);
 
             //View Events
             clock.Click += Clock_Click;
@@ -62,87 +73,14 @@ namespace LiveDisplay.Fragments
         {
             base.OnDestroyView();
             battery.Dispose();
+            Application.Context.UnregisterReceiver(batteryReceiver);
             BatteryReceiver.BatteryInfoChanged -= BatteryReceiver_BatteryInfoChanged;
         }
 
         private void BatteryReceiver_BatteryInfoChanged(object sender, Servicios.Battery.BatteryEventArgs.BatteryChangedEventArgs e)
         {
             battery.Text = e.BatteryLevel.ToString() + "%";
-            SetBackgroundAccordingWithBatteryLevel(e);
-        }
-
-        private void SetBackgroundAccordingWithBatteryLevel(Servicios.Battery.BatteryEventArgs.BatteryChangedEventArgs e)
-        {
-            switch (e.BatteryLevelFlags)
-            {
-                case BatteryLevelFlags.OverZero:
-                    batteryIcon.SetBackgroundResource(Resource.Drawable.battery_alert_white_18dp);
-                    break;
-
-                case BatteryLevelFlags.OverTwenty:
-                    batteryIcon.SetBackgroundResource(Resource.Drawable.baseline_battery_20_white_18);
-                    break;
-
-                case BatteryLevelFlags.OverThirty:
-                    batteryIcon.SetBackgroundResource(Resource.Drawable.baseline_battery_30_white_18);
-                    break;
-
-                case BatteryLevelFlags.OverFifty:
-                    batteryIcon.SetBackgroundResource(Resource.Drawable.baseline_battery_50_white_18);
-                    break;
-
-                case BatteryLevelFlags.OverSixty:
-                    batteryIcon.SetBackgroundResource(Resource.Drawable.baseline_battery_60_white_18);
-                    break;
-
-                case BatteryLevelFlags.OverEighty:
-                    batteryIcon.SetBackgroundResource(Resource.Drawable.baseline_battery_80_white_18);
-                    break;
-
-                case BatteryLevelFlags.OverNinety:
-                    batteryIcon.SetBackgroundResource(Resource.Drawable.baseline_battery_90_white_18);
-                    break;
-
-                default:
-                    break;
-            }
-        }
-
-        private void SetBackgroundAccordingWithBatteryLevel(BatteryLevelFlags batteryLevelFlags)
-        {
-            switch (batteryLevelFlags)
-            {
-                case BatteryLevelFlags.OverZero:
-                    batteryIcon.SetBackgroundResource(Resource.Drawable.battery_alert_white_18dp);
-                    break;
-
-                case BatteryLevelFlags.OverTwenty:
-                    batteryIcon.SetBackgroundResource(Resource.Drawable.baseline_battery_20_white_18);
-                    break;
-
-                case BatteryLevelFlags.OverThirty:
-                    batteryIcon.SetBackgroundResource(Resource.Drawable.baseline_battery_30_white_18);
-                    break;
-
-                case BatteryLevelFlags.OverFifty:
-                    batteryIcon.SetBackgroundResource(Resource.Drawable.baseline_battery_50_white_18);
-                    break;
-
-                case BatteryLevelFlags.OverSixty:
-                    batteryIcon.SetBackgroundResource(Resource.Drawable.baseline_battery_60_white_18);
-                    break;
-
-                case BatteryLevelFlags.OverEighty:
-                    batteryIcon.SetBackgroundResource(Resource.Drawable.baseline_battery_80_white_18);
-                    break;
-
-                case BatteryLevelFlags.OverNinety:
-                    batteryIcon.SetBackgroundResource(Resource.Drawable.baseline_battery_90_white_18);
-                    break;
-
-                default:
-                    break;
-            }
+            batteryIcon.Background = e.BatteryIcon;
         }
 
         private void Clock_Click(object sender, EventArgs e)

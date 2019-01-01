@@ -3,6 +3,7 @@ using Android.App.Admin;
 using Android.Content;
 using Android.OS;
 using Android.Preferences;
+using Android.Provider;
 using Android.Runtime;
 using Android.Support.V7.App;
 using Android.Views;
@@ -10,7 +11,6 @@ using Android.Widget;
 using LiveDisplay.BroadcastReceivers;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
-using Android.Provider;
 
 //for CI.
 using Microsoft.AppCenter;
@@ -27,6 +27,7 @@ namespace LiveDisplay.Activities
         private Android.Support.V7.Widget.Toolbar toolbar;
         private TextView enableNotificationAccess, enableDeviceAdmin;
         private TextView enableDrawOverAccess;
+        private RelativeLayout enableDrawOverAccessContainer;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -40,6 +41,7 @@ namespace LiveDisplay.Activities
         {
             CheckNotificationAccess();
             CheckDeviceAdminAccess();
+            CheckDrawOverOtherAppsAccess();
             IsApplicationHealthy();
             base.OnResume();
         }
@@ -48,15 +50,17 @@ namespace LiveDisplay.Activities
         {
             using (var adminGivenImageView = FindViewById<ImageView>(Resource.Id.deviceAccessCheckbox))
             {
-                switch (AdminReceiver.isAdminGiven)
+                switch (Checkers.IsThisAppADeviceAdministrator())
                 {
                     case true:
                         adminGivenImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
                         break;
+
                     case false:
                         adminGivenImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
 
                         break;
+
                     default:
                         break;
                 }
@@ -67,25 +71,29 @@ namespace LiveDisplay.Activities
         {
             using (var notificationAccessGivenImageView = FindViewById<ImageView>(Resource.Id.notificationAccessCheckbox))
             {
-                switch (NLChecker.IsNotificationListenerEnabled())
+                switch (Checkers.IsNotificationListenerEnabled())
                 {
                     case true:
                         notificationAccessGivenImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
 
                         break;
+
                     case false:
                         notificationAccessGivenImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
                         break;
+
                     default:
                         break;
                 }
             }
         }
-        void CheckDrawOverOtherAppsAccess()
+
+        private void CheckDrawOverOtherAppsAccess()
         {
             ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context));
 
             using (var drawOverOtherAppsImageView = FindViewById<ImageView>(Resource.Id.drawOverOtherAppsAccessCheckbox))
+            {
                 if (Settings.CanDrawOverlays(Application.Context))
                 {
                     drawOverOtherAppsImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
@@ -93,23 +101,22 @@ namespace LiveDisplay.Activities
                 else
                 {
                     drawOverOtherAppsImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
-
                 }
-
+            }
         }
+
         private void IsApplicationHealthy()
         {
             bool canDrawOverlays = true;
             if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1) //In Lollipop and less this permission is granted at Install time.
             {
-                canDrawOverlays= Settings.CanDrawOverlays(Application.Context);
+                canDrawOverlays = Checkers.ThisAppCanDrawOverlays();
             }
 
             using (var accessestext = FindViewById<TextView>(Resource.Id.health))
             {
-                if (NLChecker.IsNotificationListenerEnabled() == true && AdminReceiver.isAdminGiven == true && canDrawOverlays==true)
+                if (Checkers.IsNotificationListenerEnabled() == true && Checkers.IsThisAppADeviceAdministrator() && canDrawOverlays == true)
                 {
-
                     accessestext.SetText(Resource.String.accessesstatusenabled);
                     accessestext.SetTextColor(Android.Graphics.Color.Green);
                 }
@@ -119,7 +126,6 @@ namespace LiveDisplay.Activities
                     accessestext.SetTextColor(Android.Graphics.Color.Red);
                 }
             }
-
         }
 
         protected override void OnPause()
@@ -156,13 +162,10 @@ namespace LiveDisplay.Activities
             int id = item.ItemId;
             if (id == Resource.Id.action_settings)
             {
-
                 using (Intent intent = new Intent(this, typeof(SettingsActivity)))
                 {
                     StartActivity(intent);
                 }
-
-
 
                 return true;
             }
@@ -179,10 +182,16 @@ namespace LiveDisplay.Activities
 
             enableDeviceAdmin = FindViewById<TextView>(Resource.Id.enableDeviceAccess);
             enableNotificationAccess = FindViewById<TextView>(Resource.Id.enableNotificationAccess);
-            enableDrawOverAccess = FindViewById<TextView>(Resource.Id.enableFloatingPermission);
+            if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1)
+            {
+                enableDrawOverAccessContainer = FindViewById<RelativeLayout>(Resource.Id.drawOverlaysCheckboxContainer);
+                enableDrawOverAccessContainer.Visibility = ViewStates.Visible;
+                enableDrawOverAccess = FindViewById<TextView>(Resource.Id.enableFloatingPermission);
+                enableDrawOverAccess.Click += EnableDrawOverAccess_Click;
+
+            }
             enableNotificationAccess.Click += EnableNotificationAccess_Click;
             enableDeviceAdmin.Click += EnableDeviceAdmin_Click;
-            enableDrawOverAccess.Click += EnableDrawOverAccess_Click;
         }
 
         private void EnableDrawOverAccess_Click(object sender, EventArgs e)
@@ -191,9 +200,8 @@ namespace LiveDisplay.Activities
             {
                 StartActivityForResult(intent, 25);
             }
-
-
         }
+
         private void EnableDeviceAdmin_Click(object sender, EventArgs e)
         {
             ComponentName admin = new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(AdminReceiver)));

@@ -62,7 +62,7 @@ namespace LiveDisplay.Fragments
         {
             if (e.ShouldCauseWakeUp == true)
             {
-                Awake.WakeUpScreenOnNewNotification();
+                Awake.WakeUpScreen();
             }
         }
 
@@ -144,7 +144,6 @@ namespace LiveDisplay.Fragments
         private void ItemClicked(object sender, NotificationItemClickedEventArgs e)
         {
             position = e.Position;
-            //When an item of the list is clicked, then fill A notification with the position of the item.
             using (OpenNotification openNotification = new OpenNotification(e.Position))
             {
                 titulo.Text = openNotification.GetTitle();
@@ -159,7 +158,6 @@ namespace LiveDisplay.Fragments
                     {
                         notificationActions.AddView(a);
                     }
-                    notificationActions.Invalidate();
                 }
             }
             if (notification.Visibility != ViewStates.Visible)

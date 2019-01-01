@@ -59,6 +59,7 @@
 				android:minLines="0"
 				 />
 			<LinearLayout
+				android:weightSum="1"
 				android:id="@+id/floatingNotificationActions"
 				android:orientation="horizontal"
 				android:layout_width="match_parent"

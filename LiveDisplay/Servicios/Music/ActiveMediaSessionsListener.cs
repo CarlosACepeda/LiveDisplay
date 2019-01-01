@@ -32,7 +32,7 @@ namespace LiveDisplay.Servicios.Music
             else if (mediaController != null && controllers.Count == 0)
             {
                 Log.Info("LiveDisplay", "mediacontroller null or no controllers.");
-                //This is probably never to happen
+
                 mediaController.UnregisterCallback(musicController);
                 musicController.Dispose();
             }

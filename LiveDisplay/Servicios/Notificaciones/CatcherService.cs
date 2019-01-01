@@ -20,8 +20,6 @@ namespace LiveDisplay.Servicios
     [IntentFilter(new[] { "android.service.notification.NotificationListenerService" })]
     internal class Catcher : NotificationListenerService
     {
-        //Move to respective fragments
-        private BatteryReceiver batteryReceiver;
 
         private ScreenOnOffReceiver screenOnOffReceiver;
 
@@ -41,9 +39,6 @@ namespace LiveDisplay.Servicios
 
         private CatcherHelper catcherHelper;
         private List<StatusBarNotification> statusBarNotifications;
-#pragma warning disable CS0414 // El campo 'Catcher.isInAPlainSurface' está asignado pero su valor nunca se usa
-        private bool isInAPlainSurface = false;
-#pragma warning restore CS0414 // El campo 'Catcher.isInAPlainSurface' está asignado pero su valor nunca se usa
 
         public override IBinder OnBind(Intent intent)
         {
@@ -115,7 +110,7 @@ namespace LiveDisplay.Servicios
         {
             catcherHelper.Dispose();
             mediaSessionManager.RemoveOnActiveSessionsChangedListener(activeMediaSessionsListener);
-            UnregisterReceivers();
+            UnregisterReceiver(screenOnOffReceiver);
             base.OnListenerDisconnected();
         }
 
@@ -124,7 +119,7 @@ namespace LiveDisplay.Servicios
             if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
             {
                 catcherHelper.Dispose();
-                UnregisterReceivers();
+                UnregisterReceiver(screenOnOffReceiver);
 #pragma warning disable CS0618 // El tipo o el miembro están obsoletos
                 audioManager.UnregisterRemoteController(remoteController);
 #pragma warning restore CS0618 // El tipo o el miembro están obsoletos
@@ -165,12 +160,7 @@ namespace LiveDisplay.Servicios
                 intentFilter.AddAction(Intent.ActionScreenOn);
                 RegisterReceiver(screenOnOffReceiver, intentFilter);
             }
-            using (IntentFilter intentFilter = new IntentFilter())
-            {
-                batteryReceiver = new BatteryReceiver();
-                intentFilter.AddAction(Intent.ActionBatteryChanged);
-                RegisterReceiver(batteryReceiver, intentFilter);
-            }
+
         }
 
         //Events:
@@ -192,10 +182,5 @@ namespace LiveDisplay.Servicios
             catcherHelper.CancelAllNotifications();
         }
 
-        private void UnregisterReceivers()
-        {
-            UnregisterReceiver(screenOnOffReceiver);
-            UnregisterReceiver(batteryReceiver);
-        }
     }
 }

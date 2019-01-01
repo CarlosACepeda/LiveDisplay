@@ -230,19 +230,16 @@ namespace LiveDisplay.Fragments
             if (move == true)
             {
                 timer.Start();
-                Log.Info("LiveDisplay", "TimerStarted");
             }
             else
             {
                 timer.Stop();
-                Log.Info("LiveDisplay", "Timer Stopped");
             }
         }
 
         private void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
             skbSeekSongTime.SetProgress(skbSeekSongTime.Progress + 1000, true);
-            Log.Info("LiveDisplay", "Elapsed 1 second");
         }
     }
 }

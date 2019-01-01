@@ -21,6 +21,8 @@ using System;
 using System.Threading;
 using Android.Media.Session;
 using LiveDisplay.Servicios.FloatingNotification;
+using Com.JackAndPhantom;
+using Android.Graphics.Drawables;
 
 namespace LiveDisplay
 {
@@ -29,6 +31,7 @@ namespace LiveDisplay
     {
         private RecyclerView recycler;
         private RecyclerView.LayoutManager layoutManager;
+        private ImageView wallpaper;
         private ImageView unlocker;
         private Button clearAll;
         private FrameLayout weatherandclockcontainer;
@@ -42,9 +45,9 @@ namespace LiveDisplay
         private float firstTouchTime = -1;
         private float finalTouchTime;
         private readonly float threshold = 1000; //1 second of threshold.(used to implement the double tap.)
-        private bool timeoutStarted;
         private Sensor sensor;
         private SensorManager sensorManager;
+        private System.Timers.Timer watchDog; //the watchdog simply will start counting down until it gets resetted by OnUserInteraction() override.
 
 
 
@@ -54,8 +57,30 @@ namespace LiveDisplay
             base.OnCreate(savedInstanceState);
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.LockScreen);
-            //Views
 
+            //Before loading anything, check if the user has the required permissions.
+            ThreadPool.QueueUserWorkItem(isApphealthy =>
+            {
+                bool canDrawOverlays = true;
+                if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1) //In Lollipop and less this permission is granted at Install time.
+                {
+                    canDrawOverlays = Checkers.ThisAppCanDrawOverlays();
+                }
+
+                if (Checkers.IsNotificationListenerEnabled() == false  || canDrawOverlays == false)
+                {
+                    RunOnUiThread(()=>
+                    Toast.MakeText(Application.Context, "You dont have the required permissions", ToastLength.Long).Show()
+                    );
+                    Finish();
+                }
+
+            });
+
+
+
+            //Views
+            wallpaper = FindViewById<ImageView>(Resource.Id.wallpaper);
             unlocker = FindViewById<ImageView>(Resource.Id.unlocker);
             startCamera = FindViewById<Button>(Resource.Id.btnStartCamera);
             clearAll = FindViewById<Button>(Resource.Id.btnClearAllNotifications);
@@ -70,6 +95,11 @@ namespace LiveDisplay
             startCamera.Click += StartCamera_Click;
             lockscreen.Touch += Lockscreen_Touch;
             weatherandclockcontainer.LongClick += Weatherandclockcontainer_LongClick;
+
+            watchDog = new System.Timers.Timer();
+            watchDog.AutoReset = false;
+            watchDog.Interval = 5000;
+            watchDog.Elapsed += WatchdogInterval_Elapsed;
 
             WallpaperPublisher.WallpaperChanged += Wallpaper_WallpaperChanged;
 
@@ -114,6 +144,11 @@ namespace LiveDisplay
 
         }
 
+        private void WatchdogInterval_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+                Awake.TurnOffScreen();
+        }
+
         private void MusicController_MusicStopped(object sender, EventArgs e)
         {
             StopMusicController();
@@ -153,11 +188,13 @@ namespace LiveDisplay
         {
             if(e.Wallpaper== null)
             {
-                Window.DecorView.SetBackgroundColor(Color.Black);
+                
+                wallpaper.SetBackgroundColor(Color.Black);
             }
             else
             {
-                Window.DecorView.Background = e.Wallpaper;
+                wallpaper.Background = e.Wallpaper;
+                wallpaper.Background.Alpha = e.OpacityLevel;
             }
             
         }
@@ -179,7 +216,7 @@ namespace LiveDisplay
                             finalTouchTime = e.Event.DownTime;
                             if (firstTouchTime + threshold > finalTouchTime)
                             {
-                                Awake.LockScreen();
+                                Awake.TurnOffScreen();
                             }
                             //Reset the values of touch
                             firstTouchTime = -1;
@@ -205,9 +242,9 @@ namespace LiveDisplay
         protected override void OnResume()
         {
             base.OnResume();
-            //StartTimerToLockScreen();
-            //Add Immersive Flags
             AddFlags();
+            watchDog.Stop();
+            watchDog.Start();
         }
 
         protected override void OnPause()
@@ -231,12 +268,17 @@ namespace LiveDisplay
             CatcherHelper.NotificationListSizeChanged -= CatcherHelper_NotificationListSizeChanged;
             lockscreen.Touch -= Lockscreen_Touch;
 
+            watchDog.Stop();
+            watchDog.Elapsed -= WatchdogInterval_Elapsed;
+            watchDog.Dispose();
+
             //Dispose Views
             //Views
             recycler.Dispose();
             unlocker.Dispose();
             clearAll.Dispose();
             lockscreen.Dispose();
+            wallpaper.Dispose();
 
             //Dispose Fragments
             notificationFragment.Dispose();
@@ -256,27 +298,13 @@ namespace LiveDisplay
 
         //It simply means that a Touch has been registered, no matter where, it was on the lockscreen.
         //used to detect if the user is interacting with the lockscreen.
-
-        //FIx me: I don't work, because Im getting called if there is not any view handling touch events.
-        //and there are several views handling touch events, so, I wont be called never.
-        public override bool OnTouchEvent(MotionEvent e)
+        public override void OnUserInteraction()
         {
-            using (var handler = new Handler())
-            {
-                void turnOffAndLock()
-                { Awake.TurnOffScreen(); timeoutStarted = false; }
-                if (timeoutStarted == true)
-                {
-                    handler?.RemoveCallbacks(turnOffAndLock);
-                    handler?.PostDelayed(turnOffAndLock, 10000); //10 seconds.
-                }
-                else
-                {
-                    timeoutStarted = true;
-                    handler?.PostDelayed(turnOffAndLock, 10000);
-                }
-            }
-            return base.OnTouchEvent(e);
+            base.OnUserInteraction();
+            //Refresh the Watchdog, damn dog, annoying, lol.
+            watchDog.Stop();
+            watchDog.Start();
+            Log.Info("LiveDisplay", "User is touching Lockscreen");
         }
 
 
@@ -338,19 +366,6 @@ namespace LiveDisplay
             }
         }
 
-        //switch (e.Event.Action)
-        //{
-        //    case MotionEventActions.Down:
-        //        x = linearLayout.GetX()- e.Event.RawX;
-        //        break;
-        //    case MotionEventActions.Move:
-        //        linearLayout.Animate().X(e.Event.RawX + x)
-        //            .SetDuration(0)
-        //            .Start();
-
-        //        break;
-
-        //}
         private void StartCamera_Click(object sender, EventArgs e)
         {
             using (Intent intent = new Intent("android.media.action.IMAGE_CAPTURE"))
@@ -372,10 +387,27 @@ namespace LiveDisplay
                         break;
 
                     case "1":
-                        using (var wallpaper = WallpaperManager.GetInstance(Application.Context))
-                        {
-                            WallpaperPublisher.OnWallpaperChanged(new WallpaperChangedEventArgs { Wallpaper = wallpaper.Drawable });
-                        }
+                        
+                            ThreadPool.QueueUserWorkItem(blurWallpaper =>
+                            {
+                                using (var wallpaper = WallpaperManager.GetInstance(Application.Context))
+                                {
+                                    wallpaper.ForgetLoadedWallpaper();
+                                    int savedblurlevel = configurationManager.RetrieveAValue(ConfigurationParameters.blurlevel, 1);
+                                    int savedOpacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.opacitylevel, 255);
+                                    Bitmap bitmap = ((BitmapDrawable)wallpaper.Drawable).Bitmap;
+                                    BlurImage blurImage = new BlurImage(Application.Context);
+                                    blurImage.Load(bitmap).Intensity(savedblurlevel).Async(true);
+                                    Drawable drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
+
+                                    RunOnUiThread(() =>
+                                    WallpaperPublisher.OnWallpaperChanged(new WallpaperChangedEventArgs { Wallpaper = drawable, OpacityLevel= (short)savedOpacitylevel })
+                                    );
+
+                                }
+                            }
+                            );
+                        
                         break;
 
                     case "2":
