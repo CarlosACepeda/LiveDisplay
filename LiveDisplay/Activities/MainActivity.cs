@@ -6,11 +6,14 @@ using Android.Preferences;
 using Android.Provider;
 using Android.Runtime;
 using Android.Support.V7.App;
+using Android.Telephony;
 using Android.Views;
 using Android.Widget;
+using Java.Util;
 using LiveDisplay.BroadcastReceivers;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
+using LiveDisplay.Servicios.Weather;
 
 //for CI.
 using Microsoft.AppCenter;
@@ -31,6 +34,7 @@ namespace LiveDisplay.Activities
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+           
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.Main);
             BindViews();

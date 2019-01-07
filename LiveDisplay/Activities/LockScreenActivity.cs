@@ -130,12 +130,11 @@ namespace LiveDisplay
             LoadClockFragment();
 
             //Load User Configs.
-            ThreadPool.QueueUserWorkItem(o => LoadConfiguration());
+            LoadConfiguration();
 
             
             LoadNotificationFragment();
 
-            //Check if music is playing
             CheckIfMusicIsPlaying();
 
             
@@ -146,7 +145,7 @@ namespace LiveDisplay
 
         private void WatchdogInterval_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-                Awake.TurnOffScreen();
+            Awake.TurnOffScreen();
         }
 
         private void MusicController_MusicStopped(object sender, EventArgs e)
@@ -186,9 +185,9 @@ namespace LiveDisplay
 
         private void Wallpaper_WallpaperChanged(object sender, WallpaperChangedEventArgs e)
         {
-            if(e.Wallpaper== null)
+            if (e.Wallpaper == null)
             {
-                
+
                 wallpaper.SetBackgroundColor(Color.Black);
             }
             else
@@ -196,7 +195,8 @@ namespace LiveDisplay
                 wallpaper.Background = e.Wallpaper;
                 wallpaper.Background.Alpha = e.OpacityLevel;
             }
-            
+            GC.Collect();
+
         }
 
         private void Lockscreen_Touch(object sender, View.TouchEventArgs e)
@@ -252,7 +252,7 @@ namespace LiveDisplay
             MusicController.MusicPlaying -= MusicController_MusicPlaying;
             MusicController.MusicPaused -= MusicController_MusicPaused;
             MusicController.MusicStopped -= MusicController_MusicStopped;
-
+            watchDog.Stop();
             GC.Collect();
             base.OnPause();
         }
@@ -278,6 +278,7 @@ namespace LiveDisplay
             unlocker.Dispose();
             clearAll.Dispose();
             lockscreen.Dispose();
+            wallpaper.Background.Dispose();
             wallpaper.Dispose();
 
             //Dispose Fragments
@@ -344,7 +345,6 @@ namespace LiveDisplay
 
         private void Unlocker_Touch(object sender, View.TouchEventArgs e)
         {
-            //TODO: Document me
             float startPoint = 0;
             float finalPoint = 0;
             if (e.Event.Action == MotionEventActions.Down)
@@ -383,47 +383,42 @@ namespace LiveDisplay
                 {
                     case "0":
 
-                            WallpaperPublisher.OnWallpaperChanged(new WallpaperChangedEventArgs { Wallpaper = null });
+                        WallpaperPublisher.OnWallpaperChanged(new WallpaperChangedEventArgs { Wallpaper = null });
                         break;
 
                     case "1":
-                        
-                            ThreadPool.QueueUserWorkItem(blurWallpaper =>
+                            using (var wallpaper = WallpaperManager.GetInstance(Application.Context).Drawable)
                             {
-                                using (var wallpaper = WallpaperManager.GetInstance(Application.Context))
-                                {
-                                    wallpaper.ForgetLoadedWallpaper();
-                                    int savedblurlevel = configurationManager.RetrieveAValue(ConfigurationParameters.blurlevel, 1);
-                                    int savedOpacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.opacitylevel, 255);
-                                    Bitmap bitmap = ((BitmapDrawable)wallpaper.Drawable).Bitmap;
-                                    BlurImage blurImage = new BlurImage(Application.Context);
-                                    blurImage.Load(bitmap).Intensity(savedblurlevel).Async(true);
-                                    Drawable drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
+                                int savedblurlevel = configurationManager.RetrieveAValue(ConfigurationParameters.blurlevel, 1);
+                                int savedOpacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.opacitylevel, 255);
+                                //var weakblur = new WeakReference(new BlurImage(Application.Context).Load(bitmap).Intensity(savedblurlevel).Async(true).GetImageBlur());
+                                //var weak = new WeakReference(new BitmapDrawable(Resources, weakblur.Target as Bitmap));
 
-                                    RunOnUiThread(() =>
-                                    WallpaperPublisher.OnWallpaperChanged(new WallpaperChangedEventArgs { Wallpaper = drawable, OpacityLevel= (short)savedOpacitylevel })
-                                    );
-
-                                }
+                                
+                                 RunOnUiThread(() =>
+                                    WallpaperPublisher.OnWallpaperChanged(new WallpaperChangedEventArgs { Wallpaper = wallpaper, OpacityLevel = (short)savedOpacitylevel })
+                                          );
                             }
-                            );
+
+                               
                         
+                                                
                         break;
 
                     case "2":
-                        using (Bitmap bm = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.imagePath, "")))
-                        {
-                            using (var backgroundFactory = new BackgroundFactory())
-                            {
-                                using (BackgroundFactory blurImage = new BackgroundFactory())
-                                {
-                                    var drawable = blurImage.Difuminar(bm);
-                                    RunOnUiThread(() =>
-                                    Window.DecorView.Background = drawable);
-                                    drawable.Dispose();
-                                }
-                            }
-                        }
+                        //using (Bitmap bm = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.imagePath, "")))
+                        //{
+                        //    using (var backgroundFactory = new BackgroundFactory())
+                        //    {
+                        //        using (BackgroundFactory blurImage = new BackgroundFactory())
+                        //        {
+                        //            var drawable = blurImage.Difuminar(bm, sa);
+                        //            RunOnUiThread(() =>
+                        //            Window.DecorView.Background = drawable);
+                        //            drawable.Dispose();
+                        //        }
+                        //    }
+                        //}
                         break;
 
                     default:

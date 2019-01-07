@@ -2737,8 +2737,8 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f09005c
 			public const int action_mode_close_button = 2131296348;
 			
-			// aapt resource value: 0x7f0900e8
-			public const int action_settings = 2131296488;
+			// aapt resource value: 0x7f0900ea
+			public const int action_settings = 2131296490;
 			
 			// aapt resource value: 0x7f0900c4
 			public const int action_text = 2131296452;
@@ -3025,8 +3025,11 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f0900b0
 			public const int mainToolbar = 2131296432;
 			
+			// aapt resource value: 0x7f0900e9
+			public const int masked = 2131296489;
+			
 			// aapt resource value: 0x7f0900e7
-			public const int masked = 2131296487;
+			public const int maximumtemperature = 2131296487;
 			
 			// aapt resource value: 0x7f0900be
 			public const int mediaControls = 2131296446;
@@ -3042,6 +3045,9 @@ namespace LiveDisplay
 			
 			// aapt resource value: 0x7f090053
 			public const int mini = 2131296339;
+			
+			// aapt resource value: 0x7f0900e6
+			public const int minimumtemperature = 2131296486;
 			
 			// aapt resource value: 0x7f090028
 			public const int multiply = 2131296296;
@@ -3241,6 +3247,9 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f090019
 			public const int tag_transition_group = 2131296281;
 			
+			// aapt resource value: 0x7f0900e5
+			public const int temperature = 2131296485;
+			
 			// aapt resource value: 0x7f09001a
 			public const int text = 2131296282;
 			
@@ -3340,17 +3349,14 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f090016
 			public const int view_offset_helper = 2131296278;
 			
-			// aapt resource value: 0x7f0900e6
-			public const int visible = 2131296486;
+			// aapt resource value: 0x7f0900e8
+			public const int visible = 2131296488;
 			
 			// aapt resource value: 0x7f0900a8
 			public const int wallpaper = 2131296424;
 			
 			// aapt resource value: 0x7f09008b
 			public const int wallpaperPreview = 2131296395;
-			
-			// aapt resource value: 0x7f0900e5
-			public const int weatherStatusImage = 2131296485;
 			
 			// aapt resource value: 0x7f0900ad
 			public const int weatherandcLockplaceholder = 2131296429;

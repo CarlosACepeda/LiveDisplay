@@ -15,7 +15,7 @@
       android:title="@string/lockonboot">
     </SwitchPreference>
     <ListPreference
-      android:defaultValue="1"
+      android:defaultValue="0"
       android:key="changewallpaper"
       android:title="@string/changewallpaper"
       android:text="@string/changewallpaperdesc"
