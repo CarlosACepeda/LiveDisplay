@@ -193,7 +193,9 @@
     <Compile Include="Servicios\Music\JukeboxKitkat.cs" />
     <Compile Include="Servicios\Music\MediaEventArgs\MediaActionEventArgs.cs" />
     <Compile Include="Servicios\Music\MediaEventArgs\MediaMetadataChangedEventArgs.cs" />
+    <Compile Include="Servicios\Music\MediaEventArgs\MediaMetadataChangedKitkatEventArgs.cs" />
     <Compile Include="Servicios\Music\MediaEventArgs\MediaPlaybackStateChangedEventArgs.cs" />
+    <Compile Include="Servicios\Music\MediaEventArgs\MediaPlaybackStateChangedKitkatEventArgs.cs" />
     <Compile Include="Servicios\Music\MusicControllerKitkat.cs" />
     <Compile Include="Servicios\Music\ActiveMediaSessionsListener.cs" />
     <Compile Include="Servicios\Notificaciones\CatcherHelper.cs" />

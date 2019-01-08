@@ -3,6 +3,7 @@ using Android.Content;
 using Android.Media;
 using Android.Media.Session;
 using Android.OS;
+using Android.Runtime;
 using Android.Service.Notification;
 using Android.Util;
 using LiveDisplay.BroadcastReceivers;
@@ -18,35 +19,24 @@ namespace LiveDisplay.Servicios
 {
     [Service(Label = "@string/app_name", Permission = "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE")]
     [IntentFilter(new[] { "android.service.notification.NotificationListenerService" })]
-    internal class Catcher : NotificationListenerService
+    internal class Catcher : NotificationListenerService, RemoteController.IOnClientUpdateListener
     {
 
         private ScreenOnOffReceiver screenOnOffReceiver;
-
-        //Manipular las sesiones-
         private MediaSessionManager mediaSessionManager;
-
-        //el controlador actual de media.
+        private MusicControllerKitkat musicControllerKitkat;
         private ActiveMediaSessionsListener activeMediaSessionsListener;
-
-        //For Kitkat Music Controlling.
-
-#pragma warning disable CS0618 // El tipo o el miembro están obsoletos
         private RemoteController remoteController;
-#pragma warning restore CS0618 // El tipo o el miembro están obsoletos
-
         private AudioManager audioManager;
-
         private CatcherHelper catcherHelper;
         private List<StatusBarNotification> statusBarNotifications;
+
 
         public override IBinder OnBind(Intent intent)
         {
             //Workaround for Kitkat to Retrieve Notifications.
             if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
             {
-                //Activate the remote controller in Kitkat, because is Deprecated since Lollipop
-
                 ThreadPool.QueueUserWorkItem(o =>
                 {
                     Thread.Sleep(1000);
@@ -55,19 +45,11 @@ namespace LiveDisplay.Servicios
 
                 SubscribeToEvents();
                 RegisterReceivers();
-                //New remote controller for Kitkat
-
-#pragma warning disable CS0618 // El tipo o el miembro están obsoletos
-                remoteController = new RemoteController(Application.Context, new MusicControllerKitkat());
-
-                //remoteController.SetArtworkConfiguration(450, 450);
-
-#pragma warning restore CS0618 // El tipo o el miembro están obsoletos
+                remoteController = new RemoteController(Application.Context, this);
+                remoteController.SetArtworkConfiguration(450, 450);
                 audioManager = (AudioManager)Application.Context.GetSystemService(AudioService);
-#pragma warning disable CS0618 // El tipo o el miembro están obsoletos
                 audioManager.RegisterRemoteController(remoteController);
-
-#pragma warning restore CS0618 // El tipo o el miembro están obsoletos
+                musicControllerKitkat = MusicControllerKitkat.GetInstance();
             }
             return base.OnBind(intent);
         }
@@ -96,13 +78,13 @@ namespace LiveDisplay.Servicios
 
         public override void OnNotificationPosted(StatusBarNotification sbn)
         {
-            base.OnNotificationPosted(sbn);
+            //base.OnNotificationPosted(sbn);
             catcherHelper.OnNotificationPosted(sbn);
         }
 
         public override void OnNotificationRemoved(StatusBarNotification sbn)
         {
-            base.OnNotificationRemoved(sbn);
+            //base.OnNotificationRemoved(sbn);
             catcherHelper.OnNotificationRemoved(sbn);
         }
 
@@ -182,5 +164,31 @@ namespace LiveDisplay.Servicios
             catcherHelper.CancelAllNotifications();
         }
 
+        public void OnClientChange(bool clearing)
+        {
+            Log.Info("LiveDisplay", "clearing: " + clearing);
+            musicControllerKitkat = MusicControllerKitkat.GetInstance();
+        }
+
+        public void OnClientMetadataUpdate(RemoteController.MetadataEditor metadataEditor)
+        {
+            musicControllerKitkat.OnMetadataChanged(metadataEditor);
+        }
+
+        public void OnClientPlaybackStateUpdateSimple([GeneratedEnum] RemoteControlPlayState stateSimple)
+        {
+            musicControllerKitkat.OnPlaybackStateChanged(stateSimple);
+        }
+
+        public void OnClientPlaybackStateUpdate([GeneratedEnum] RemoteControlPlayState state, long stateChangeTimeMs, long currentPosMs, float speed)
+        {
+            musicControllerKitkat.OnPlaybackStateChanged(state);
+        }
+
+        public void OnClientTransportControlUpdate([GeneratedEnum] RemoteControlFlags transportControlFlags)
+        {
+            Log.Info("Livedisplay", "TransportControl update" + transportControlFlags);
+
+        }
     }
 }

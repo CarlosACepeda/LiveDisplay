@@ -151,8 +151,56 @@ namespace LiveDisplay.Fragments
 
         private void BindMusicControllerEvents()
         {
-            MusicController.MediaPlaybackChanged += MusicController_MediaPlaybackChanged;
-            MusicController.MediaMetadataChanged += MusicController_MediaMetadataChanged;
+            if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
+            {
+                MusicController.MediaPlaybackChanged += MusicController_MediaPlaybackChanged;
+                MusicController.MediaMetadataChanged += MusicController_MediaMetadataChanged;
+            }
+            else
+            {
+                MusicControllerKitkat.MediaMetadataChanged += MusicControllerKitkat_MediaMetadataChanged;
+                MusicControllerKitkat.MediaPlaybackChanged += MusicControllerKitkat_MediaPlaybackChanged;
+            }
+        }
+
+        private void MusicControllerKitkat_MediaPlaybackChanged(object sender, MediaPlaybackStateChangedKitkatEventArgs e)
+        {
+            switch (e.PlaybackState)
+            {
+                case RemoteControlPlayState.Paused:
+                    btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
+                    playbackState = PlaybackStateCode.Paused;
+                    MoveSeekbar(false);
+
+                    break;
+                case RemoteControlPlayState.Playing:
+                    btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_pause_white_24dp, 0, 0);
+                    playbackState = PlaybackStateCode.Playing;
+                    MoveSeekbar(true);
+
+                    break;
+                case RemoteControlPlayState.Stopped:
+                    btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
+                    playbackState = PlaybackStateCode.Stopped;
+                    MoveSeekbar(false);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void MusicControllerKitkat_MediaMetadataChanged(object sender, MediaMetadataChangedKitkatEventArgs e)
+        {
+            tvTitle.Text = e.Title;
+            tvAlbum.Text = e.Album;
+            tvArtist.Text = e.Artist;
+            skbSeekSongTime.Max=(int)e.Duration;
+            WallpaperPublisher.OnWallpaperChanged(new WallpaperChangedEventArgs
+            {
+                Wallpaper = new BitmapDrawable(Resources, e.AlbumArt)
+            });
+            GC.Collect(0);
+
         }
 
         private void MusicController_MediaMetadataChanged(object sender, MediaMetadataChangedEventArgs e)
@@ -221,10 +269,7 @@ namespace LiveDisplay.Fragments
             Jukebox.RetrieveMediaInformation();
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="move"> Boolean indicating if seekbar should start or stop moving itself automatically</param>
+        
         private void MoveSeekbar(bool move)
         {
             if (move == true)

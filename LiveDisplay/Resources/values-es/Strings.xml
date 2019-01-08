@@ -61,7 +61,7 @@
   <string name="turnonnewnotification_desc">Prender la pantalla si una nueva notificacion llega</string>
   <string name="turnonusermovement">Prender la pantalla al levantar el dispositivo</string>
   <string name="version">Versión</string>
-  <string name="versionnumber">0.7.0-alpha5</string>
+  <string name="versionnumber">0.7.0-alpha6</string>
   <string name="wallpaperblur">Difuminación</string>
   <string name="wallpaperopacity">Opacidad</string>
   <string name="yasujizr">Yasujizr</string>

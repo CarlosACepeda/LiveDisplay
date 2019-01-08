@@ -23,6 +23,7 @@ using Android.Media.Session;
 using LiveDisplay.Servicios.FloatingNotification;
 using Com.JackAndPhantom;
 using Android.Graphics.Drawables;
+using Android.Media;
 
 namespace LiveDisplay
 {
@@ -470,7 +471,7 @@ namespace LiveDisplay
 
         private void CheckIfMusicIsPlaying()
         {
-            if (MusicController.MusicStatus == PlaybackStateCode.Playing)
+            if (MusicController.MusicStatus == PlaybackStateCode.Playing || MusicControllerKitkat.MusicStatus == RemoteControlPlayState.Playing)
             {
                 StartMusicController();
                 StartFloatingNotificationService();
@@ -511,7 +512,6 @@ namespace LiveDisplay
             }
         }
 
-        //When music is stopped, call this.
         private void StopMusicController()
         {
             LoadNotificationFragment();

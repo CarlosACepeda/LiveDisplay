@@ -45,7 +45,11 @@ namespace LiveDisplay.Activities
         {
             CheckNotificationAccess();
             CheckDeviceAdminAccess();
-            CheckDrawOverOtherAppsAccess();
+            if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1)
+            {
+
+                CheckDrawOverOtherAppsAccess();
+            }
             IsApplicationHealthy();
             base.OnResume();
         }
