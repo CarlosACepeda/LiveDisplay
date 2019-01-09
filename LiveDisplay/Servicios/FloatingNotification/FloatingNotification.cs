@@ -141,6 +141,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
         private void FloatingNotificationView_Click(object sender, EventArgs e)
         {
             OpenNotification.ClickNotification(position);
+            floatingNotificationView.Visibility = ViewStates.Gone;
         }
         public override void OnDestroy()
         {

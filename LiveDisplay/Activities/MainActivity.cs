@@ -5,6 +5,7 @@ using Android.OS;
 using Android.Preferences;
 using Android.Provider;
 using Android.Runtime;
+using Android.Support.Design.Widget;
 using Android.Support.V7.App;
 using Android.Telephony;
 using Android.Views;
@@ -212,6 +213,25 @@ namespace LiveDisplay.Activities
 
         private void EnableDeviceAdmin_Click(object sender, EventArgs e)
         {
+            using (Android.Support.V7.App.AlertDialog.Builder builder = new Android.Support.V7.App.AlertDialog.Builder(this))
+            {
+
+                builder.SetMessage(Resource.String.dialogfordeviceaccessdescription);
+                builder.SetPositiveButton(Resource.String.dialogallowbutton, new EventHandler<DialogClickEventArgs>(OnDialogPositiveButtonEventArgs));
+                builder.SetNegativeButton(Resource.String.dialogcancelbutton, new EventHandler<DialogClickEventArgs>(OnDialogNegativeButtonEventArgs));
+                builder.Show();
+            }
+
+
+        }
+
+        private void OnDialogNegativeButtonEventArgs(object sender, DialogClickEventArgs e)
+        {
+            
+        }
+
+        private void OnDialogPositiveButtonEventArgs(object sender, DialogClickEventArgs e)
+        {
             ComponentName admin = new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(AdminReceiver)));
             using (Intent intent = new Intent(DevicePolicyManager.ActionAddDeviceAdmin).PutExtra(DevicePolicyManager.ExtraDeviceAdmin, admin))
                 StartActivity(intent);
@@ -221,7 +241,7 @@ namespace LiveDisplay.Activities
         {
             using (Intent intent = new Intent())
             {
-                string lel = Android.Provider.Settings.ActionNotificationListenerSettings;
+                string lel = Settings.ActionNotificationListenerSettings;
 
                 intent.AddFlags(ActivityFlags.NewTask);
                 intent.SetAction(lel);

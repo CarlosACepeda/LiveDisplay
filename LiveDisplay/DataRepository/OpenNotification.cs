@@ -12,7 +12,7 @@ using System.Collections.Generic;
 
 namespace LiveDisplay.Servicios.Notificaciones
 {
-    internal class OpenNotification : Java.Lang.Object
+    internal class OpenNotification:IDisposable
     {
         private int position;
 
@@ -170,6 +170,11 @@ namespace LiveDisplay.Servicios.Notificaciones
         public static void SendInlineText(string text)
         {
             //Implement me.
+        }
+
+        public void Dispose()
+        {
+            position = -1;
         }
     }
 }

@@ -209,10 +209,14 @@ namespace LiveDisplay.Fragments
             tvAlbum.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyAlbum);
             tvArtist.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyArtist);
             skbSeekSongTime.Max = (int)e.MediaMetadata.GetLong(MediaMetadata.MetadataKeyDuration);
-            WallpaperPublisher.OnWallpaperChanged(new WallpaperChangedEventArgs
+            using (var wallpaper = new BitmapDrawable(Resources, e.MediaMetadata.GetBitmap(MediaMetadata.MetadataKeyAlbumArt)))
             {
-                Wallpaper = new BitmapDrawable(Resources ,e.MediaMetadata.GetBitmap(MediaMetadata.MetadataKeyAlbumArt))
-            });
+                WallpaperPublisher.OnWallpaperChanged(new WallpaperChangedEventArgs
+                {
+                    Wallpaper = wallpaper,
+                    OpacityLevel = 255
+                });
+            }
             GC.Collect(0);
         }
 

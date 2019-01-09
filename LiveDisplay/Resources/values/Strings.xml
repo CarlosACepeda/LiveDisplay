@@ -22,10 +22,10 @@
   <string name="contactme">Contact me</string>
   <string name="contributetoprojectdesc">LiveDisplay on Github</string>
   <string name="defaultwallpaper">Default wallpaper</string>
+  <string name="dialogallowbutton">Allow</string>
+  <string name="dialogcancelbutton">Cancel</string>
   <string name="dialogcancelledclick">Ok, you can change this setting later in Notifications section!</string>
-  <string name="dialognldisabledmessage">You must allow this app to read Notifications first!</string>
-  <string name="dialognldisablednegativebutton">Cancel</string>
-  <string name="dialognldisabledpositivebutton">Allow</string>
+  <string name="dialogfordeviceaccessdescription">Permissions required:  \nLock screen: Control how and when to lock the screen</string>
   <string name="doubletaptosleep">Double tap to sleep</string>
   <string name="doubletaptosleepdesc">Touch twice anywhere on the lock screen to turn off the screen</string>
   <string name="enabledeviceaccess">Enable device Access</string>
@@ -63,7 +63,7 @@
   <string name="turnonnewnotification_desc">Turn on screen if a new notification incomes</string>
   <string name="turnonusermovement">Turn on screen on device pick up</string>
   <string name="version">Version</string>
-  <string name="versionnumber">0.7.0-alpha6</string>
+  <string name="versionnumber">0.7.0-alpha7</string>
   <string name="wallpaperblur">Blur</string>
   <string name="wallpaperopacity">Opacity</string>
   <string name="yasujizr">Yasujizr</string>

@@ -21,10 +21,10 @@
   <string name="contactme">Contáctame</string>
   <string name="contributetoprojectdesc">LiveDisplay en Github</string>
   <string name="defaultwallpaper">Papel tapiz por defecto</string>
+  <string name="dialogallowbutton">Permitir</string>
+  <string name="dialogcancelbutton">Cancelar</string>
   <string name="dialogcancelledclick">Muy bien, puedes cambiar esta opción después en la sección \'Notificaciones\'</string>
-  <string name="dialognldisabledmessage">Debes permitir que esta app acceda a las notificaciones primero!</string>
-  <string name="dialognldisablednegativebutton">Cancelar</string>
-  <string name="dialognldisabledpositivebutton">Permitir</string>
+  <string name="dialogfordeviceaccessdescription">Permisos requeridos: \nBloquear la pantalla: \nControlar cómo y cuando se apaga la pantalla</string>
   <string name="doubletaptosleep">Doble pulsación para suspender</string>
   <string name="doubletaptosleepdesc">Pulsa dos veces en la pantalla de bloqueo para apagar la pantalla</string>
   <string name="enabledeviceaccess">Acceso al Dispositivo</string>
@@ -61,7 +61,7 @@
   <string name="turnonnewnotification_desc">Prender la pantalla si una nueva notificacion llega</string>
   <string name="turnonusermovement">Prender la pantalla al levantar el dispositivo</string>
   <string name="version">Versión</string>
-  <string name="versionnumber">0.7.0-alpha6</string>
+  <string name="versionnumber">0.7.0-alpha7</string>
   <string name="wallpaperblur">Difuminación</string>
   <string name="wallpaperopacity">Opacidad</string>
   <string name="yasujizr">Yasujizr</string>

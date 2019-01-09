@@ -3895,16 +3895,16 @@ namespace LiveDisplay
 			public const int defaultwallpaper = 2131427390;
 			
 			// aapt resource value: 0x7f0b003f
-			public const int dialogcancelledclick = 2131427391;
+			public const int dialogallowbutton = 2131427391;
 			
 			// aapt resource value: 0x7f0b0040
-			public const int dialognldisabledmessage = 2131427392;
+			public const int dialogcancelbutton = 2131427392;
 			
 			// aapt resource value: 0x7f0b0041
-			public const int dialognldisablednegativebutton = 2131427393;
+			public const int dialogcancelledclick = 2131427393;
 			
 			// aapt resource value: 0x7f0b0042
-			public const int dialognldisabledpositivebutton = 2131427394;
+			public const int dialogfordeviceaccessdescription = 2131427394;
 			
 			// aapt resource value: 0x7f0b0043
 			public const int doubletaptosleep = 2131427395;
