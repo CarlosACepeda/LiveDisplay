@@ -3,9 +3,12 @@ using Android.Graphics.Drawables;
 using Android.Media;
 using Android.Media.Session;
 using Android.OS;
+using Android.Preferences;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using LiveDisplay.Misc;
+using LiveDisplay.Servicios;
 using LiveDisplay.Servicios.Music;
 using LiveDisplay.Servicios.Music.MediaEventArgs;
 using LiveDisplay.Servicios.Wallpaper;
@@ -23,6 +26,7 @@ namespace LiveDisplay.Fragments
         private SeekBar skbSeekSongTime;
         private PlaybackStateCode playbackState;
         private System.Timers.Timer timer;
+        ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context));
 
         #region Fragment Lifecycle
 
@@ -209,15 +213,20 @@ namespace LiveDisplay.Fragments
             tvAlbum.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyAlbum);
             tvArtist.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyArtist);
             skbSeekSongTime.Max = (int)e.MediaMetadata.GetLong(MediaMetadata.MetadataKeyDuration);
-            using (var wallpaper = new BitmapDrawable(Resources, e.MediaMetadata.GetBitmap(MediaMetadata.MetadataKeyAlbumArt)))
+            using (var albumart = e.MediaMetadata.GetBitmap(MediaMetadata.MetadataKeyAlbumArt))
             {
-                WallpaperPublisher.OnWallpaperChanged(new WallpaperChangedEventArgs
+                using (var wallpaper = new BitmapDrawable(Resources, albumart))
                 {
-                    Wallpaper = wallpaper,
-                    OpacityLevel = 255
-                });
+                    int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.opacitylevel, 255);
+                    WallpaperPublisher.OnWallpaperChanged(new WallpaperChangedEventArgs
+                    {
+                        Wallpaper = wallpaper,
+                        OpacityLevel = (short)opacitylevel
+                    });
+                }
+                
             }
-            GC.Collect(0);
+            GC.Collect();
         }
 
         private void MusicController_MediaPlaybackChanged(object sender, MediaPlaybackStateChangedEventArgs e)

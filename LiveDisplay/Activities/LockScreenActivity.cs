@@ -129,16 +129,12 @@ namespace LiveDisplay
 
 
             LoadClockFragment();
+            
+            LoadNotificationFragment();
 
             //Load User Configs.
             LoadConfiguration();
 
-            
-            LoadNotificationFragment();
-
-            CheckIfMusicIsPlaying();
-
-            
             CheckNotificationListSize();
 
 
@@ -426,6 +422,10 @@ namespace LiveDisplay
                         Window.DecorView.SetBackgroundColor(Color.Black);
                         break;
                 }
+                if (configurationManager.RetrieveAValue(ConfigurationParameters.musicwidgetenabled) == true)
+                    {
+                        CheckIfMusicIsPlaying(); //This method is the main entry for the music widget and the floating notification.
+                    }
             }
         }
 

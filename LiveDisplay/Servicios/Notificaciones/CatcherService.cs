@@ -3,10 +3,13 @@ using Android.Content;
 using Android.Media;
 using Android.Media.Session;
 using Android.OS;
+using Android.Preferences;
 using Android.Runtime;
 using Android.Service.Notification;
 using Android.Util;
 using LiveDisplay.BroadcastReceivers;
+using LiveDisplay.Fragments;
+using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Music;
 using LiveDisplay.Servicios.Notificaciones;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
@@ -124,7 +127,7 @@ namespace LiveDisplay.Servicios
             catcherHelper = new CatcherHelper(statusBarNotifications);
         }
 
-        //Subscribe to events by NotificationSlave
+        //Subscribe to events by Several publishers
         private void SubscribeToEvents()
         {
             NotificationSlave notificationSlave = NotificationSlave.NotificationSlaveInstance();
@@ -188,6 +191,23 @@ namespace LiveDisplay.Servicios
         public void OnClientTransportControlUpdate([GeneratedEnum] RemoteControlFlags transportControlFlags)
         {
             Log.Info("Livedisplay", "TransportControl update" + transportControlFlags);
+
+        }
+
+        void ToggleRemoteControllerKitkat()
+        {
+            using (ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context)))
+            {
+                if (configurationManager.RetrieveAValue(ConfigurationParameters.musicwidgetenabled) == true)
+                {
+
+                }
+
+            }
+
+        }
+        void ToggleActiveSessionsListenerLollipop()
+        {
 
         }
     }

@@ -66,4 +66,5 @@
   <string name="wallpaperopacity">Opacidad</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">Diseño del icono de esta app!</string>
+  <string name="musicwidgetenabled">Activar el Widget de Música</string>
 </resources>

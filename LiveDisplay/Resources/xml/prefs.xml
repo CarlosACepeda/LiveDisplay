@@ -34,6 +34,13 @@
       android:title="@string/musicwidget">
       <SwitchPreference
         android:defaultValue="true"
+        android:key="musicwidgetenabled?"
+        android:title="@string/musicwidgetenabled"
+        >
+        
+      </SwitchPreference>
+      <SwitchPreference
+        android:defaultValue="true"
         android:key="showalbumart?"
         android:title="@string/showalbumart">
       </SwitchPreference>

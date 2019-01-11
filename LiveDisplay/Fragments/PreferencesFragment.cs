@@ -10,12 +10,15 @@ using LiveDisplay.Activities;
 using LiveDisplay.Factories;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
+using System;
 
 namespace LiveDisplay.Fragments
 {
     public class PreferencesFragment : PreferenceFragment, ISharedPreferencesOnSharedPreferenceChangeListener
     {
         private ISharedPreferences sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
+
+        public static event EventHandler MusicWidgetPreferenceChanged;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
@@ -26,6 +29,8 @@ namespace LiveDisplay.Fragments
             Preference wallpapersettingspreference = FindPreference("wallpapersettings");
             Preference githubprojectpreference = FindPreference("contributetoproject");
             Preference blacklistpreference = FindPreference("blacklist");
+            Preference musicwidgetenabledpreference = FindPreference("musicwidgetenabled?");
+
             wallpapersettingspreference.PreferenceClick += WallpaperSettingsPreference_PreferenceClick;
             blacklistpreference.PreferenceClick += Blacklistpreference_PreferenceClick;
             githubprojectpreference.PreferenceClick += Githubprojectpreference_PreferenceClick;
@@ -35,7 +40,7 @@ namespace LiveDisplay.Fragments
         {
             string url = "https://github.com/CarlosACepeda/LiveDisplay/";
             Intent intent = new Intent(Intent.ActionView);
-            intent.SetData(Uri.Parse(url));
+            intent.SetData(Android.Net.Uri.Parse(url));
             StartActivity(intent);
 
         }

@@ -13,9 +13,8 @@
         public const string opacitylevel = "opacitylevel";
         public const string lockonboot = "lockonboot?";
 
-        //For Saving the device admin state.
-
         //For Music Widget settings
+        public const string musicwidgetenabled = "musicwidgetenabled?";
         public const string showalbumart = "showalbumart?";
 
         //For Notifications Settings :

@@ -3969,6 +3969,9 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f0b0057
 			public const int musicwidget = 2131427415;
 			
+			// aapt resource value: 0x7f0b006d
+			public const int musicwidgetenabled = 2131427437;
+			
 			// aapt resource value: 0x7f0b0058
 			public const int notificationsettings = 2131427416;
 			
