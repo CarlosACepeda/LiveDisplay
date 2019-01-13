@@ -162,6 +162,7 @@
     <Compile Include="Activities\BackgroundSettingsActivity.cs" />
     <Compile Include="Activities\BlacklistActivity.cs" />
     <Compile Include="Activities\SettingsActivity.cs" />
+    <Compile Include="Activities\WeatherSettingsActivity.cs" />
     <Compile Include="Adapters\AppsToBeBlacklistedAdapter.cs" />
     <Compile Include="Adapters\NotificationAdapter.cs" />
     <Compile Include="BroadcastReceivers\AdminReceiver.cs" />
@@ -182,6 +183,7 @@
     <Compile Include="Activities\MainActivity.cs" />
     <Compile Include="Activities\LockScreenActivity.cs" />
     <Compile Include="Misc\PackageUtils.cs" />
+    <Compile Include="Misc\UnitsFlags.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Servicios\Awake.cs" />

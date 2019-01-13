@@ -12,19 +12,19 @@ namespace LiveDisplay.BroadcastReceivers
     [IntentFilter(new[] { Intent.ActionScreenOn })]
     public class ScreenOnOffReceiver : BroadcastReceiver
     {
-        public static bool isScreenOn = true;
+        public static bool IsScreenOn { get; set; } = true;
         private ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context));
         public override void OnReceive(Context context, Intent intent)
         {
             if (intent.Action == Intent.ActionScreenOn)
             {
                 //Nice easter eggs here, lol.
-                isScreenOn = true;
+                IsScreenOn = true;
             }
             else if (intent.Action == Intent.ActionScreenOff)
             {
                 //Start hidden in Darkness. :$
-                isScreenOn = false;
+                IsScreenOn = false;
                     int delaytolockscreen = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.startlockscreendelaytime, "0"));
 
                     ThreadPool.QueueUserWorkItem(m =>
@@ -36,7 +36,7 @@ namespace LiveDisplay.BroadcastReceivers
                                                             //in summary the Lockscreen only can start when screen is off
                             using (Intent lockScreenIntent = new Intent(Application.Context, typeof(LockScreenActivity)))
                             {
-                                if (isScreenOn == false)
+                                if (IsScreenOn == false)
                                 {
                                     PendingIntent pendingIntent = PendingIntent.GetActivity(Application.Context, 0, lockScreenIntent, 0);
 

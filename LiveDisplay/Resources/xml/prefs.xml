@@ -45,6 +45,20 @@
         android:title="@string/showalbumart">
       </SwitchPreference>
     </PreferenceCategory>
+    <PreferenceCategory
+      android:title="@string/weatherwidget"
+      >
+      <SwitchPreference
+        android:defaultValue="false"
+        android:key="weatherwidgetenabled?"
+        android:title="@string/weatherwidgetenabled">
+      </SwitchPreference>
+      <Preference
+        android:key="weathersettings"
+        android:title="@string/changeweatherpreferences"
+        android:selectable="true"
+      ></Preference>
+    </PreferenceCategory>
 </PreferenceScreen>
   <!--This is the Second preference screen-->
   <PreferenceScreen

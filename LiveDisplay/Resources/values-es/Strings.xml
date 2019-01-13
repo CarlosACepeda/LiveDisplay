@@ -17,6 +17,7 @@
   <string name="changewallpaper">Cambiar fondo de pantalla</string>
   <string name="changewallpaperappearance">Apariencia del papel tapiz</string>
   <string name="changewallpaperdesc">El fondo de pantalla actual se usa por defecto</string>
+  <string name="changeweatherpreferences">Cambiar preferencias del clima</string>
   <string name="clearallnotifications">Descartar todas</string>
   <string name="contactme">Contáctame</string>
   <string name="contributetoprojectdesc">LiveDisplay en Github</string>
@@ -45,11 +46,13 @@
   <string name="lockonboot">Bloquear la pantalla al iniciar</string>
   <string name="lockscreensettings">Lockscreen</string>
   <string name="musicwidget">Widget de Musica</string>
+  <string name="musicwidgetenabled">Activar el Widget de Música</string>
   <string name="notificationsettings">Notificaciones</string>
   <string name="opciones">Opciones</string>
   <string name="pickwallpaper">Elige uno</string>
   <string name="placeholder">Inserta una cadena aquí</string>
   <string name="rus">Ruso</string>
+  <string name="sendtestnotification">Enviar notificacion de prueba</string>
   <string name="settings">Ajustes</string>
   <string name="showalbumart">Mostrar portada del álbum</string>
   <string name="showclock">No mostrar el reloj</string>
@@ -64,7 +67,8 @@
   <string name="versionnumber">0.7.0-alpha7</string>
   <string name="wallpaperblur">Difuminación</string>
   <string name="wallpaperopacity">Opacidad</string>
+  <string name="weatherwidget">Widget del Clima</string>
+  <string name="weatherwidgetenabled">Activar el Widget del Clima</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">Diseño del icono de esta app!</string>
-  <string name="musicwidgetenabled">Activar el Widget de Música</string>
 </resources>

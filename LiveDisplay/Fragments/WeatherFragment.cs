@@ -12,6 +12,7 @@ using Android.Telephony;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
 using LiveDisplay.Servicios.Weather;
 
@@ -45,12 +46,12 @@ namespace LiveDisplay.Fragments
 
             ThreadPool.QueueUserWorkItem(async m => 
             {
-                var weather= await Weather.GetWeather("Bogotá", countryCode);
+                var weather= await Weather.GetWeather("Bogotá", countryCode, UnitsFlags.Metric);
                 Activity.RunOnUiThread(() =>
                 {
-                    temperature.Text = weather.MainWeather.Temperature.ToString();
-                    minimumTemperature.Text = weather.MainWeather.MinTemperature.ToString();
-                    maximumTemperature.Text = weather.MainWeather.MaxTemperature.ToString();
+                    temperature.Text = weather?.MainWeather.Temperature.ToString();
+                    minimumTemperature.Text = weather?.MainWeather.MinTemperature.ToString();
+                    maximumTemperature.Text = weather?.MainWeather.MaxTemperature.ToString();
                 });
             });
             return v;

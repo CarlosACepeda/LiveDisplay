@@ -17,8 +17,10 @@
         public const string musicwidgetenabled = "musicwidgetenabled?";
         public const string showalbumart = "showalbumart?";
 
+        //For Weather Widget settings
+        public const string weatherwidgetenabled = "weatherwidgetenabled?";
+
         //For Notifications Settings :
-        //<The ListenerIsEnabled is not present because that value is get from the Actual Notification Listener (-:>
         public const string enablequickreply = "enablequickreply?";
 
         //For Awake Settings: (Awake is fused with notification settings now, but here is separated to maintain

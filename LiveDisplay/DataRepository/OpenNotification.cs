@@ -1,10 +1,10 @@
 ﻿using Android.App;
 using Android.Graphics;
+using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
-using Java.Util;
 using LiveDisplay.Factories;
 using LiveDisplay.Misc;
 using System;
@@ -12,7 +12,7 @@ using System.Collections.Generic;
 
 namespace LiveDisplay.Servicios.Notificaciones
 {
-    internal class OpenNotification:IDisposable
+    internal class OpenNotification : IDisposable
     {
         private int position;
 
@@ -47,7 +47,6 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         public static void ClickNotification(int position)
         {
-            
             try
             {
                 CatcherHelper.statusBarNotifications[position].Notification.ContentIntent.Send();
@@ -69,10 +68,11 @@ namespace LiveDisplay.Servicios.Notificaciones
                 string paquete = CatcherHelper.statusBarNotifications[position].PackageName;
                 foreach (var action in actions)
                 {
+                    OpenAction openAction = new OpenAction(action);
                     Button anActionButton = new Button(Application.Context)
                     {
                         LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MatchParent, weight),
-                        Text = action.Title.ToString(),
+                        Text = openAction.GetTitle(),
                     };
                     anActionButton.SetTypeface(Typeface.Create("sans-serif-condensed", TypefaceStyle.Normal), TypefaceStyle.Normal);
                     anActionButton.SetMaxLines(1);
@@ -81,7 +81,7 @@ namespace LiveDisplay.Servicios.Notificaciones
                     {
                         try
                         {
-                            action.ActionIntent.Send();
+                            openAction.ClickAction();
                         }
                         catch (Exception ex)
                         {
@@ -93,10 +93,8 @@ namespace LiveDisplay.Servicios.Notificaciones
                     TypedValue outValue = new TypedValue();
                     Application.Context.Theme.ResolveAttribute(Android.Resource.Attribute.SelectableItemBackgroundBorderless, outValue, true);
                     anActionButton.SetBackgroundResource(outValue.ResourceId);
-                    if (Build.VERSION.SdkInt > BuildVersionCodes.M)
-                    {
-                        anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(IconFactory.ReturnActionIconDrawable(action.Icon, paquete), null, null, null);
-                    }
+                    anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction.GetActionIcon(), null, null, null);
+                    
                     buttons.Add(anActionButton);
                 }
                 return buttons;
@@ -132,7 +130,7 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             try
             {
-                var lol= CatcherHelper.statusBarNotifications[position].Notification.When.ToString();
+                var lol = CatcherHelper.statusBarNotifications[position].Notification.When.ToString();
                 DateTime dateTime = new DateTime(Convert.ToInt64(lol));
                 if (dateTime.Hour == 0 && dateTime.Minute == 0)
                 {
@@ -175,6 +173,39 @@ namespace LiveDisplay.Servicios.Notificaciones
         public void Dispose()
         {
             position = -1;
+        }
+    }
+
+    internal class OpenAction: IDisposable
+    {
+        Notification.Action action;
+
+        public OpenAction(Notification.Action action)
+        {
+            this.action = action;
+        }
+
+        public string GetTitle()
+        {
+            return action.ToString();
+        }
+        public void ClickAction()
+        {
+            action.ActionIntent.Send();
+        }
+        public Drawable GetActionIcon()
+        {
+            if (Build.VERSION.SdkInt > BuildVersionCodes.M)
+            {
+                return IconFactory.ReturnActionIconDrawable(action.Icon, action.ActionIntent.CreatorPackage);
+            }
+            return null;
+
+        }
+        
+        public void Dispose()
+        {
+            action.Dispose();
         }
     }
 }

@@ -24,11 +24,12 @@ using LiveDisplay.Servicios.FloatingNotification;
 using Com.JackAndPhantom;
 using Android.Graphics.Drawables;
 using Android.Media;
+using LiveDisplay.BroadcastReceivers;
 
 namespace LiveDisplay
 {
     [Activity(Label = "LockScreen", Theme = "@style/LiveDisplayThemeDark", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, LaunchMode = Android.Content.PM.LaunchMode.SingleTask, ExcludeFromRecents = true)]
-    public class LockScreenActivity : Activity, ISensorEventListener
+    public class LockScreenActivity : Activity
     {
         private RecyclerView recycler;
         private RecyclerView.LayoutManager layoutManager;
@@ -99,7 +100,6 @@ namespace LiveDisplay
 
             watchDog = new System.Timers.Timer();
             watchDog.AutoReset = false;
-            watchDog.Interval = 5000;
             watchDog.Elapsed += WatchdogInterval_Elapsed;
 
             WallpaperPublisher.WallpaperChanged += Wallpaper_WallpaperChanged;
@@ -135,7 +135,11 @@ namespace LiveDisplay
             //Load User Configs.
             LoadConfiguration();
 
+
             CheckNotificationListSize();
+            sensorManager = GetSystemService(SensorService) as SensorManager;
+
+            sensor = sensorManager.GetDefaultSensor(SensorType.Accelerometer);
 
 
         }
@@ -242,6 +246,7 @@ namespace LiveDisplay
             AddFlags();
             watchDog.Stop();
             watchDog.Start();
+
         }
 
         protected override void OnPause()
@@ -249,6 +254,8 @@ namespace LiveDisplay
             MusicController.MusicPlaying -= MusicController_MusicPlaying;
             MusicController.MusicPaused -= MusicController_MusicPaused;
             MusicController.MusicStopped -= MusicController_MusicStopped;
+            //sensorManager.UnregisterListener(this);
+
             watchDog.Stop();
             GC.Collect();
             base.OnPause();
@@ -268,7 +275,8 @@ namespace LiveDisplay
             watchDog.Stop();
             watchDog.Elapsed -= WatchdogInterval_Elapsed;
             watchDog.Dispose();
-
+            sensor.Dispose();
+            sensorManager.Dispose();
             //Dispose Views
             //Views
             recycler.Dispose();
@@ -302,9 +310,7 @@ namespace LiveDisplay
             //Refresh the Watchdog, damn dog, annoying, lol.
             watchDog.Stop();
             watchDog.Start();
-            Log.Info("LiveDisplay", "User is touching Lockscreen");
         }
-
 
         private void CatcherHelper_NotificationListSizeChanged(object sender, NotificationListSizeChangedEventArgs e)
         {
@@ -426,6 +432,13 @@ namespace LiveDisplay
                     {
                         CheckIfMusicIsPlaying(); //This method is the main entry for the music widget and the floating notification.
                     }
+                int interval = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.turnoffscreendelaytime, "5000"));
+                watchDog.Interval = interval;
+                if (configurationManager.RetrieveAValue(ConfigurationParameters.turnonusermovement) == true)
+                {
+                    StartAwakeService();
+                }
+
             }
         }
 
@@ -501,6 +514,23 @@ namespace LiveDisplay
 
         }
 
+        private void StartAwakeService()
+        {
+            using (Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(Awake))))
+            {
+                StartService(intent);
+
+            }
+        }
+        private void StopAwakeService()
+        {
+            using (Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(Awake))))
+            {
+                StopService(intent);
+
+            }
+        }
+
         private void StartMusicController()
         {
             using (FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction())
@@ -517,15 +547,5 @@ namespace LiveDisplay
             LoadNotificationFragment();
         }
 
-
-        public void OnAccuracyChanged(Sensor sensor, [GeneratedEnum] SensorStatus accuracy)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void OnSensorChanged(SensorEvent e)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

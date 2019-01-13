@@ -32,6 +32,7 @@ namespace LiveDisplay.Activities
         private TextView enableNotificationAccess, enableDeviceAdmin;
         private TextView enableDrawOverAccess;
         private RelativeLayout enableDrawOverAccessContainer;
+        bool isApplicationHealthy;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -128,11 +129,13 @@ namespace LiveDisplay.Activities
                 {
                     accessestext.SetText(Resource.String.accessesstatusenabled);
                     accessestext.SetTextColor(Android.Graphics.Color.Green);
+                    isApplicationHealthy = true;
                 }
                 else
                 {
                     accessestext.SetText(Resource.String.accessesstatusdisabled);
                     accessestext.SetTextColor(Android.Graphics.Color.Red);
+                    isApplicationHealthy = false;
                 }
             }
         }
@@ -169,14 +172,44 @@ namespace LiveDisplay.Activities
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
             int id = item.ItemId;
-            if (id == Resource.Id.action_settings)
+            switch (id)
             {
-                using (Intent intent = new Intent(this, typeof(SettingsActivity)))
-                {
-                    StartActivity(intent);
-                }
+                case Resource.Id.action_settings:
+                    using (Intent intent = new Intent(this, typeof(SettingsActivity)))
+                    {
+                        StartActivity(intent);
+                    }
 
-                return true;
+                    return true;
+                case Resource.Id.action_sendtestnotification:
+                    if (isApplicationHealthy)
+                    {
+                        using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())
+                        {
+                            if (Build.VERSION.SdkInt > BuildVersionCodes.N)
+                            {
+                                slave.PostNotification("LiveDisplay", "Long press a notification from the list to clear it", true, NotificationImportance.Low);
+                            }
+                            else
+                            {
+                                slave.PostNotification("LiveDisplay", "Long press a notification from the list to clear it", true, NotificationPriority.Low);
+
+                            }
+                        }
+                        using (Intent intent = new Intent(Application.Context, typeof(LockScreenActivity)))
+                        {
+                            intent.AddFlags(ActivityFlags.NewTask);
+                            StartActivity(intent);
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        Toast.MakeText(Application.Context, "You dont have the required permissions yet", ToastLength.Long).Show();
+                    }
+                    break;
+                default:
+                    break;
             }
 
             return base.OnOptionsItemSelected(item);
