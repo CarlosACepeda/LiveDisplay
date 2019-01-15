@@ -25,6 +25,8 @@ using Com.JackAndPhantom;
 using Android.Graphics.Drawables;
 using Android.Media;
 using LiveDisplay.BroadcastReceivers;
+using static Android.Resource;
+using Android.Views.Animations;
 
 namespace LiveDisplay
 {
@@ -50,8 +52,7 @@ namespace LiveDisplay
         private Sensor sensor;
         private SensorManager sensorManager;
         private System.Timers.Timer watchDog; //the watchdog simply will start counting down until it gets resetted by OnUserInteraction() override.
-
-
+        private Android.Views.Animations.Animation fadeoutanimation;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -88,6 +89,10 @@ namespace LiveDisplay
             clearAll = FindViewById<Button>(Resource.Id.btnClearAllNotifications);
             lockscreen = FindViewById<LinearLayout>(Resource.Id.contenedorPrincipal);
             weatherandclockcontainer = FindViewById<FrameLayout>(Resource.Id.weatherandcLockplaceholder);
+
+            fadeoutanimation = AnimationUtils.LoadAnimation(Application.Context, Resource.Animation.abc_fade_out);
+            fadeoutanimation.AnimationEnd += Fadeoutanimation_AnimationEnd;
+
             notificationFragment = new NotificationFragment();
             musicFragment = new MusicFragment();
             clockFragment = new ClockFragment();
@@ -144,6 +149,14 @@ namespace LiveDisplay
 
         }
 
+        private void Fadeoutanimation_AnimationEnd(object sender, Android.Views.Animations.Animation.AnimationEndEventArgs e)
+        {
+            var fadeinanimation = AnimationUtils.LoadAnimation(Application.Context, Resource.Animation.abc_fade_in);
+            wallpaper.StartAnimation(fadeinanimation);
+            Log.Info("Livedisplay", "fadeinanimation started");
+
+        }
+
         private void WatchdogInterval_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             Awake.TurnOffScreen();
@@ -186,10 +199,11 @@ namespace LiveDisplay
 
         private void Wallpaper_WallpaperChanged(object sender, WallpaperChangedEventArgs e)
         {
+            wallpaper.StartAnimation(fadeoutanimation);
             if (e.Wallpaper == null)
             {
 
-                wallpaper.SetBackgroundColor(Color.Black);
+                wallpaper.SetBackgroundColor(Android.Graphics.Color.Black);
             }
             else
             {
@@ -425,7 +439,7 @@ namespace LiveDisplay
                         break;
 
                     default:
-                        Window.DecorView.SetBackgroundColor(Color.Black);
+                        Window.DecorView.SetBackgroundColor(Android.Graphics.Color.Black);
                         break;
                 }
                 if (configurationManager.RetrieveAValue(ConfigurationParameters.musicwidgetenabled) == true)
@@ -546,6 +560,5 @@ namespace LiveDisplay
         {
             LoadNotificationFragment();
         }
-
     }
 }
