@@ -1,19 +1,11 @@
-# Live Display
+# LiveDisplay
 
-This Application shows the list of current notifications on Screen, remove them, with various configurable options.
-
-[![currentversion](https://img.shields.io/badge/current--version-v0.6.1-blue.svg)](https://github.com/CarlosACepeda/LiveDisplay)
-[![pre-releaseversion](https://img.shields.io/badge/pre--release-v.0.1-blue.svg)](https://github.com/CarlosACepeda/LiveDisplay/releases)
-
-|Master branch:|Laboratory branch:|
-|--------------|------------------|
-|[![currentversion](https://img.shields.io/badge/current--version-v0.3.21-blue.svg)](https://github.com/CarlosACepeda/LiveDisplay)|[![currentversion](https://img.shields.io/badge/pre--release-v0.6.2-blue.svg)](https://github.com/CarlosACepeda/LiveDisplay)
-|[![pre-releaseversion](https://img.shields.io/badge/pre--release-v.0.1-blue.svg)](https://github.com/CarlosACepeda/LiveDisplay/releases)|[![pre-releaseversion](https://img.shields.io/badge/pre--release-v.0.1-blue.svg)](https://github.com/CarlosACepeda/LiveDisplay/releases)|
+This Application shows the list of current notifications on a beautiful and customizable lockscreen, in a simple manner.
 
 
 # Releases
 
-[![release](https://img.shields.io/badge/release-not%20released-lightgrey.svg)](https://github.com/CarlosACepeda/LiveDisplay)
+[![release](https://img.shields.io/badge/release-released-brightgreen.svg)](https://github.com/CarlosACepeda/LiveDisplay/releases)
 
 ## Build Status: App Center
 
@@ -23,29 +15,32 @@ This Application shows the list of current notifications on Screen, remove them,
 
 ## Features
 
+* Change the wallpaper as well it's appearance, blur and opacity
+
 * Manage the Notifications directly from the LockScreen - *Functional*
 
 * Block the notifications from the apps you choose. *WIP*
 
-* Configure which apps should be allowed to wake up the device when a new notification from that app is posted. *To be added*
+* Configure which apps should be allowed to wake up the device when a new notification from that app is posted. *WIP*
 
-* Control music currently playing directly from the Lockscreen - *Functional[beta]*
+* Control music currently playing directly from the Lockscreen, you can disable it or change some of its configurations - *Functional*
 
-* Automatic device turn-on screen when a new notification is posted or when the user picks the phone up, or when you pick your phone out of your pocket, you can change this behavior. -*Partially functional*, there are bugs.
+* Automatic device turn-on screen when a new notification is posted or when the user picks the phone up, or when you pick your phone out of your pocket, you can change this behavior. -*Functional
 
 * Turning on the Screen automatically is disabled at night, or at the time you want, it's configurable, it helps to save battery. -*To be added*
 
-* LockScreen shortcuts, by default, the camera is launched, you can change it. - *WIP*
+* LockScreen shortcuts, by default, the camera is launched, you can change it. - *Partially functional*
+
+* See the weather.
+
+* Answer directly from the notification as seen in Android Nougat, I'm trying to backport it to Kitkat. ;) 
 
 
-### Screenshots (The contents can potentially change)
+### Screenshots
 
-|Lockscreen:|Music Control:|App Settings/About:|
+|LockScreen|Main|LockScreen settings|
 |-----------|--------------|-------------|
-|<img src="https://i.imgur.com/or1E4B1.png" width=320>|<img src="https://i.imgur.com/E1C4JIL.png" width=320>|<img src="https://i.imgur.com/rp6diWb.png" width="320">|
-
-
-
+|<img src="https://i.imgur.com/vT9q2Qb.png" width=320>|<img src="https://i.imgur.com/QrFhA6C.png" width=320>|<img src="https://i.imgur.com/z3FTtaK.png" width="320">|
 
 
 
