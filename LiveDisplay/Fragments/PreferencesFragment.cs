@@ -23,7 +23,6 @@ namespace LiveDisplay.Fragments
             base.OnCreate(savedInstanceState);
             AddPreferencesFromResource(Resource.Xml.prefs);
             PreferenceManager.SetDefaultValues(Application.Context, Resource.Xml.prefs, false);
-            sharedPreferences.RegisterOnSharedPreferenceChangeListener(this);
             Preference wallpapersettingspreference = FindPreference("wallpapersettings");
             Preference githubprojectpreference = FindPreference("contributetoproject");
             Preference blacklistpreference = FindPreference("blacklist");
@@ -69,7 +68,12 @@ namespace LiveDisplay.Fragments
         {
             return base.OnCreateView(inflater, container, savedInstanceState);
         }
+        public override void OnResume()
+        {
+            base.OnResume();
+            sharedPreferences.RegisterOnSharedPreferenceChangeListener(this);
 
+        }
         public override void OnPause()
         {
             base.OnPause();

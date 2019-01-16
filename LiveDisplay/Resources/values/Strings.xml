@@ -73,4 +73,5 @@
   <string name="weatherwidgetenabled">Enable Weather Widget</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
+  <string name="testnotificationtext">Long press a notification from the list to clear it</string>
 </resources>

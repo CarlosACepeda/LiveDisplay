@@ -4047,6 +4047,9 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f0b0063
 			public const int tenseconds = 2131427427;
 			
+			// aapt resource value: 0x7f0b0072
+			public const int testnotificationtext = 2131427442;
+			
 			// aapt resource value: 0x7f0b0064
 			public const int translations = 2131427428;
 			

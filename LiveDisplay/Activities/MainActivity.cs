@@ -186,13 +186,14 @@ namespace LiveDisplay.Activities
                     {
                         using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())
                         {
+                            var notificationtext=  Resources.GetString(Resource.String.testnotificationtext);
                             if (Build.VERSION.SdkInt > BuildVersionCodes.N)
                             {
-                                slave.PostNotification("LiveDisplay", "Long press a notification from the list to clear it", true, NotificationImportance.Low);
+                                slave.PostNotification("LiveDisplay", notificationtext, true, NotificationImportance.Low);
                             }
                             else
                             {
-                                slave.PostNotification("LiveDisplay", "Long press a notification from the list to clear it", true, NotificationPriority.Low);
+                                slave.PostNotification("LiveDisplay", notificationtext, true, NotificationPriority.Low);
 
                             }
                         }

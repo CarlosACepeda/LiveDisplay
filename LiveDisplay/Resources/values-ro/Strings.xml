@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="dialogallowbutton">Permite</string>
+  <string name="dialogcancelbutton">închide</string>
+  <string name="idk">¯\_(ツ)_/¯</string>
+  <string name="testnotificationtext">Es Ține apăsat pe o notificare din listă pentru a o elimina</string>
+</resources>

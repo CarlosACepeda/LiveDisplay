@@ -187,15 +187,30 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         public string GetTitle()
         {
-            return action.ToString();
+            try
+            {
+                return action.Title.ToString();
+            }
+            catch
+            {
+                return "";
+            }
         }
         public void ClickAction()
         {
-            action.ActionIntent.Send();
+            try
+            {
+                action.ActionIntent.Send();
+            }
+            catch
+            {
+                Log.Info("LiveDisplay", "Click notification failed");
+            }
+
         }
         public Drawable GetActionIcon()
         {
-            if (Build.VERSION.SdkInt > BuildVersionCodes.M)
+            if (Build.VERSION.SdkInt < BuildVersionCodes.N)
             {
                 return IconFactory.ReturnActionIconDrawable(action.Icon, action.ActionIntent.CreatorPackage);
             }
