@@ -3,14 +3,40 @@
     a:orientation="vertical"
     a:layout_width="match_parent"
     a:layout_height="match_parent">
-<!--this will hold apart from the image, the City, when this information was retrieved
-  and also the city-->
-    <ImageView
-        a:id="@+id/weatherStatusImage"
-        a:layout_width="wrap_content"
-        a:layout_height="wrap_content"
-        a:layout_toRightOf="@id/clockLock"
-        a:layout_below="@id/batteryLevel"
-        a:minWidth="20dp"
-        a:minHeight="20dp" />
+
+	<TextView
+		a:text="bash"
+		a:textAppearance="?android:attr/textAppearanceLarge"
+		a:layout_width="match_parent"
+		a:layout_height="wrap_content"
+		a:minWidth="25px"
+		a:minHeight="25px"
+		a:id="@+id/temperature" />
+	<LinearLayout
+		a:orientation="horizontal"
+		a:layout_width="match_parent"
+		a:layout_height="wrap_content">
+		<TextView
+			a:text="bash"
+			a:textAppearance="?android:attr/textAppearanceMedium"
+			a:layout_width="wrap_content"
+			a:layout_height="wrap_content"
+			a:id="@+id/minimumtemperature" />
+		<Space
+            a:layout_width="5dp"
+            a:layout_height="wrap_content" />
+		<TextView
+			a:text="lmao"
+			a:textAppearance="?android:attr/textAppearanceMedium"
+			a:layout_width="wrap_content"
+			a:layout_height="wrap_content"
+			a:id="@+id/maximumtemperature" />
+	</LinearLayout>
+	<TextView
+		a:text="bash"
+		a:textAppearance="?android:attr/textAppearanceSmall"
+		a:layout_width="wrap_content"
+		a:layout_height="wrap_content"
+		a:minWidth="25px"
+		a:minHeight="25px"/>
 </LinearLayout>

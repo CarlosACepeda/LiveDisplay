@@ -111,7 +111,7 @@ namespace LiveDisplay.Servicios.Music
             OnMediaPlaybackChanged(new MediaPlaybackStateChangedEventArgs
             {
                 PlaybackState = state.State,
-                CurrentTime = (int)(state.Position / 1000)
+                CurrentTime = state.Position
             });
             base.OnPlaybackStateChanged(state);
         }

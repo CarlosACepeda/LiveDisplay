@@ -1,6 +1,12 @@
 ﻿using Android.Media;
+using Android.Media.Session;
 using Android.Runtime;
+using Android.Service.Notification;
+using Android.Util;
+using LiveDisplay.Misc;
+using LiveDisplay.Servicios.Music.MediaEventArgs;
 using System;
+using static Android.Media.Session.MediaController;
 
 namespace LiveDisplay.Servicios.Music
 {
@@ -9,37 +15,131 @@ namespace LiveDisplay.Servicios.Music
     /// This class is registered in Catcher to receive callbacks
     /// For Kitkat only.
     /// </summary>
-#pragma warning disable CS0618 // El tipo o el miembro están obsoletos
 
-    internal class MusicControllerKitkat : Java.Lang.Object, RemoteController.IOnClientUpdateListener
-#pragma warning restore CS0618 // El tipo o el miembro están obsoletos
+    internal class MusicControllerKitkat: IDisposable
     {
-        public void OnClientChange(bool clearing)
+        private static MusicControllerKitkat instance;
+
+        public static RemoteControlPlayState MusicStatus { get; private set; }
+        public RemoteControlPlayState PlaybackState { get; set; }
+        public RemoteController.MetadataEditor MediaMetadata { get; set; }
+
+        public static event EventHandler<MediaPlaybackStateChangedKitkatEventArgs> MediaPlaybackChanged;
+        public static event EventHandler<MediaMetadataChangedKitkatEventArgs> MediaMetadataChanged;
+
+
+        internal static MusicControllerKitkat GetInstance()
         {
-            Console.WriteLine("OnClientChange called");
+            if (instance == null)
+            {
+                instance = new MusicControllerKitkat();
+            }
+            return instance;
+        }
+        private MusicControllerKitkat()
+        {
+            Jukebox.MediaEvent += Jukebox_MediaEvent;
         }
 
-#pragma warning disable CS0618 // El tipo o el miembro están obsoletos
-
-        public void OnClientMetadataUpdate(RemoteController.MetadataEditor metadataEditor)
-#pragma warning restore CS0618 // El tipo o el miembro están obsoletos
+        private void Jukebox_MediaEvent(object sender, MediaActionEventArgs e)
         {
-            Console.WriteLine("OnClientMetadataUpdate called");
+            switch (e.MediaActionFlags)
+            {
+                //case MediaActionFlags.Play:
+                //    Play();
+                //    break;
+
+                //case MediaActionFlags.Pause:
+                //    TransportControls.Pause();
+                //    break;
+
+                //case MediaActionFlags.SkipToNext:
+                //    TransportControls.SkipToNext();
+                //    break;
+
+                //case MediaActionFlags.SkipToPrevious:
+                //    TransportControls.SkipToPrevious();
+                //    break;
+
+                //case MediaActionFlags.SeekTo:
+                //    TransportControls.SeekTo(e.Time);
+                //    break;
+
+                //case MediaActionFlags.FastFoward:
+                //    TransportControls.FastForward();
+                //    break;
+
+                //case MediaActionFlags.Rewind:
+                //    TransportControls.Rewind();
+                //    break;
+
+                //case Misc.MediaActionFlags.Stop:
+                //    TransportControls.Stop();
+                //    break;
+
+                //case Misc.MediaActionFlags.RetrieveMediaInformation:
+                //    //Send media information.
+                //    OnMediaMetadataChanged(new MediaMetadataChangedEventArgs
+                //    {
+                //        MediaMetadata = MediaMetadata
+                //    });
+                //    //Send Playbackstate of the media.
+                //    OnMediaPlaybackChanged(new MediaPlaybackStateChangedEventArgs
+                //    {
+                //        PlaybackState = PlaybackState.State,
+                //        CurrentTime = PlaybackState.Position
+                //    });
+
+                //    break;
+
+                //default:
+                //    break;
+
+            }
         }
 
-        public void OnClientPlaybackStateUpdateSimple([GeneratedEnum] RemoteControlPlayState stateSimple)
+        public void OnPlaybackStateChanged(RemoteControlPlayState state)
         {
-            Console.WriteLine("OnClientPlaybackStateUpdateSimple called");
+            PlaybackState = state;
+            MusicStatus = state;
+            Log.Info("LiveDisplay", "Music state is" + state);
+            OnMediaPlaybackChanged(new MediaPlaybackStateChangedKitkatEventArgs
+            {
+                PlaybackState = state   
+            });
+        }
+        public void OnMetadataChanged(RemoteController.MetadataEditor mediaMetadata)
+        { 
+            MediaMetadata = mediaMetadata;
+            OnMediaMetadataChanged(new MediaMetadataChangedKitkatEventArgs
+            {
+                Title = mediaMetadata.GetString((MediaMetadataEditKey)MetadataKey.Title, ""),
+                Artist = mediaMetadata.GetString((MediaMetadataEditKey)MetadataKey.Artist, ""),
+                Album = mediaMetadata.GetString((MediaMetadataEditKey)MetadataKey.Album, ""),
+                AlbumArt = mediaMetadata.GetBitmap(MediaMetadataEditKey.BitmapKeyArtwork, null),
+                Duration = mediaMetadata.GetLong((MediaMetadataEditKey)MetadataKey.Duration, 0)
+                
+        });
         }
 
-        public void OnClientPlaybackStateUpdate([GeneratedEnum] RemoteControlPlayState state, long stateChangeTimeMs, long currentPosMs, float speed)
+        #region Raising events.
+
+
+        protected virtual void OnMediaPlaybackChanged(MediaPlaybackStateChangedKitkatEventArgs e)
         {
-            Console.WriteLine("OnClientPlaybackStateUpdate called");
+            MediaPlaybackChanged?.Invoke(this, e);
         }
 
-        public void OnClientTransportControlUpdate([GeneratedEnum] RemoteControlFlags transportControlFlags)
+        protected virtual void OnMediaMetadataChanged(MediaMetadataChangedKitkatEventArgs e)
         {
-            Console.WriteLine("OnClientTransportControlUpdate called");
+            MediaMetadataChanged?.Invoke(this, e);
+        }
+
+        #endregion Raising events.
+
+        public void Dispose()
+        {
+            Jukebox.MediaEvent -= Jukebox_MediaEvent;
         }
     }
 }

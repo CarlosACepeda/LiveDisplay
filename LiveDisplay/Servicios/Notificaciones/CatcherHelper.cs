@@ -131,20 +131,7 @@ namespace LiveDisplay.Servicios.Notificaciones
                 OnNotificationUpdated(indice);
                 return true;
             }
-            else
-            {
-                var notificationSlave = NotificationSlave.NotificationSlaveInstance();
-                if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
-                {
-                    notificationSlave.CancelNotification(sbn.Key);
-
-                }
-                else
-                {
-                    notificationSlave.CancelNotification(sbn.PackageName, sbn.Tag, sbn.Id);
-                }
-                return false;
-            }
+            return false;
             
         }
 

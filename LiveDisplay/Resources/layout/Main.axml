@@ -87,6 +87,8 @@
 						android:layout_alignParentRight="true" />
 				</RelativeLayout>
 				<RelativeLayout
+					android:id="@+id/drawOverlaysCheckboxContainer"
+					android:visibility="gone"
 					android:background="?android:attr/selectableItemBackground"
 					android:minWidth="25px"
 					android:minHeight="25px"

@@ -5,17 +5,16 @@ using System.Text;
 
 using Android.App;
 using Android.Content;
-using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 
-namespace LiveDisplay.Servicios.Wallpaper
+namespace LiveDisplay.Misc
 {
-    public class WallpaperChangedEventArgs: EventArgs
+    public enum UnitsFlags
     {
-        public Drawable Wallpaper { get; set; }
-        public short OpacityLevel { get; set; }
+        Metric=1,
+        Imperial=2
     }
 }

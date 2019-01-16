@@ -3,14 +3,18 @@ using Android.Graphics.Drawables;
 using Android.Media;
 using Android.Media.Session;
 using Android.OS;
+using Android.Preferences;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using LiveDisplay.Misc;
+using LiveDisplay.Servicios;
 using LiveDisplay.Servicios.Music;
 using LiveDisplay.Servicios.Music.MediaEventArgs;
 using LiveDisplay.Servicios.Wallpaper;
 using System;
 using System.Threading;
+using System.Timers;
 
 namespace LiveDisplay.Fragments
 {
@@ -21,6 +25,8 @@ namespace LiveDisplay.Fragments
         private LinearLayout musicPlayerContainer;
         private SeekBar skbSeekSongTime;
         private PlaybackStateCode playbackState;
+        private System.Timers.Timer timer;
+        ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context));
 
         #region Fragment Lifecycle
 
@@ -28,6 +34,12 @@ namespace LiveDisplay.Fragments
         {
             // Create your fragment here
             BindMusicControllerEvents();
+
+            timer = new System.Timers.Timer();
+            timer.Interval = 1000; //1 second.
+            timer.Elapsed += Timer_Elapsed;
+            timer.Enabled = true;
+
 
             base.OnCreate(savedInstanceState);
         }
@@ -51,6 +63,8 @@ namespace LiveDisplay.Fragments
             skbSeekSongTime = null;
             MusicController.MediaPlaybackChanged -= MusicController_MediaPlaybackChanged;
             MusicController.MediaMetadataChanged -= MusicController_MediaMetadataChanged;
+            timer.Elapsed -= Timer_Elapsed;
+            timer.Dispose();
             base.OnDestroy();
         }
 
@@ -141,8 +155,56 @@ namespace LiveDisplay.Fragments
 
         private void BindMusicControllerEvents()
         {
-            MusicController.MediaPlaybackChanged += MusicController_MediaPlaybackChanged;
-            MusicController.MediaMetadataChanged += MusicController_MediaMetadataChanged;
+            if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
+            {
+                MusicController.MediaPlaybackChanged += MusicController_MediaPlaybackChanged;
+                MusicController.MediaMetadataChanged += MusicController_MediaMetadataChanged;
+            }
+            else
+            {
+                MusicControllerKitkat.MediaMetadataChanged += MusicControllerKitkat_MediaMetadataChanged;
+                MusicControllerKitkat.MediaPlaybackChanged += MusicControllerKitkat_MediaPlaybackChanged;
+            }
+        }
+
+        private void MusicControllerKitkat_MediaPlaybackChanged(object sender, MediaPlaybackStateChangedKitkatEventArgs e)
+        {
+            switch (e.PlaybackState)
+            {
+                case RemoteControlPlayState.Paused:
+                    btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
+                    playbackState = PlaybackStateCode.Paused;
+                    MoveSeekbar(false);
+
+                    break;
+                case RemoteControlPlayState.Playing:
+                    btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_pause_white_24dp, 0, 0);
+                    playbackState = PlaybackStateCode.Playing;
+                    MoveSeekbar(true);
+
+                    break;
+                case RemoteControlPlayState.Stopped:
+                    btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
+                    playbackState = PlaybackStateCode.Stopped;
+                    MoveSeekbar(false);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void MusicControllerKitkat_MediaMetadataChanged(object sender, MediaMetadataChangedKitkatEventArgs e)
+        {
+            tvTitle.Text = e.Title;
+            tvAlbum.Text = e.Album;
+            tvArtist.Text = e.Artist;
+            skbSeekSongTime.Max=(int)e.Duration;
+            WallpaperPublisher.OnWallpaperChanged(new WallpaperChangedEventArgs
+            {
+                Wallpaper = new BitmapDrawable(Resources, e.AlbumArt)
+            });
+            GC.Collect(0);
+
         }
 
         private void MusicController_MediaMetadataChanged(object sender, MediaMetadataChangedEventArgs e)
@@ -151,11 +213,20 @@ namespace LiveDisplay.Fragments
             tvAlbum.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyAlbum);
             tvArtist.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyArtist);
             skbSeekSongTime.Max = (int)e.MediaMetadata.GetLong(MediaMetadata.MetadataKeyDuration);
-            WallpaperPublisher.OnWallpaperChanged(new WallpaperChangedEventArgs
+            using (var albumart = e.MediaMetadata.GetBitmap(MediaMetadata.MetadataKeyAlbumArt))
             {
-                Wallpaper = new BitmapDrawable(Resources ,e.MediaMetadata.GetBitmap(MediaMetadata.MetadataKeyAlbumArt))
-            });
-            GC.Collect(0);
+                using (var wallpaper = new BitmapDrawable(Resources, albumart))
+                {
+                    int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.opacitylevel, 255);
+                    WallpaperPublisher.OnWallpaperChanged(new WallpaperChangedEventArgs
+                    {
+                        Wallpaper = wallpaper,
+                        OpacityLevel = (short)opacitylevel
+                    });
+                }
+                
+            }
+            GC.Collect();
         }
 
         private void MusicController_MediaPlaybackChanged(object sender, MediaPlaybackStateChangedEventArgs e)
@@ -165,20 +236,20 @@ namespace LiveDisplay.Fragments
                 case PlaybackStateCode.Paused:
                     btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
                     playbackState = PlaybackStateCode.Paused;
-                    MoveSeekbarAutomatically(false);
+                    MoveSeekbar(false);
                     break;
 
                 case PlaybackStateCode.Playing:
                     btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_pause_white_24dp, 0, 0);
                     playbackState = PlaybackStateCode.Playing;
-                    MoveSeekbarAutomatically(true);
+                    MoveSeekbar(true);
 
                     break;
 
                 case PlaybackStateCode.Stopped:
                     btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
                     playbackState = PlaybackStateCode.Stopped;
-                    MoveSeekbarAutomatically(false);
+                    MoveSeekbar(false);
                     break;
 
                 default:
@@ -211,26 +282,22 @@ namespace LiveDisplay.Fragments
             Jukebox.RetrieveMediaInformation();
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="move"> Boolean indicating if seekbar should start or stop moving itself automatically</param>
-        private void MoveSeekbarAutomatically(bool move)
+        
+        private void MoveSeekbar(bool move)
         {
-
-            void moveSeekbarAutoEachSecond()
-            {
-                skbSeekSongTime.SetProgress(skbSeekSongTime.Progress + 1000, true);
-                Log.Info("LiveDisplay", "Called action to advance 1 second the song.");
-                    };
             if (move == true)
             {
-                skbSeekSongTime.PostDelayed(moveSeekbarAutoEachSecond, 1000);
+                timer.Start();
             }
             else
             {
-                skbSeekSongTime.RemoveCallbacks(moveSeekbarAutoEachSecond);
+                timer.Stop();
             }
+        }
+
+        private void Timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            skbSeekSongTime.SetProgress(skbSeekSongTime.Progress + 1000, true);
         }
     }
 }

@@ -10,14 +10,12 @@
       android:key="hiddensystemicons?"
       android:title="@string/hidesystemicons" />
     <SwitchPreference
-      android:key="enabledlockscreennonotifications?"
-      android:title="@string/uselockscreennonotifications"
-      android:summary="@string/uselockscreennonotificationsdesc" />
-    <SwitchPreference
-      android:key="lockonboot"
+      android:defaultValue="true"
+      android:key="lockonboot?"
       android:title="@string/lockonboot">
     </SwitchPreference>
     <ListPreference
+      android:defaultValue="0"
       android:key="changewallpaper"
       android:title="@string/changewallpaper"
       android:text="@string/changewallpaperdesc"
@@ -35,9 +33,31 @@
     <PreferenceCategory
       android:title="@string/musicwidget">
       <SwitchPreference
+        android:defaultValue="true"
+        android:key="musicwidgetenabled?"
+        android:title="@string/musicwidgetenabled"
+        >
+        
+      </SwitchPreference>
+      <SwitchPreference
+        android:defaultValue="true"
         android:key="showalbumart?"
         android:title="@string/showalbumart">
       </SwitchPreference>
+    </PreferenceCategory>
+    <PreferenceCategory
+      android:title="@string/weatherwidget"
+      >
+      <SwitchPreference
+        android:defaultValue="false"
+        android:key="weatherwidgetenabled?"
+        android:title="@string/weatherwidgetenabled">
+      </SwitchPreference>
+      <Preference
+        android:key="weathersettings"
+        android:title="@string/changeweatherpreferences"
+        android:selectable="true"
+      ></Preference>
     </PreferenceCategory>
 </PreferenceScreen>
   <!--This is the Second preference screen-->
@@ -66,6 +86,7 @@
       android:summary="@string/turnonnewnotification_desc">
       </SwitchPreference>
       <SwitchPreference
+        android:defaultValue="true"
         android:key="doubletaptosleep?"
         android:title="@string/doubletaptosleep"
         android:summary="@string/doubletaptosleepdesc">
@@ -75,6 +96,7 @@
         android:title="@string/turnonusermovement">
       </SwitchPreference>
       <ListPreference
+        android:defaultValue="0"
         android:key="startlockscreendelaytime"
         android:title="@string/lockdelay"
         android:summary="@string/lockdelay_desc"
@@ -82,6 +104,7 @@
         android:entryValues="@array/listvaluesstartlock">
       </ListPreference>
       <ListPreference
+        android:defaultValue="5000"
         android:key="turnoffscreendelaytime"
         android:title="@string/turnoffdelay"
         android:summary="@string/turnoffdelay_desc"
@@ -108,6 +131,15 @@
       >
       
     </Preference>
+      <Preference
+        android:key="contributetoproject"
+        android:title="@string/githubproject"
+        android:summary="@string/contributetoprojectdesc"
+        android:selectable="true"
+        android:persistent="false"
+        >
+        
+      </Preference>
   </PreferenceCategory>
     <PreferenceCategory android:title="@string/translations">
       <Preference

@@ -5,15 +5,16 @@ using System.Text;
 
 using Android.App;
 using Android.Content;
+using Android.Media;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 
-namespace LiveDisplay
+namespace LiveDisplay.Servicios.Music.MediaEventArgs
 {
-    class BroadcasterService: Android.App.Service
+    class MediaPlaybackStateChangedKitkatEventArgs: EventArgs
     {
-
+       public RemoteControlPlayState PlaybackState { get; set; }
     }
 }

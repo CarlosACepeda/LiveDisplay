@@ -21,8 +21,9 @@ namespace LiveDisplay.Servicios.Music
         {
             if (controllers.Count > 0)
             {
+                musicController = MusicController.GetInstance();
                 mediaController = controllers[0];
-                mediaController.RegisterCallback(musicController = MusicController.GetInstance());
+                mediaController.RegisterCallback(musicController);
 
                 //Retrieve the controls to control the media, duh.
                 musicController.TransportControls = mediaController.GetTransportControls();
@@ -32,9 +33,15 @@ namespace LiveDisplay.Servicios.Music
             else if (mediaController != null && controllers.Count == 0)
             {
                 Log.Info("LiveDisplay", "mediacontroller null or no controllers.");
-                //This is probably never to happen
-                mediaController.UnregisterCallback(musicController);
-                musicController.Dispose();
+                try
+                {
+                    mediaController.UnregisterCallback(musicController);
+                    musicController.Dispose();
+                }
+                catch(Exception e)
+                {
+                    Log.Info("LiveDisplay", "Unregistering MediaController callback failed" + e.Message);
+                }
             }
         }
 

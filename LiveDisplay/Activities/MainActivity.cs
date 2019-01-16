@@ -3,14 +3,18 @@ using Android.App.Admin;
 using Android.Content;
 using Android.OS;
 using Android.Preferences;
+using Android.Provider;
 using Android.Runtime;
+using Android.Support.Design.Widget;
 using Android.Support.V7.App;
+using Android.Telephony;
 using Android.Views;
 using Android.Widget;
+using Java.Util;
 using LiveDisplay.BroadcastReceivers;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
-using Android.Provider;
+using LiveDisplay.Servicios.Weather;
 
 //for CI.
 using Microsoft.AppCenter;
@@ -27,9 +31,12 @@ namespace LiveDisplay.Activities
         private Android.Support.V7.Widget.Toolbar toolbar;
         private TextView enableNotificationAccess, enableDeviceAdmin;
         private TextView enableDrawOverAccess;
+        private RelativeLayout enableDrawOverAccessContainer;
+        bool isApplicationHealthy;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+           
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.Main);
             BindViews();
@@ -40,6 +47,11 @@ namespace LiveDisplay.Activities
         {
             CheckNotificationAccess();
             CheckDeviceAdminAccess();
+            if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1)
+            {
+
+                CheckDrawOverOtherAppsAccess();
+            }
             IsApplicationHealthy();
             base.OnResume();
         }
@@ -48,15 +60,17 @@ namespace LiveDisplay.Activities
         {
             using (var adminGivenImageView = FindViewById<ImageView>(Resource.Id.deviceAccessCheckbox))
             {
-                switch (AdminReceiver.isAdminGiven)
+                switch (Checkers.IsThisAppADeviceAdministrator())
                 {
                     case true:
                         adminGivenImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
                         break;
+
                     case false:
                         adminGivenImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
 
                         break;
+
                     default:
                         break;
                 }
@@ -67,25 +81,29 @@ namespace LiveDisplay.Activities
         {
             using (var notificationAccessGivenImageView = FindViewById<ImageView>(Resource.Id.notificationAccessCheckbox))
             {
-                switch (NLChecker.IsNotificationListenerEnabled())
+                switch (Checkers.IsNotificationListenerEnabled())
                 {
                     case true:
                         notificationAccessGivenImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
 
                         break;
+
                     case false:
                         notificationAccessGivenImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
                         break;
+
                     default:
                         break;
                 }
             }
         }
-        void CheckDrawOverOtherAppsAccess()
+
+        private void CheckDrawOverOtherAppsAccess()
         {
             ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context));
 
             using (var drawOverOtherAppsImageView = FindViewById<ImageView>(Resource.Id.drawOverOtherAppsAccessCheckbox))
+            {
                 if (Settings.CanDrawOverlays(Application.Context))
                 {
                     drawOverOtherAppsImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
@@ -93,33 +111,33 @@ namespace LiveDisplay.Activities
                 else
                 {
                     drawOverOtherAppsImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
-
                 }
-
+            }
         }
+
         private void IsApplicationHealthy()
         {
             bool canDrawOverlays = true;
             if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1) //In Lollipop and less this permission is granted at Install time.
             {
-                canDrawOverlays= Settings.CanDrawOverlays(Application.Context);
+                canDrawOverlays = Checkers.ThisAppCanDrawOverlays();
             }
 
             using (var accessestext = FindViewById<TextView>(Resource.Id.health))
             {
-                if (NLChecker.IsNotificationListenerEnabled() == true && AdminReceiver.isAdminGiven == true && canDrawOverlays==true)
+                if (Checkers.IsNotificationListenerEnabled() == true && Checkers.IsThisAppADeviceAdministrator() && canDrawOverlays == true)
                 {
-
                     accessestext.SetText(Resource.String.accessesstatusenabled);
                     accessestext.SetTextColor(Android.Graphics.Color.Green);
+                    isApplicationHealthy = true;
                 }
                 else
                 {
                     accessestext.SetText(Resource.String.accessesstatusdisabled);
                     accessestext.SetTextColor(Android.Graphics.Color.Red);
+                    isApplicationHealthy = false;
                 }
             }
-
         }
 
         protected override void OnPause()
@@ -154,17 +172,45 @@ namespace LiveDisplay.Activities
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
             int id = item.ItemId;
-            if (id == Resource.Id.action_settings)
+            switch (id)
             {
+                case Resource.Id.action_settings:
+                    using (Intent intent = new Intent(this, typeof(SettingsActivity)))
+                    {
+                        StartActivity(intent);
+                    }
 
-                using (Intent intent = new Intent(this, typeof(SettingsActivity)))
-                {
-                    StartActivity(intent);
-                }
+                    return true;
+                case Resource.Id.action_sendtestnotification:
+                    if (isApplicationHealthy)
+                    {
+                        using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())
+                        {
+                            var notificationtext=  Resources.GetString(Resource.String.testnotificationtext);
+                            if (Build.VERSION.SdkInt > BuildVersionCodes.N)
+                            {
+                                slave.PostNotification("LiveDisplay", notificationtext, true, NotificationImportance.Low);
+                            }
+                            else
+                            {
+                                slave.PostNotification("LiveDisplay", notificationtext, true, NotificationPriority.Low);
 
-
-
-                return true;
+                            }
+                        }
+                        using (Intent intent = new Intent(Application.Context, typeof(LockScreenActivity)))
+                        {
+                            intent.AddFlags(ActivityFlags.NewTask);
+                            StartActivity(intent);
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        Toast.MakeText(Application.Context, "You dont have the required permissions yet", ToastLength.Long).Show();
+                    }
+                    break;
+                default:
+                    break;
             }
 
             return base.OnOptionsItemSelected(item);
@@ -179,10 +225,16 @@ namespace LiveDisplay.Activities
 
             enableDeviceAdmin = FindViewById<TextView>(Resource.Id.enableDeviceAccess);
             enableNotificationAccess = FindViewById<TextView>(Resource.Id.enableNotificationAccess);
-            enableDrawOverAccess = FindViewById<TextView>(Resource.Id.enableFloatingPermission);
+            if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1)
+            {
+                enableDrawOverAccessContainer = FindViewById<RelativeLayout>(Resource.Id.drawOverlaysCheckboxContainer);
+                enableDrawOverAccessContainer.Visibility = ViewStates.Visible;
+                enableDrawOverAccess = FindViewById<TextView>(Resource.Id.enableFloatingPermission);
+                enableDrawOverAccess.Click += EnableDrawOverAccess_Click;
+
+            }
             enableNotificationAccess.Click += EnableNotificationAccess_Click;
             enableDeviceAdmin.Click += EnableDeviceAdmin_Click;
-            enableDrawOverAccess.Click += EnableDrawOverAccess_Click;
         }
 
         private void EnableDrawOverAccess_Click(object sender, EventArgs e)
@@ -191,10 +243,28 @@ namespace LiveDisplay.Activities
             {
                 StartActivityForResult(intent, 25);
             }
+        }
+
+        private void EnableDeviceAdmin_Click(object sender, EventArgs e)
+        {
+            using (Android.Support.V7.App.AlertDialog.Builder builder = new Android.Support.V7.App.AlertDialog.Builder(this))
+            {
+
+                builder.SetMessage(Resource.String.dialogfordeviceaccessdescription);
+                builder.SetPositiveButton(Resource.String.dialogallowbutton, new EventHandler<DialogClickEventArgs>(OnDialogPositiveButtonEventArgs));
+                builder.SetNegativeButton(Resource.String.dialogcancelbutton, new EventHandler<DialogClickEventArgs>(OnDialogNegativeButtonEventArgs));
+                builder.Show();
+            }
 
 
         }
-        private void EnableDeviceAdmin_Click(object sender, EventArgs e)
+
+        private void OnDialogNegativeButtonEventArgs(object sender, DialogClickEventArgs e)
+        {
+            
+        }
+
+        private void OnDialogPositiveButtonEventArgs(object sender, DialogClickEventArgs e)
         {
             ComponentName admin = new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(AdminReceiver)));
             using (Intent intent = new Intent(DevicePolicyManager.ActionAddDeviceAdmin).PutExtra(DevicePolicyManager.ExtraDeviceAdmin, admin))
@@ -205,7 +275,7 @@ namespace LiveDisplay.Activities
         {
             using (Intent intent = new Intent())
             {
-                string lel = Android.Provider.Settings.ActionNotificationListenerSettings;
+                string lel = Settings.ActionNotificationListenerSettings;
 
                 intent.AddFlags(ActivityFlags.NewTask);
                 intent.SetAction(lel);

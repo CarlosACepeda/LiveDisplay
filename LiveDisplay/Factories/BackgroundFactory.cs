@@ -12,110 +12,36 @@ using System;
 namespace LiveDisplay.Factories
 {
     //TODO: Correct me, I can be optimized.
-    internal class BackgroundFactory : Java.Lang.Object
+    internal class BackgroundFactory:Java.Lang.Object
     {
-        [Obsolete]
+        private static readonly short maxRadius = 25;
+
         //Retrieves a blurred image
-        public Drawable Difuminar(Drawable papelTapiz)
+        public static Drawable Difuminar(Drawable papelTapiz, short blurRadius)
         {
-            //Fondo de escritorio provista por el Argumento que se pasa en <papelTapiz>
             Bitmap originalBitmap = ((BitmapDrawable)papelTapiz).Bitmap;
-            // Un bitmap null que almacenará la imagen difuminada.
-            Bitmap blurredBitmap;
-            //Asignar a este bitmap la imagen original para trabajar con ella.
-            blurredBitmap = Bitmap.CreateBitmap(originalBitmap);
-            //Crear la instancia de RenderScript que hará el trabajo
+            Bitmap blurredBitmap= Bitmap.CreateScaledBitmap(originalBitmap,originalBitmap.Width, originalBitmap.Height, false);
             RenderScript rs = RenderScript.Create(Application.Context);
-            //Alocar memoria para que RenderScript trabaje.
             Allocation input = Allocation.CreateFromBitmap(rs, originalBitmap, Allocation.MipmapControl.MipmapFull, AllocationUsage.Script);
             Allocation output = Allocation.CreateTyped(rs, input.Type);
-
-            // Load up an instance of the specific script that we want to use.
             ScriptIntrinsicBlur script = ScriptIntrinsicBlur.Create(rs, Element.U8_4(rs));
             script.SetInput(input);
+            if(blurRadius< maxRadius)
+            {
+                script.SetRadius(blurRadius);
 
-            // Set the blur radius
-            script.SetRadius(25);
-
-            // Start the ScriptIntrinisicBlur
+            }
             script.ForEach(output);
-
-            // Copy the output to the blurred bitmap
             output.CopyTo(blurredBitmap);
-
-            //Scale the bitmap:
-            Bitmap blurredBitMapResized = Bitmap.CreateScaledBitmap(blurredBitmap, 70, 80, false);
-
-            Drawable papelTapizDifuminado = new BitmapDrawable(Android.Content.Res.Resources.System,blurredBitMapResized);
-            originalBitmap = null;
-            blurredBitmap = null;
-            blurredBitMapResized = null;
+            Drawable papelTapizDifuminado = new BitmapDrawable(Android.Content.Res.Resources.System,blurredBitmap);
+            originalBitmap.Recycle();
+            originalBitmap.Dispose();
+            blurredBitmap.Recycle();
+            blurredBitmap.Dispose();
+            input.Dispose();
+            output.Dispose();
             return papelTapizDifuminado;
         }
-
-        [Obsolete]
-        public Drawable Difuminar(Bitmap image)
-        {
-            Bitmap blurredBitmap;
-            //Asignar a este bitmap la imagen original para trabajar con ella.
-            blurredBitmap = image;
-            //Crear la instancia de RenderScript que hará el trabajo
-            RenderScript rs = RenderScript.Create(Application.Context);
-            //Alocar memoria para que RenderScript trabaje.
-            Allocation input = Allocation.CreateFromBitmap(rs, image, Allocation.MipmapControl.MipmapFull, AllocationUsage.Script);
-            Allocation output = Allocation.CreateTyped(rs, input.Type);
-
-            // Load up an instance of the specific script that we want to use.
-            ScriptIntrinsicBlur script = ScriptIntrinsicBlur.Create(rs, Element.U8_4(rs));
-            script.SetInput(input);
-
-            // Set the blur radius
-            script.SetRadius(25);
-
-            // Start the ScriptIntrinisicBlur
-            script.ForEach(output);
-
-            // Copy the output to the blurred bitmap
-            output.CopyTo(blurredBitmap);
-
-            //Scale the bitmap:
-            Bitmap blurredBitMapResized = Bitmap.CreateScaledBitmap(blurredBitmap, 70, 80, false);
-
-            Drawable papelTapizDifuminado = new BitmapDrawable(blurredBitMapResized);
-            image.Dispose();
-            blurredBitMapResized.Dispose();
-            return papelTapizDifuminado;
-        }
-        [Obsolete]
-        public Bitmap DifuminarBitmap(Bitmap image)
-        {
-            Bitmap blurredBitmap;
-            //Asignar a este bitmap la imagen original para trabajar con ella.
-            blurredBitmap = image;
-            //Crear la instancia de RenderScript que hará el trabajo
-            RenderScript rs = RenderScript.Create(Application.Context);
-            //Alocar memoria para que RenderScript trabaje.
-            Allocation input = Allocation.CreateFromBitmap(rs, image, Allocation.MipmapControl.MipmapFull, AllocationUsage.Script);
-            Allocation output = Allocation.CreateTyped(rs, input.Type);
-
-            // Load up an instance of the specific script that we want to use.
-            ScriptIntrinsicBlur script = ScriptIntrinsicBlur.Create(rs, Element.U8_4(rs));
-            script.SetInput(input);
-
-            // Set the blur radius
-            script.SetRadius(25);
-
-            // Start the ScriptIntrinisicBlur
-            script.ForEach(output);
-
-            // Copy the output to the blurred bitmap
-            output.CopyTo(blurredBitmap);
-
-            //Scale the bitmap:
-            Bitmap blurredBitMapResized = Bitmap.CreateScaledBitmap(blurredBitmap, 70, 80, false);
-            return blurredBitMapResized;
-        }
-
         public string SaveImagePath(Android.Net.Uri uri)
         {
             ContextWrapper contextWrapper = new ContextWrapper(Application.Context);

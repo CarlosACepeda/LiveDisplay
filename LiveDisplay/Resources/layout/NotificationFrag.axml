@@ -49,12 +49,39 @@
         android:id="@+id/tvTexto"
         android:maxLines="4"
         android:minLines="0" />
-    <LinearLayout
+	<FrameLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		>
+		<LinearLayout
         android:id="@+id/notificationActions"
 		android:weightSum="1"
         android:orientation="horizontal"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:visibility="visible"
 		/>
+		<LinearLayout
+			android:id="@+id/inlineNotificationContainer"
+			android:orientation="horizontal"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:weightSum="10"
+			android:visibility="gone"
+			>
+			<EditText
+				android:hint="bash"
+				android:id="@+id/tvInlineText"
+				android:layout_width="0dp"
+				android:layout_weight="8"
+				android:layout_height="wrap_content"
+				/>
+			<Button
+				android:id="@+id/sendInlineResponseButton"
+				android:layout_width="0dp"
+				android:layout_weight="2"
+				android:layout_height="wrap_content"
+			/>
+		</LinearLayout>
+	</FrameLayout>
 </LinearLayout>

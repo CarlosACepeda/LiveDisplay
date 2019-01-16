@@ -1,5 +1,6 @@
 ﻿using Android.App;
 using Android.Content;
+using Android.Graphics.Drawables;
 using Android.OS;
 using LiveDisplay.DataRepository;
 using LiveDisplay.Misc;
@@ -12,59 +13,40 @@ namespace LiveDisplay.BroadcastReceivers
     [IntentFilter(new[] { Intent.ActionBatteryChanged })]
     public class BatteryReceiver : BroadcastReceiver
     {
-        private Battery battery = Battery.BatteryInstance();
-        private BatteryLevelFlags batteryLevelFlags;
+        private LevelListDrawable levelListDrawable;
 
         public static event EventHandler<BatteryChangedEventArgs> BatteryInfoChanged;
+
+
 
         public override void OnReceive(Context context, Intent intent)
         {
             int batterylevel = intent.GetIntExtra(BatteryManager.ExtraLevel, 0);
-            Battery.BatteryLevel = batterylevel;
-            Battery.BatteryLevelFlags = ReturnBatteryLevelFlag(batterylevel);
-            OnBatteryInfoChanged(batterylevel);
+            int batteryIcon = intent.GetIntExtra(BatteryManager.ExtraIconSmall, 0);
+            if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
+            {
+                levelListDrawable = Application.Context.Resources.GetDrawable(batteryIcon, Application.Context.Resources.NewTheme()) as LevelListDrawable;
+
+            }
+            else
+            {
+#pragma warning disable 
+                levelListDrawable = Application.Context.Resources.GetDrawable(batteryIcon) as LevelListDrawable;
+#pragma warning restore
+
+            }
+
+            OnBatteryInfoChanged(batterylevel, levelListDrawable);
         }
 
-        private void OnBatteryInfoChanged(int batterylevel)
+        private void OnBatteryInfoChanged(int batterylevel, Drawable batteryIcon)
         {
             BatteryInfoChanged?.Invoke(this, new BatteryChangedEventArgs
             {
                 BatteryLevel = batterylevel,
-                BatteryLevelFlags = ReturnBatteryLevelFlag(batterylevel)
+                BatteryIcon = batteryIcon
             });
         }
-
-        private BatteryLevelFlags ReturnBatteryLevelFlag(int batterylevel)
-        {
-            if (batterylevel > 0)
-            {
-                batteryLevelFlags = BatteryLevelFlags.OverZero;
-            }
-            if (batterylevel > 20)
-            {
-                batteryLevelFlags = BatteryLevelFlags.OverTwenty;
-            }
-            if (batterylevel > 30)
-            {
-                batteryLevelFlags = BatteryLevelFlags.OverThirty;
-            }
-            if (batterylevel > 50)
-            {
-                batteryLevelFlags = BatteryLevelFlags.OverFifty;
-            }
-            if (batterylevel > 60)
-            {
-                batteryLevelFlags = BatteryLevelFlags.OverSixty;
-            }
-            if (batterylevel > 80)
-            {
-                batteryLevelFlags = BatteryLevelFlags.OverEighty;
-            }
-            if (batterylevel > 90)
-            {
-                batteryLevelFlags = BatteryLevelFlags.OverNinety;
-            }
-            return batteryLevelFlags;
-        }
+    
     }
 }
