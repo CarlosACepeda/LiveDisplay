@@ -184,7 +184,6 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             this.action = action;
         }
-
         public string GetTitle()
         {
             try
@@ -217,7 +216,25 @@ namespace LiveDisplay.Servicios.Notificaciones
             return null;
 
         }
-        
+        private void GetRemoteInput()
+        {
+            RemoteInput remoteInput;
+            foreach (var item in action.GetRemoteInputs())
+            {
+                if (item.ResultKey != null)
+                {
+                    remoteInput = item;
+                    break;
+                }
+
+            }
+            
+        }
+
+        public string GetPlaceholderTextForInlineResponse()
+        {
+           return action.GetRemoteInputs()[1].Label;
+        }
         public void Dispose()
         {
             action.Dispose();

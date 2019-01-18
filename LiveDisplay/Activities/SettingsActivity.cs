@@ -5,7 +5,7 @@ using LiveDisplay.Fragments;
 
 namespace LiveDisplay.Activities
 {
-    [Activity(Label = "@string/settings", Theme = "@style/LiveDisplayTheme.NoActionBar")]
+    [Activity(Label = "@string/settings", Theme = "@style/LiveDisplayThemeDark.NoActionBar")]
     public class SettingsActivity : AppCompatActivity
     {
         private Android.Support.V7.Widget.Toolbar toolbar;

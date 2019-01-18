@@ -4642,6 +4642,9 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f0a01a7
 			public const int LiveDisplayThemeDark = 2131362215;
 			
+			// aapt resource value: 0x7f0a01a8
+			public const int LiveDisplayThemeDark_NoActionBar = 2131362216;
+			
 			// aapt resource value: 0x7f0a002f
 			public const int Platform_AppCompat = 2131361839;
 			

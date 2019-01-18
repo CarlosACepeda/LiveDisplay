@@ -25,7 +25,7 @@ using System.Threading;
 
 namespace LiveDisplay.Activities
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/LiveDisplayTheme.NoActionBar", MainLauncher = true)]
+    [Activity(Label = "@string/app_name", Theme = "@style/LiveDisplayThemeDark.NoActionBar", MainLauncher = true)]
     internal class MainActivity : AppCompatActivity
     {
         private Android.Support.V7.Widget.Toolbar toolbar;
@@ -36,7 +36,7 @@ namespace LiveDisplay.Activities
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
-           
+            
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.Main);
             BindViews();

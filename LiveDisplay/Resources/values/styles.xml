@@ -34,4 +34,9 @@
     <item name="colorAccent">@color/colorAccent</item>
     <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
   </style>
+  <!--the following Style is for No action bar dark-->
+  <style name="LiveDisplayThemeDark.NoActionBar" parent="LiveDisplayThemeDark">
+    <item name="windowActionBar">false</item>
+    <item name="windowNoTitle">true</item>
+  </style>
 </resources>
