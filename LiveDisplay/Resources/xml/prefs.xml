@@ -73,11 +73,11 @@
         android:summary="@string/blacklistdesc"
         android:selectable="true">
       </Preference>
-      <SwitchPreference
+      <!--<SwitchPreference
         android:key="enablequickreply?"
         android:title="@string/enablequickreply"
         android:summary="@string/enablequickreplydesc"
-        ></SwitchPreference>
+        ></SwitchPreference>-->
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/awakesettings">
       <SwitchPreference

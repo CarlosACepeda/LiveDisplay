@@ -33,8 +33,6 @@ This Application shows the list of current notifications on a beautiful and cust
 
 * See the weather.
 
-* Answer directly from the notification as seen in Android Nougat, I'm trying to backport it to Kitkat. ;) 
-
 
 ### Screenshots
 

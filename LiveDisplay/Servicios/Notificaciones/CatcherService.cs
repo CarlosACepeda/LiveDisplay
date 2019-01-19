@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Reflection;
 
 namespace LiveDisplay.Servicios
 {
@@ -121,10 +122,42 @@ namespace LiveDisplay.Servicios
                 if ((notification.IsOngoing == false || notification.Notification.Flags.HasFlag(NotificationFlags.NoClear)) && notification.IsClearable == true)
                 {
                     statusBarNotifications.Add(notification);
+
+                    //GetRemoteInput(notification);
                 }
             }
 
             catcherHelper = new CatcherHelper(statusBarNotifications);
+        }
+        //No se puede implementar. :/
+        private void GetRemoteInput(StatusBarNotification sbn)
+        {
+            RemoteInput remoteInput;
+            if(sbn.Notification.Actions!= null)
+            foreach (var item in sbn.Notification.Actions)
+            {
+                    List<RemoteInput> remoteInputs;
+                if(item.GetRemoteInputs()!= null)
+                    {
+                        remoteInputs = item.GetRemoteInputs().ToList();
+                        foreach (var remoteinput in remoteInputs)
+                        {
+                            if (remoteinput.ResultKey != null)
+                            {
+                                remoteInput = remoteinput;
+                                remoteInput.Extras.PutCharSequence(remoteinput.ResultKey, ":)");
+                                item.Extras.PutCharSequence(remoteinput.ResultKey, ":)");
+                                    item.ActionIntent.Send();
+                                var i = item.ActionIntent;
+                                   
+                                break;
+                            }
+
+                        }
+                    }
+
+            }
+
         }
 
         //Subscribe to events by Several publishers
