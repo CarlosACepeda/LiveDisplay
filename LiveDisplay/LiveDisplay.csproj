@@ -61,10 +61,11 @@
     <EnableLLVM>false</EnableLLVM>
     <BundleAssemblies>false</BundleAssemblies>
     <AndroidSupportedAbis>armeabi-v7a;x86</AndroidSupportedAbis>
-    <AndroidCreatePackagePerAbi>true</AndroidCreatePackagePerAbi>
-    <EnableProguard>false</EnableProguard>
+    <AndroidCreatePackagePerAbi>false</AndroidCreatePackagePerAbi>
+    <EnableProguard>true</EnableProguard>
     <AndroidEnableMultiDex>false</AndroidEnableMultiDex>
     <AndroidEnableSGenConcurrent>false</AndroidEnableSGenConcurrent>
+    <Debugger>Xamarin</Debugger>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BlurImage, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
@@ -212,6 +213,7 @@
     <Compile Include="Servicios\Notificaciones\NotificationSlave.cs" />
     <Compile Include="Servicios\Wallpaper\WallpaperChangedEventArgs.cs" />
     <Compile Include="Servicios\Wallpaper\WallpaperPublisher.cs" />
+    <Compile Include="Servicios\Weather\IconsForWeatherConditions.cs" />
     <Compile Include="Servicios\Weather\Weather.cs" />
   </ItemGroup>
   <ItemGroup>

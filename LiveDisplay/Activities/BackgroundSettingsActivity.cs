@@ -66,6 +66,8 @@ namespace LiveDisplay.Activities
 
         private void LoadPreviousValues()
         {
+            Window.DecorView.SetBackgroundColor(Color.Black);
+
             int savedblurlevel= configurationManager.RetrieveAValue(ConfigurationParameters.BlurLevel, 1);
             int savedOpacitylevel= configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, 255);
 
