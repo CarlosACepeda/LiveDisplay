@@ -55,7 +55,7 @@ namespace LiveDisplay.Fragments
             BatteryReceiver.BatteryInfoChanged += BatteryReceiver_BatteryInfoChanged;
             ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context));
 
-            if (configurationManager.RetrieveAValue(ConfigurationParameters.hiddenclock) == true)
+            if (configurationManager.RetrieveAValue(ConfigurationParameters.HiddenClock) == true)
             {
                 //Hide the clock
                 Activity.RunOnUiThread(() => clock.Visibility = ViewStates.Invisible);

@@ -187,7 +187,7 @@ namespace LiveDisplay.Activities
                         using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())
                         {
                             var notificationtext=  Resources.GetString(Resource.String.testnotificationtext);
-                            if (Build.VERSION.SdkInt > BuildVersionCodes.N)
+                            if (Build.VERSION.SdkInt > BuildVersionCodes.NMr1)
                             {
                                 slave.PostNotification("LiveDisplay", notificationtext, true, NotificationImportance.Low);
                             }

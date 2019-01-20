@@ -24,7 +24,7 @@ namespace LiveDisplay.Servicios
 
         public static void WakeUpScreen()
         {
-            if (configurationManager.GetBoolean(ConfigurationParameters.turnonusermovement, false) == true)
+            if (configurationManager.GetBoolean(ConfigurationParameters.TurnOnUserMovement, false) == true)
             {
                 PowerManager pm = ((PowerManager)Application.Context.GetSystemService(Context.PowerService));
                 var screenLock = pm.NewWakeLock(WakeLockFlags.ScreenDim | WakeLockFlags.AcquireCausesWakeup, "Turn On Lockscreen");

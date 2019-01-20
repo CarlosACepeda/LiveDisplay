@@ -2737,11 +2737,11 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f09005c
 			public const int action_mode_close_button = 2131296348;
 			
-			// aapt resource value: 0x7f0900f0
-			public const int action_sendtestnotification = 2131296496;
+			// aapt resource value: 0x7f0900f1
+			public const int action_sendtestnotification = 2131296497;
 			
-			// aapt resource value: 0x7f0900ef
-			public const int action_settings = 2131296495;
+			// aapt resource value: 0x7f0900f0
+			public const int action_settings = 2131296496;
 			
 			// aapt resource value: 0x7f0900c4
 			public const int action_text = 2131296452;
@@ -2974,6 +2974,9 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f090021
 			public const int homeAsUp = 2131296289;
 			
+			// aapt resource value: 0x7f0900ec
+			public const int humidity = 2131296492;
+			
 			// aapt resource value: 0x7f090062
 			public const int icon = 2131296354;
 			
@@ -3034,8 +3037,8 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f0900b0
 			public const int mainToolbar = 2131296432;
 			
-			// aapt resource value: 0x7f0900ee
-			public const int masked = 2131296494;
+			// aapt resource value: 0x7f0900ef
+			public const int masked = 2131296495;
 			
 			// aapt resource value: 0x7f0900ea
 			public const int maximumtemperature = 2131296490;
@@ -3250,9 +3253,6 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f090087
 			public const int submit_area = 2131296391;
 			
-			// aapt resource value: 0x7f0900ec
-			public const int switch1 = 2131296492;
-			
 			// aapt resource value: 0x7f0900e4
 			public const int switchWidget = 2131296484;
 			
@@ -3364,11 +3364,14 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f090026
 			public const int useLogo = 2131296294;
 			
+			// aapt resource value: 0x7f0900ed
+			public const int useimperialsystem = 2131296493;
+			
 			// aapt resource value: 0x7f090016
 			public const int view_offset_helper = 2131296278;
 			
-			// aapt resource value: 0x7f0900ed
-			public const int visible = 2131296493;
+			// aapt resource value: 0x7f0900ee
+			public const int visible = 2131296494;
 			
 			// aapt resource value: 0x7f0900a8
 			public const int wallpaper = 2131296424;

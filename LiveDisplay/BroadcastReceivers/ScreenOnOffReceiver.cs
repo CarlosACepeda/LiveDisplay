@@ -25,7 +25,7 @@ namespace LiveDisplay.BroadcastReceivers
             {
                 //Start hidden in Darkness. :$
                 IsScreenOn = false;
-                    int delaytolockscreen = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.startlockscreendelaytime, "0"));
+                    int delaytolockscreen = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.StartLockscreenDelayTime, "0"));
 
                     ThreadPool.QueueUserWorkItem(m =>
                     {

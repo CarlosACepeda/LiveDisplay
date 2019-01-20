@@ -217,7 +217,7 @@ namespace LiveDisplay.Fragments
             {
                 using (var wallpaper = new BitmapDrawable(Resources, albumart))
                 {
-                    int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.opacitylevel, 255);
+                    int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, 255);
                     WallpaperPublisher.OnWallpaperChanged(new WallpaperChangedEventArgs
                     {
                         Wallpaper = wallpaper,

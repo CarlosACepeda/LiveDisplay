@@ -218,7 +218,7 @@ namespace LiveDisplay
         {
             using (ConfigurationManager configuration = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context)))
             {
-                if (configuration.RetrieveAValue(ConfigurationParameters.doubletaptosleep) == true)
+                if (configuration.RetrieveAValue(ConfigurationParameters.DoubleTapToSleep) == true)
                 {
                     if (e.Event.Action == MotionEventActions.Up)
                     {
@@ -396,7 +396,7 @@ namespace LiveDisplay
             //Load configurations based on User configs.
             using (ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context)))
             {
-                switch (configurationManager.RetrieveAValue(ConfigurationParameters.changewallpaper, "0"))
+                switch (configurationManager.RetrieveAValue(ConfigurationParameters.ChangeWallpaper, "0"))
                 {
                     case "0":
 
@@ -406,8 +406,8 @@ namespace LiveDisplay
                     case "1":
                             using (var wallpaper = WallpaperManager.GetInstance(Application.Context).Drawable)
                             {
-                                int savedblurlevel = configurationManager.RetrieveAValue(ConfigurationParameters.blurlevel, 1);
-                                int savedOpacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.opacitylevel, 255);
+                                int savedblurlevel = configurationManager.RetrieveAValue(ConfigurationParameters.BlurLevel, 1);
+                                int savedOpacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, 255);
                                 //var weakblur = new WeakReference(new BlurImage(Application.Context).Load(bitmap).Intensity(savedblurlevel).Async(true).GetImageBlur());
                                 //var weak = new WeakReference(new BitmapDrawable(Resources, weakblur.Target as Bitmap));
 
@@ -442,13 +442,13 @@ namespace LiveDisplay
                         Window.DecorView.SetBackgroundColor(Android.Graphics.Color.Black);
                         break;
                 }
-                if (configurationManager.RetrieveAValue(ConfigurationParameters.musicwidgetenabled) == true)
+                if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetEnabled) == true)
                     {
                         CheckIfMusicIsPlaying(); //This method is the main entry for the music widget and the floating notification.
                     }
-                int interval = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.turnoffscreendelaytime, "5000"));
+                int interval = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.TurnOffScreenDelayTime, "5000"));
                 watchDog.Interval = interval;
-                if (configurationManager.RetrieveAValue(ConfigurationParameters.turnonusermovement) == true)
+                if (configurationManager.RetrieveAValue(ConfigurationParameters.TurnOnUserMovement) == true)
                 {
                     StartAwakeService();
                 }

@@ -65,7 +65,7 @@ namespace LiveDisplay.Factories
                 var columnIndex = cursor.GetColumnIndexOrThrow(Android.Provider.MediaStore.Images.Media.InterfaceConsts.Data);
                 cursor.MoveToFirst();
                 path = cursor.GetString(columnIndex);
-                configurationManager.SaveAValue(ConfigurationParameters.imagePath, path);
+                configurationManager.SaveAValue(ConfigurationParameters.ImagePath, path);
             }
             return path;
         }

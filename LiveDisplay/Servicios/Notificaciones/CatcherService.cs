@@ -231,7 +231,7 @@ namespace LiveDisplay.Servicios
         {
             using (ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context)))
             {
-                if (configurationManager.RetrieveAValue(ConfigurationParameters.musicwidgetenabled) == true)
+                if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetEnabled) == true)
                 {
 
                 }

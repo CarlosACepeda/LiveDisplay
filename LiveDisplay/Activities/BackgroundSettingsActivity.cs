@@ -66,8 +66,8 @@ namespace LiveDisplay.Activities
 
         private void LoadPreviousValues()
         {
-            int savedblurlevel= configurationManager.RetrieveAValue(ConfigurationParameters.blurlevel, 1);
-            int savedOpacitylevel= configurationManager.RetrieveAValue(ConfigurationParameters.opacitylevel, 255);
+            int savedblurlevel= configurationManager.RetrieveAValue(ConfigurationParameters.BlurLevel, 1);
+            int savedOpacitylevel= configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, 255);
 
             Bitmap bitmap = ((BitmapDrawable)wallpaperManager.Drawable).Bitmap;
             
@@ -88,7 +88,7 @@ namespace LiveDisplay.Activities
         private void Opacity_StopTrackingTouch(object sender, SeekBar.StopTrackingTouchEventArgs e)
         {
             wallpaperPreview.Background.Alpha = e.SeekBar.Progress;
-            configurationManager.SaveAValue(ConfigurationParameters.opacitylevel, e.SeekBar.Progress);
+            configurationManager.SaveAValue(ConfigurationParameters.OpacityLevel, e.SeekBar.Progress);
         }
 
         private void Blur_StopTrackingTouch(object sender, SeekBar.StopTrackingTouchEventArgs e)
@@ -100,7 +100,7 @@ namespace LiveDisplay.Activities
                 blurImage.Load(bitmap).Intensity(e.SeekBar.Progress).Async(true);
                 drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
             wallpaperPreview.Background = drawable;
-            configurationManager.SaveAValue(ConfigurationParameters.blurlevel, e.SeekBar.Progress);
+            configurationManager.SaveAValue(ConfigurationParameters.BlurLevel, e.SeekBar.Progress);
             GC.Collect(0);
         }
 

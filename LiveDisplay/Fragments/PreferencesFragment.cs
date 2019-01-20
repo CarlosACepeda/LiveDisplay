@@ -106,7 +106,7 @@ namespace LiveDisplay.Fragments
                         Log.Info("LiveDisplay", "Data was null");
                         using (ConfigurationManager configurationManager = new ConfigurationManager(sharedPreferences))
                         {
-                            configurationManager.SaveAValue(ConfigurationParameters.changewallpaper, "0");
+                            configurationManager.SaveAValue(ConfigurationParameters.ChangeWallpaper, "0");
                         }
                     }
 
@@ -127,7 +127,7 @@ namespace LiveDisplay.Fragments
                 Log.Info("LiveDisplay", "User did not allow the read storage permision, reverting back to Black wallpaper");
                 using (ConfigurationManager configurationManager = new ConfigurationManager(sharedPreferences))
                 {
-                    configurationManager.SaveAValue(ConfigurationParameters.changewallpaper, "0");
+                    configurationManager.SaveAValue(ConfigurationParameters.ChangeWallpaper, "0");
                 }
 
             }
@@ -138,8 +138,8 @@ namespace LiveDisplay.Fragments
         {
             switch (key)
             {
-                case ConfigurationParameters.changewallpaper:
-                    switch (sharedPreferences.GetString(ConfigurationParameters.changewallpaper, "0"))
+                case ConfigurationParameters.ChangeWallpaper:
+                    switch (sharedPreferences.GetString(ConfigurationParameters.ChangeWallpaper, "0"))
                     {
                         case "1":
 

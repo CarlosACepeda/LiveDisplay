@@ -6,9 +6,9 @@
     <SwitchPreference
    android:key="hiddenclock?"
    android:title="@string/showclock" />
-    <SwitchPreference
+    <!--<SwitchPreference
       android:key="hiddensystemicons?"
-      android:title="@string/hidesystemicons" />
+      android:title="@string/hidesystemicons" />-->
     <SwitchPreference
       android:defaultValue="true"
       android:key="lockonboot?"
