@@ -2,6 +2,7 @@
 using Android.Content;
 using Android.Graphics.Drawables;
 using Android.OS;
+using Android.Util;
 using LiveDisplay.Servicios.Battery.BatteryEventArgs;
 using System;
 
@@ -18,7 +19,7 @@ namespace LiveDisplay.BroadcastReceivers
         public override void OnReceive(Context context, Intent intent)
         {
             int batterylevel = intent.GetIntExtra(BatteryManager.ExtraLevel, 0);
-            int batteryIcon = intent.GetIntExtra(BatteryManager.ExtraIconSmall, 0);
+            int batteryIcon = intent.GetIntExtra(BatteryManager.ExtraIconSmall, 100);
             if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
             {
                 levelListDrawable = Application.Context.Resources.GetDrawable(batteryIcon, Application.Context.Resources.NewTheme()) as LevelListDrawable;
