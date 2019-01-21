@@ -90,6 +90,7 @@ namespace LiveDisplay.Servicios.Notificaciones
                 statusBarNotifications.Add(sbn);
                 using (var h = new Handler(Looper.MainLooper))
                     h.Post(() => { notificationAdapter.NotifyItemInserted(statusBarNotifications.Count); });
+                OnNotificationPosted();
             }
             else
             {
