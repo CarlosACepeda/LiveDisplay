@@ -17,10 +17,8 @@ namespace LiveDisplay.Adapters
 
         public override int ItemCount => notificaciones.Count;
 
-        
         public NotificationAdapter(List<StatusBarNotification> notificaciones)
         {
-            
             this.notificaciones = notificaciones;
         }
 
@@ -63,7 +61,6 @@ namespace LiveDisplay.Adapters
             itemView.LongClick += ItemView_LongClick;
         }
 
-        
         private void ItemView_LongClick(object sender, View.LongClickEventArgs e)
         {
             OnItemLongClicked(LayoutPosition);

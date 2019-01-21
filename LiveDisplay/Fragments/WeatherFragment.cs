@@ -1,32 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using Android.App;
+﻿using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Preferences;
-using Android.Runtime;
 using Android.Telephony;
-using Android.Util;
 using Android.Views;
 using Android.Widget;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
 using LiveDisplay.Servicios.Weather;
+using System.Threading;
 
 namespace LiveDisplay.Fragments
 {
     public class WeatherFragment : Fragment
     {
-        ConfigurationManager configurationManager;
+        private ConfigurationManager configurationManager;
 
-        TextView temperature;
-        TextView minimumTemperature;
-        TextView maximumTemperature;
-        TextView city;
-        TextView humidity;
+        private TextView temperature;
+        private TextView minimumTemperature;
+        private TextView maximumTemperature;
+        private TextView city;
+        private TextView humidity;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
@@ -38,8 +31,8 @@ namespace LiveDisplay.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            View v= inflater.Inflate(Resource.Layout.Weather, container, false);
-            temperature= v.FindViewById<TextView>(Resource.Id.temperature);
+            View v = inflater.Inflate(Resource.Layout.Weather, container, false);
+            temperature = v.FindViewById<TextView>(Resource.Id.temperature);
             minimumTemperature = v.FindViewById<TextView>(Resource.Id.minimumtemperature);
             maximumTemperature = v.FindViewById<TextView>(Resource.Id.maximumtemperature);
             city = v.FindViewById<TextView>(Resource.Id.city);
@@ -56,17 +49,16 @@ namespace LiveDisplay.Fragments
                 temperatureSuffix = "°F";
             }
 
-            ThreadPool.QueueUserWorkItem(async m => 
+            ThreadPool.QueueUserWorkItem(async m =>
             {
-                var weather= await Weather.GetWeather(thecity, countryCode, unitsFlags);
+                var weather = await Weather.GetWeather(thecity, countryCode, unitsFlags);
                 Activity.RunOnUiThread(() =>
                 {
-                    temperature.Text = weather?.MainWeather.Temperature.ToString()+ temperatureSuffix;
+                    temperature.Text = weather?.MainWeather.Temperature.ToString() + temperatureSuffix;
                     minimumTemperature.Text = weather?.MainWeather.MinTemperature.ToString() + temperatureSuffix;
-                    maximumTemperature.Text = weather?.MainWeather.MaxTemperature.ToString() + temperatureSuffix; 
+                    maximumTemperature.Text = weather?.MainWeather.MaxTemperature.ToString() + temperatureSuffix;
                     city.Text = weather?.Name + ": " + weather?.Weather[0].Description;
                     humidity.Text = weather?.MainWeather.Humidity.ToString();
-                    
                 });
             });
             return v;

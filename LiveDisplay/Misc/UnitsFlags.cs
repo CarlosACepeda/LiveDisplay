@@ -1,20 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-
-namespace LiveDisplay.Misc
+﻿namespace LiveDisplay.Misc
 {
     public enum UnitsFlags
     {
-        Metric=1,
-        Imperial=2
+        Metric = 1,
+        Imperial = 2
     }
 }

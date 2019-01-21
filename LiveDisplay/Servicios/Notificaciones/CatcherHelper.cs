@@ -2,7 +2,6 @@
 using Android.Service.Notification;
 using LiveDisplay.Adapters;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
-using LiveDisplay.Servicios;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -86,12 +85,11 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         private void InsertNotification(StatusBarNotification sbn)
         {
-            if (Blacklist.IsAppBlacklisted(sbn.PackageName)==false)
+            if (Blacklist.IsAppBlacklisted(sbn.PackageName) == false)
             {
                 statusBarNotifications.Add(sbn);
                 using (var h = new Handler(Looper.MainLooper))
                     h.Post(() => { notificationAdapter.NotifyItemInserted(statusBarNotifications.Count); });
-
             }
             else
             {
@@ -99,13 +97,11 @@ namespace LiveDisplay.Servicios.Notificaciones
                 if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
                 {
                     notificationSlave.CancelNotification(sbn.Key);
-
                 }
                 else
                 {
                     notificationSlave.CancelNotification(sbn.PackageName, sbn.Tag, sbn.Id);
                 }
-
             }
         }
 
@@ -132,7 +128,6 @@ namespace LiveDisplay.Servicios.Notificaciones
                 return true;
             }
             return false;
-            
         }
 
         private void RemoveNotificationFromGroup()

@@ -1,31 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
+﻿using Android.App;
 using Android.Content;
 using Android.Content.PM;
-using Android.OS;
 using Android.Preferences;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace LiveDisplay.Servicios
 {
-    class Blacklist
+    internal class Blacklist
     {
-
         public static List<PackageInfo> GetListOfApps()
         {
-
             PackageManager packageManager = Application.Context.PackageManager;
 
             var lol = packageManager.GetInstalledPackages(0);
             return lol.ToList();
-
-
         }
 
         public static void ToggleAppBlacklistState(string whichApp, bool isBlacklisted)
@@ -34,6 +23,7 @@ namespace LiveDisplay.Servicios
             ConfigurationManager configurationManager = new ConfigurationManager(sharedPreferences);
             configurationManager.SaveAValue(whichApp, isBlacklisted);
         }
+
         public static bool IsAppBlacklisted(string whichApp)
         {
             ISharedPreferences sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(Application.Context);

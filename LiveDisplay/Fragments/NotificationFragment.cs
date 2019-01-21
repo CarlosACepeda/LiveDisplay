@@ -4,7 +4,6 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using LiveDisplay.Adapters;
-using LiveDisplay.Factories;
 using LiveDisplay.Servicios;
 using LiveDisplay.Servicios.Notificaciones;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;

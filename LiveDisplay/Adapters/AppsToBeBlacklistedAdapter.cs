@@ -1,19 +1,17 @@
-﻿using System;
-
+﻿using Android.Content.PM;
+using Android.Support.V7.Widget;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
-using Android.Support.V7.Widget;
-using System.Collections.Generic;
-using Android.Content.PM;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
-using Android.Util;
+using System.Collections.Generic;
 
 namespace LiveDisplay.Adapters
 {
-    class AppsToBeBlacklistedAdapter : RecyclerView.Adapter
+    internal class AppsToBeBlacklistedAdapter : RecyclerView.Adapter
     {
-        List<PackageInfo> items;
+        private List<PackageInfo> items;
         private int selectedItem = -1;
 
         public AppsToBeBlacklistedAdapter(List<PackageInfo> listofapppackages)
@@ -24,7 +22,6 @@ namespace LiveDisplay.Adapters
         // Create new views (invoked by the layout manager)
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
         {
-
             //Setup your layout here
             LayoutInflater layoutInflater = LayoutInflater.From(parent.Context);
             View itemView = layoutInflater.Inflate(Resource.Layout.BlacklistItemRow, parent, false);
@@ -34,7 +31,6 @@ namespace LiveDisplay.Adapters
         // Replace the contents of a view (invoked by the layout manager)
         public override void OnBindViewHolder(RecyclerView.ViewHolder viewHolder, int position)
         {
-
             selectedItem = position;
 
             // Replace the contents of the view with that element
@@ -43,7 +39,6 @@ namespace LiveDisplay.Adapters
             holder.BlacklistToggle.Checked = Blacklist.IsAppBlacklisted(items[position].PackageName);
             holder.BlacklistToggle.CheckedChange += BlacklistToggle_CheckedChange;
             Log.Info("LiveDisplay", "CalledOnBindViewHolder");
-
         }
 
         private void BlacklistToggle_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
@@ -55,12 +50,10 @@ namespace LiveDisplay.Adapters
             else
             {
                 Blacklist.ToggleAppBlacklistState(items[selectedItem].PackageName, false);
-
             }
         }
 
         public override int ItemCount => items.Count;
-
     }
 
     public class AppsToBeBlacklistedAdapterViewHolder : RecyclerView.ViewHolder
@@ -68,13 +61,10 @@ namespace LiveDisplay.Adapters
         public TextView App { get; set; }
         public CheckBox BlacklistToggle { get; set; }
 
-
         public AppsToBeBlacklistedAdapterViewHolder(View itemView) : base(itemView)
         {
-            App= itemView.FindViewById<TextView>(Resource.Id.applicationname);
-            BlacklistToggle = itemView.FindViewById<CheckBox>(Resource.Id.istheappblacklisted);   
+            App = itemView.FindViewById<TextView>(Resource.Id.applicationname);
+            BlacklistToggle = itemView.FindViewById<CheckBox>(Resource.Id.istheappblacklisted);
         }
-
     }
-
 }

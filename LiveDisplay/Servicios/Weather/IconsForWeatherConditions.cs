@@ -1,21 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-
-namespace LiveDisplay.Servicios.Weather
+﻿namespace LiveDisplay.Servicios.Weather
 {
     /// <summary>
     /// This class holds constant values for image resources on the OpenWeatherMap website, it might change over time.
     /// </summary>
-    class IconsForWeatherConditions
+    internal class IconsForWeatherConditions
     {
         /*I don't want magical strings, so, each one of these identifies a image that represents a Weather condition, cloudy, sunny, etc.
         for example see: https://openweathermap.org/weather-conditions

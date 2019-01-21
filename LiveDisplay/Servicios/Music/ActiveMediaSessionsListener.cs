@@ -38,12 +38,11 @@ namespace LiveDisplay.Servicios.Music
                     mediaController.UnregisterCallback(musicController);
                     musicController.Dispose();
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     Log.Info("LiveDisplay", "Unregistering MediaController callback failed" + e.Message);
                 }
             }
         }
-
     }
 }

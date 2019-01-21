@@ -1,24 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.Graphics;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
+﻿using Android.Graphics;
+using System;
 
 namespace LiveDisplay.Servicios.Music.MediaEventArgs
 {
-    class MediaMetadataChangedKitkatEventArgs: EventArgs
+    internal class MediaMetadataChangedKitkatEventArgs : EventArgs
     {
         public string Title { get; set; }
         public string Album { get; set; }
         public string Artist { get; set; }
         public long Duration { get; set; }
-        public Bitmap AlbumArt {get; set;}
+        public Bitmap AlbumArt { get; set; }
     }
 }

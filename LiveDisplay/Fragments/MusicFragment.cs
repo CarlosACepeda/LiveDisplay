@@ -4,7 +4,6 @@ using Android.Media;
 using Android.Media.Session;
 using Android.OS;
 using Android.Preferences;
-using Android.Util;
 using Android.Views;
 using Android.Widget;
 using LiveDisplay.Misc;
@@ -13,7 +12,6 @@ using LiveDisplay.Servicios.Music;
 using LiveDisplay.Servicios.Music.MediaEventArgs;
 using LiveDisplay.Servicios.Wallpaper;
 using System;
-using System.Threading;
 using System.Timers;
 
 namespace LiveDisplay.Fragments
@@ -26,7 +24,7 @@ namespace LiveDisplay.Fragments
         private SeekBar skbSeekSongTime;
         private PlaybackStateCode playbackState;
         private System.Timers.Timer timer;
-        ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context));
+        private ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context));
 
         #region Fragment Lifecycle
 
@@ -39,7 +37,6 @@ namespace LiveDisplay.Fragments
             timer.Interval = 1000; //1 second.
             timer.Elapsed += Timer_Elapsed;
             timer.Enabled = true;
-
 
             base.OnCreate(savedInstanceState);
         }
@@ -69,7 +66,7 @@ namespace LiveDisplay.Fragments
         }
 
         #endregion Fragment Lifecycle
- 
+
         #region Fragment Views events
 
         private void BindViewEvents()
@@ -177,17 +174,20 @@ namespace LiveDisplay.Fragments
                     MoveSeekbar(false);
 
                     break;
+
                 case RemoteControlPlayState.Playing:
                     btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_pause_white_24dp, 0, 0);
                     playbackState = PlaybackStateCode.Playing;
                     MoveSeekbar(true);
 
                     break;
+
                 case RemoteControlPlayState.Stopped:
                     btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
                     playbackState = PlaybackStateCode.Stopped;
                     MoveSeekbar(false);
                     break;
+
                 default:
                     break;
             }
@@ -198,13 +198,12 @@ namespace LiveDisplay.Fragments
             tvTitle.Text = e.Title;
             tvAlbum.Text = e.Album;
             tvArtist.Text = e.Artist;
-            skbSeekSongTime.Max=(int)e.Duration;
+            skbSeekSongTime.Max = (int)e.Duration;
             WallpaperPublisher.OnWallpaperChanged(new WallpaperChangedEventArgs
             {
                 Wallpaper = new BitmapDrawable(Resources, e.AlbumArt)
             });
             GC.Collect(0);
-
         }
 
         private void MusicController_MediaMetadataChanged(object sender, MediaMetadataChangedEventArgs e)
@@ -224,7 +223,6 @@ namespace LiveDisplay.Fragments
                         OpacityLevel = (short)opacitylevel
                     });
                 }
-                
             }
             GC.Collect();
         }
@@ -272,7 +270,6 @@ namespace LiveDisplay.Fragments
             skbSeekSongTime = view.FindViewById<SeekBar>(Resource.Id.seeksongTime);
 
             musicPlayerContainer = view.FindViewById<LinearLayout>(Resource.Id.musicPlayerContainer);
-            
         }
 
         private void RetrieveMediaInformation()
@@ -282,7 +279,6 @@ namespace LiveDisplay.Fragments
             Jukebox.RetrieveMediaInformation();
         }
 
-        
         private void MoveSeekbar(bool move)
         {
             if (move == true)

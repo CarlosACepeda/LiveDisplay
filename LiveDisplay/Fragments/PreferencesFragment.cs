@@ -1,7 +1,6 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.Content.PM;
-using Android.Net;
 using Android.OS;
 using Android.Preferences;
 using Android.Runtime;
@@ -11,13 +10,13 @@ using LiveDisplay.Activities;
 using LiveDisplay.Factories;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
-using System;
 
 namespace LiveDisplay.Fragments
 {
     public class PreferencesFragment : PreferenceFragment, ISharedPreferencesOnSharedPreferenceChangeListener
     {
         private ISharedPreferences sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
+
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -47,7 +46,6 @@ namespace LiveDisplay.Fragments
             Intent intent = new Intent(Intent.ActionView);
             intent.SetData(Android.Net.Uri.Parse(url));
             StartActivity(intent);
-
         }
 
         private void Blacklistpreference_PreferenceClick(object sender, Preference.PreferenceClickEventArgs e)
@@ -68,12 +66,13 @@ namespace LiveDisplay.Fragments
         {
             return base.OnCreateView(inflater, container, savedInstanceState);
         }
+
         public override void OnResume()
         {
             base.OnResume();
             sharedPreferences.RegisterOnSharedPreferenceChangeListener(this);
-
         }
+
         public override void OnPause()
         {
             base.OnPause();
@@ -112,8 +111,8 @@ namespace LiveDisplay.Fragments
 
                     break;
             }
-            
         }
+
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
         {
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -129,10 +128,8 @@ namespace LiveDisplay.Fragments
                 {
                     configurationManager.SaveAValue(ConfigurationParameters.ChangeWallpaper, "0");
                 }
-
             }
         }
-
 
         public void OnSharedPreferenceChanged(ISharedPreferences sharedPreferences, string key)
         {
@@ -152,6 +149,7 @@ namespace LiveDisplay.Fragments
                             }
 
                             break;
+
                         case "2":
 
                             using (Intent intent = new Intent())

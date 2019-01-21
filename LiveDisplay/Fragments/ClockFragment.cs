@@ -7,7 +7,6 @@ using Android.Views;
 using Android.Widget;
 using Java.Util;
 using LiveDisplay.BroadcastReceivers;
-using LiveDisplay.DataRepository;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
 using System;
@@ -27,8 +26,6 @@ namespace LiveDisplay.Fragments
             base.OnCreate(savedInstanceState);
 
             RegisterBatteryReceiver();
-
-
         }
 
         private void RegisterBatteryReceiver()

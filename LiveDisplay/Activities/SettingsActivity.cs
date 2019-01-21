@@ -16,10 +16,10 @@ namespace LiveDisplay.Activities
 
             if (Intent != null)
             {
-                Bundle bundle= RemoteInput.GetResultsFromIntent(Intent);
+                Bundle bundle = RemoteInput.GetResultsFromIntent(Intent);
                 if (bundle != null)
                 {
-                   var lmao= bundle.GetCharSequence("test");
+                    var lmao = bundle.GetCharSequence("test");
                 }
             }
 

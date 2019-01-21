@@ -8,7 +8,6 @@ using Android.Runtime;
 using Android.Service.Notification;
 using Android.Util;
 using LiveDisplay.BroadcastReceivers;
-using LiveDisplay.Fragments;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Music;
 using LiveDisplay.Servicios.Notificaciones;
@@ -17,7 +16,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Reflection;
 
 namespace LiveDisplay.Servicios
 {
@@ -25,7 +23,6 @@ namespace LiveDisplay.Servicios
     [IntentFilter(new[] { "android.service.notification.NotificationListenerService" })]
     internal class Catcher : NotificationListenerService, RemoteController.IOnClientUpdateListener
     {
-
         private ScreenOnOffReceiver screenOnOffReceiver;
         private MediaSessionManager mediaSessionManager;
         private MusicControllerKitkat musicControllerKitkat;
@@ -34,7 +31,6 @@ namespace LiveDisplay.Servicios
         private AudioManager audioManager;
         private CatcherHelper catcherHelper;
         private List<StatusBarNotification> statusBarNotifications;
-
 
         public override IBinder OnBind(Intent intent)
         {
@@ -129,15 +125,16 @@ namespace LiveDisplay.Servicios
 
             catcherHelper = new CatcherHelper(statusBarNotifications);
         }
+
         //No se puede implementar. :/
         private void GetRemoteInput(StatusBarNotification sbn)
         {
             RemoteInput remoteInput;
-            if(sbn.Notification.Actions!= null)
-            foreach (var item in sbn.Notification.Actions)
-            {
+            if (sbn.Notification.Actions != null)
+                foreach (var item in sbn.Notification.Actions)
+                {
                     List<RemoteInput> remoteInputs;
-                if(item.GetRemoteInputs()!= null)
+                    if (item.GetRemoteInputs() != null)
                     {
                         remoteInputs = item.GetRemoteInputs().ToList();
                         foreach (var remoteinput in remoteInputs)
@@ -147,17 +144,14 @@ namespace LiveDisplay.Servicios
                                 remoteInput = remoteinput;
                                 remoteInput.Extras.PutCharSequence(remoteinput.ResultKey, ":)");
                                 item.Extras.PutCharSequence(remoteinput.ResultKey, ":)");
-                                    item.ActionIntent.Send();
+                                item.ActionIntent.Send();
                                 var i = item.ActionIntent;
-                                   
+
                                 break;
                             }
-
                         }
                     }
-
-            }
-
+                }
         }
 
         //Subscribe to events by Several publishers
@@ -178,7 +172,6 @@ namespace LiveDisplay.Servicios
                 intentFilter.AddAction(Intent.ActionScreenOn);
                 RegisterReceiver(screenOnOffReceiver, intentFilter);
             }
-
         }
 
         //Events:
@@ -224,24 +217,20 @@ namespace LiveDisplay.Servicios
         public void OnClientTransportControlUpdate([GeneratedEnum] RemoteControlFlags transportControlFlags)
         {
             Log.Info("Livedisplay", "TransportControl update" + transportControlFlags);
-
         }
 
-        void ToggleRemoteControllerKitkat()
+        private void ToggleRemoteControllerKitkat()
         {
             using (ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context)))
             {
                 if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetEnabled) == true)
                 {
-
                 }
-
             }
-
         }
-        void ToggleActiveSessionsListenerLollipop()
-        {
 
+        private void ToggleActiveSessionsListenerLollipop()
+        {
         }
     }
 }

@@ -15,6 +15,7 @@ namespace LiveDisplay.Servicios.Music
     internal class MusicController : MediaController.Callback, IDisposable
     {
         #region Class members
+
         public static PlaybackStateCode MusicStatus { get; private set; }
         public PlaybackState PlaybackState { get; set; }
         public MediaController.TransportControls TransportControls { get; set; }
@@ -24,9 +25,13 @@ namespace LiveDisplay.Servicios.Music
         #region events
 
         public static event EventHandler MusicPlaying;
+
         public static event EventHandler MusicStopped;
+
         public static event EventHandler MusicPaused;
+
         public static event EventHandler<MediaPlaybackStateChangedEventArgs> MediaPlaybackChanged;
+
         public static event EventHandler<MediaMetadataChangedEventArgs> MediaMetadataChanged;
 
         #endregion events
@@ -142,7 +147,6 @@ namespace LiveDisplay.Servicios.Music
 
         #region Raising events.
 
-
         protected virtual void OnMediaPlaybackChanged(MediaPlaybackStateChangedEventArgs e)
         {
             MediaPlaybackChanged?.Invoke(this, e);
@@ -154,6 +158,7 @@ namespace LiveDisplay.Servicios.Music
         }
 
         #endregion Raising events.
+
         protected override void Dispose(bool disposing)
         {
             //release resources.

@@ -4,7 +4,6 @@ using Android.Content;
 using Android.Provider;
 using LiveDisplay.BroadcastReceivers;
 using LiveDisplay.Servicios;
-using System;
 
 namespace LiveDisplay.Misc
 {
@@ -18,8 +17,9 @@ namespace LiveDisplay.Misc
             {
                 return true;
             }
-           return false;
+            return false;
         }
+
         public static bool IsThisAppADeviceAdministrator()
         {
             DevicePolicyManager devicePolicyManager = Application.Context.GetSystemService(Context.DevicePolicyService) as DevicePolicyManager;
@@ -27,8 +27,8 @@ namespace LiveDisplay.Misc
             ComponentName componentName = new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(AdminReceiver)));
 
             return devicePolicyManager.IsAdminActive(componentName);
-
         }
+
         public static bool ThisAppCanDrawOverlays()
         {
             return Settings.CanDrawOverlays(Application.Context);

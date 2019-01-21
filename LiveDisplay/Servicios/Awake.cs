@@ -13,14 +13,13 @@ using System.Threading;
 
 namespace LiveDisplay.Servicios
 {
-    [Service(Label ="Awake")]
-    internal class Awake: Service, ISensorEventListener
+    [Service(Label = "Awake")]
+    internal class Awake : Service, ISensorEventListener
     {
-
         private static ISharedPreferences configurationManager = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
         private SensorManager sensorManager;
         private Sensor sensor;
-        private bool isLaidDown=false;
+        private bool isLaidDown = false;
 
         public static void WakeUpScreen()
         {
@@ -73,7 +72,6 @@ namespace LiveDisplay.Servicios
                     catch (Exception)
                     {
                         Log.Warn("LiveDisplay", "Lock device failed, check Device Admin permission");
-
                     }
                 }
             }
@@ -83,6 +81,7 @@ namespace LiveDisplay.Servicios
         {
             return null;
         }
+
         [return: GeneratedEnum]
         public override StartCommandResult OnStartCommand(Intent intent, [GeneratedEnum] StartCommandFlags flags, int startId)
         {
@@ -92,19 +91,15 @@ namespace LiveDisplay.Servicios
 
             sensorManager.RegisterListener(this, sensor, SensorDelay.Normal);
 
-
             return StartCommandResult.Sticky;
-
-
         }
 
         public void OnAccuracyChanged(Sensor sensor, [GeneratedEnum] SensorStatus accuracy)
         {
-           
         }
 
         public void OnSensorChanged(SensorEvent e)
-        {          
+        {
             if (e.Sensor.Type == SensorType.Accelerometer)
             {
                 //Detect phone on plain surface:
@@ -129,7 +124,7 @@ namespace LiveDisplay.Servicios
                 //Z axis must be less than 10 m/s2("Example: 9.5") it means that Z  axis is not being
                 //Accelerated and
                 //Y axis must be greater than 3m/s20
-                else if (ScreenOnOffReceiver.IsScreenOn == false&& isLaidDown== true)
+                else if (ScreenOnOffReceiver.IsScreenOn == false && isLaidDown == true)
                 {
                     if (e.Values[2] < 9.6f && e.Values[1] > 3)
                     {
@@ -141,24 +136,21 @@ namespace LiveDisplay.Servicios
                     {
                         isLaidDown = true;
                     }
-
                 }
             }
 
-                //The less Z axis m/s2 value is, and the more Y axis m/s2 value is, the phone more vertically is.
+            //The less Z axis m/s2 value is, and the more Y axis m/s2 value is, the phone more vertically is.
 
-                //Notes:
-                //X axis is not necessary as I don't need to know if the phone is being moved Horizontally.
-            
+            //Notes:
+            //X axis is not necessary as I don't need to know if the phone is being moved Horizontally.
         }
+
         public override void OnDestroy()
         {
             sensorManager.UnregisterListener(this);
             sensor.Dispose();
             sensorManager.Dispose();
             base.OnDestroy();
-
-
         }
     }
 }

@@ -1,31 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
+﻿using Android.App;
+using Android.Content.PM;
+using Android.Graphics;
+using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Preferences;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using LiveDisplay.Servicios;
 using Com.JackAndPhantom;
 using LiveDisplay.Misc;
-using Android.Graphics;
-using Android.Graphics.Drawables;
-using System.Threading;
-using Android.Content.PM;
+using LiveDisplay.Servicios;
+using System;
 
 namespace LiveDisplay.Activities
 {
     [Activity(Label = "bash", Theme = "@style/LiveDisplayThemeDark")]
     public class BackgroundSettingsActivity : Activity
     {
-        ImageView wallpaperPreview;
-        SeekBar blur;
-        SeekBar opacity;
+        private ImageView wallpaperPreview;
+        private SeekBar blur;
+        private SeekBar opacity;
         private WallpaperManager wallpaperManager;
         private ConfigurationManager configurationManager;
 
@@ -55,36 +49,32 @@ namespace LiveDisplay.Activities
                 {
                     LoadPreviousValues();
                 }
-
             }
             else
             {
                 LoadPreviousValues();
             }
-
         }
 
         private void LoadPreviousValues()
         {
             Window.DecorView.SetBackgroundColor(Color.Black);
 
-            int savedblurlevel= configurationManager.RetrieveAValue(ConfigurationParameters.BlurLevel, 1);
-            int savedOpacitylevel= configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, 255);
+            int savedblurlevel = configurationManager.RetrieveAValue(ConfigurationParameters.BlurLevel, 1);
+            int savedOpacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, 255);
 
             Bitmap bitmap = ((BitmapDrawable)wallpaperManager.Drawable).Bitmap;
-            
 
             BlurImage blurImage = new BlurImage(Application.Context);
-                blurImage.Load(bitmap).Intensity(savedblurlevel).Async(true);
-                Drawable drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
-                wallpaperPreview.Background = drawable;
+            blurImage.Load(bitmap).Intensity(savedblurlevel).Async(true);
+            Drawable drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
+            wallpaperPreview.Background = drawable;
 
             wallpaperPreview.Background.Alpha = savedOpacitylevel;
 
             blur.Progress = savedblurlevel;
             opacity.Progress = savedOpacitylevel;
             GC.Collect(0); //Helping the gc, We are manipulating bitmaps.
-
         }
 
         private void Opacity_StopTrackingTouch(object sender, SeekBar.StopTrackingTouchEventArgs e)
@@ -98,9 +88,9 @@ namespace LiveDisplay.Activities
             Drawable drawable = null;
             wallpaperManager.ForgetLoadedWallpaper();
             Bitmap bitmap = ((BitmapDrawable)wallpaperManager.Drawable).Bitmap;
-                BlurImage blurImage = new BlurImage(Application.Context);
-                blurImage.Load(bitmap).Intensity(e.SeekBar.Progress).Async(true);
-                drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
+            BlurImage blurImage = new BlurImage(Application.Context);
+            blurImage.Load(bitmap).Intensity(e.SeekBar.Progress).Async(true);
+            drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
             wallpaperPreview.Background = drawable;
             configurationManager.SaveAValue(ConfigurationParameters.BlurLevel, e.SeekBar.Progress);
             GC.Collect(0);

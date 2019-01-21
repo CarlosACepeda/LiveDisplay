@@ -67,10 +67,11 @@ namespace LiveDisplay.Servicios
 #pragma warning disable CS0618 // 'Notification.Builder.SetPriority(int)' está obsoleto: 'deprecated'
             builder.SetPriority(Convert.ToInt32(NotificationPriority.Low));
 #pragma warning restore CS0618 // 'Notification.Builder.SetPriority(int)' está obsoleto: 'deprecated'
-            
+
             builder.SetSmallIcon(Resource.Drawable.ic_stat_default_appicon);
             notificationManager.Notify(1, builder.Build());
         }
+
         public void PostNotification(string title, string text, bool autoCancellable, NotificationImportance notificationImportance)
         {
             NotificationChannel notificationChannel = new NotificationChannel("livedisplaynotificationchannel", "LiveDisplay", notificationImportance);
@@ -94,9 +95,9 @@ namespace LiveDisplay.Servicios
 
             notificationManager.Notify(1, builder.Build());
         }
+
         public void SendDumbNotification()
         {
-
         }
 
         //Raising events.

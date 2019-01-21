@@ -94,7 +94,7 @@ namespace LiveDisplay.Servicios.Notificaciones
                     Application.Context.Theme.ResolveAttribute(Android.Resource.Attribute.SelectableItemBackgroundBorderless, outValue, true);
                     anActionButton.SetBackgroundResource(outValue.ResourceId);
                     anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction.GetActionIcon(), null, null, null);
-                    
+
                     buttons.Add(anActionButton);
                 }
                 return buttons;
@@ -176,14 +176,15 @@ namespace LiveDisplay.Servicios.Notificaciones
         }
     }
 
-    internal class OpenAction: IDisposable
+    internal class OpenAction : IDisposable
     {
-        Notification.Action action;
+        private Notification.Action action;
 
         public OpenAction(Notification.Action action)
         {
             this.action = action;
         }
+
         public string GetTitle()
         {
             try
@@ -195,6 +196,7 @@ namespace LiveDisplay.Servicios.Notificaciones
                 return "";
             }
         }
+
         public void ClickAction()
         {
             try
@@ -205,8 +207,8 @@ namespace LiveDisplay.Servicios.Notificaciones
             {
                 Log.Info("LiveDisplay", "Click notification failed");
             }
-
         }
+
         public Drawable GetActionIcon()
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.N)
@@ -214,8 +216,8 @@ namespace LiveDisplay.Servicios.Notificaciones
                 return IconFactory.ReturnActionIconDrawable(action.Icon, action.ActionIntent.CreatorPackage);
             }
             return null;
-
         }
+
         private void GetRemoteInput()
         {
             RemoteInput remoteInput;
@@ -226,15 +228,14 @@ namespace LiveDisplay.Servicios.Notificaciones
                     remoteInput = item;
                     break;
                 }
-
             }
-            
         }
 
         public string GetPlaceholderTextForInlineResponse()
         {
-           return action.GetRemoteInputs()[1].Label;
+            return action.GetRemoteInputs()[1].Label;
         }
+
         public void Dispose()
         {
             action.Dispose();

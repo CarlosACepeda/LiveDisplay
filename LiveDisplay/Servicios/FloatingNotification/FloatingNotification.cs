@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
+﻿using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
@@ -12,12 +7,13 @@ using Android.Views;
 using Android.Widget;
 using LiveDisplay.Adapters;
 using LiveDisplay.Servicios.Notificaciones;
+using System;
 
 namespace LiveDisplay.Servicios.FloatingNotification
 {
     //Will spawn a View to show the clicked notification in the list, while the music is playing.
-    [Service(Enabled =true)]
-    class FloatingNotification : Service
+    [Service(Enabled = true)]
+    internal class FloatingNotification : Service
     {
         private IWindowManager windowManager;
         private LinearLayout floatingNotificationView;
@@ -32,11 +28,13 @@ namespace LiveDisplay.Servicios.FloatingNotification
         {
             return null;
         }
+
         [return: GeneratedEnum]
         public override StartCommandResult OnStartCommand(Intent intent, [GeneratedEnum] StartCommandFlags flags, int startId)
         {
             return StartCommandResult.Sticky;
         }
+
         public override void OnCreate()
         {
             base.OnCreate();
@@ -46,16 +44,15 @@ namespace LiveDisplay.Servicios.FloatingNotification
             {
                 layoutType = WindowManagerTypes.ApplicationOverlay; //Android Oreo does not allow to add windows of WindowManagerTypes.Phone
             }
-            
-            
-                windowManager = (IWindowManager)GetSystemService(WindowService).JavaCast<IWindowManager>();
+
+            windowManager = (IWindowManager)GetSystemService(WindowService).JavaCast<IWindowManager>();
 
             var lol = LayoutInflater.From(this);
 
             floatingNotificationView = (LinearLayout)lol.Inflate(Resource.Layout.FloatingNotification, null);
 
             int width = 200;
-            var floatingNotificationWidth= TypedValue.ApplyDimension(ComplexUnitType.Dip, width, Resources.DisplayMetrics);
+            var floatingNotificationWidth = TypedValue.ApplyDimension(ComplexUnitType.Dip, width, Resources.DisplayMetrics);
 
             WindowManagerLayoutParams layoutParams = new WindowManagerLayoutParams
             {
@@ -70,21 +67,17 @@ namespace LiveDisplay.Servicios.FloatingNotification
 
             windowManager.AddView(floatingNotificationView, layoutParams);
 
-
-            floatingNotificationAppName= floatingNotificationView.FindViewById<TextView>(Resource.Id.floatingappname);
+            floatingNotificationAppName = floatingNotificationView.FindViewById<TextView>(Resource.Id.floatingappname);
             floatingNotificationWhen = floatingNotificationView.FindViewById<TextView>(Resource.Id.floatingwhen);
             floatingNotificationTitle = floatingNotificationView.FindViewById<TextView>(Resource.Id.floatingtitle);
             floatingNotificationText = floatingNotificationView.FindViewById<TextView>(Resource.Id.floatingtext);
             floatingNotificationActionsContainer = floatingNotificationView.FindViewById<LinearLayout>(Resource.Id.floatingNotificationActions);
-            
 
             NotificationAdapterViewHolder.ItemClicked += NotificationAdapterViewHolder_ItemClicked;
             NotificationAdapterViewHolder.ItemLongClicked += NotificationAdapterViewHolder_ItemLongClicked;
 
             floatingNotificationView.Click += FloatingNotificationView_Click;
-
         }
-
 
         private void NotificationAdapterViewHolder_ItemLongClicked(object sender, Notificaciones.NotificationEventArgs.NotificationItemClickedEventArgs e)
         {
@@ -107,6 +100,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
                 floatingNotificationView.Visibility = ViewStates.Gone;
             }
         }
+
         private void NotificationAdapterViewHolder_ItemClicked(object sender, Notificaciones.NotificationEventArgs.NotificationItemClickedEventArgs e)
         {
             using (OpenNotification notification = new OpenNotification(e.Position))
@@ -126,7 +120,6 @@ namespace LiveDisplay.Servicios.FloatingNotification
                     }
                 }
 
-
                 if (floatingNotificationView.Visibility != ViewStates.Visible)
                 {
                     floatingNotificationView.Visibility = ViewStates.Visible;
@@ -143,12 +136,13 @@ namespace LiveDisplay.Servicios.FloatingNotification
             OpenNotification.ClickNotification(position);
             floatingNotificationView.Visibility = ViewStates.Gone;
         }
+
         public override void OnDestroy()
         {
             base.OnDestroy();
             floatingNotificationView.Click -= FloatingNotificationView_Click;
             NotificationAdapterViewHolder.ItemClicked -= NotificationAdapterViewHolder_ItemClicked;
-            NotificationAdapterViewHolder.ItemLongClicked-=NotificationAdapterViewHolder_ItemLongClicked;
+            NotificationAdapterViewHolder.ItemLongClicked -= NotificationAdapterViewHolder_ItemLongClicked;
             if (floatingNotificationView != null)
             {
                 floatingNotificationAppName.Dispose();

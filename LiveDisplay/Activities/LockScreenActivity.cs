@@ -2,31 +2,25 @@
 using Android.Content;
 using Android.Graphics;
 using Android.Hardware;
+using Android.Media;
+using Android.Media.Session;
 using Android.OS;
 using Android.Preferences;
-using Android.Runtime;
 using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
+using Android.Views.Animations;
 using Android.Widget;
-using LiveDisplay.Factories;
 using LiveDisplay.Fragments;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
+using LiveDisplay.Servicios.FloatingNotification;
 using LiveDisplay.Servicios.Music;
 using LiveDisplay.Servicios.Notificaciones;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
 using LiveDisplay.Servicios.Wallpaper;
 using System;
 using System.Threading;
-using Android.Media.Session;
-using LiveDisplay.Servicios.FloatingNotification;
-using Com.JackAndPhantom;
-using Android.Graphics.Drawables;
-using Android.Media;
-using LiveDisplay.BroadcastReceivers;
-using static Android.Resource;
-using Android.Views.Animations;
 
 namespace LiveDisplay
 {
@@ -52,15 +46,14 @@ namespace LiveDisplay
         private Sensor sensor;
         private SensorManager sensorManager;
         private System.Timers.Timer watchDog; //the watchdog simply will start counting down until it gets resetted by OnUserInteraction() override.
-        private Android.Views.Animations.Animation fadeoutanimation;
+        private Animation fadeoutanimation;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
-           
             base.OnCreate(savedInstanceState);
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.LockScreen);
-
+            Window.DecorView.SetBackgroundColor(Color.Black);
             //Before loading anything, check if the user has the required permissions.
             ThreadPool.QueueUserWorkItem(isApphealthy =>
             {
@@ -70,17 +63,14 @@ namespace LiveDisplay
                     canDrawOverlays = Checkers.ThisAppCanDrawOverlays();
                 }
 
-                if (Checkers.IsNotificationListenerEnabled() == false  || canDrawOverlays == false)
+                if (Checkers.IsNotificationListenerEnabled() == false || canDrawOverlays == false)
                 {
-                    RunOnUiThread(()=>
+                    RunOnUiThread(() =>
                     Toast.MakeText(Application.Context, "You dont have the required permissions", ToastLength.Long).Show()
                     );
                     Finish();
                 }
-
             });
-
-
 
             //Views
             wallpaper = FindViewById<ImageView>(Resource.Id.wallpaper);
@@ -110,13 +100,11 @@ namespace LiveDisplay
             WallpaperPublisher.WallpaperChanged += Wallpaper_WallpaperChanged;
 
             //Music Controller Events
-            if(MusicController.MusicStatus!= PlaybackStateCode.None)
+            if (MusicController.MusicStatus != PlaybackStateCode.None)
             {
                 MusicController.MusicPlaying += MusicController_MusicPlaying;
                 MusicController.MusicPaused += MusicController_MusicPaused;
                 MusicController.MusicStopped += MusicController_MusicStopped;
-
-
             }
             //CatcherHelper events
             CatcherHelper.NotificationListSizeChanged += CatcherHelper_NotificationListSizeChanged;
@@ -132,21 +120,17 @@ namespace LiveDisplay
                 }
             }
 
-
             LoadClockFragment();
-            
+
             LoadNotificationFragment();
 
             //Load User Configs.
             LoadConfiguration();
 
-
             CheckNotificationListSize();
             sensorManager = GetSystemService(SensorService) as SensorManager;
 
             sensor = sensorManager.GetDefaultSensor(SensorType.Accelerometer);
-
-
         }
 
         private void Fadeoutanimation_AnimationEnd(object sender, Android.Views.Animations.Animation.AnimationEndEventArgs e)
@@ -154,7 +138,6 @@ namespace LiveDisplay
             var fadeinanimation = AnimationUtils.LoadAnimation(Application.Context, Resource.Animation.abc_fade_in);
             wallpaper.StartAnimation(fadeinanimation);
             Log.Info("Livedisplay", "fadeinanimation started");
-
         }
 
         private void WatchdogInterval_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -176,7 +159,7 @@ namespace LiveDisplay
         {
             Thread.Sleep(5000); //Wait 5 seconds.
 
-            if(MusicController.MusicStatus!= PlaybackStateCode.Playing)
+            if (MusicController.MusicStatus != PlaybackStateCode.Playing)
             {
                 StopMusicController();
                 Log.Info("LiveDisplay", "Musicfragment stopped");
@@ -202,7 +185,6 @@ namespace LiveDisplay
             wallpaper.StartAnimation(fadeoutanimation);
             if (e.Wallpaper == null)
             {
-
                 wallpaper.SetBackgroundColor(Android.Graphics.Color.Black);
             }
             else
@@ -211,7 +193,6 @@ namespace LiveDisplay
                 wallpaper.Background.Alpha = e.OpacityLevel;
             }
             GC.Collect();
-
         }
 
         private void Lockscreen_Touch(object sender, View.TouchEventArgs e)
@@ -260,7 +241,6 @@ namespace LiveDisplay
             AddFlags();
             watchDog.Stop();
             watchDog.Start();
-
         }
 
         protected override void OnPause()
@@ -306,7 +286,6 @@ namespace LiveDisplay
             clockFragment.Dispose();
 
             StopFloatingNotificationService();
-            
         }
 
         public override void OnBackPressed()
@@ -404,22 +383,18 @@ namespace LiveDisplay
                         break;
 
                     case "1":
-                            using (var wallpaper = WallpaperManager.GetInstance(Application.Context).Drawable)
-                            {
-                                int savedblurlevel = configurationManager.RetrieveAValue(ConfigurationParameters.BlurLevel, 1);
-                                int savedOpacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, 255);
-                                //var weakblur = new WeakReference(new BlurImage(Application.Context).Load(bitmap).Intensity(savedblurlevel).Async(true).GetImageBlur());
-                                //var weak = new WeakReference(new BitmapDrawable(Resources, weakblur.Target as Bitmap));
+                        using (var wallpaper = WallpaperManager.GetInstance(Application.Context).Drawable)
+                        {
+                            int savedblurlevel = configurationManager.RetrieveAValue(ConfigurationParameters.BlurLevel, 1);
+                            int savedOpacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, 255);
+                            //var weakblur = new WeakReference(new BlurImage(Application.Context).Load(bitmap).Intensity(savedblurlevel).Async(true).GetImageBlur());
+                            //var weak = new WeakReference(new BitmapDrawable(Resources, weakblur.Target as Bitmap));
 
-                                
-                                 RunOnUiThread(() =>
-                                    WallpaperPublisher.OnWallpaperChanged(new WallpaperChangedEventArgs { Wallpaper = wallpaper, OpacityLevel = (short)savedOpacitylevel })
-                                          );
-                            }
+                            RunOnUiThread(() =>
+                               WallpaperPublisher.OnWallpaperChanged(new WallpaperChangedEventArgs { Wallpaper = wallpaper, OpacityLevel = (short)savedOpacitylevel })
+                                     );
+                        }
 
-                               
-                        
-                                                
                         break;
 
                     case "2":
@@ -443,16 +418,15 @@ namespace LiveDisplay
                         break;
                 }
                 if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetEnabled) == true)
-                    {
-                        CheckIfMusicIsPlaying(); //This method is the main entry for the music widget and the floating notification.
-                    }
+                {
+                    CheckIfMusicIsPlaying(); //This method is the main entry for the music widget and the floating notification.
+                }
                 int interval = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.TurnOffScreenDelayTime, "5000"));
                 watchDog.Interval = interval;
                 if (configurationManager.RetrieveAValue(ConfigurationParameters.TurnOnUserMovement) == true)
                 {
                     StartAwakeService();
                 }
-
             }
         }
 
@@ -516,7 +490,6 @@ namespace LiveDisplay
             {
                 StopService(intent);
             }
-
         }
 
         private void StartFloatingNotificationService()
@@ -525,7 +498,6 @@ namespace LiveDisplay
             {
                 StartService(intent);
             }
-
         }
 
         private void StartAwakeService()
@@ -533,15 +505,14 @@ namespace LiveDisplay
             using (Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(Awake))))
             {
                 StartService(intent);
-
             }
         }
+
         private void StopAwakeService()
         {
             using (Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(Awake))))
             {
                 StopService(intent);
-
             }
         }
 
