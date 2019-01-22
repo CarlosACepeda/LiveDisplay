@@ -79,17 +79,6 @@ namespace LiveDisplay.Servicios
         public override void OnNotificationPosted(StatusBarNotification sbn)
         {
             //base.OnNotificationPosted(sbn);
-            using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())
-            {
-                slave.SendDumbNotification();
-                if (sbn.PackageName == "com.underground.livedisplay")
-                {
-                    Log.Info("LiveDisplay", "My dumb notification was posted");
-                    NotificationManager notificationManager = (NotificationManager)Application.Context.GetSystemService("notification");
-                    notificationManager.Cancel(2);
-
-                }
-            }
             catcherHelper.OnNotificationPosted(sbn);
         }
 
