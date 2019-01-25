@@ -23,7 +23,10 @@ namespace LiveDisplay.Servicios.Music
             {
                 musicController = MusicController.GetInstance();
                 mediaController = controllers[0];
-                mediaController.RegisterCallback(musicController);
+                if (musicController.Handle != null)
+                {
+                    mediaController.RegisterCallback(musicController);
+                }
 
                 //Retrieve the controls to control the media, duh.
                 musicController.TransportControls = mediaController.GetTransportControls();
