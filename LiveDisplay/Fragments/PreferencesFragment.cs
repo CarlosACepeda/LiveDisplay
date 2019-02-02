@@ -13,7 +13,7 @@ using LiveDisplay.Servicios;
 
 namespace LiveDisplay.Fragments
 {
-    public class PreferencesFragment : PreferenceFragment, ISharedPreferencesOnSharedPreferenceChangeListener
+    public class PreferencesFragmentCompat : PreferenceFragment, ISharedPreferencesOnSharedPreferenceChangeListener
     {
         private ISharedPreferences sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
 

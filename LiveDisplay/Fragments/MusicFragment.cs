@@ -23,7 +23,7 @@ namespace LiveDisplay.Fragments
         private LinearLayout musicPlayerContainer;
         private SeekBar skbSeekSongTime;
         private PlaybackStateCode playbackState;
-        private System.Timers.Timer timer;
+        private Timer timer;
         private ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context));
 
         #region Fragment Lifecycle
@@ -235,6 +235,7 @@ namespace LiveDisplay.Fragments
                     btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
                     playbackState = PlaybackStateCode.Paused;
                     MoveSeekbar(false);
+
                     break;
 
                 case PlaybackStateCode.Playing:

@@ -57,6 +57,7 @@
   <string name="showalbumart">Mostrar portada del álbum</string>
   <string name="showclock">No mostrar el reloj</string>
   <string name="tenseconds">10 segundos</string>
+  <string name="testnotificationtext">Manten presionado una notificación de la lista para quitarla</string>
   <string name="translations">Traducciones</string>
   <string name="turnoffdelay">Apagar pantalla automaticamente</string>
   <string name="turnoffdelay_desc">Si la pantalla se enciende(p.e.j. una nueva notificación llega) y no hay interaccion por parte del usuario, apagar la pantalla en...</string>
@@ -71,5 +72,5 @@
   <string name="weatherwidgetenabled">Activar el Widget del Clima</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">Diseño del icono de esta app!</string>
-  <string name="testnotificationtext">Manten presionado una notificación de la lista para quitarla</string>
+  <string name="help">Ayuda</string>
 </resources>

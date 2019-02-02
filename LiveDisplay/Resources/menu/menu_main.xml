@@ -11,4 +11,9 @@
     android:orderInCategory="2"
     android:title="@string/sendtestnotification"
     app:showAsAction="never" />
+  <item
+    android:id="@+id/action_help"
+    android:orderInCategory="3"
+    android:title="@string/help"
+    app:showAsAction="never" />
 </menu>

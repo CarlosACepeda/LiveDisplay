@@ -35,8 +35,9 @@ namespace LiveDisplay.BroadcastReceivers
                                                     //then turn it on before the delay to lock screen is finished.
                                                     //So, the Activity will start even if the screen is On, so,
                                                     //in summary the Lockscreen only can start when screen is off
-                        using (Intent lockScreenIntent = new Intent(Application.Context, typeof(LockScreenActivity)))
+                    using (Intent lockScreenIntent = new Intent(Application.Context, typeof(LockScreenActivity)))
                     {
+                        
                         if (IsScreenOn == false)
                         {
                             PendingIntent pendingIntent = PendingIntent.GetActivity(Application.Context, 0, lockScreenIntent, 0);

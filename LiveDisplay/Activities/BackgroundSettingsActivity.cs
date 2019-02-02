@@ -11,6 +11,7 @@ using Com.JackAndPhantom;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
 using System;
+using System.Threading;
 
 namespace LiveDisplay.Activities
 {
@@ -63,14 +64,25 @@ namespace LiveDisplay.Activities
             int savedblurlevel = configurationManager.RetrieveAValue(ConfigurationParameters.BlurLevel, 1);
             int savedOpacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, 255);
 
-            Bitmap bitmap = ((BitmapDrawable)wallpaperManager.Drawable).Bitmap;
+            ThreadPool.QueueUserWorkItem(m =>
+            {
+                using (Bitmap bitmap = ((BitmapDrawable)wallpaperManager.Drawable).Bitmap)
+                {
+                    BlurImage blurImage = new BlurImage(Application.Context);
+                    blurImage.Load(bitmap).Intensity(savedblurlevel).Async(true);
+                    Drawable drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
+                RunOnUiThread(() =>
+                {
+                    wallpaperPreview.Background = drawable;
+                    wallpaperPreview.Background.Alpha = savedOpacitylevel;
+                }
+                );
+                    
 
-            BlurImage blurImage = new BlurImage(Application.Context);
-            blurImage.Load(bitmap).Intensity(savedblurlevel).Async(true);
-            Drawable drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
-            wallpaperPreview.Background = drawable;
+                }
+            }
+            );
 
-            wallpaperPreview.Background.Alpha = savedOpacitylevel;
 
             blur.Progress = savedblurlevel;
             opacity.Progress = savedOpacitylevel;
@@ -87,11 +99,17 @@ namespace LiveDisplay.Activities
         {
             Drawable drawable = null;
             wallpaperManager.ForgetLoadedWallpaper();
-            Bitmap bitmap = ((BitmapDrawable)wallpaperManager.Drawable).Bitmap;
-            BlurImage blurImage = new BlurImage(Application.Context);
-            blurImage.Load(bitmap).Intensity(e.SeekBar.Progress).Async(true);
-            drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
-            wallpaperPreview.Background = drawable;
+            ThreadPool.QueueUserWorkItem(m =>
+            {
+            using (var backgroundcopy = (BitmapDrawable) wallpaperManager.Drawable)
+                {
+                    BlurImage blurImage = new BlurImage(Application.Context);
+                    blurImage.Load(backgroundcopy.Bitmap).Intensity(e.SeekBar.Progress).Async(true);
+                    drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
+                    RunOnUiThread(()=>
+                    wallpaperPreview.Background = drawable);
+                }
+            });
             configurationManager.SaveAValue(ConfigurationParameters.BlurLevel, e.SeekBar.Progress);
             GC.Collect(0);
         }

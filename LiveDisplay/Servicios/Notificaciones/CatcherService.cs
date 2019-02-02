@@ -71,20 +71,15 @@ namespace LiveDisplay.Servicios
             SubscribeToEvents();
             RegisterReceivers();
             RetrieveNotificationFromStatusBar();
-            //TODO:This setting is sensible to user configuration and also the Inactive hours setting.
-            //Move to NotificationFragment.
-            //StartWatchingDeviceMovement();
         }
 
         public override void OnNotificationPosted(StatusBarNotification sbn)
         {
-            //base.OnNotificationPosted(sbn);
             catcherHelper.OnNotificationPosted(sbn);
         }
 
         public override void OnNotificationRemoved(StatusBarNotification sbn)
         {
-            //base.OnNotificationRemoved(sbn);
             catcherHelper.OnNotificationRemoved(sbn);
         }
 

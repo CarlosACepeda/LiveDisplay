@@ -24,7 +24,7 @@ using System.Threading;
 
 namespace LiveDisplay
 {
-    [Activity(Label = "LockScreen", Theme = "@style/LiveDisplayThemeDark", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, LaunchMode = Android.Content.PM.LaunchMode.SingleTask, ExcludeFromRecents = true)]
+    [Activity(Label = "LockScreen", Theme = "@style/LiveDisplayThemeDark", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, TaskAffinity ="livedisplay.lockscreen", LaunchMode = Android.Content.PM.LaunchMode.SingleInstance, ExcludeFromRecents = true)]
     public class LockScreenActivity : Activity
     {
         private RecyclerView recycler;
@@ -43,18 +43,14 @@ namespace LiveDisplay
         private float firstTouchTime = -1;
         private float finalTouchTime;
         private readonly float threshold = 1000; //1 second of threshold.(used to implement the double tap.)
-        private Sensor sensor;
-        private SensorManager sensorManager;
         private System.Timers.Timer watchDog; //the watchdog simply will start counting down until it gets resetted by OnUserInteraction() override.
         private Animation fadeoutanimation;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.LockScreen);
             Window.DecorView.SetBackgroundColor(Color.Black);
-            //Before loading anything, check if the user has the required permissions.
             ThreadPool.QueueUserWorkItem(isApphealthy =>
             {
                 bool canDrawOverlays = true;
@@ -63,7 +59,7 @@ namespace LiveDisplay
                     canDrawOverlays = Checkers.ThisAppCanDrawOverlays();
                 }
 
-                if (Checkers.IsNotificationListenerEnabled() == false || canDrawOverlays == false)
+                if (Checkers.IsNotificationListenerEnabled() == false || canDrawOverlays == false || Checkers.IsThisAppADeviceAdministrator()==false)
                 {
                     RunOnUiThread(() =>
                     Toast.MakeText(Application.Context, "You dont have the required permissions", ToastLength.Long).Show()
@@ -99,13 +95,6 @@ namespace LiveDisplay
 
             WallpaperPublisher.WallpaperChanged += Wallpaper_WallpaperChanged;
 
-            //Music Controller Events
-            if (MusicController.MusicStatus != PlaybackStateCode.None)
-            {
-                MusicController.MusicPlaying += MusicController_MusicPlaying;
-                MusicController.MusicPaused += MusicController_MusicPaused;
-                MusicController.MusicStopped += MusicController_MusicStopped;
-            }
             //CatcherHelper events
             CatcherHelper.NotificationListSizeChanged += CatcherHelper_NotificationListSizeChanged;
 
@@ -128,12 +117,9 @@ namespace LiveDisplay
             LoadConfiguration();
 
             CheckNotificationListSize();
-            sensorManager = GetSystemService(SensorService) as SensorManager;
-
-            sensor = sensorManager.GetDefaultSensor(SensorType.Accelerometer);
         }
 
-        private void Fadeoutanimation_AnimationEnd(object sender, Android.Views.Animations.Animation.AnimationEndEventArgs e)
+        private void Fadeoutanimation_AnimationEnd(object sender, Animation.AnimationEndEventArgs e)
         {
             var fadeinanimation = AnimationUtils.LoadAnimation(Application.Context, Resource.Animation.abc_fade_in);
             wallpaper.StartAnimation(fadeinanimation);
@@ -182,10 +168,11 @@ namespace LiveDisplay
 
         private void Wallpaper_WallpaperChanged(object sender, WallpaperChangedEventArgs e)
         {
-            wallpaper.StartAnimation(fadeoutanimation);
+            ThreadPool.QueueUserWorkItem(m =>
+            wallpaper.StartAnimation(fadeoutanimation));
             if (e.Wallpaper == null)
             {
-                wallpaper.SetBackgroundColor(Android.Graphics.Color.Black);
+                wallpaper.SetBackgroundColor(Color.Black);
             }
             else
             {
@@ -245,11 +232,6 @@ namespace LiveDisplay
 
         protected override void OnPause()
         {
-            MusicController.MusicPlaying -= MusicController_MusicPlaying;
-            MusicController.MusicPaused -= MusicController_MusicPaused;
-            MusicController.MusicStopped -= MusicController_MusicStopped;
-            //sensorManager.UnregisterListener(this);
-
             watchDog.Stop();
             GC.Collect();
             base.OnPause();
@@ -269,8 +251,6 @@ namespace LiveDisplay
             watchDog.Stop();
             watchDog.Elapsed -= WatchdogInterval_Elapsed;
             watchDog.Dispose();
-            sensor.Dispose();
-            sensorManager.Dispose();
             //Dispose Views
             //Views
             recycler.Dispose();
@@ -291,7 +271,6 @@ namespace LiveDisplay
         public override void OnBackPressed()
         {
             //Do nothing.
-            //base.OnBackPressed();
             //In Nougat it works after several tries to go back, I can't fix that.
         }
 

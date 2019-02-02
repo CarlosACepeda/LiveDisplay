@@ -21,7 +21,7 @@ using System.Threading;
 
 namespace LiveDisplay.Activities
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/LiveDisplayThemeDark.NoActionBar", MainLauncher = true)]
+    [Activity(Label = "@string/app_name", Theme = "@style/LiveDisplayThemeDark.NoActionBar", TaskAffinity = "livedisplay.main", MainLauncher = true)]
     internal class MainActivity : AppCompatActivity
     {
         private Android.Support.V7.Widget.Toolbar toolbar;
@@ -193,7 +193,6 @@ namespace LiveDisplay.Activities
                         }
                         using (Intent intent = new Intent(Application.Context, typeof(LockScreenActivity)))
                         {
-                            intent.AddFlags(ActivityFlags.NewTask);
                             StartActivity(intent);
                             return true;
                         }
@@ -243,6 +242,7 @@ namespace LiveDisplay.Activities
         {
             using (Android.Support.V7.App.AlertDialog.Builder builder = new Android.Support.V7.App.AlertDialog.Builder(this))
             {
+                
                 builder.SetMessage(Resource.String.dialogfordeviceaccessdescription);
                 builder.SetPositiveButton(Resource.String.dialogallowbutton, new EventHandler<DialogClickEventArgs>(OnDialogPositiveButtonEventArgs));
                 builder.SetNegativeButton(Resource.String.dialogcancelbutton, new EventHandler<DialogClickEventArgs>(OnDialogNegativeButtonEventArgs));

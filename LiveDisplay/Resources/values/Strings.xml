@@ -59,6 +59,7 @@
   <string name="showalbumart">Show media cover art</string>
   <string name="showclock">Don\'t show the clock</string>
   <string name="tenseconds">10 seconds</string>
+  <string name="testnotificationtext">Long press a notification from the list to clear it</string>
   <string name="translations">Translations</string>
   <string name="turnoffdelay">Automatically turn screen off</string>
   <string name="turnoffdelay_desc">If the screen turns on(e.g.: A new notification is posted) and there is not user interaction, turn off the screen in...</string>
@@ -73,5 +74,5 @@
   <string name="weatherwidgetenabled">Enable Weather Widget</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
-  <string name="testnotificationtext">Long press a notification from the list to clear it</string>
+  <string name="help">Help</string>
 </resources>

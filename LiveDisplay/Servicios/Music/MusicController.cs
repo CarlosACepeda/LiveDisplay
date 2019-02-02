@@ -12,7 +12,7 @@ namespace LiveDisplay.Servicios.Music
     /// This class is registered in Catcher to receive callbacks
     /// For Lollipop and beyond.
     /// </summary>
-    internal class MusicController : MediaController.Callback, IDisposable
+    internal class MusicController : MediaController.Callback
     {
         #region Class members
 
@@ -23,12 +23,6 @@ namespace LiveDisplay.Servicios.Music
         private static MusicController instance;
 
         #region events
-
-        public static event EventHandler MusicPlaying;
-
-        public static event EventHandler MusicStopped;
-
-        public static event EventHandler MusicPaused;
 
         public static event EventHandler<MediaPlaybackStateChangedEventArgs> MediaPlaybackChanged;
 
@@ -112,7 +106,6 @@ namespace LiveDisplay.Servicios.Music
         {
             PlaybackState = state;
             MusicStatus = state.State;
-
             OnMediaPlaybackChanged(new MediaPlaybackStateChangedEventArgs
             {
                 PlaybackState = state.State,
