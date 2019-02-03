@@ -11,8 +11,9 @@
   <string name="app_name">LiveDisplay</string>
   <string name="askfortranslations">Quieres ayudar con las traducciones?</string>
   <string name="awakesettings">Awake</string>
-  <string name="blacklist">Bloquear aplicaciones</string>
+  <string name="blacklist">Lista Negra</string>
   <string name="blacklistdesc">No mostrar notificaciones de las apps seleccionadas, estas se quitaran también de la barra de estado, a menos que sean notificaciones pegajosas (que no pueden ser removidas por el sistema)</string>
+  <string name="blacklisted">En lista negra</string>
   <string name="blackwallpaper">Negro</string>
   <string name="changewallpaper">Cambiar fondo de pantalla</string>
   <string name="changewallpaperappearance">Apariencia del papel tapiz</string>
@@ -38,15 +39,19 @@
   <string name="fifteenseconds">15 segundos</string>
   <string name="fiveseconds">5 segundos</string>
   <string name="githubproject">Quieres ayudar?</string>
+  <string name="help">Ayuda</string>
   <string name="hidesystemicons">No mostrar iconos del sistema</string>
   <string name="idk">¯\_(ツ)_/¯</string>
   <string name="immediately">De inmediato</string>
+  <string name="inactivetimesettings">Horas inactivas</string>
+  <string name="inactivetimesettingsdesc">Desactivar Awake en ciertas horas</string>
   <string name="lockdelay">Bloquear automaticamente</string>
   <string name="lockdelay_desc">Bloquear la pantalla después del tiempo dado</string>
   <string name="lockonboot">Bloquear la pantalla al iniciar</string>
   <string name="lockscreensettings">Lockscreen</string>
   <string name="musicwidget">Widget de Musica</string>
   <string name="musicwidgetenabled">Activar el Widget de Música</string>
+  <string name="nonallowedtoturnonscreen">No permitido para encender la pantalla</string>
   <string name="notificationsettings">Notificaciones</string>
   <string name="opciones">Opciones</string>
   <string name="pickwallpaper">Elige uno</string>
@@ -65,12 +70,11 @@
   <string name="turnonnewnotification_desc">Prender la pantalla si una nueva notificacion llega</string>
   <string name="turnonusermovement">Prender la pantalla al levantar el dispositivo</string>
   <string name="version">Versión</string>
-  <string name="versionnumber">0.7.2</string>
+  <string name="versionnumber">0.7.3</string>
   <string name="wallpaperblur">Difuminación</string>
   <string name="wallpaperopacity">Opacidad</string>
   <string name="weatherwidget">Widget del Clima</string>
   <string name="weatherwidgetenabled">Activar el Widget del Clima</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">Diseño del icono de esta app!</string>
-  <string name="help">Ayuda</string>
 </resources>

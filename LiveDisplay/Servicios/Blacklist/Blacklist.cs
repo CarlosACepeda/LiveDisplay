@@ -2,6 +2,7 @@
 using Android.Content;
 using Android.Content.PM;
 using Android.Preferences;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -30,5 +31,14 @@ namespace LiveDisplay.Servicios
             ConfigurationManager configurationManager = new ConfigurationManager(sharedPreferences);
             return configurationManager.RetrieveAValue(whichApp);
         }
+    }
+
+    [Flags]
+    public enum LevelsOfAppBlocking
+    {
+        None = 0,
+        Blacklisted = 1,
+        NonAllowedToTurnScreenOn = 2,
+        TotallyBlocked = Blacklisted | NonAllowedToTurnScreenOn
     }
 }
