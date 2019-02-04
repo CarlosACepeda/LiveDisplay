@@ -33,8 +33,10 @@ namespace LiveDisplay.Fragments
             // Create your fragment here
             BindMusicControllerEvents();
 
-            timer = new System.Timers.Timer();
-            timer.Interval = 1000; //1 second.
+            timer = new Timer
+            {
+                Interval = 1000 //1 second.
+            };
             timer.Elapsed += Timer_Elapsed;
             timer.Enabled = true;
 

@@ -1,4 +1,5 @@
 ﻿using Android.App;
+using Android.Graphics;
 using Android.OS;
 using Android.Util;
 using Android.Views;
@@ -114,29 +115,33 @@ namespace LiveDisplay.Fragments
 
         private void ItemLongClicked(object sender, NotificationItemClickedEventArgs e)
         {
+            position = e.Position;
             notification.Visibility = ViewStates.Visible;
-            //If the notification is removable...
-            if (OpenNotification.IsRemovable(e.Position))
+            using (OpenNotification openNotification = new OpenNotification(e.Position))
             {
-                //Then remove the notification
-                using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())
+                //If the notification is removable...
+                if (openNotification.IsRemovable())
                 {
-                    if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+                    //Then remove the notification
+                    using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())
                     {
-                        int notiId = CatcherHelper.statusBarNotifications[position].Id;
-                        string notiTag = CatcherHelper.statusBarNotifications[position].Tag;
-                        string notiPack = CatcherHelper.statusBarNotifications[position].PackageName;
-                        slave.CancelNotification(notiPack, notiTag, notiId);
+                        if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+                        {
+                            int notiId = CatcherHelper.statusBarNotifications[position].Id;
+                            string notiTag = CatcherHelper.statusBarNotifications[position].Tag;
+                            string notiPack = CatcherHelper.statusBarNotifications[position].PackageName;
+                            slave.CancelNotification(notiPack, notiTag, notiId);
+                        }
+                        else
+                        {
+                            slave.CancelNotification(CatcherHelper.statusBarNotifications[position].Key);
+                        }
                     }
-                    else
-                    {
-                        slave.CancelNotification(CatcherHelper.statusBarNotifications[position].Key);
-                    }
+                    notification.Visibility = ViewStates.Invisible;
+                    titulo.Text = null;
+                    texto.Text = null;
+                    notificationActions.RemoveAllViews();
                 }
-                notification.Visibility = ViewStates.Invisible;
-                titulo.Text = null;
-                texto.Text = null;
-                notificationActions.RemoveAllViews();
             }
         }
 
@@ -151,12 +156,38 @@ namespace LiveDisplay.Fragments
                 when.Text = openNotification.GetWhen();
                 notificationActions.RemoveAllViews();
 
-                if (OpenNotification.NotificationHasActionButtons(e.Position) == true)
+                if (openNotification.NotificationHasActionButtons() == true)
                 {
-                    foreach (var a in OpenNotification.RetrieveActions(e.Position))
+                    var actions = openNotification.RetrieveActions();
+                    foreach (var a in actions)
                     {
-                        notificationActions.AddView(a);
-                    }
+                        OpenAction openAction = new OpenAction(a);
+                        float weight = (float)1 / actions.Count;
+
+                        Button anActionButton = new Button(Application.Context)
+                        {
+                            LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MatchParent, weight),
+                            Text = openAction.GetTitle()
+
+                        };
+                        anActionButton.TransformationMethod = null;
+                        anActionButton.SetTypeface(Typeface.Create("sans-serif-condensed", TypefaceStyle.Normal), TypefaceStyle.Normal);
+                        anActionButton.SetMaxLines(1);
+                        anActionButton.SetTextColor(Color.White);
+                        anActionButton.Click += (o, eventargs) =>
+                         {
+                             openAction.ClickAction();
+                         };
+                        anActionButton.Gravity = GravityFlags.CenterVertical;
+                        TypedValue outValue = new TypedValue();
+                        Application.Context.Theme.ResolveAttribute(Android.Resource.Attribute.SelectableItemBackgroundBorderless, outValue, true);
+                        anActionButton.SetBackgroundResource(outValue.ResourceId);
+                        anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction.GetActionIcon(), null, null, null);
+                        notificationActions.AddView(anActionButton);
+
+
+                    };
+                    
                 }
             }
             if (notification.Visibility != ViewStates.Visible)

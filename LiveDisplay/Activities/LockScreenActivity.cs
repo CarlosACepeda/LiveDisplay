@@ -6,6 +6,7 @@ using Android.Media;
 using Android.Media.Session;
 using Android.OS;
 using Android.Preferences;
+using Android.Provider;
 using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
@@ -39,6 +40,7 @@ namespace LiveDisplay
         private WeatherFragment weatherFragment;
         private bool thereAreNotifications = false;
         private Button startCamera;
+        private Button startDialer;
         private LinearLayout lockscreen; //The root linear layout, used to implement double tap to sleep.
         private float firstTouchTime = -1;
         private float finalTouchTime;
@@ -72,6 +74,7 @@ namespace LiveDisplay
             wallpaper = FindViewById<ImageView>(Resource.Id.wallpaper);
             unlocker = FindViewById<ImageView>(Resource.Id.unlocker);
             startCamera = FindViewById<Button>(Resource.Id.btnStartCamera);
+            startDialer = FindViewById<Button>(Resource.Id.btnStartPhone);
             clearAll = FindViewById<Button>(Resource.Id.btnClearAllNotifications);
             lockscreen = FindViewById<LinearLayout>(Resource.Id.contenedorPrincipal);
             weatherandclockcontainer = FindViewById<FrameLayout>(Resource.Id.weatherandcLockplaceholder);
@@ -86,6 +89,7 @@ namespace LiveDisplay
             clearAll.Click += BtnClearAll_Click;
             unlocker.Touch += Unlocker_Touch;
             startCamera.Click += StartCamera_Click;
+            startDialer.Click += StartDialer_Click;
             lockscreen.Touch += Lockscreen_Touch;
             weatherandclockcontainer.LongClick += Weatherandclockcontainer_LongClick;
 
@@ -274,6 +278,17 @@ namespace LiveDisplay
             //In Nougat it works after several tries to go back, I can't fix that.
         }
 
+        public override void OnWindowFocusChanged(bool hasFocus)
+        {
+            if (hasFocus == false)
+            {
+                ThreadPool.QueueUserWorkItem(m =>
+                {
+                    Thread.Sleep(300);
+                   RunOnUiThread(()=> AddFlags()); });
+            }
+            base.OnWindowFocusChanged(hasFocus);
+        }
         //It simply means that a Touch has been registered, no matter where, it was on the lockscreen.
         //used to detect if the user is interacting with the lockscreen.
         public override void OnUserInteraction()
@@ -343,7 +358,15 @@ namespace LiveDisplay
 
         private void StartCamera_Click(object sender, EventArgs e)
         {
-            using (Intent intent = new Intent("android.media.action.IMAGE_CAPTURE"))
+            
+            using (Intent intent = new Intent(MediaStore.IntentActionStillImageCamera))
+            {
+                StartActivity(intent);
+            }
+        }
+        private void StartDialer_Click(object sender, EventArgs e)
+        {
+            using (Intent intent = new Intent(Intent.ActionDial))
             {
                 StartActivity(intent);
             }
