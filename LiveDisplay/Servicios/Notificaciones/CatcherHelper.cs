@@ -76,25 +76,25 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         private void InsertNotification(StatusBarNotification sbn)
         {
-            if (Blacklist.IsAppBlacklisted(sbn.PackageName) == false)
-            {
+            //if (Blacklist.IsAppBlacklisted(sbn.PackageName) == false)
+            //{
                 statusBarNotifications.Add(sbn);
                 using (var h = new Handler(Looper.MainLooper))
                     h.Post(() => { notificationAdapter.NotifyItemInserted(statusBarNotifications.Count); });
                 OnNotificationPosted();
-            }
-            else
-            {
-                var notificationSlave = NotificationSlave.NotificationSlaveInstance();
-                if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
-                {
-                    notificationSlave.CancelNotification(sbn.Key);
-                }
-                else
-                {
-                    notificationSlave.CancelNotification(sbn.PackageName, sbn.Tag, sbn.Id);
-                }
-            }
+            //}
+            //else
+            //{
+            //    var notificationSlave = NotificationSlave.NotificationSlaveInstance();
+            //    if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
+            //    {
+            //        notificationSlave.CancelNotification(sbn.Key);
+            //    }
+            //    else
+            //    {
+            //        notificationSlave.CancelNotification(sbn.PackageName, sbn.Tag, sbn.Id);
+            //    }
+            //}
         }
 
         private void OnNotificationUpdated(int position)

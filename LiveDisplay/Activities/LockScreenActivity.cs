@@ -268,6 +268,7 @@ namespace LiveDisplay
             notificationFragment.Dispose();
             musicFragment.Dispose();
             clockFragment.Dispose();
+            weatherFragment.Dispose();
 
             StopFloatingNotificationService();
         }
@@ -488,7 +489,7 @@ namespace LiveDisplay
 
         private void StopFloatingNotificationService()
         {
-            using (Intent intent = new Intent(this, typeof(FloatingNotification)))
+            using (Intent intent = new Intent(Application.Context, typeof(FloatingNotification)))
             {
                 StopService(intent);
             }
@@ -496,7 +497,7 @@ namespace LiveDisplay
 
         private void StartFloatingNotificationService()
         {
-            using (Intent intent = new Intent(this, typeof(FloatingNotification)))
+            using (Intent intent = new Intent(Application.Context, typeof(FloatingNotification)))
             {
                 StartService(intent);
             }
@@ -504,7 +505,7 @@ namespace LiveDisplay
 
         private void StartAwakeService()
         {
-            using (Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(Awake))))
+            using (Intent intent = new Intent(Application.Context, typeof(Awake)))
             {
                 StartService(intent);
             }
