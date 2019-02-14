@@ -37,6 +37,7 @@ namespace LiveDisplay.BroadcastReceivers
                                                     //in summary the Lockscreen only can start when screen is off
                     using (Intent lockScreenIntent = new Intent(Application.Context, typeof(LockScreenActivity)))
                     {
+                        lockScreenIntent.AddFlags(ActivityFlags.NewDocument);
                         
                         if (IsScreenOn == false)
                         {
