@@ -171,6 +171,7 @@ namespace LiveDisplay.Activities
                 case Resource.Id.action_settings:
                     using (Intent intent = new Intent(this, typeof(SettingsActivity)))
                     {
+                        intent.AddFlags(ActivityFlags.NewDocument);
                         StartActivity(intent);
                     }
 

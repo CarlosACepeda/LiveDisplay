@@ -161,6 +161,7 @@ namespace LiveDisplay.Servicios.Music
             PlaybackState?.Dispose();
             TransportControls?.Dispose();
             MediaMetadata?.Dispose();
+            instance = null;
         }
     }
 }
