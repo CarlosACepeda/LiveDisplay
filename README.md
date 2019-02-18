@@ -19,26 +19,33 @@ This Application shows the list of current notifications on a beautiful and cust
 
 * Manage the Notifications directly from the LockScreen - *Functional*
 
-* Block the notifications from the apps you choose. *WIP*
+* Block the notifications from the apps you choose. *Functional*
 
-* Configure which apps should be allowed to wake up the device when a new notification from that app is posted. *WIP*
+* Configure which apps should be allowed to wake up the device when a new notification from that app is posted. *Functional*
 
 * Control music currently playing directly from the Lockscreen, you can disable it or change some of its configurations - *Functional*
 
-* Automatic device turn-on screen when a new notification is posted or when the user picks the phone up, or when you pick your phone out of your pocket, you can change this behavior. -*Functional
+* Automatic device turn-on screen when a new notification is posted or when the user picks the phone up, or when you pick your phone out of your pocket, you can change this behavior.  *Functional*
 
-* Turning on the Screen automatically is disabled at night, or at the time you want, it's configurable, it helps to save battery. -*To be added*
+* Turning on the Screen automatically is disabled at night, or at the time you want, it's configurable, it helps to save battery. -*WIP*
 
-* LockScreen shortcuts, by default, the camera is launched, you can change it. - *Partially functional*
+* LockScreen shortcuts, by default, the camera is launched, you can change it. - *WIP*
 
 * See the weather.
 
 
 ### Screenshots
 
-|LockScreen|Main|LockScreen settings|
+|||
 |-----------|--------------|-------------|
-|<img src="https://i.imgur.com/vT9q2Qb.png" width=320>|<img src="https://i.imgur.com/QrFhA6C.png" width=320>|<img src="https://i.imgur.com/z3FTtaK.png" width="320">|
+|<img src="https://i.imgur.com/TWomVz1.png" width=320>|<img src="https://i.imgur.com/kSWl9nx.png" width=320>|<img src="https://i.imgur.com/sUARkMa.png" width="320">|
+
+|||
+|-----------|--------------|-------------|
+|<img src="https://i.imgur.com/RPMwn6y.png" width=320>|<img src="https://i.imgur.com/Yp0IBBh.png" width=320>|<img src="https://i.imgur.com/1zUGtTU.pngReadme" width="320">|
+|
+|<img src="https://i.imgur.com/ihR9roq.png" width=320>|
+
 
 
 
