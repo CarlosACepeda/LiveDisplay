@@ -36,14 +36,16 @@ This Application shows the list of current notifications on a beautiful and cust
 
 ### Screenshots
 
-|||
+|Lockscreen|Main|Notif. Settings|
 |-----------|--------------|-------------|
 |<img src="https://i.imgur.com/TWomVz1.png" width=320>|<img src="https://i.imgur.com/kSWl9nx.png" width=320>|<img src="https://i.imgur.com/sUARkMa.png" width="320">|
 
-|||
+|Blacklist|Weather Settings|Pick wallpaper|
 |-----------|--------------|-------------|
 |<img src="https://i.imgur.com/RPMwn6y.png" width=320>|<img src="https://i.imgur.com/Yp0IBBh.png" width=320>|<img src="https://i.imgur.com/1zUGtTU.pngReadme" width="320">|
-|
+
+|Weather in lockscreen|
+|------------------|
 |<img src="https://i.imgur.com/ihR9roq.png" width=320>|
 
 
