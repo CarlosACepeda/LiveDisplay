@@ -41,7 +41,7 @@ namespace LiveDisplay.Activities
             {
                 SetSupportActionBar(toolbar);
             }
-            city = FindViewById<EditText>(Resource.Id.city);
+            city = FindViewById<EditText>(Resource.Id.cityedit);
             useimperialsystem = FindViewById<Switch>(Resource.Id.useimperialsystem);
             city.FocusChange += City_FocusChange;
             useimperialsystem.CheckedChange += Useimperialsystem_CheckedChange;
