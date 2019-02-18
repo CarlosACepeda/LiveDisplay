@@ -80,4 +80,5 @@
   <string name="weatherwidgetenabled">Enable Weather Widget</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
+  <string name="humidity">Humidity</string>
 </resources>

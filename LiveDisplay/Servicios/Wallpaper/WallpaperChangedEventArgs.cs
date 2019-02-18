@@ -7,5 +7,6 @@ namespace LiveDisplay.Servicios.Wallpaper
     {
         public Drawable Wallpaper { get; set; }
         public short OpacityLevel { get; set; }
+        public bool IsThisWallpaperTemporary { get; set; } //Field to indicate 
     }
 }

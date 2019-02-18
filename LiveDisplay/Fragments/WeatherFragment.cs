@@ -55,10 +55,10 @@ namespace LiveDisplay.Fragments
                 Activity.RunOnUiThread(() =>
                 {
                     temperature.Text = weather?.MainWeather.Temperature.ToString() + temperatureSuffix;
-                    minimumTemperature.Text = weather?.MainWeather.MinTemperature.ToString() + temperatureSuffix;
-                    maximumTemperature.Text = weather?.MainWeather.MaxTemperature.ToString() + temperatureSuffix;
+                    minimumTemperature.Text = "min: "+ weather?.MainWeather.MinTemperature.ToString() + temperatureSuffix;
+                    maximumTemperature.Text = "max: " + weather?.MainWeather.MaxTemperature.ToString() + temperatureSuffix;
                     city.Text = weather?.Name + ": " + weather?.Weather[0].Description;
-                    humidity.Text = weather?.MainWeather.Humidity.ToString();
+                    humidity.Text = Resources.GetString(Resource.String.humidity) + ": " + weather?.MainWeather.Humidity.ToString();
                 });
             });
             return v;

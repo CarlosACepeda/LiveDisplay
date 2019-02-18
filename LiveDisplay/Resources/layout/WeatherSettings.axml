@@ -24,5 +24,13 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:id="@+id/useimperialsystem" />
-
+	<Button
+		android:id="@+id/trytogetweather"
+		android:text="bash(Test me)"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content" />
+<include
+		layout="@layout/weather"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content" />
 </LinearLayout>

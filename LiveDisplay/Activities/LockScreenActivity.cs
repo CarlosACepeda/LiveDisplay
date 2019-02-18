@@ -12,6 +12,7 @@ using Android.Util;
 using Android.Views;
 using Android.Views.Animations;
 using Android.Widget;
+using LiveDisplay.Activities;
 using LiveDisplay.Fragments;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
@@ -353,6 +354,11 @@ namespace LiveDisplay
                 Log.Info("Swipe", "Up");
 
                 Finish();
+                //using (Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(TransparentActivity))))
+                //{
+                //    intent.AddFlags(ActivityFlags.NewTask| ActivityFlags.TaskOnHome);
+                //    StartActivity(intent);
+                //}
                 OverridePendingTransition(Resource.Animation.slidetounlockanim, Resource.Animation.slidetounlockanim);
             }
         }

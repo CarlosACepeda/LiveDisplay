@@ -2,10 +2,13 @@
 using Android.Content;
 using Android.OS;
 using Android.Support.V7.App;
+using Android.Telephony;
 using Android.Views;
 using Android.Widget;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
+using LiveDisplay.Servicios.Weather;
+using System.Threading;
 
 namespace LiveDisplay.Activities
 {
@@ -14,9 +17,17 @@ namespace LiveDisplay.Activities
     {
         private ConfigurationManager configurationManager;
         private ISharedPreferences sharedPreferences;
-        private Android.Support.V7.Widget.Toolbar toolbar;
         private EditText city;
         private Switch useimperialsystem;
+        private TextView citytext;
+        private TextView humidity;
+        private TextView temperature;
+        private TextView minimumTemperature;
+        private TextView maximumTemperature;
+        private Button trytogetweather;
+
+        private string currentcity = "";
+        private UnitsFlags units;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -26,7 +37,7 @@ namespace LiveDisplay.Activities
 
             // Create your application here
             SetContentView(Resource.Layout.WeatherSettings);
-            using (toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar))
+            using (var toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar))
             {
                 SetSupportActionBar(toolbar);
             }
@@ -34,7 +45,54 @@ namespace LiveDisplay.Activities
             useimperialsystem = FindViewById<Switch>(Resource.Id.useimperialsystem);
             city.FocusChange += City_FocusChange;
             useimperialsystem.CheckedChange += Useimperialsystem_CheckedChange;
+
+            trytogetweather = FindViewById<Button>(Resource.Id.trytogetweather);
+            trytogetweather.Click += Trytogetweather_Click;
+
+
+            temperature = FindViewById<TextView>(Resource.Id.temperature);
+            minimumTemperature = FindViewById<TextView>(Resource.Id.minimumtemperature);
+            maximumTemperature = FindViewById<TextView>(Resource.Id.maximumtemperature);
+            citytext = FindViewById<TextView>(Resource.Id.city);
+            humidity = FindViewById<TextView>(Resource.Id.humidity);
+            
+
             LoadConfiguration();
+        }
+
+        private void Trytogetweather_Click(object sender, System.EventArgs e)
+        {
+            trytogetweather.Text = "wait...";
+            trytogetweather.Enabled = false;
+
+            string countryCode = "";
+            string temperatureSuffix = "°c";
+            using (TelephonyManager tm = (TelephonyManager)GetSystemService(Context.TelephonyService))
+            {
+                countryCode = tm.NetworkCountryIso;
+            }
+            if (units == UnitsFlags.Imperial)
+            {
+                temperatureSuffix = "°f";
+            }
+
+            
+
+            ThreadPool.QueueUserWorkItem(async m =>
+            {
+                var weather = await Weather.GetWeather(currentcity, countryCode, units);
+                RunOnUiThread(() =>
+                {
+                    temperature.Text = weather?.MainWeather.Temperature.ToString() + temperatureSuffix;
+                    minimumTemperature.Text = "min: " + weather?.MainWeather.MinTemperature.ToString() + temperatureSuffix;
+                    maximumTemperature.Text = "max: " + weather?.MainWeather.MaxTemperature.ToString() + temperatureSuffix;
+                    citytext.Text = weather?.Name + ": " + weather?.Weather[0].Description;
+                    humidity.Text = Resources.GetString(Resource.String.humidity) + ": " + weather?.MainWeather.Humidity.ToString();
+
+                    trytogetweather.Text = "Test me";
+                    trytogetweather.Enabled = true;
+                });
+            });
         }
 
         private void Useimperialsystem_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
@@ -50,7 +108,6 @@ namespace LiveDisplay.Activities
                     break;
 
                 default:
-                    break;
             }
         }
 
@@ -60,14 +117,15 @@ namespace LiveDisplay.Activities
             {
                 configurationManager.SaveAValue(ConfigurationParameters.City, city.Text);
             }
+            currentcity = city.Text;
         }
 
         private void LoadConfiguration()
         {
             using (configurationManager = new ConfigurationManager(sharedPreferences))
             {
-                city.Text =
-                configurationManager.RetrieveAValue(ConfigurationParameters.City, "");
+                currentcity = configurationManager.RetrieveAValue(ConfigurationParameters.City, "");
+                city.Text = currentcity;
                 useimperialsystem.Checked =
                     configurationManager.RetrieveAValue(ConfigurationParameters.UseImperialSystem);
             }
