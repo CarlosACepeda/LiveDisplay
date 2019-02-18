@@ -8,7 +8,6 @@ using Android.Runtime;
 using Android.Service.Notification;
 using Android.Util;
 using LiveDisplay.BroadcastReceivers;
-using LiveDisplay.Fragments;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Music;
 using LiveDisplay.Servicios.Notificaciones;
@@ -24,7 +23,6 @@ namespace LiveDisplay.Servicios
     [IntentFilter(new[] { "android.service.notification.NotificationListenerService" })]
     internal class Catcher : NotificationListenerService, RemoteController.IOnClientUpdateListener
     {
-
         private ScreenOnOffReceiver screenOnOffReceiver;
         private MediaSessionManager mediaSessionManager;
         private MusicControllerKitkat musicControllerKitkat;
@@ -33,7 +31,6 @@ namespace LiveDisplay.Servicios
         private AudioManager audioManager;
         private CatcherHelper catcherHelper;
         private List<StatusBarNotification> statusBarNotifications;
-
 
         public override IBinder OnBind(Intent intent)
         {
@@ -74,20 +71,15 @@ namespace LiveDisplay.Servicios
             SubscribeToEvents();
             RegisterReceivers();
             RetrieveNotificationFromStatusBar();
-            //TODO:This setting is sensible to user configuration and also the Inactive hours setting.
-            //Move to NotificationFragment.
-            //StartWatchingDeviceMovement();
         }
 
         public override void OnNotificationPosted(StatusBarNotification sbn)
         {
-            //base.OnNotificationPosted(sbn);
             catcherHelper.OnNotificationPosted(sbn);
         }
 
         public override void OnNotificationRemoved(StatusBarNotification sbn)
         {
-            //base.OnNotificationRemoved(sbn);
             catcherHelper.OnNotificationRemoved(sbn);
         }
 
@@ -121,10 +113,40 @@ namespace LiveDisplay.Servicios
                 if ((notification.IsOngoing == false || notification.Notification.Flags.HasFlag(NotificationFlags.NoClear)) && notification.IsClearable == true)
                 {
                     statusBarNotifications.Add(notification);
+
+                    //GetRemoteInput(notification);
                 }
             }
 
             catcherHelper = new CatcherHelper(statusBarNotifications);
+        }
+
+        //No se puede implementar. :/
+        private void GetRemoteInput(StatusBarNotification sbn)
+        {
+            RemoteInput remoteInput;
+            if (sbn.Notification.Actions != null)
+                foreach (var item in sbn.Notification.Actions)
+                {
+                    List<RemoteInput> remoteInputs;
+                    if (item.GetRemoteInputs() != null)
+                    {
+                        remoteInputs = item.GetRemoteInputs().ToList();
+                        foreach (var remoteinput in remoteInputs)
+                        {
+                            if (remoteinput.ResultKey != null)
+                            {
+                                remoteInput = remoteinput;
+                                remoteInput.Extras.PutCharSequence(remoteinput.ResultKey, ":)");
+                                item.Extras.PutCharSequence(remoteinput.ResultKey, ":)");
+                                item.ActionIntent.Send();
+                                var i = item.ActionIntent;
+
+                                break;
+                            }
+                        }
+                    }
+                }
         }
 
         //Subscribe to events by Several publishers
@@ -145,7 +167,6 @@ namespace LiveDisplay.Servicios
                 intentFilter.AddAction(Intent.ActionScreenOn);
                 RegisterReceiver(screenOnOffReceiver, intentFilter);
             }
-
         }
 
         //Events:
@@ -191,24 +212,20 @@ namespace LiveDisplay.Servicios
         public void OnClientTransportControlUpdate([GeneratedEnum] RemoteControlFlags transportControlFlags)
         {
             Log.Info("Livedisplay", "TransportControl update" + transportControlFlags);
-
         }
 
-        void ToggleRemoteControllerKitkat()
+        private void ToggleRemoteControllerKitkat()
         {
             using (ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context)))
             {
-                if (configurationManager.RetrieveAValue(ConfigurationParameters.musicwidgetenabled) == true)
+                if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetEnabled) == true)
                 {
-
                 }
-
             }
-
         }
-        void ToggleActiveSessionsListenerLollipop()
-        {
 
+        private void ToggleActiveSessionsListenerLollipop()
+        {
         }
     }
 }

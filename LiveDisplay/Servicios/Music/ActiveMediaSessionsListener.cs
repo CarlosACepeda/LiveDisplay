@@ -23,8 +23,15 @@ namespace LiveDisplay.Servicios.Music
             {
                 musicController = MusicController.GetInstance();
                 mediaController = controllers[0];
-                mediaController.RegisterCallback(musicController);
-
+                try
+                {
+                    mediaController.RegisterCallback(musicController);
+                }
+                catch
+                {
+                    musicController.Dispose();
+                    Log.Info("LiveDisplay", "Couldn't register a mediacallback");
+                }
                 //Retrieve the controls to control the media, duh.
                 musicController.TransportControls = mediaController.GetTransportControls();
                 musicController.MediaMetadata = mediaController.Metadata;
@@ -38,12 +45,11 @@ namespace LiveDisplay.Servicios.Music
                     mediaController.UnregisterCallback(musicController);
                     musicController.Dispose();
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     Log.Info("LiveDisplay", "Unregistering MediaController callback failed" + e.Message);
                 }
             }
         }
-
     }
 }

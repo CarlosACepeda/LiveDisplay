@@ -2,17 +2,15 @@
 using Android.Content;
 using Android.Graphics;
 using Android.Graphics.Drawables;
-using Android.Net;
 using Android.Preferences;
 using Android.Renderscripts;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
-using System;
 
 namespace LiveDisplay.Factories
 {
     //TODO: Correct me, I can be optimized.
-    internal class BackgroundFactory:Java.Lang.Object
+    internal class BackgroundFactory : Java.Lang.Object
     {
         private static readonly short maxRadius = 25;
 
@@ -20,20 +18,19 @@ namespace LiveDisplay.Factories
         public static Drawable Difuminar(Drawable papelTapiz, short blurRadius)
         {
             Bitmap originalBitmap = ((BitmapDrawable)papelTapiz).Bitmap;
-            Bitmap blurredBitmap= Bitmap.CreateScaledBitmap(originalBitmap,originalBitmap.Width, originalBitmap.Height, false);
+            Bitmap blurredBitmap = Bitmap.CreateScaledBitmap(originalBitmap, originalBitmap.Width, originalBitmap.Height, false);
             RenderScript rs = RenderScript.Create(Application.Context);
             Allocation input = Allocation.CreateFromBitmap(rs, originalBitmap, Allocation.MipmapControl.MipmapFull, AllocationUsage.Script);
             Allocation output = Allocation.CreateTyped(rs, input.Type);
             ScriptIntrinsicBlur script = ScriptIntrinsicBlur.Create(rs, Element.U8_4(rs));
             script.SetInput(input);
-            if(blurRadius< maxRadius)
+            if (blurRadius < maxRadius)
             {
                 script.SetRadius(blurRadius);
-
             }
             script.ForEach(output);
             output.CopyTo(blurredBitmap);
-            Drawable papelTapizDifuminado = new BitmapDrawable(Android.Content.Res.Resources.System,blurredBitmap);
+            Drawable papelTapizDifuminado = new BitmapDrawable(Android.Content.Res.Resources.System, blurredBitmap);
             originalBitmap.Recycle();
             originalBitmap.Dispose();
             blurredBitmap.Recycle();
@@ -42,6 +39,7 @@ namespace LiveDisplay.Factories
             output.Dispose();
             return papelTapizDifuminado;
         }
+
         public string SaveImagePath(Android.Net.Uri uri)
         {
             ContextWrapper contextWrapper = new ContextWrapper(Application.Context);
@@ -65,7 +63,7 @@ namespace LiveDisplay.Factories
                 var columnIndex = cursor.GetColumnIndexOrThrow(Android.Provider.MediaStore.Images.Media.InterfaceConsts.Data);
                 cursor.MoveToFirst();
                 path = cursor.GetString(columnIndex);
-                configurationManager.SaveAValue(ConfigurationParameters.imagePath, path);
+                configurationManager.SaveAValue(ConfigurationParameters.ImagePath, path);
             }
             return path;
         }

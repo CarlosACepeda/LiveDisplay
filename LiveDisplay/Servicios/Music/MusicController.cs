@@ -12,9 +12,10 @@ namespace LiveDisplay.Servicios.Music
     /// This class is registered in Catcher to receive callbacks
     /// For Lollipop and beyond.
     /// </summary>
-    internal class MusicController : MediaController.Callback, IDisposable
+    internal class MusicController : MediaController.Callback
     {
         #region Class members
+
         public static PlaybackStateCode MusicStatus { get; private set; }
         public PlaybackState PlaybackState { get; set; }
         public MediaController.TransportControls TransportControls { get; set; }
@@ -23,10 +24,8 @@ namespace LiveDisplay.Servicios.Music
 
         #region events
 
-        public static event EventHandler MusicPlaying;
-        public static event EventHandler MusicStopped;
-        public static event EventHandler MusicPaused;
         public static event EventHandler<MediaPlaybackStateChangedEventArgs> MediaPlaybackChanged;
+
         public static event EventHandler<MediaMetadataChangedEventArgs> MediaMetadataChanged;
 
         #endregion events
@@ -107,7 +106,6 @@ namespace LiveDisplay.Servicios.Music
         {
             PlaybackState = state;
             MusicStatus = state.State;
-
             OnMediaPlaybackChanged(new MediaPlaybackStateChangedEventArgs
             {
                 PlaybackState = state.State,
@@ -142,7 +140,6 @@ namespace LiveDisplay.Servicios.Music
 
         #region Raising events.
 
-
         protected virtual void OnMediaPlaybackChanged(MediaPlaybackStateChangedEventArgs e)
         {
             MediaPlaybackChanged?.Invoke(this, e);
@@ -154,6 +151,7 @@ namespace LiveDisplay.Servicios.Music
         }
 
         #endregion Raising events.
+
         protected override void Dispose(bool disposing)
         {
             //release resources.
@@ -163,6 +161,7 @@ namespace LiveDisplay.Servicios.Music
             PlaybackState?.Dispose();
             TransportControls?.Dispose();
             MediaMetadata?.Dispose();
+            instance = null;
         }
     }
 }

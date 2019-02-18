@@ -1,13 +1,14 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.OS;
+using Android.Preferences;
 using Android.Provider;
 using Android.Views;
 using Android.Widget;
 using Java.Util;
 using LiveDisplay.BroadcastReceivers;
-using LiveDisplay.DataRepository;
 using LiveDisplay.Misc;
+using LiveDisplay.Servicios;
 using System;
 
 namespace LiveDisplay.Fragments
@@ -25,22 +26,6 @@ namespace LiveDisplay.Fragments
             base.OnCreate(savedInstanceState);
 
             RegisterBatteryReceiver();
-
-
-            // Create your fragment here
-
-            // TODO: Implement me
-
-            //if (sharedPreferences.GetBoolean(ConfigurationParameters.hiddenclock, false) == true)
-            //{
-            //    //Hide the clock
-            //    RunOnUiThread(() => reloj.Visibility = ViewStates.Gone);
-            //}
-
-            //TODO: Implement me too. ;)
-            //if (configurationManager.RetrieveAValue(ConfigurationParameters.hiddensystemicons) == true)
-            //{
-            //}
         }
 
         private void RegisterBatteryReceiver()
@@ -65,7 +50,13 @@ namespace LiveDisplay.Fragments
             //View Events
             clock.Click += Clock_Click;
             BatteryReceiver.BatteryInfoChanged += BatteryReceiver_BatteryInfoChanged;
+            ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context));
 
+            if (configurationManager.RetrieveAValue(ConfigurationParameters.HiddenClock) == true)
+            {
+                //Hide the clock
+                Activity.RunOnUiThread(() => clock.Visibility = ViewStates.Invisible);
+            }
             return v;
         }
 

@@ -1,26 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
+﻿using Android.App;
+using Android.Content.PM;
 using Android.OS;
-using Android.Runtime;
 using Android.Support.V7.App;
 using Android.Support.V7.Widget;
-using Android.Views;
-using Android.Widget;
 using LiveDisplay.Adapters;
 using LiveDisplay.Servicios;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace LiveDisplay.Activities
 {
-    [Activity(Label = "BlacklistActivity")]
+    [Activity(Label = "@string/blacklist", Theme = "@style/LiveDisplayThemeDark")]
     public class BlacklistActivity : AppCompatActivity
     {
         private RecyclerView blacklistRecyclerView;
         private LinearLayoutManager manager;
+        private List<PackageInfo> applist;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -28,17 +23,18 @@ namespace LiveDisplay.Activities
 
             SetContentView(Resource.Layout.BlackList);
 
-            var applist = Blacklist.GetListOfApps();
             // Create your application here
             blacklistRecyclerView = FindViewById<RecyclerView>(Resource.Id.blacklistRecyclerView);
 
             manager = new LinearLayoutManager(Application.Context);
-            
-                blacklistRecyclerView.SetLayoutManager(manager);
-                blacklistRecyclerView.SetAdapter(new AppsToBeBlacklistedAdapter(applist));
-            
-            
-            
+
+            blacklistRecyclerView.SetLayoutManager(manager);
+            ThreadPool.QueueUserWorkItem(m =>
+            {
+                applist = Blacklist.GetListOfApps();
+                RunOnUiThread(() => blacklistRecyclerView.SetAdapter(new AppsToBeBlacklistedAdapter(applist)));
+            }
+            );
 
         }
     }

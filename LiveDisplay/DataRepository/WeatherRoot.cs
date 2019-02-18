@@ -1,19 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-using Newtonsoft.Json;
 
 namespace LiveDisplay.DataRepository
 {
-    
     public class WeatherRoot
     {
         [JsonProperty("coord")]
@@ -43,6 +32,7 @@ namespace LiveDisplay.DataRepository
         [JsonProperty("dt_txt")]
         public string Date { get; set; } = string.Empty;
     }
+
     public class Coordinates
     {
         [JsonProperty("lon")]
@@ -51,11 +41,13 @@ namespace LiveDisplay.DataRepository
         [JsonProperty("lat")]
         public double Latitude { get; set; } = 0;
     }
+
     public class Sys
     {
         [JsonProperty("country")]
         public string Country { get; set; } = string.Empty;
     }
+
     public class Weather
     {
         [JsonProperty("id")]
@@ -70,26 +62,31 @@ namespace LiveDisplay.DataRepository
         [JsonProperty("icon")]
         public string Icon { get; set; } = string.Empty;
     }
+
     public class Main
     {
         [JsonProperty("temp")]
         public double Temperature { get; set; } = 0;
+
         [JsonProperty("pressure")]
         public double Pressure { get; set; } = 0;
 
         [JsonProperty("humidity")]
         public double Humidity { get; set; } = 0;
+
         [JsonProperty("temp_min")]
         public double MinTemperature { get; set; } = 0;
 
         [JsonProperty("temp_max")]
         public double MaxTemperature { get; set; } = 0;
     }
+
     public class Clouds
     {
         [JsonProperty("all")]
         public int CloudinessPercent { get; set; } = 0;
     }
+
     public class Wind
     {
         [JsonProperty("speed")]

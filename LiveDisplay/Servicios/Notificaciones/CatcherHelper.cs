@@ -2,22 +2,12 @@
 using Android.Service.Notification;
 using LiveDisplay.Adapters;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
-using LiveDisplay.Servicios;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace LiveDisplay.Servicios.Notificaciones
 {
-    /// <summary>
-    /// This class is made for Help the main Catcher to do its Actions like:
-    /// Update a notification.
-    /// Insert a Notification.
-    /// Initialize the data (?) maybe.
-    /// Group a notification, this is a new feature in Nougat(API Level 24+)
-    /// Also is made to allow more funcionality and keep the Catcher Service readable and understandable
-    /// (for me and others, gracias al cielo)
-    /// </summary>
     internal class CatcherHelper : Java.Lang.Object
     {
         public static NotificationAdapter notificationAdapter;
@@ -25,9 +15,9 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         public static event EventHandler NotificationRemoved;
 
-        public static event EventHandler<NotificationPostedEventArgs> NotificationPosted; //NotifyItemInserted.
+        public static event EventHandler<NotificationPostedEventArgs> NotificationPosted;
 
-        public static event EventHandler<NotificationItemClickedEventArgs> NotificationUpdated; //NotifyItemUpdated.
+        public static event EventHandler<NotificationItemClickedEventArgs> NotificationUpdated;
 
 #pragma warning disable CS0067 // El evento 'CatcherHelper.NotificationGrouped' nunca se usa
 
@@ -86,27 +76,25 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         private void InsertNotification(StatusBarNotification sbn)
         {
-            if (Blacklist.IsAppBlacklisted(sbn.PackageName)==false)
-            {
+            //if (Blacklist.IsAppBlacklisted(sbn.PackageName) == false)
+            //{
                 statusBarNotifications.Add(sbn);
                 using (var h = new Handler(Looper.MainLooper))
                     h.Post(() => { notificationAdapter.NotifyItemInserted(statusBarNotifications.Count); });
-
-            }
-            else
-            {
-                var notificationSlave = NotificationSlave.NotificationSlaveInstance();
-                if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
-                {
-                    notificationSlave.CancelNotification(sbn.Key);
-
-                }
-                else
-                {
-                    notificationSlave.CancelNotification(sbn.PackageName, sbn.Tag, sbn.Id);
-                }
-
-            }
+                OnNotificationPosted();
+            //}
+            //else
+            //{
+            //    var notificationSlave = NotificationSlave.NotificationSlaveInstance();
+            //    if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
+            //    {
+            //        notificationSlave.CancelNotification(sbn.Key);
+            //    }
+            //    else
+            //    {
+            //        notificationSlave.CancelNotification(sbn.PackageName, sbn.Tag, sbn.Id);
+            //    }
+            //}
         }
 
         private void OnNotificationUpdated(int position)
@@ -132,7 +120,6 @@ namespace LiveDisplay.Servicios.Notificaciones
                 return true;
             }
             return false;
-            
         }
 
         private void RemoveNotificationFromGroup()
@@ -149,8 +136,7 @@ namespace LiveDisplay.Servicios.Notificaciones
                 using (var h = new Handler(Looper.MainLooper))
                     h.Post(() => { notificationAdapter.NotifyItemRemoved(position); });
             }
-            //Check if when removing this notification the list size is zero, if true, then raise an event that will
-            //indicate the lockscreen to hide the 'Clear all button'
+
             if (statusBarNotifications.Count == 0)
             {
                 OnNotificationListSizeChanged(new NotificationListSizeChangedEventArgs
@@ -182,7 +168,7 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             NotificationPosted?.Invoke(this, new NotificationPostedEventArgs()
             {
-                ShouldCauseWakeUp = true //Implementing blacklist...
+                ShouldCauseWakeUp = true 
             });
         }
 

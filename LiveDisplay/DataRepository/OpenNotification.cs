@@ -9,6 +9,7 @@ using LiveDisplay.Factories;
 using LiveDisplay.Misc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace LiveDisplay.Servicios.Notificaciones
 {
@@ -57,52 +58,12 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
         }
 
-        public static List<Button> RetrieveActions(int position)
+        public List<Notification.Action> RetrieveActions()
         {
-            var actions = CatcherHelper.statusBarNotifications[position].Notification.Actions;
-            if (actions != null)
-            {
-                var buttons = new List<Button>();
-                float weight = (float)1 / actions.Count;
-
-                string paquete = CatcherHelper.statusBarNotifications[position].PackageName;
-                foreach (var action in actions)
-                {
-                    OpenAction openAction = new OpenAction(action);
-                    Button anActionButton = new Button(Application.Context)
-                    {
-                        LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MatchParent, weight),
-                        Text = openAction.GetTitle(),
-                    };
-                    anActionButton.SetTypeface(Typeface.Create("sans-serif-condensed", TypefaceStyle.Normal), TypefaceStyle.Normal);
-                    anActionButton.SetMaxLines(1);
-                    anActionButton.SetTextColor(Color.White);
-                    anActionButton.Click += (o, e) =>
-                    {
-                        try
-                        {
-                            openAction.ClickAction();
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Error("Action button ex:", ex.ToString());
-                        }
-                    };
-
-                    anActionButton.Gravity = GravityFlags.CenterVertical;
-                    TypedValue outValue = new TypedValue();
-                    Application.Context.Theme.ResolveAttribute(Android.Resource.Attribute.SelectableItemBackgroundBorderless, outValue, true);
-                    anActionButton.SetBackgroundResource(outValue.ResourceId);
-                    anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction.GetActionIcon(), null, null, null);
-                    
-                    buttons.Add(anActionButton);
-                }
-                return buttons;
-            }
-            return null;
+            return CatcherHelper.statusBarNotifications[position].Notification.Actions.ToList();
         }
 
-        internal static bool IsRemovable(int position)
+        internal bool IsRemovable()
         {
             if (CatcherHelper.statusBarNotifications[position].IsClearable == true)
             {
@@ -114,7 +75,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
         }
 
-        public static bool NotificationHasActionButtons(int position)
+        public bool NotificationHasActionButtons()
         {
             if (CatcherHelper.statusBarNotifications[position].Notification.Actions != null)
             {
@@ -176,9 +137,9 @@ namespace LiveDisplay.Servicios.Notificaciones
         }
     }
 
-    internal class OpenAction: IDisposable
+    internal class OpenAction : IDisposable
     {
-        Notification.Action action;
+        private Notification.Action action;
 
         public OpenAction(Notification.Action action)
         {
@@ -196,6 +157,7 @@ namespace LiveDisplay.Servicios.Notificaciones
                 return "";
             }
         }
+
         public void ClickAction()
         {
             try
@@ -206,8 +168,8 @@ namespace LiveDisplay.Servicios.Notificaciones
             {
                 Log.Info("LiveDisplay", "Click notification failed");
             }
-
         }
+
         public Drawable GetActionIcon()
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.N)
@@ -215,9 +177,26 @@ namespace LiveDisplay.Servicios.Notificaciones
                 return IconFactory.ReturnActionIconDrawable(action.Icon, action.ActionIntent.CreatorPackage);
             }
             return null;
-
         }
-        
+
+        private void GetRemoteInput()
+        {
+            RemoteInput remoteInput;
+            foreach (var item in action.GetRemoteInputs())
+            {
+                if (item.ResultKey != null)
+                {
+                    remoteInput = item;
+                    break;
+                }
+            }
+        }
+
+        public string GetPlaceholderTextForInlineResponse()
+        {
+            return action.GetRemoteInputs()[1].Label;
+        }
+
         public void Dispose()
         {
             action.Dispose();

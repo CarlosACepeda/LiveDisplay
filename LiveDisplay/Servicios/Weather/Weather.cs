@@ -1,23 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-using static Newtonsoft.Json.JsonConvert;
-
-using LiveDisplay.DataRepository;
+﻿using LiveDisplay.DataRepository;
 using LiveDisplay.Misc;
+using System.Net.Http;
+using System.Threading.Tasks;
+using static Newtonsoft.Json.JsonConvert;
 
 namespace LiveDisplay.Servicios.Weather
 {
-    class Weather
+    internal class Weather
     {
         //This class will be the one that connects to the api and provide Lockscreen with Weather information.
         public static async Task<WeatherRoot> GetWeather(string city, string country, UnitsFlags unitsformat)
@@ -28,9 +17,11 @@ namespace LiveDisplay.Servicios.Weather
                 case UnitsFlags.Metric:
                     units = "metric";
                     break;
+
                 case UnitsFlags.Imperial:
                     units = "imperial";
                     break;
+
                 default:
                     units = "metric";
                     break;

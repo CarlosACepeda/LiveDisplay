@@ -5,7 +5,7 @@
     a:layout_height="match_parent">
 
 	<TextView
-		a:text="bash"
+		a:text="19c°"
 		a:textAppearance="?android:attr/textAppearanceLarge"
 		a:layout_width="match_parent"
 		a:layout_height="wrap_content"
@@ -17,26 +17,34 @@
 		a:layout_width="match_parent"
 		a:layout_height="wrap_content">
 		<TextView
-			a:text="bash"
+			a:text="17c°"
 			a:textAppearance="?android:attr/textAppearanceMedium"
 			a:layout_width="wrap_content"
 			a:layout_height="wrap_content"
 			a:id="@+id/minimumtemperature" />
-		<Space
+		<TextView
+			a:text="|"
             a:layout_width="5dp"
             a:layout_height="wrap_content" />
 		<TextView
-			a:text="lmao"
+			a:text="25c°"
 			a:textAppearance="?android:attr/textAppearanceMedium"
 			a:layout_width="wrap_content"
 			a:layout_height="wrap_content"
 			a:id="@+id/maximumtemperature" />
 	</LinearLayout>
 	<TextView
-		a:text="bash"
+		a:id="@+id/city"
+		a:text="Bogotá: Scattered cLouds"
 		a:textAppearance="?android:attr/textAppearanceSmall"
 		a:layout_width="wrap_content"
 		a:layout_height="wrap_content"
 		a:minWidth="25px"
 		a:minHeight="25px"/>
+	<TextView
+		a:id="@+id/humidity"
+		a:text="Humidty"
+		a:layout_width="wrap_content"
+		a:layout_height="wrap_content"
+	/>
 </LinearLayout>

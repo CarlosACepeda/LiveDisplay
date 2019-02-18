@@ -1,12 +1,7 @@
 ﻿using Android.Media;
-using Android.Media.Session;
-using Android.Runtime;
-using Android.Service.Notification;
 using Android.Util;
-using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Music.MediaEventArgs;
 using System;
-using static Android.Media.Session.MediaController;
 
 namespace LiveDisplay.Servicios.Music
 {
@@ -16,7 +11,7 @@ namespace LiveDisplay.Servicios.Music
     /// For Kitkat only.
     /// </summary>
 
-    internal class MusicControllerKitkat: IDisposable
+    internal class MusicControllerKitkat : IDisposable
     {
         private static MusicControllerKitkat instance;
 
@@ -25,8 +20,8 @@ namespace LiveDisplay.Servicios.Music
         public RemoteController.MetadataEditor MediaMetadata { get; set; }
 
         public static event EventHandler<MediaPlaybackStateChangedKitkatEventArgs> MediaPlaybackChanged;
-        public static event EventHandler<MediaMetadataChangedKitkatEventArgs> MediaMetadataChanged;
 
+        public static event EventHandler<MediaMetadataChangedKitkatEventArgs> MediaMetadataChanged;
 
         internal static MusicControllerKitkat GetInstance()
         {
@@ -36,6 +31,7 @@ namespace LiveDisplay.Servicios.Music
             }
             return instance;
         }
+
         private MusicControllerKitkat()
         {
             Jukebox.MediaEvent += Jukebox_MediaEvent;
@@ -94,7 +90,6 @@ namespace LiveDisplay.Servicios.Music
 
                 //default:
                 //    break;
-
             }
         }
 
@@ -105,11 +100,12 @@ namespace LiveDisplay.Servicios.Music
             Log.Info("LiveDisplay", "Music state is" + state);
             OnMediaPlaybackChanged(new MediaPlaybackStateChangedKitkatEventArgs
             {
-                PlaybackState = state   
+                PlaybackState = state
             });
         }
+
         public void OnMetadataChanged(RemoteController.MetadataEditor mediaMetadata)
-        { 
+        {
             MediaMetadata = mediaMetadata;
             OnMediaMetadataChanged(new MediaMetadataChangedKitkatEventArgs
             {
@@ -118,12 +114,10 @@ namespace LiveDisplay.Servicios.Music
                 Album = mediaMetadata.GetString((MediaMetadataEditKey)MetadataKey.Album, ""),
                 AlbumArt = mediaMetadata.GetBitmap(MediaMetadataEditKey.BitmapKeyArtwork, null),
                 Duration = mediaMetadata.GetLong((MediaMetadataEditKey)MetadataKey.Duration, 0)
-                
-        });
+            });
         }
 
         #region Raising events.
-
 
         protected virtual void OnMediaPlaybackChanged(MediaPlaybackStateChangedKitkatEventArgs e)
         {

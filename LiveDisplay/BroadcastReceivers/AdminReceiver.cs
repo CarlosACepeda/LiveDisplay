@@ -1,10 +1,6 @@
 ﻿using Android.App;
 using Android.App.Admin;
 using Android.Content;
-using Android.Preferences;
-using LiveDisplay.Misc;
-using LiveDisplay.Servicios;
-using System;
 
 namespace LiveDisplay.BroadcastReceivers
 {
@@ -13,7 +9,6 @@ namespace LiveDisplay.BroadcastReceivers
     [IntentFilter(new[] { "android.app.action.DEVICE_ADMIN_ENABLED" })]
     public class AdminReceiver : DeviceAdminReceiver
     {
-
         public override void OnEnabled(Context context, Intent intent)
         {
             base.OnEnabled(context, intent);

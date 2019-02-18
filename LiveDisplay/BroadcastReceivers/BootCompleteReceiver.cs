@@ -13,7 +13,7 @@ namespace LiveDisplay.BroadcastReceivers
 
         public override void OnReceive(Context context, Intent intent)
         {
-            if (sharedPreferences.GetBoolean(ConfigurationParameters.lockonboot, false) == true)
+            if (sharedPreferences.GetBoolean(ConfigurationParameters.LockOnBoot, false) == true)
             {
                 Intent lanzarLockScreen = new Intent(context, typeof(LockScreenActivity));
                 lanzarLockScreen.AddFlags(ActivityFlags.NewTask);

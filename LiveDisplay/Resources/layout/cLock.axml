@@ -3,15 +3,13 @@
     a:layout_width="match_parent"
     a:layout_height="match_parent"
     a:gravity="bottom">
-    <TextClock xmlns:p2="http://xamarin.com/mono/android/designer-default"
+    <TextClock
         a:id="@+id/clockLock"
         a:background="?android:selectableItemBackground"
         a:layout_width="wrap_content"
         a:layout_height="wrap_content"
-        a:minWidth="30dp"
-        a:textSize="60dp"
+        a:textSize="45dp"
         a:typeface="sans"
-        a:textStyle="normal"
         a:gravity="bottom" />
     <ImageView
         a:id="@+id/batteryIcon"

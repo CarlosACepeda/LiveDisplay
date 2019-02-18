@@ -5,16 +5,12 @@ using Android.OS;
 using Android.Preferences;
 using Android.Provider;
 using Android.Runtime;
-using Android.Support.Design.Widget;
 using Android.Support.V7.App;
-using Android.Telephony;
 using Android.Views;
 using Android.Widget;
-using Java.Util;
 using LiveDisplay.BroadcastReceivers;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
-using LiveDisplay.Servicios.Weather;
 
 //for CI.
 using Microsoft.AppCenter;
@@ -25,18 +21,17 @@ using System.Threading;
 
 namespace LiveDisplay.Activities
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/LiveDisplayTheme.NoActionBar", MainLauncher = true)]
+    [Activity(Label = "@string/app_name", Theme = "@style/LiveDisplayThemeDark.NoActionBar", TaskAffinity = "livedisplay.main", MainLauncher = true)]
     internal class MainActivity : AppCompatActivity
     {
         private Android.Support.V7.Widget.Toolbar toolbar;
         private TextView enableNotificationAccess, enableDeviceAdmin;
         private TextView enableDrawOverAccess;
         private RelativeLayout enableDrawOverAccessContainer;
-        bool isApplicationHealthy;
+        private bool isApplicationHealthy;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
-           
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.Main);
             BindViews();
@@ -49,7 +44,6 @@ namespace LiveDisplay.Activities
             CheckDeviceAdminAccess();
             if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1)
             {
-
                 CheckDrawOverOtherAppsAccess();
             }
             IsApplicationHealthy();
@@ -72,7 +66,6 @@ namespace LiveDisplay.Activities
                         break;
 
                     default:
-                        break;
                 }
             }
         }
@@ -93,7 +86,6 @@ namespace LiveDisplay.Activities
                         break;
 
                     default:
-                        break;
                 }
             }
         }
@@ -177,29 +169,29 @@ namespace LiveDisplay.Activities
                 case Resource.Id.action_settings:
                     using (Intent intent = new Intent(this, typeof(SettingsActivity)))
                     {
+                        intent.AddFlags(ActivityFlags.NewDocument);
                         StartActivity(intent);
                     }
 
                     return true;
+
                 case Resource.Id.action_sendtestnotification:
                     if (isApplicationHealthy)
                     {
                         using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())
                         {
-                            var notificationtext=  Resources.GetString(Resource.String.testnotificationtext);
-                            if (Build.VERSION.SdkInt > BuildVersionCodes.N)
+                            var notificationtext = Resources.GetString(Resource.String.testnotificationtext);
+                            if (Build.VERSION.SdkInt > BuildVersionCodes.NMr1)
                             {
                                 slave.PostNotification("LiveDisplay", notificationtext, true, NotificationImportance.Low);
                             }
                             else
                             {
                                 slave.PostNotification("LiveDisplay", notificationtext, true, NotificationPriority.Low);
-
                             }
                         }
                         using (Intent intent = new Intent(Application.Context, typeof(LockScreenActivity)))
                         {
-                            intent.AddFlags(ActivityFlags.NewTask);
                             StartActivity(intent);
                             return true;
                         }
@@ -209,6 +201,7 @@ namespace LiveDisplay.Activities
                         Toast.MakeText(Application.Context, "You dont have the required permissions yet", ToastLength.Long).Show();
                     }
                     break;
+
                 default:
                     break;
             }
@@ -231,7 +224,6 @@ namespace LiveDisplay.Activities
                 enableDrawOverAccessContainer.Visibility = ViewStates.Visible;
                 enableDrawOverAccess = FindViewById<TextView>(Resource.Id.enableFloatingPermission);
                 enableDrawOverAccess.Click += EnableDrawOverAccess_Click;
-
             }
             enableNotificationAccess.Click += EnableNotificationAccess_Click;
             enableDeviceAdmin.Click += EnableDeviceAdmin_Click;
@@ -249,19 +241,16 @@ namespace LiveDisplay.Activities
         {
             using (Android.Support.V7.App.AlertDialog.Builder builder = new Android.Support.V7.App.AlertDialog.Builder(this))
             {
-
+                
                 builder.SetMessage(Resource.String.dialogfordeviceaccessdescription);
                 builder.SetPositiveButton(Resource.String.dialogallowbutton, new EventHandler<DialogClickEventArgs>(OnDialogPositiveButtonEventArgs));
                 builder.SetNegativeButton(Resource.String.dialogcancelbutton, new EventHandler<DialogClickEventArgs>(OnDialogNegativeButtonEventArgs));
                 builder.Show();
             }
-
-
         }
 
         private void OnDialogNegativeButtonEventArgs(object sender, DialogClickEventArgs e)
         {
-            
         }
 
         private void OnDialogPositiveButtonEventArgs(object sender, DialogClickEventArgs e)

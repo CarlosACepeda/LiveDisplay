@@ -1,5 +1,4 @@
 ﻿using Android.Graphics.Drawables;
-using LiveDisplay.Misc;
 using System;
 
 namespace LiveDisplay.Servicios.Battery.BatteryEventArgs

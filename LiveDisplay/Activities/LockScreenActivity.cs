@@ -2,35 +2,31 @@
 using Android.Content;
 using Android.Graphics;
 using Android.Hardware;
+using Android.Media;
+using Android.Media.Session;
 using Android.OS;
 using Android.Preferences;
-using Android.Runtime;
+using Android.Provider;
 using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
+using Android.Views.Animations;
 using Android.Widget;
-using LiveDisplay.Factories;
+using LiveDisplay.Activities;
 using LiveDisplay.Fragments;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
+using LiveDisplay.Servicios.FloatingNotification;
 using LiveDisplay.Servicios.Music;
 using LiveDisplay.Servicios.Notificaciones;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
 using LiveDisplay.Servicios.Wallpaper;
 using System;
 using System.Threading;
-using Android.Media.Session;
-using LiveDisplay.Servicios.FloatingNotification;
-using Com.JackAndPhantom;
-using Android.Graphics.Drawables;
-using Android.Media;
-using LiveDisplay.BroadcastReceivers;
-using static Android.Resource;
-using Android.Views.Animations;
 
 namespace LiveDisplay
 {
-    [Activity(Label = "LockScreen", Theme = "@style/LiveDisplayThemeDark", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, LaunchMode = Android.Content.PM.LaunchMode.SingleTask, ExcludeFromRecents = true)]
+    [Activity(Label = "LockScreen", Theme = "@style/LiveDisplayThemeDark", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, TaskAffinity ="livedisplay.lockscreen", LaunchMode = Android.Content.PM.LaunchMode.SingleInstance, ExcludeFromRecents = true)]
     public class LockScreenActivity : Activity
     {
         private RecyclerView recycler;
@@ -45,23 +41,19 @@ namespace LiveDisplay
         private WeatherFragment weatherFragment;
         private bool thereAreNotifications = false;
         private Button startCamera;
+        private Button startDialer;
         private LinearLayout lockscreen; //The root linear layout, used to implement double tap to sleep.
         private float firstTouchTime = -1;
         private float finalTouchTime;
         private readonly float threshold = 1000; //1 second of threshold.(used to implement the double tap.)
-        private Sensor sensor;
-        private SensorManager sensorManager;
         private System.Timers.Timer watchDog; //the watchdog simply will start counting down until it gets resetted by OnUserInteraction() override.
-        private Android.Views.Animations.Animation fadeoutanimation;
+        private Animation fadeoutanimation;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
-           
             base.OnCreate(savedInstanceState);
-            // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.LockScreen);
-
-            //Before loading anything, check if the user has the required permissions.
+            Window.DecorView.SetBackgroundColor(Color.Black);
             ThreadPool.QueueUserWorkItem(isApphealthy =>
             {
                 bool canDrawOverlays = true;
@@ -70,22 +62,20 @@ namespace LiveDisplay
                     canDrawOverlays = Checkers.ThisAppCanDrawOverlays();
                 }
 
-                if (Checkers.IsNotificationListenerEnabled() == false  || canDrawOverlays == false)
+                if (Checkers.IsNotificationListenerEnabled() == false || canDrawOverlays == false || Checkers.IsThisAppADeviceAdministrator()==false)
                 {
-                    RunOnUiThread(()=>
+                    RunOnUiThread(() =>
                     Toast.MakeText(Application.Context, "You dont have the required permissions", ToastLength.Long).Show()
                     );
                     Finish();
                 }
-
             });
-
-
 
             //Views
             wallpaper = FindViewById<ImageView>(Resource.Id.wallpaper);
             unlocker = FindViewById<ImageView>(Resource.Id.unlocker);
             startCamera = FindViewById<Button>(Resource.Id.btnStartCamera);
+            startDialer = FindViewById<Button>(Resource.Id.btnStartPhone);
             clearAll = FindViewById<Button>(Resource.Id.btnClearAllNotifications);
             lockscreen = FindViewById<LinearLayout>(Resource.Id.contenedorPrincipal);
             weatherandclockcontainer = FindViewById<FrameLayout>(Resource.Id.weatherandcLockplaceholder);
@@ -100,6 +90,7 @@ namespace LiveDisplay
             clearAll.Click += BtnClearAll_Click;
             unlocker.Touch += Unlocker_Touch;
             startCamera.Click += StartCamera_Click;
+            startDialer.Click += StartDialer_Click;
             lockscreen.Touch += Lockscreen_Touch;
             weatherandclockcontainer.LongClick += Weatherandclockcontainer_LongClick;
 
@@ -109,15 +100,6 @@ namespace LiveDisplay
 
             WallpaperPublisher.WallpaperChanged += Wallpaper_WallpaperChanged;
 
-            //Music Controller Events
-            if(MusicController.MusicStatus!= PlaybackStateCode.None)
-            {
-                MusicController.MusicPlaying += MusicController_MusicPlaying;
-                MusicController.MusicPaused += MusicController_MusicPaused;
-                MusicController.MusicStopped += MusicController_MusicStopped;
-
-
-            }
             //CatcherHelper events
             CatcherHelper.NotificationListSizeChanged += CatcherHelper_NotificationListSizeChanged;
 
@@ -132,29 +114,21 @@ namespace LiveDisplay
                 }
             }
 
-
             LoadClockFragment();
-            
+
             LoadNotificationFragment();
 
             //Load User Configs.
             LoadConfiguration();
 
-
             CheckNotificationListSize();
-            sensorManager = GetSystemService(SensorService) as SensorManager;
-
-            sensor = sensorManager.GetDefaultSensor(SensorType.Accelerometer);
-
-
         }
 
-        private void Fadeoutanimation_AnimationEnd(object sender, Android.Views.Animations.Animation.AnimationEndEventArgs e)
+        private void Fadeoutanimation_AnimationEnd(object sender, Animation.AnimationEndEventArgs e)
         {
             var fadeinanimation = AnimationUtils.LoadAnimation(Application.Context, Resource.Animation.abc_fade_in);
             wallpaper.StartAnimation(fadeinanimation);
             Log.Info("Livedisplay", "fadeinanimation started");
-
         }
 
         private void WatchdogInterval_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -176,7 +150,7 @@ namespace LiveDisplay
         {
             Thread.Sleep(5000); //Wait 5 seconds.
 
-            if(MusicController.MusicStatus!= PlaybackStateCode.Playing)
+            if (MusicController.MusicStatus != PlaybackStateCode.Playing)
             {
                 StopMusicController();
                 Log.Info("LiveDisplay", "Musicfragment stopped");
@@ -199,11 +173,11 @@ namespace LiveDisplay
 
         private void Wallpaper_WallpaperChanged(object sender, WallpaperChangedEventArgs e)
         {
-            wallpaper.StartAnimation(fadeoutanimation);
+            ThreadPool.QueueUserWorkItem(m =>
+            wallpaper.StartAnimation(fadeoutanimation));
             if (e.Wallpaper == null)
             {
-
-                wallpaper.SetBackgroundColor(Android.Graphics.Color.Black);
+                wallpaper.SetBackgroundColor(Color.Black);
             }
             else
             {
@@ -211,14 +185,13 @@ namespace LiveDisplay
                 wallpaper.Background.Alpha = e.OpacityLevel;
             }
             GC.Collect();
-
         }
 
         private void Lockscreen_Touch(object sender, View.TouchEventArgs e)
         {
             using (ConfigurationManager configuration = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context)))
             {
-                if (configuration.RetrieveAValue(ConfigurationParameters.doubletaptosleep) == true)
+                if (configuration.RetrieveAValue(ConfigurationParameters.DoubleTapToSleep) == true)
                 {
                     if (e.Event.Action == MotionEventActions.Up)
                     {
@@ -260,16 +233,10 @@ namespace LiveDisplay
             AddFlags();
             watchDog.Stop();
             watchDog.Start();
-
         }
 
         protected override void OnPause()
         {
-            MusicController.MusicPlaying -= MusicController_MusicPlaying;
-            MusicController.MusicPaused -= MusicController_MusicPaused;
-            MusicController.MusicStopped -= MusicController_MusicStopped;
-            //sensorManager.UnregisterListener(this);
-
             watchDog.Stop();
             GC.Collect();
             base.OnPause();
@@ -289,8 +256,6 @@ namespace LiveDisplay
             watchDog.Stop();
             watchDog.Elapsed -= WatchdogInterval_Elapsed;
             watchDog.Dispose();
-            sensor.Dispose();
-            sensorManager.Dispose();
             //Dispose Views
             //Views
             recycler.Dispose();
@@ -304,18 +269,28 @@ namespace LiveDisplay
             notificationFragment.Dispose();
             musicFragment.Dispose();
             clockFragment.Dispose();
+            weatherFragment.Dispose();
 
             StopFloatingNotificationService();
-            
         }
 
         public override void OnBackPressed()
         {
             //Do nothing.
-            //base.OnBackPressed();
             //In Nougat it works after several tries to go back, I can't fix that.
         }
 
+        public override void OnWindowFocusChanged(bool hasFocus)
+        {
+            if (hasFocus == false)
+            {
+                ThreadPool.QueueUserWorkItem(m =>
+                {
+                    Thread.Sleep(300);
+                   RunOnUiThread(()=> AddFlags()); });
+            }
+            base.OnWindowFocusChanged(hasFocus);
+        }
         //It simply means that a Touch has been registered, no matter where, it was on the lockscreen.
         //used to detect if the user is interacting with the lockscreen.
         public override void OnUserInteraction()
@@ -379,13 +354,26 @@ namespace LiveDisplay
                 Log.Info("Swipe", "Up");
 
                 Finish();
+                //using (Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(TransparentActivity))))
+                //{
+                //    intent.AddFlags(ActivityFlags.NewTask| ActivityFlags.TaskOnHome);
+                //    StartActivity(intent);
+                //}
                 OverridePendingTransition(Resource.Animation.slidetounlockanim, Resource.Animation.slidetounlockanim);
             }
         }
 
         private void StartCamera_Click(object sender, EventArgs e)
         {
-            using (Intent intent = new Intent("android.media.action.IMAGE_CAPTURE"))
+            
+            using (Intent intent = new Intent(MediaStore.IntentActionStillImageCamera))
+            {
+                StartActivity(intent);
+            }
+        }
+        private void StartDialer_Click(object sender, EventArgs e)
+        {
+            using (Intent intent = new Intent(Intent.ActionDial))
             {
                 StartActivity(intent);
             }
@@ -396,7 +384,7 @@ namespace LiveDisplay
             //Load configurations based on User configs.
             using (ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context)))
             {
-                switch (configurationManager.RetrieveAValue(ConfigurationParameters.changewallpaper, "0"))
+                switch (configurationManager.RetrieveAValue(ConfigurationParameters.ChangeWallpaper, "0"))
                 {
                     case "0":
 
@@ -404,22 +392,18 @@ namespace LiveDisplay
                         break;
 
                     case "1":
-                            using (var wallpaper = WallpaperManager.GetInstance(Application.Context).Drawable)
-                            {
-                                int savedblurlevel = configurationManager.RetrieveAValue(ConfigurationParameters.blurlevel, 1);
-                                int savedOpacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.opacitylevel, 255);
-                                //var weakblur = new WeakReference(new BlurImage(Application.Context).Load(bitmap).Intensity(savedblurlevel).Async(true).GetImageBlur());
-                                //var weak = new WeakReference(new BitmapDrawable(Resources, weakblur.Target as Bitmap));
+                        using (var wallpaper = WallpaperManager.GetInstance(Application.Context).Drawable)
+                        {
+                            int savedblurlevel = configurationManager.RetrieveAValue(ConfigurationParameters.BlurLevel, 1);
+                            int savedOpacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, 255);
+                            //var weakblur = new WeakReference(new BlurImage(Application.Context).Load(bitmap).Intensity(savedblurlevel).Async(true).GetImageBlur());
+                            //var weak = new WeakReference(new BitmapDrawable(Resources, weakblur.Target as Bitmap));
 
-                                
-                                 RunOnUiThread(() =>
-                                    WallpaperPublisher.OnWallpaperChanged(new WallpaperChangedEventArgs { Wallpaper = wallpaper, OpacityLevel = (short)savedOpacitylevel })
-                                          );
-                            }
+                            RunOnUiThread(() =>
+                               WallpaperPublisher.OnWallpaperChanged(new WallpaperChangedEventArgs { Wallpaper = wallpaper, OpacityLevel = (short)savedOpacitylevel })
+                                     );
+                        }
 
-                               
-                        
-                                                
                         break;
 
                     case "2":
@@ -442,17 +426,16 @@ namespace LiveDisplay
                         Window.DecorView.SetBackgroundColor(Android.Graphics.Color.Black);
                         break;
                 }
-                if (configurationManager.RetrieveAValue(ConfigurationParameters.musicwidgetenabled) == true)
-                    {
-                        CheckIfMusicIsPlaying(); //This method is the main entry for the music widget and the floating notification.
-                    }
-                int interval = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.turnoffscreendelaytime, "5000"));
+                if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetEnabled) == true)
+                {
+                    CheckIfMusicIsPlaying(); //This method is the main entry for the music widget and the floating notification.
+                }
+                int interval = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.TurnOffScreenDelayTime, "5000"));
                 watchDog.Interval = interval;
-                if (configurationManager.RetrieveAValue(ConfigurationParameters.turnonusermovement) == true)
+                if (configurationManager.RetrieveAValue(ConfigurationParameters.TurnOnUserMovement) == true)
                 {
                     StartAwakeService();
                 }
-
             }
         }
 
@@ -512,36 +495,33 @@ namespace LiveDisplay
 
         private void StopFloatingNotificationService()
         {
-            using (Intent intent = new Intent(this, typeof(FloatingNotification)))
+            using (Intent intent = new Intent(Application.Context, typeof(FloatingNotification)))
             {
                 StopService(intent);
             }
-
         }
 
         private void StartFloatingNotificationService()
         {
-            using (Intent intent = new Intent(this, typeof(FloatingNotification)))
+            using (Intent intent = new Intent(Application.Context, typeof(FloatingNotification)))
             {
                 StartService(intent);
             }
-
         }
 
         private void StartAwakeService()
         {
-            using (Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(Awake))))
+            using (Intent intent = new Intent(Application.Context, typeof(Awake)))
             {
                 StartService(intent);
-
             }
         }
+
         private void StopAwakeService()
         {
             using (Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(Awake))))
             {
                 StopService(intent);
-
             }
         }
 

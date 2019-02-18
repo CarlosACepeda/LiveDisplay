@@ -6,9 +6,9 @@
     <SwitchPreference
    android:key="hiddenclock?"
    android:title="@string/showclock" />
-    <SwitchPreference
+    <!--<SwitchPreference
       android:key="hiddensystemicons?"
-      android:title="@string/hidesystemicons" />
+      android:title="@string/hidesystemicons" />-->
     <SwitchPreference
       android:defaultValue="true"
       android:key="lockonboot?"
@@ -25,9 +25,7 @@
     <Preference
       android:key="wallpapersettings"
       android:title="@string/changewallpaperappearance"
-      android:selectable="true"
-      >
-      
+      android:selectable="true">
     </Preference>
   </PreferenceCategory>
     <PreferenceCategory
@@ -35,9 +33,7 @@
       <SwitchPreference
         android:defaultValue="true"
         android:key="musicwidgetenabled?"
-        android:title="@string/musicwidgetenabled"
-        >
-        
+        android:title="@string/musicwidgetenabled">
       </SwitchPreference>
       <SwitchPreference
         android:defaultValue="true"
@@ -46,8 +42,7 @@
       </SwitchPreference>
     </PreferenceCategory>
     <PreferenceCategory
-      android:title="@string/weatherwidget"
-      >
+      android:title="@string/weatherwidget">
       <SwitchPreference
         android:defaultValue="false"
         android:key="weatherwidgetenabled?"
@@ -73,13 +68,20 @@
         android:summary="@string/blacklistdesc"
         android:selectable="true">
       </Preference>
-      <SwitchPreference
+      <!--<SwitchPreference
         android:key="enablequickreply?"
         android:title="@string/enablequickreply"
         android:summary="@string/enablequickreplydesc"
-        ></SwitchPreference>
+        ></SwitchPreference>-->
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/awakesettings">
+      <Preference
+        android:key="inactivetimesettings"
+        android:title="@string/inactivetimesettings"
+        android:summary="@string/inactivetimesettingsdesc"
+        >
+        
+      </Preference>
       <SwitchPreference
       android:key="turnonnewnotification?"
       android:title="@string/turnonnewnotification"
@@ -127,18 +129,14 @@
       android:title="@string/version"
       android:summary="@string/versionnumber"
       android:selectable="false"
-      android:persistent="false"
-      >
-      
+      android:persistent="false">
     </Preference>
       <Preference
         android:key="contributetoproject"
         android:title="@string/githubproject"
         android:summary="@string/contributetoprojectdesc"
         android:selectable="true"
-        android:persistent="false"
-        >
-        
+        android:persistent="false">
       </Preference>
   </PreferenceCategory>
     <PreferenceCategory android:title="@string/translations">
