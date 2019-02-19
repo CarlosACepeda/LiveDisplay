@@ -109,7 +109,7 @@ namespace LiveDisplay.Servicios.Notificaciones
         private bool UpdateNotification(StatusBarNotification sbn)
         {
             int indice = GetNotificationPosition(sbn);
-            if (indice >= 0 && Blacklist.IsAppBlacklisted(sbn.PackageName) == false)
+            if (indice >= 0 /*&& Blacklist.IsAppBlacklisted(sbn.PackageName) == false*/)
             {
                 statusBarNotifications.RemoveAt(indice);
                 statusBarNotifications.Add(sbn);

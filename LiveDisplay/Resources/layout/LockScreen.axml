@@ -91,4 +91,9 @@
                 a:id="@+id/btnStartPhone" />
         </FrameLayout>
     </LinearLayout>
+<LinearLayout
+        a:id="@+id/surfaceview"
+        a:visibility="gone"
+    a:layout_width="match_parent"
+    a:layout_height="match_parent" />
 </FrameLayout>
