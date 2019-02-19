@@ -66,6 +66,7 @@ namespace LiveDisplay.Activities
                         break;
 
                     default:
+                        break;
                 }
             }
         }
@@ -86,6 +87,7 @@ namespace LiveDisplay.Activities
                         break;
 
                     default:
+                        break;
                 }
             }
         }

@@ -94,6 +94,12 @@
 <LinearLayout
         a:id="@+id/surfaceview"
         a:visibility="gone"
+        a:gravity="center_vertical"
     a:layout_width="match_parent"
-    a:layout_height="match_parent" />
+    a:layout_height="match_parent" >
+        <include
+            layout="@layout/notificationfrag"
+            a:layout_width="match_parent"
+            a:layout_height="wrap_content" />
+</LinearLayout>
 </FrameLayout>

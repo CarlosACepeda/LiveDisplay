@@ -108,6 +108,7 @@ namespace LiveDisplay.Activities
                     break;
 
                 default:
+                    break;
             }
         }
 

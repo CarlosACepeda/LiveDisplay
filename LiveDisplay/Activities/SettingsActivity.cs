@@ -15,14 +15,6 @@ namespace LiveDisplay.Activities
         {
             base.OnCreate(savedInstanceState);
 
-            if (Intent != null)
-            {
-                Bundle bundle = RemoteInput.GetResultsFromIntent(Intent);
-                if (bundle != null)
-                {
-                    var lmao = bundle.GetCharSequence("test");
-                }
-            }
 
             // Create your application here
             SetContentView(Resource.Layout.Settings);
