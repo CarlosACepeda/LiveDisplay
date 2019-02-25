@@ -98,16 +98,19 @@ namespace LiveDisplay.Fragments
             notification.Visibility = ViewStates.Visible;
             try
             {
-                Activity.RunOnUiThread(() =>
-                OpenNotification.ClickNotification(position)
-                );
-                if (OpenNotification.NotificationIsAutoCancel(position) == true)
+                using (OpenNotification openNotification = new OpenNotification(position))
                 {
-                    notification.Visibility = ViewStates.Invisible;
-                    titulo.Text = null;
-                    texto.Text = null;
-                    when.Text = null;
-                    notificationActions.RemoveAllViews();
+                    Activity.RunOnUiThread(() =>
+                    openNotification.ClickNotification()
+                    );
+                    if (OpenNotification.NotificationIsAutoCancel(position) == true)
+                    {
+                        notification.Visibility = ViewStates.Invisible;
+                        titulo.Text = null;
+                        texto.Text = null;
+                        when.Text = null;
+                        notificationActions.RemoveAllViews();
+                    }
                 }
             }
             catch

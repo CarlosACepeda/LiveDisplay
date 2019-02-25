@@ -46,11 +46,31 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
         }
 
-        public static void ClickNotification(int position)
+        public void ClickNotification()
         {
             try
             {
                 CatcherHelper.statusBarNotifications[position].Notification.ContentIntent.Send();
+                //Android Docs: For NotificationListeners: When implementing a custom click for notification
+                //Cancel the notification after it was clicked when this notification is autocancellable.
+                if (IsRemovable())
+                {
+                    using (NotificationSlave notificationSlave = NotificationSlave.NotificationSlaveInstance())
+                    {
+                        if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+                        {
+                            int notiId = CatcherHelper.statusBarNotifications[position].Id;
+                            string notiTag = CatcherHelper.statusBarNotifications[position].Tag;
+                            string notiPack = CatcherHelper.statusBarNotifications[position].PackageName;
+                            notificationSlave.CancelNotification(notiPack, notiTag, notiId);
+                        }
+                        else
+                        {
+                            notificationSlave.CancelNotification(CatcherHelper.statusBarNotifications[position].Key);
+                        }
+                    }
+                }
+
             }
             catch
             {
