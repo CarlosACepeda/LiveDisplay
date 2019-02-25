@@ -7,6 +7,9 @@ namespace LiveDisplay.Servicios.Wallpaper
     {
         public Drawable Wallpaper { get; set; }
         public short OpacityLevel { get; set; }
-        public bool IsThisWallpaperTemporary { get; set; } //Field to indicate 
+        public short BlurLevel { get; set; }
+        //Property indicating for how many seconds should the Lockscreen show this Wallpaper, after that, it will 
+        //reload the previous one.
+        public short SecondsOfAttention { get; set; }
     }
 }

@@ -201,7 +201,7 @@ namespace LiveDisplay.Fragments
             tvAlbum.Text = e.Album;
             tvArtist.Text = e.Artist;
             skbSeekSongTime.Max = (int)e.Duration;
-            WallpaperPublisher.OnWallpaperChanged(new WallpaperChangedEventArgs
+            WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
             {
                 Wallpaper = new BitmapDrawable(Resources, e.AlbumArt)
             });
@@ -219,7 +219,7 @@ namespace LiveDisplay.Fragments
                 using (var wallpaper = new BitmapDrawable(Resources, albumart))
                 {
                     int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, 255);
-                    WallpaperPublisher.OnWallpaperChanged(new WallpaperChangedEventArgs
+                    WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
                     {
                         Wallpaper = wallpaper,
                         OpacityLevel = (short)opacitylevel

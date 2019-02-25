@@ -43,6 +43,7 @@
   <string name="githubproject">Want to help?</string>
   <string name="help">Help</string>
   <string name="hidesystemicons">Do not show system icons</string>
+  <string name="humidity">Humidity</string>
   <string name="idk">¯\_(ツ)_/¯</string>
   <string name="immediately">Immediately</string>
   <string name="inactivetimesettings">Inactive hours</string>
@@ -73,12 +74,11 @@
   <string name="turnonnewnotification_desc">Turn on screen if a new notification incomes</string>
   <string name="turnonusermovement">Turn on screen on device pick up</string>
   <string name="version">Version</string>
-  <string name="versionnumber">0.7.4</string>
+  <string name="versionnumber">0.7.5</string>
   <string name="wallpaperblur">Blur</string>
   <string name="wallpaperopacity">Opacity</string>
   <string name="weatherwidget">Weather Widget</string>
   <string name="weatherwidgetenabled">Enable Weather Widget</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
-  <string name="humidity">Humidity</string>
 </resources>

@@ -69,10 +69,8 @@ namespace LiveDisplay.Servicios.Notificaciones
             {
                 return true;
             }
-            else
-            {
-                return false;
-            }
+            return false;
+            
         }
 
         public bool NotificationHasActionButtons()
@@ -81,18 +79,16 @@ namespace LiveDisplay.Servicios.Notificaciones
             {
                 return true;
             }
-            else
-            {
-                return false;
-            }
+            return false;
+            
         }
 
         internal string GetWhen()
         {
             try
             {
-                var lol = CatcherHelper.statusBarNotifications[position].Notification.When.ToString();
-                DateTime dateTime = new DateTime(Convert.ToInt64(lol));
+                var timeinmillis = CatcherHelper.statusBarNotifications[position].Notification.When.ToString();
+                DateTime dateTime = new DateTime(Convert.ToInt64(timeinmillis));
                 if (dateTime.Hour == 0 && dateTime.Minute == 0)
                 {
                     return "";
@@ -115,6 +111,11 @@ namespace LiveDisplay.Servicios.Notificaciones
             {
                 return "";
             }
+        }
+
+        internal Bitmap GetBigPicture()
+        {   
+            return CatcherHelper.statusBarNotifications[position].Notification.Extras.Get(Notification.ExtraPicture) as Bitmap;
         }
 
         public static bool NotificationIsAutoCancel(int position)

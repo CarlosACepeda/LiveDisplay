@@ -1,7 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="blacklist">Listă Neagră</string>
+  <string name="blackwallpaper">Negru</string>
+  <string name="changewallpaper">Schimbă fundalul ecranului</string>
+  <string name="changeweatherpreferences">Schimbă preferințele de climă</string>
+  <string name="defaultwallpaper">Fundal default</string>
   <string name="dialogallowbutton">Permite</string>
   <string name="dialogcancelbutton">închide</string>
+  <string name="doubletaptosleep">Dublă apăsare pentru închidere</string>
   <string name="idk">¯\_(ツ)_/¯</string>
+  <string name="inactivetimesettings">Ore de inactivitate</string>
+  <string name="lockonboot">Blocați ecranul la pornire</string>
+  <string name="musicwidgetenabled">Activează Widget de Muzică</string>
+  <string name="notificationsettings">Notificări</string>
+  <string name="opciones">Opțiuni</string>
+  <string name="showalbumart">Arată coperta albumului</string>
+  <string name="showclock">Ascunde ceasul</string>
   <string name="testnotificationtext">Es Ține apăsat pe o notificare din listă pentru a o elimina</string>
+  <string name="turnonnewnotification">Aprinde ecranul</string>
+  <string name="wallpaperblur">Blurare</string>
+  <string name="wallpaperopacity">Opacitate</string>
+  <string name="weatherwidget">Widget de Climă</string>
+  <string name="weatherwidgetenabled">Activează Widget de Climă</string>
 </resources>

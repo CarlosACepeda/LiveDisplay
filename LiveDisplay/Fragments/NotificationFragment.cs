@@ -1,5 +1,6 @@
 ﻿using Android.App;
 using Android.Graphics;
+using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Util;
 using Android.Views;
@@ -8,7 +9,9 @@ using LiveDisplay.Adapters;
 using LiveDisplay.Servicios;
 using LiveDisplay.Servicios.Notificaciones;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
+using LiveDisplay.Servicios.Wallpaper;
 using System;
+using System.Threading;
 
 namespace LiveDisplay.Fragments
 {
@@ -150,12 +153,17 @@ namespace LiveDisplay.Fragments
             position = e.Position;
             using (OpenNotification openNotification = new OpenNotification(e.Position))
             {
+                ThreadPool.QueueUserWorkItem(method =>
+                {
+                    var notificationBigPicture = new BitmapDrawable(Resources, openNotification.GetBigPicture());
+                    WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = notificationBigPicture, OpacityLevel = 125, SecondsOfAttention= 5 });
+                });
                 titulo.Text = openNotification.GetTitle();
                 texto.Text = openNotification.GetText();
                 appName.Text = openNotification.GetAppName();
                 when.Text = openNotification.GetWhen();
                 notificationActions.RemoveAllViews();
-
+                
                 if (openNotification.NotificationHasActionButtons() == true)
                 {
                     var actions = openNotification.RetrieveActions();

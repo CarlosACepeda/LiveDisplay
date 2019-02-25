@@ -106,8 +106,13 @@ namespace LiveDisplay.Activities
                     BlurImage blurImage = new BlurImage(Application.Context);
                     blurImage.Load(backgroundcopy.Bitmap).Intensity(e.SeekBar.Progress).Async(true);
                     drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
-                    RunOnUiThread(()=>
-                    wallpaperPreview.Background = drawable);
+                    RunOnUiThread(() => {
+                        var previousAlpha = wallpaperPreview.Background.Alpha;
+                        wallpaperPreview.Background = drawable;
+                        wallpaperPreview.Background.Alpha = previousAlpha;
+                        
+
+                    });
                 }
             });
             configurationManager.SaveAValue(ConfigurationParameters.BlurLevel, e.SeekBar.Progress);
