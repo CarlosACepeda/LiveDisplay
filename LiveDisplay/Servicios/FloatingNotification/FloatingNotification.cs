@@ -167,7 +167,8 @@ namespace LiveDisplay.Servicios.FloatingNotification
 
         private void FloatingNotificationView_Click(object sender, EventArgs e)
         {
-            OpenNotification.ClickNotification(position);
+            using(OpenNotification openNotification= new OpenNotification(position))
+            openNotification.ClickNotification();
             floatingNotificationView.Visibility = ViewStates.Gone;
         }
 
