@@ -17,6 +17,7 @@ namespace LiveDisplay.Fragments
 {
     public class NotificationFragment : Fragment
     {
+        public static event EventHandler NotificationClicked;
         private int position;
         private LinearLayout notificationActions;
         private TextView titulo;
@@ -204,8 +205,14 @@ namespace LiveDisplay.Fragments
             if (notification.Visibility != ViewStates.Visible)
             {
                 notification.Visibility = ViewStates.Visible;
+                StartTimeout();
             }
-            StartTimeout();
+            
+            else
+            {
+                notification.Visibility = ViewStates.Invisible;
+            }
+            NotificationClicked?.Invoke(null, EventArgs.Empty);
         }
 
         #endregion Events Implementation:

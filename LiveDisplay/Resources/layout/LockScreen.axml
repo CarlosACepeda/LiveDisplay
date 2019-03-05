@@ -49,7 +49,8 @@
                 a:overScrollMode="never"
                 a:layout_width="25dp"
                 a:layout_height="wrap_content"
-                a:layout_gravity="bottom" />
+                a:layout_gravity="bottom"
+			/>
         </LinearLayout>
     <!--This FrameLayout contains the clock and later the System icons which aren't available... yet.-->
         <FrameLayout
@@ -91,15 +92,17 @@
                 a:id="@+id/btnStartPhone" />
         </FrameLayout>
     </LinearLayout>
-<LinearLayout
+	<LinearLayout
         a:id="@+id/surfaceview"
-        a:visibility="gone"
+		a:background="@android:color/black"
+		a:alpha="0.7"
+	    a:visibility="visible"
         a:gravity="center_vertical"
-    a:layout_width="match_parent"
-    a:layout_height="match_parent" >
-        <include
-            layout="@layout/notificationfrag"
-            a:layout_width="match_parent"
-            a:layout_height="wrap_content" />
-</LinearLayout>
+		a:layout_width="match_parent"
+		a:layout_height="match_parent" >
+         <FrameLayout
+                a:layout_width="200dp"
+                a:layout_height="wrap_content"
+                a:id="@+id/FloatingNotificationPlaceholder" />
+	</LinearLayout>
 </FrameLayout>

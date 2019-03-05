@@ -193,10 +193,10 @@ namespace LiveDisplay
             }
             else
             {
-                ThreadPool.QueueUserWorkItem(m =>
-                wallpaper.StartAnimation(fadeoutanimation));
                 RunOnUiThread(() =>
                 {
+                    wallpaper.StartAnimation(fadeoutanimation);
+
                     if (e.Wallpaper == null)
                     {
                         wallpaper.SetBackgroundColor(Color.Black);
@@ -402,7 +402,6 @@ namespace LiveDisplay
                 StartActivity(intent);
             }
         }
-
         private void LoadConfiguration()
         {
             //Load configurations based on User configs.
@@ -507,12 +506,44 @@ namespace LiveDisplay
             if (MusicController.MusicStatus == PlaybackStateCode.Playing || MusicControllerKitkat.MusicStatus == RemoteControlPlayState.Playing)
             {
                 StartMusicController();
-                StartFloatingNotificationService();
+                //StartFloatingNotificationService();
+                using (var surfaceView = FindViewById<LinearLayout>(Resource.Id.surfaceview))
+                {
+                    surfaceView.Visibility = ViewStates.Visible;
+                    using (FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction())
+                    {
+                        fragmentTransaction.Replace(Resource.Id.FloatingNotificationPlaceholder, new NotificationFragment());
+                        fragmentTransaction.SetCustomAnimations(Resource.Animation.fade_in, Resource.Animation.fade_out);
+                        fragmentTransaction.DisallowAddToBackStack();
+                        fragmentTransaction.Commit();
+                        NotificationFragment.NotificationClicked += NotificationFragment_NotificationClicked;
+                    }
+                }
             }
             else
             {
                 StopMusicController();
-                StopFloatingNotificationService();
+                //StopFloatingNotificationService();
+                using (var surfaceView = FindViewById<LinearLayout>(Resource.Id.surfaceview))
+                {
+                    surfaceView.Visibility = ViewStates.Gone;
+                }
+                NotificationFragment.NotificationClicked-= NotificationFragment_NotificationClicked;
+            }
+        }
+
+        private void NotificationFragment_NotificationClicked(object sender, EventArgs e)
+        {
+            using (var surfaceView = FindViewById<LinearLayout>(Resource.Id.surfaceview))
+            {
+                if (surfaceView.Visibility != ViewStates.Gone)
+                {
+                    surfaceView.Visibility = ViewStates.Gone;
+                }
+                else
+                {
+                    surfaceView.Visibility= ViewStates.Visible;
+                }
             }
         }
 
