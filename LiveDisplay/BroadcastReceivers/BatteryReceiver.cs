@@ -2,7 +2,6 @@
 using Android.Content;
 using Android.Graphics.Drawables;
 using Android.OS;
-using Android.Util;
 using LiveDisplay.Servicios.Battery.BatteryEventArgs;
 using System;
 

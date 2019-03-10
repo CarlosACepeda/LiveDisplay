@@ -55,7 +55,7 @@ namespace LiveDisplay.Fragments
                 Activity.RunOnUiThread(() =>
                 {
                     temperature.Text = weather?.MainWeather.Temperature.ToString() + temperatureSuffix;
-                    minimumTemperature.Text = "min: "+ weather?.MainWeather.MinTemperature.ToString() + temperatureSuffix;
+                    minimumTemperature.Text = "min: " + weather?.MainWeather.MinTemperature.ToString() + temperatureSuffix;
                     maximumTemperature.Text = "max: " + weather?.MainWeather.MaxTemperature.ToString() + temperatureSuffix;
                     city.Text = weather?.Name + ": " + weather?.Weather[0].Description;
                     humidity.Text = Resources.GetString(Resource.String.humidity) + ": " + weather?.MainWeather.Humidity.ToString();

@@ -4,11 +4,11 @@ namespace LiveDisplay.Servicios.Wallpaper
 {
     public class WallpaperPublisher
     {
-        public static event EventHandler<WallpaperChangedEventArgs> WallpaperChanged;
+        public static event EventHandler<WallpaperChangedEventArgs> NewWallpaperIssued;
 
-        public static void OnWallpaperChanged(WallpaperChangedEventArgs e)
+        public static void ChangeWallpaper(WallpaperChangedEventArgs e)
         {
-            WallpaperChanged?.Invoke(null, e);
+            NewWallpaperIssued?.Invoke(null, e);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Android.App;
 using Android.Graphics;
+using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Util;
 using Android.Views;
@@ -8,12 +9,16 @@ using LiveDisplay.Adapters;
 using LiveDisplay.Servicios;
 using LiveDisplay.Servicios.Notificaciones;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
+using LiveDisplay.Servicios.Wallpaper;
 using System;
+using System.Threading;
 
 namespace LiveDisplay.Fragments
 {
     public class NotificationFragment : Fragment
     {
+        public static event EventHandler NotificationClicked;
+
         private int position;
         private LinearLayout notificationActions;
         private TextView titulo;
@@ -95,16 +100,19 @@ namespace LiveDisplay.Fragments
             notification.Visibility = ViewStates.Visible;
             try
             {
-                Activity.RunOnUiThread(() =>
-                OpenNotification.ClickNotification(position)
-                );
-                if (OpenNotification.NotificationIsAutoCancel(position) == true)
+                using (OpenNotification openNotification = new OpenNotification(position))
                 {
-                    notification.Visibility = ViewStates.Invisible;
-                    titulo.Text = null;
-                    texto.Text = null;
-                    when.Text = null;
-                    notificationActions.RemoveAllViews();
+                    Activity.RunOnUiThread(() =>
+                    openNotification.ClickNotification()
+                    );
+                    if (OpenNotification.NotificationIsAutoCancel(position) == true)
+                    {
+                        notification.Visibility = ViewStates.Invisible;
+                        titulo.Text = null;
+                        texto.Text = null;
+                        when.Text = null;
+                        notificationActions.RemoveAllViews();
+                    }
                 }
             }
             catch
@@ -150,6 +158,11 @@ namespace LiveDisplay.Fragments
             position = e.Position;
             using (OpenNotification openNotification = new OpenNotification(e.Position))
             {
+                ThreadPool.QueueUserWorkItem(method =>
+                {
+                    var notificationBigPicture = new BitmapDrawable(Resources, openNotification.GetBigPicture());
+                    WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = notificationBigPicture, OpacityLevel = 125, SecondsOfAttention = 5 });
+                });
                 titulo.Text = openNotification.GetTitle();
                 texto.Text = openNotification.GetText();
                 appName.Text = openNotification.GetAppName();
@@ -168,7 +181,6 @@ namespace LiveDisplay.Fragments
                         {
                             LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MatchParent, weight),
                             Text = openAction.GetTitle()
-
                         };
                         anActionButton.TransformationMethod = null;
                         anActionButton.SetTypeface(Typeface.Create("sans-serif-condensed", TypefaceStyle.Normal), TypefaceStyle.Normal);
@@ -184,17 +196,16 @@ namespace LiveDisplay.Fragments
                         anActionButton.SetBackgroundResource(outValue.ResourceId);
                         anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction.GetActionIcon(), null, null, null);
                         notificationActions.AddView(anActionButton);
-
-
                     };
-                    
                 }
             }
             if (notification.Visibility != ViewStates.Visible)
             {
                 notification.Visibility = ViewStates.Visible;
+                StartTimeout();
             }
-            StartTimeout();
+
+            NotificationClicked?.Invoke(null, EventArgs.Empty);
         }
 
         #endregion Events Implementation:

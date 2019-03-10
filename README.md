@@ -57,7 +57,7 @@ This Application shows the list of current notifications on a beautiful and cust
 
 ## Beta Testing
 
-* Beta testing is now available for anyone who wants to test my app and give feedback! Send me a e-mail for details!
+* Install the latest version from [Google Play!](https://play.google.com/store/apps/details?id=com.underground.livedisplay)
 
 ## Contributing
 

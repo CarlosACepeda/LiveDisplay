@@ -132,7 +132,6 @@ namespace LiveDisplay.Servicios.FloatingNotification
                             {
                                 LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MatchParent, weight),
                                 Text = openAction.GetTitle(),
-
                             };
                             anActionButton.SetTypeface(Typeface.Create("sans-serif-condensed", TypefaceStyle.Normal), TypefaceStyle.Normal);
                             anActionButton.SetMaxLines(1);
@@ -147,10 +146,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
                             anActionButton.SetBackgroundResource(outValue.ResourceId);
                             anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction.GetActionIcon(), null, null, null);
                             floatingNotificationActionsContainer.AddView(anActionButton);
-
-
                         };
-
                     }
                 }
 
@@ -167,7 +163,8 @@ namespace LiveDisplay.Servicios.FloatingNotification
 
         private void FloatingNotificationView_Click(object sender, EventArgs e)
         {
-            OpenNotification.ClickNotification(position);
+            using (OpenNotification openNotification = new OpenNotification(position))
+                openNotification.ClickNotification();
             floatingNotificationView.Visibility = ViewStates.Gone;
         }
 

@@ -78,9 +78,7 @@
       <Preference
         android:key="inactivetimesettings"
         android:title="@string/inactivetimesettings"
-        android:summary="@string/inactivetimesettingsdesc"
-        >
-        
+        android:summary="@string/inactivetimesettingsdesc">
       </Preference>
       <SwitchPreference
       android:key="turnonnewnotification?"

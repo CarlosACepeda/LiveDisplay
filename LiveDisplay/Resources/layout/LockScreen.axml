@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:a="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
     a:layout_width="match_parent"
     a:layout_height="match_parent">
     <!--This is a ImageView that holds the Wallpaper-->
@@ -17,7 +18,7 @@
         a:weightSum="100"
         a:gravity="bottom">
     <!--ClearAll button-->
-        <Button
+    <Button
             a:layout_weight="4"
             a:background="?android:selectableItemBackground"
             a:text="@string/clearallnotifications"
@@ -25,13 +26,14 @@
             a:layout_height="0dp"
             a:layout_gravity="right"
             a:gravity="right"
+			a:fontFamily="sans-serif-condensed-light"
             a:id="@+id/btnClearAllNotifications"
             a:textAllCaps="false"
             a:alpha="0.7" />
     <!--This linear layout contains the Framelayout used for containing Notification and Music Widgets, 
     and also the RecyclerView containing the notification list
     -->
-            <LinearLayout
+    <LinearLayout
                 a:layout_weight="76"
                 a:orientation="horizontal"
                 a:layout_width="match_parent"
@@ -49,8 +51,10 @@
                 a:overScrollMode="never"
                 a:layout_width="25dp"
                 a:layout_height="wrap_content"
-                a:layout_gravity="bottom" />
-        </LinearLayout>
+                a:layout_gravity="bottom"
+			/>
+
+     </LinearLayout>
     <!--This FrameLayout contains the clock and later the System icons which aren't available... yet.-->
         <FrameLayout
             a:layout_weight="15"
@@ -91,4 +95,17 @@
                 a:id="@+id/btnStartPhone" />
         </FrameLayout>
     </LinearLayout>
+	<LinearLayout
+        a:id="@+id/surfaceview"
+		a:background="@android:color/black"
+		a:alpha="0.7"
+	    a:visibility="gone"
+        a:gravity="center_vertical"
+		a:layout_width="match_parent"
+		a:layout_height="match_parent" >
+         <FrameLayout
+                a:layout_width="200dp"
+                a:layout_height="wrap_content"
+                a:id="@+id/FloatingNotificationPlaceholder" />
+	</LinearLayout>
 </FrameLayout>
