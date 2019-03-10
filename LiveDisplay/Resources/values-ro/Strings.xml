@@ -18,6 +18,7 @@
   <string name="showclock">Ascunde ceasul</string>
   <string name="testnotificationtext">Es Ține apăsat pe o notificare din listă pentru a o elimina</string>
   <string name="turnonnewnotification">Aprinde ecranul</string>
+  <string name="versionnumber">0.7.6</string>
   <string name="wallpaperblur">Blurare</string>
   <string name="wallpaperopacity">Opacitate</string>
   <string name="weatherwidget">Widget de Climă</string>

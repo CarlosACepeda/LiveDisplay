@@ -71,18 +71,15 @@ namespace LiveDisplay.Activities
                     BlurImage blurImage = new BlurImage(Application.Context);
                     blurImage.Load(bitmap).Intensity(savedblurlevel).Async(true);
                     Drawable drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
-                RunOnUiThread(() =>
-                {
-                    wallpaperPreview.Background = drawable;
-                    wallpaperPreview.Background.Alpha = savedOpacitylevel;
-                }
-                );
-                    
-
+                    RunOnUiThread(() =>
+                    {
+                        wallpaperPreview.Background = drawable;
+                        wallpaperPreview.Background.Alpha = savedOpacitylevel;
+                    }
+                    );
                 }
             }
             );
-
 
             blur.Progress = savedblurlevel;
             opacity.Progress = savedOpacitylevel;
@@ -101,17 +98,16 @@ namespace LiveDisplay.Activities
             wallpaperManager.ForgetLoadedWallpaper();
             ThreadPool.QueueUserWorkItem(m =>
             {
-            using (var backgroundcopy = (BitmapDrawable) wallpaperManager.Drawable)
+                using (var backgroundcopy = (BitmapDrawable)wallpaperManager.Drawable)
                 {
                     BlurImage blurImage = new BlurImage(Application.Context);
                     blurImage.Load(backgroundcopy.Bitmap).Intensity(e.SeekBar.Progress).Async(true);
                     drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
-                    RunOnUiThread(() => {
+                    RunOnUiThread(() =>
+                    {
                         var previousAlpha = wallpaperPreview.Background.Alpha;
                         wallpaperPreview.Background = drawable;
                         wallpaperPreview.Background.Alpha = previousAlpha;
-                        
-
                     });
                 }
             });

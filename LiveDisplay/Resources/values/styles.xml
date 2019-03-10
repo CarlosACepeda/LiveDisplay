@@ -11,7 +11,7 @@
     <item name="colorAccent">@color/colorAccent</item>
     <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
   </style>
-  
+
   <!--the following Style is for No action bar-->
   <style name="LiveDisplayTheme.NoActionBar">
     <item name="windowActionBar">false</item>

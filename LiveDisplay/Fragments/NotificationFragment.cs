@@ -18,6 +18,7 @@ namespace LiveDisplay.Fragments
     public class NotificationFragment : Fragment
     {
         public static event EventHandler NotificationClicked;
+
         private int position;
         private LinearLayout notificationActions;
         private TextView titulo;
@@ -160,14 +161,14 @@ namespace LiveDisplay.Fragments
                 ThreadPool.QueueUserWorkItem(method =>
                 {
                     var notificationBigPicture = new BitmapDrawable(Resources, openNotification.GetBigPicture());
-                    WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = notificationBigPicture, OpacityLevel = 125, SecondsOfAttention= 5 });
+                    WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = notificationBigPicture, OpacityLevel = 125, SecondsOfAttention = 5 });
                 });
                 titulo.Text = openNotification.GetTitle();
                 texto.Text = openNotification.GetText();
                 appName.Text = openNotification.GetAppName();
                 when.Text = openNotification.GetWhen();
                 notificationActions.RemoveAllViews();
-                
+
                 if (openNotification.NotificationHasActionButtons() == true)
                 {
                     var actions = openNotification.RetrieveActions();
@@ -180,7 +181,6 @@ namespace LiveDisplay.Fragments
                         {
                             LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MatchParent, weight),
                             Text = openAction.GetTitle()
-
                         };
                         anActionButton.TransformationMethod = null;
                         anActionButton.SetTypeface(Typeface.Create("sans-serif-condensed", TypefaceStyle.Normal), TypefaceStyle.Normal);
@@ -196,10 +196,7 @@ namespace LiveDisplay.Fragments
                         anActionButton.SetBackgroundResource(outValue.ResourceId);
                         anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction.GetActionIcon(), null, null, null);
                         notificationActions.AddView(anActionButton);
-
-
                     };
-                    
                 }
             }
             if (notification.Visibility != ViewStates.Visible)
@@ -207,7 +204,7 @@ namespace LiveDisplay.Fragments
                 notification.Visibility = ViewStates.Visible;
                 StartTimeout();
             }
-            
+
             NotificationClicked?.Invoke(null, EventArgs.Empty);
         }
 

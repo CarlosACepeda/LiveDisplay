@@ -78,10 +78,10 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             //if (Blacklist.IsAppBlacklisted(sbn.PackageName) == false)
             //{
-                statusBarNotifications.Add(sbn);
-                using (var h = new Handler(Looper.MainLooper))
-                    h.Post(() => { notificationAdapter.NotifyItemInserted(statusBarNotifications.Count); });
-                OnNotificationPosted();
+            statusBarNotifications.Add(sbn);
+            using (var h = new Handler(Looper.MainLooper))
+                h.Post(() => { notificationAdapter.NotifyItemInserted(statusBarNotifications.Count); });
+            OnNotificationPosted();
             //}
             //else
             //{
@@ -168,7 +168,7 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             NotificationPosted?.Invoke(this, new NotificationPostedEventArgs()
             {
-                ShouldCauseWakeUp = true 
+                ShouldCauseWakeUp = true
             });
         }
 

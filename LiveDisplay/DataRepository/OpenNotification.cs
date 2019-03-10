@@ -3,8 +3,6 @@ using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Util;
-using Android.Views;
-using Android.Widget;
 using LiveDisplay.Factories;
 using LiveDisplay.Misc;
 using System;
@@ -70,7 +68,6 @@ namespace LiveDisplay.Servicios.Notificaciones
                         }
                     }
                 }
-
             }
             catch
             {
@@ -90,7 +87,6 @@ namespace LiveDisplay.Servicios.Notificaciones
                 return true;
             }
             return false;
-            
         }
 
         public bool NotificationHasActionButtons()
@@ -100,7 +96,6 @@ namespace LiveDisplay.Servicios.Notificaciones
                 return true;
             }
             return false;
-            
         }
 
         internal string GetWhen()
@@ -134,7 +129,7 @@ namespace LiveDisplay.Servicios.Notificaciones
         }
 
         internal Bitmap GetBigPicture()
-        {   
+        {
             return CatcherHelper.statusBarNotifications[position].Notification.Extras.Get(Notification.ExtraPicture) as Bitmap;
         }
 

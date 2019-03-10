@@ -2,7 +2,6 @@
 using Android.Content;
 using Android.Graphics;
 using Android.Graphics.Drawables;
-using Android.Hardware;
 using Android.Media;
 using Android.Media.Session;
 using Android.OS;
@@ -14,7 +13,6 @@ using Android.Views;
 using Android.Views.Animations;
 using Android.Widget;
 using Com.JackAndPhantom;
-using LiveDisplay.Activities;
 using LiveDisplay.Fragments;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
@@ -28,7 +26,7 @@ using System.Threading;
 
 namespace LiveDisplay
 {
-    [Activity(Label = "LockScreen", Theme = "@style/LiveDisplayThemeDark", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, TaskAffinity ="livedisplay.lockscreen", LaunchMode = Android.Content.PM.LaunchMode.SingleInstance, ExcludeFromRecents = true)]
+    [Activity(Label = "LockScreen", Theme = "@style/LiveDisplayThemeDark", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, TaskAffinity = "livedisplay.lockscreen", LaunchMode = Android.Content.PM.LaunchMode.SingleInstance, ExcludeFromRecents = true)]
     public class LockScreenActivity : Activity
     {
         private RecyclerView recycler;
@@ -63,7 +61,7 @@ namespace LiveDisplay
                     canDrawOverlays = Checkers.ThisAppCanDrawOverlays();
                 }
 
-                if (Checkers.IsNotificationListenerEnabled() == false || canDrawOverlays == false || Checkers.IsThisAppADeviceAdministrator()==false)
+                if (Checkers.IsNotificationListenerEnabled() == false || canDrawOverlays == false || Checkers.IsThisAppADeviceAdministrator() == false)
                 {
                     RunOnUiThread(() =>
                     Toast.MakeText(Application.Context, "You dont have the required permissions", ToastLength.Long).Show()
@@ -310,10 +308,12 @@ namespace LiveDisplay
                 ThreadPool.QueueUserWorkItem(m =>
                 {
                     Thread.Sleep(300);
-                   RunOnUiThread(()=> AddFlags()); });
+                    RunOnUiThread(() => AddFlags());
+                });
             }
             base.OnWindowFocusChanged(hasFocus);
         }
+
         //It simply means that a Touch has been registered, no matter where, it was on the lockscreen.
         //used to detect if the user is interacting with the lockscreen.
         public override void OnUserInteraction()
@@ -328,7 +328,7 @@ namespace LiveDisplay
         {
             if (e.ThereAreNotifications)
             {
-                if(clearAll!= null)
+                if (clearAll != null)
                     clearAll.Visibility = ViewStates.Visible;
             }
             else
@@ -376,12 +376,12 @@ namespace LiveDisplay
 
         private void StartCamera_Click(object sender, EventArgs e)
         {
-            
             using (Intent intent = new Intent(MediaStore.IntentActionStillImageCamera))
             {
                 StartActivity(intent);
             }
         }
+
         private void StartDialer_Click(object sender, EventArgs e)
         {
             using (Intent intent = new Intent(Intent.ActionDial))
@@ -389,6 +389,7 @@ namespace LiveDisplay
                 StartActivity(intent);
             }
         }
+
         private void LoadConfiguration()
         {
             //Load configurations based on User configs.
@@ -490,7 +491,6 @@ namespace LiveDisplay
 
         private void CheckIfMusicIsPlaying()
         {
-
             if (MusicController.MusicStatus == PlaybackStateCode.Playing || MusicControllerKitkat.MusicStatus == RemoteControlPlayState.Playing)
             {
                 StartMusicController();
@@ -530,7 +530,7 @@ namespace LiveDisplay
                 }
                 else
                 {
-                    surfaceView.Visibility= ViewStates.Visible;
+                    surfaceView.Visibility = ViewStates.Visible;
                 }
             }
         }

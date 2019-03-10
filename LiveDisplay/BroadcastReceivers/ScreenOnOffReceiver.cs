@@ -38,7 +38,7 @@ namespace LiveDisplay.BroadcastReceivers
                     using (Intent lockScreenIntent = new Intent(Application.Context, typeof(LockScreenActivity)))
                     {
                         lockScreenIntent.AddFlags(ActivityFlags.NewDocument);
-                        
+
                         if (IsScreenOn == false)
                         {
                             PendingIntent pendingIntent = PendingIntent.GetActivity(Application.Context, 0, lockScreenIntent, 0);

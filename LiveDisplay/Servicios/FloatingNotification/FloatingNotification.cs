@@ -39,11 +39,11 @@ namespace LiveDisplay.Servicios.FloatingNotification
         public override void OnCreate()
         {
             base.OnCreate();
-            WindowManagerTypes layoutType = WindowManagerTypes.SystemOverlay;
+            WindowManagerTypes layoutType = WindowManagerTypes.Phone;
 
             if (Build.VERSION.SdkInt > BuildVersionCodes.NMr1) //Nougat 7.1
             {
-                layoutType = WindowManagerTypes.SystemOverlay; //Android Oreo does not allow to add windows of WindowManagerTypes.Phone
+                layoutType = WindowManagerTypes.ApplicationOverlay; //Android Oreo does not allow to add windows of WindowManagerTypes.Phone
             }
 
             windowManager = GetSystemService(WindowService).JavaCast<IWindowManager>();
@@ -132,7 +132,6 @@ namespace LiveDisplay.Servicios.FloatingNotification
                             {
                                 LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MatchParent, weight),
                                 Text = openAction.GetTitle(),
-
                             };
                             anActionButton.SetTypeface(Typeface.Create("sans-serif-condensed", TypefaceStyle.Normal), TypefaceStyle.Normal);
                             anActionButton.SetMaxLines(1);
@@ -147,10 +146,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
                             anActionButton.SetBackgroundResource(outValue.ResourceId);
                             anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction.GetActionIcon(), null, null, null);
                             floatingNotificationActionsContainer.AddView(anActionButton);
-
-
                         };
-
                     }
                 }
 
@@ -167,8 +163,8 @@ namespace LiveDisplay.Servicios.FloatingNotification
 
         private void FloatingNotificationView_Click(object sender, EventArgs e)
         {
-            using(OpenNotification openNotification= new OpenNotification(position))
-            openNotification.ClickNotification();
+            using (OpenNotification openNotification = new OpenNotification(position))
+                openNotification.ClickNotification();
             floatingNotificationView.Visibility = ViewStates.Gone;
         }
 

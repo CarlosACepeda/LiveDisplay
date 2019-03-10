@@ -49,13 +49,11 @@ namespace LiveDisplay.Activities
             trytogetweather = FindViewById<Button>(Resource.Id.trytogetweather);
             trytogetweather.Click += Trytogetweather_Click;
 
-
             temperature = FindViewById<TextView>(Resource.Id.temperature);
             minimumTemperature = FindViewById<TextView>(Resource.Id.minimumtemperature);
             maximumTemperature = FindViewById<TextView>(Resource.Id.maximumtemperature);
             citytext = FindViewById<TextView>(Resource.Id.city);
             humidity = FindViewById<TextView>(Resource.Id.humidity);
-            
 
             LoadConfiguration();
         }
@@ -75,8 +73,6 @@ namespace LiveDisplay.Activities
             {
                 temperatureSuffix = "°f";
             }
-
-            
 
             ThreadPool.QueueUserWorkItem(async m =>
             {

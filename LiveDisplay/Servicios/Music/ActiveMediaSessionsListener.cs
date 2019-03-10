@@ -36,7 +36,6 @@ namespace LiveDisplay.Servicios.Music
                     musicController.Dispose();
                     Log.Info("LiveDisplay", "Couldn't register a mediacallback");
                 }
-                
             }
             else if (mediaController != null && controllers.Count == 0)
             {

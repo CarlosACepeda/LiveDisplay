@@ -1,7 +1,6 @@
 ﻿using Android.App;
 using Android.OS;
 using Android.Support.V7.App;
-using Android.Widget;
 using LiveDisplay.Fragments;
 
 namespace LiveDisplay.Activities
@@ -15,7 +14,6 @@ namespace LiveDisplay.Activities
         {
             base.OnCreate(savedInstanceState);
 
-
             // Create your application here
             SetContentView(Resource.Layout.Settings);
             using (toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar))
@@ -23,14 +21,12 @@ namespace LiveDisplay.Activities
                 SetSupportActionBar(toolbar);
                 SupportActionBar.SetDefaultDisplayHomeAsUpEnabled(true);
             }
-
-
         }
+
         protected override void OnPostCreate(Bundle savedInstanceState)
         {
             base.OnPostCreate(savedInstanceState);
             FragmentManager.BeginTransaction().Replace(Resource.Id.content, new PreferencesFragmentCompat()).Commit();
-
         }
 
         protected override void OnDestroy()

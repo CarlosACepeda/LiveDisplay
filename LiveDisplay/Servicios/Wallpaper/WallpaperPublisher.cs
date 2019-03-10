@@ -1,5 +1,4 @@
-﻿using Android.Graphics.Drawables;
-using System;
+﻿using System;
 
 namespace LiveDisplay.Servicios.Wallpaper
 {

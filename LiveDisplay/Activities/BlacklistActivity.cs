@@ -35,7 +35,6 @@ namespace LiveDisplay.Activities
                 RunOnUiThread(() => blacklistRecyclerView.SetAdapter(new AppsToBeBlacklistedAdapter(applist)));
             }
             );
-
         }
     }
 }

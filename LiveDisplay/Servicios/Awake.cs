@@ -91,8 +91,6 @@ namespace LiveDisplay.Servicios
 
             sensorManager.RegisterListener(this, sensor, SensorDelay.Normal);
 
-
-
             return StartCommandResult.Sticky;
         }
 

@@ -74,7 +74,7 @@
   <string name="turnonnewnotification_desc">Turn on screen if a new notification incomes</string>
   <string name="turnonusermovement">Turn on screen on device pick up</string>
   <string name="version">Version</string>
-  <string name="versionnumber">0.7.5</string>
+  <string name="versionnumber">0.7.6</string>
   <string name="wallpaperblur">Blur</string>
   <string name="wallpaperopacity">Opacity</string>
   <string name="weatherwidget">Weather Widget</string>

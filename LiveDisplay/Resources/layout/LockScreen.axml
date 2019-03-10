@@ -18,7 +18,7 @@
         a:weightSum="100"
         a:gravity="bottom">
     <!--ClearAll button-->
-        <Button
+    <Button
             a:layout_weight="4"
             a:background="?android:selectableItemBackground"
             a:text="@string/clearallnotifications"
@@ -33,7 +33,7 @@
     <!--This linear layout contains the Framelayout used for containing Notification and Music Widgets, 
     and also the RecyclerView containing the notification list
     -->
-            <LinearLayout
+    <LinearLayout
                 a:layout_weight="76"
                 a:orientation="horizontal"
                 a:layout_width="match_parent"
@@ -53,7 +53,8 @@
                 a:layout_height="wrap_content"
                 a:layout_gravity="bottom"
 			/>
-        </LinearLayout>
+
+     </LinearLayout>
     <!--This FrameLayout contains the clock and later the System icons which aren't available... yet.-->
         <FrameLayout
             a:layout_weight="15"

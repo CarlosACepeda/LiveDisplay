@@ -243,7 +243,6 @@ namespace LiveDisplay.Activities
         {
             using (Android.Support.V7.App.AlertDialog.Builder builder = new Android.Support.V7.App.AlertDialog.Builder(this))
             {
-                
                 builder.SetMessage(Resource.String.dialogfordeviceaccessdescription);
                 builder.SetPositiveButton(Resource.String.dialogallowbutton, new EventHandler<DialogClickEventArgs>(OnDialogPositiveButtonEventArgs));
                 builder.SetNegativeButton(Resource.String.dialogcancelbutton, new EventHandler<DialogClickEventArgs>(OnDialogNegativeButtonEventArgs));
