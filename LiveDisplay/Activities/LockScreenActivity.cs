@@ -41,7 +41,6 @@ namespace LiveDisplay
         private MusicFragment musicFragment;
         private ClockFragment clockFragment;
         private WeatherFragment weatherFragment;
-        private bool thereAreNotifications = false;
         private Button startCamera;
         private Button startDialer;
         private LinearLayout lockscreen; //The root linear layout, used to implement double tap to sleep.
@@ -327,27 +326,15 @@ namespace LiveDisplay
 
         private void CatcherHelper_NotificationListSizeChanged(object sender, NotificationListSizeChangedEventArgs e)
         {
-            if (e.ThereAreNotifications == true)
+            if (e.ThereAreNotifications)
             {
-                try
-                {
+                if(clearAll!= null)
                     clearAll.Visibility = ViewStates.Visible;
-                }
-                catch
-                {
-                    thereAreNotifications = e.ThereAreNotifications;
-                }
             }
             else
             {
-                try
-                {
+                if (clearAll != null)
                     clearAll.Visibility = ViewStates.Invisible;
-                }
-                catch
-                {
-                    thereAreNotifications = e.ThereAreNotifications;
-                }
             }
         }
 
@@ -503,32 +490,33 @@ namespace LiveDisplay
 
         private void CheckIfMusicIsPlaying()
         {
+
             if (MusicController.MusicStatus == PlaybackStateCode.Playing || MusicControllerKitkat.MusicStatus == RemoteControlPlayState.Playing)
             {
                 StartMusicController();
-                //StartFloatingNotificationService();
-                using (var surfaceView = FindViewById<LinearLayout>(Resource.Id.surfaceview))
-                {
-                    surfaceView.Visibility = ViewStates.Visible;
-                    using (FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction())
-                    {
-                        fragmentTransaction.Replace(Resource.Id.FloatingNotificationPlaceholder, new NotificationFragment());
-                        fragmentTransaction.SetCustomAnimations(Resource.Animation.fade_in, Resource.Animation.fade_out);
-                        fragmentTransaction.DisallowAddToBackStack();
-                        fragmentTransaction.Commit();
-                        NotificationFragment.NotificationClicked += NotificationFragment_NotificationClicked;
-                    }
-                }
+                StartFloatingNotificationService();
+                //using (var surfaceView = FindViewById<LinearLayout>(Resource.Id.surfaceview))
+                //{
+                //    surfaceView.Visibility = ViewStates.Visible;
+                //    using (FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction())
+                //    {
+                //        fragmentTransaction.Replace(Resource.Id.FloatingNotificationPlaceholder, new NotificationFragment());
+                //        fragmentTransaction.SetCustomAnimations(Resource.Animation.fade_in, Resource.Animation.fade_out);
+                //        fragmentTransaction.DisallowAddToBackStack();
+                //        fragmentTransaction.Commit();
+                //        NotificationFragment.NotificationClicked += NotificationFragment_NotificationClicked;
+                //    }
+                //}
             }
             else
             {
                 StopMusicController();
-                //StopFloatingNotificationService();
-                using (var surfaceView = FindViewById<LinearLayout>(Resource.Id.surfaceview))
-                {
-                    surfaceView.Visibility = ViewStates.Gone;
-                }
-                NotificationFragment.NotificationClicked-= NotificationFragment_NotificationClicked;
+                StopFloatingNotificationService();
+                //using (var surfaceView = FindViewById<LinearLayout>(Resource.Id.surfaceview))
+                //{
+                //    surfaceView.Visibility = ViewStates.Gone;
+                //}
+                //NotificationFragment.NotificationClicked-= NotificationFragment_NotificationClicked;
             }
         }
 

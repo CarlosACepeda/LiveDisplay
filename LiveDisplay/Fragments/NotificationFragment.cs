@@ -208,10 +208,6 @@ namespace LiveDisplay.Fragments
                 StartTimeout();
             }
             
-            else
-            {
-                notification.Visibility = ViewStates.Invisible;
-            }
             NotificationClicked?.Invoke(null, EventArgs.Empty);
         }
 

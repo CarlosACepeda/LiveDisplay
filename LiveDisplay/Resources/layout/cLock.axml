@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:a="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
     a:layout_width="match_parent"
     a:layout_height="match_parent"
     a:gravity="bottom">
@@ -9,7 +10,8 @@
         a:layout_width="wrap_content"
         a:layout_height="wrap_content"
         a:textSize="45dp"
-        a:typeface="sans"
+        a:fontFamily="sans-serif-condensed-light"
+		tools:visibility="visible"
         a:gravity="bottom" />
     <ImageView
         a:id="@+id/batteryIcon"
@@ -21,11 +23,13 @@
         a:id="@+id/batteryLevel"
         a:layout_alignBottom="@id/batteryIcon"
         a:layout_toRightOf="@id/batteryIcon"
+		a:fontFamily="sans-serif-condensed-light"
         a:layout_width="wrap_content"
         a:layout_height="wrap_content" />
     <TextView
         a:layout_width="match_parent"
         a:layout_below="@id/clockLock"
         a:layout_height="wrap_content"
+		a:fontFamily="sans-serif-condensed-light"
         a:id="@+id/txtFechaLock" />
 </RelativeLayout>

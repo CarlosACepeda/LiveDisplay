@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:a="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
     a:layout_width="match_parent"
     a:layout_height="match_parent">
     <!--This is a ImageView that holds the Wallpaper-->
@@ -25,6 +26,7 @@
             a:layout_height="0dp"
             a:layout_gravity="right"
             a:gravity="right"
+			a:fontFamily="sans-serif-condensed-light"
             a:id="@+id/btnClearAllNotifications"
             a:textAllCaps="false"
             a:alpha="0.7" />
@@ -96,7 +98,7 @@
         a:id="@+id/surfaceview"
 		a:background="@android:color/black"
 		a:alpha="0.7"
-	    a:visibility="visible"
+	    a:visibility="gone"
         a:gravity="center_vertical"
 		a:layout_width="match_parent"
 		a:layout_height="match_parent" >

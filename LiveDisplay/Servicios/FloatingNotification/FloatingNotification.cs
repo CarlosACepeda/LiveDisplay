@@ -39,11 +39,11 @@ namespace LiveDisplay.Servicios.FloatingNotification
         public override void OnCreate()
         {
             base.OnCreate();
-            WindowManagerTypes layoutType = WindowManagerTypes.Phone;
+            WindowManagerTypes layoutType = WindowManagerTypes.SystemOverlay;
 
             if (Build.VERSION.SdkInt > BuildVersionCodes.NMr1) //Nougat 7.1
             {
-                layoutType = WindowManagerTypes.ApplicationOverlay; //Android Oreo does not allow to add windows of WindowManagerTypes.Phone
+                layoutType = WindowManagerTypes.SystemOverlay; //Android Oreo does not allow to add windows of WindowManagerTypes.Phone
             }
 
             windowManager = GetSystemService(WindowService).JavaCast<IWindowManager>();
