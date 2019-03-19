@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="about">About...</string>
-  <string name="aboutinfo">This app is developed with &lt;3 by Carlos Cepeda, you can support me by donating me! i hope youre enjoying this app as much as i developed it </string>
+  <string name="aboutinfo">Developed with love by UndergroundDev(Carlos Cepeda)</string>
   <string name="aboutinfotitle">About this application:</string>
   <string name="accessesstatusdisabled">Accesses are disabled</string>
   <string name="accessesstatusenabled">Accesses are enabled!</string>

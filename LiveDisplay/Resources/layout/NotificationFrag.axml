@@ -9,6 +9,19 @@
     android:minHeight="70dp"
     android:background="?android:selectableItemBackground"
     android:visibility="invisible">
+	<LinearLayout
+		android:layout_gravity="right"
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content">
+		<ImageButton
+			android:background="?android:selectableItemBackground"
+			android:maxWidth="15dp"
+			android:maxHeight="15dp"
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:src="@drawable/baseline_close_white_18"
+			/>
+	</LinearLayout>
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
