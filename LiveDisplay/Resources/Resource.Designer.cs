@@ -2728,8 +2728,8 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f0900cb
 			public const int action_divider = 2131296459;
 			
-			// aapt resource value: 0x7f0900f6
-			public const int action_help = 2131296502;
+			// aapt resource value: 0x7f0900f7
+			public const int action_help = 2131296503;
 			
 			// aapt resource value: 0x7f0900c5
 			public const int action_image = 2131296453;
@@ -2749,11 +2749,11 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f09005c
 			public const int action_mode_close_button = 2131296348;
 			
-			// aapt resource value: 0x7f0900f5
-			public const int action_sendtestnotification = 2131296501;
+			// aapt resource value: 0x7f0900f6
+			public const int action_sendtestnotification = 2131296502;
 			
-			// aapt resource value: 0x7f0900f4
-			public const int action_settings = 2131296500;
+			// aapt resource value: 0x7f0900f5
+			public const int action_settings = 2131296501;
 			
 			// aapt resource value: 0x7f0900c6
 			public const int action_text = 2131296454;
@@ -2845,11 +2845,11 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f0900d0
 			public const int chronometer = 2131296464;
 			
-			// aapt resource value: 0x7f0900ed
-			public const int city = 2131296493;
+			// aapt resource value: 0x7f0900ee
+			public const int city = 2131296494;
 			
-			// aapt resource value: 0x7f0900ef
-			public const int cityedit = 2131296495;
+			// aapt resource value: 0x7f0900f0
+			public const int cityedit = 2131296496;
 			
 			// aapt resource value: 0x7f09004e
 			public const int clip_horizontal = 2131296334;
@@ -2860,6 +2860,9 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f090090
 			public const int clockLock = 2131296400;
 			
+			// aapt resource value: 0x7f0900da
+			public const int closenotificationbutton = 2131296474;
+			
 			// aapt resource value: 0x7f090039
 			public const int collapseActionView = 2131296313;
 			
@@ -2869,8 +2872,8 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f0900a8
 			public const int contenedorPrincipal = 2131296424;
 			
-			// aapt resource value: 0x7f0900e8
-			public const int content = 2131296488;
+			// aapt resource value: 0x7f0900e9
+			public const int content = 2131296489;
 			
 			// aapt resource value: 0x7f090066
 			public const int contentPanel = 2131296358;
@@ -2992,14 +2995,14 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f090021
 			public const int homeAsUp = 2131296289;
 			
-			// aapt resource value: 0x7f0900ee
-			public const int humidity = 2131296494;
+			// aapt resource value: 0x7f0900ef
+			public const int humidity = 2131296495;
 			
 			// aapt resource value: 0x7f090062
 			public const int icon = 2131296354;
 			
-			// aapt resource value: 0x7f0900e1
-			public const int icon_frame = 2131296481;
+			// aapt resource value: 0x7f0900e2
+			public const int icon_frame = 2131296482;
 			
 			// aapt resource value: 0x7f0900d5
 			public const int icon_group = 2131296469;
@@ -3013,8 +3016,8 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f0900d1
 			public const int info = 2131296465;
 			
-			// aapt resource value: 0x7f0900dd
-			public const int inlineNotificationContainer = 2131296477;
+			// aapt resource value: 0x7f0900de
+			public const int inlineNotificationContainer = 2131296478;
 			
 			// aapt resource value: 0x7f090059
 			public const int italic = 2131296345;
@@ -3022,8 +3025,8 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f090000
 			public const int item_touch_helper_previous_elevation = 2131296256;
 			
-			// aapt resource value: 0x7f0900e0
-			public const int ivNotificationIcon = 2131296480;
+			// aapt resource value: 0x7f0900e1
+			public const int ivNotificationIcon = 2131296481;
 			
 			// aapt resource value: 0x7f090095
 			public const int largeLabel = 2131296405;
@@ -3037,8 +3040,8 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f090018
 			public const int line3 = 2131296280;
 			
-			// aapt resource value: 0x7f0900e3
-			public const int list = 2131296483;
+			// aapt resource value: 0x7f0900e4
+			public const int list = 2131296484;
 			
 			// aapt resource value: 0x7f09001d
 			public const int listMode = 2131296285;
@@ -3052,11 +3055,11 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f0900b2
 			public const int mainToolbar = 2131296434;
 			
-			// aapt resource value: 0x7f0900f3
-			public const int masked = 2131296499;
+			// aapt resource value: 0x7f0900f4
+			public const int masked = 2131296500;
 			
-			// aapt resource value: 0x7f0900ec
-			public const int maximumtemperature = 2131296492;
+			// aapt resource value: 0x7f0900ed
+			public const int maximumtemperature = 2131296493;
 			
 			// aapt resource value: 0x7f0900c0
 			public const int mediaControls = 2131296448;
@@ -3064,8 +3067,8 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f0900ca
 			public const int media_actions = 2131296458;
 			
-			// aapt resource value: 0x7f0900e9
-			public const int message = 2131296489;
+			// aapt resource value: 0x7f0900ea
+			public const int message = 2131296490;
 			
 			// aapt resource value: 0x7f090031
 			public const int middle = 2131296305;
@@ -3073,8 +3076,8 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f090053
 			public const int mini = 2131296339;
 			
-			// aapt resource value: 0x7f0900eb
-			public const int minimumtemperature = 2131296491;
+			// aapt resource value: 0x7f0900ec
+			public const int minimumtemperature = 2131296492;
 			
 			// aapt resource value: 0x7f090028
 			public const int multiply = 2131296296;
@@ -3097,8 +3100,8 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f0900b4
 			public const int notificationAccessCheckbox = 2131296436;
 			
-			// aapt resource value: 0x7f0900dc
-			public const int notificationActions = 2131296476;
+			// aapt resource value: 0x7f0900dd
+			public const int notificationActions = 2131296477;
 			
 			// aapt resource value: 0x7f0900d3
 			public const int notification_background = 2131296467;
@@ -3199,11 +3202,11 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f090089
 			public const int search_voice_btn = 2131296393;
 			
-			// aapt resource value: 0x7f0900e4
-			public const int seekbar = 2131296484;
-			
 			// aapt resource value: 0x7f0900e5
-			public const int seekbar_value = 2131296485;
+			public const int seekbar = 2131296485;
+			
+			// aapt resource value: 0x7f0900e6
+			public const int seekbar_value = 2131296486;
 			
 			// aapt resource value: 0x7f0900bf
 			public const int seeksongTime = 2131296447;
@@ -3211,8 +3214,8 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f09008a
 			public const int select_dialog_listview = 2131296394;
 			
-			// aapt resource value: 0x7f0900df
-			public const int sendInlineResponseButton = 2131296479;
+			// aapt resource value: 0x7f0900e0
+			public const int sendInlineResponseButton = 2131296480;
 			
 			// aapt resource value: 0x7f090074
 			public const int shortcut = 2131296372;
@@ -3241,8 +3244,8 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f090064
 			public const int spacer = 2131296356;
 			
-			// aapt resource value: 0x7f0900e2
-			public const int spinner = 2131296482;
+			// aapt resource value: 0x7f0900e3
+			public const int spinner = 2131296483;
 			
 			// aapt resource value: 0x7f090008
 			public const int split_action_bar = 2131296264;
@@ -3271,8 +3274,8 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f0900b0
 			public const int surfaceview = 2131296432;
 			
-			// aapt resource value: 0x7f0900e6
-			public const int switchWidget = 2131296486;
+			// aapt resource value: 0x7f0900e7
+			public const int switchWidget = 2131296487;
 			
 			// aapt resource value: 0x7f09001f
 			public const int tabMode = 2131296287;
@@ -3280,8 +3283,8 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f090019
 			public const int tag_transition_group = 2131296281;
 			
-			// aapt resource value: 0x7f0900ea
-			public const int temperature = 2131296490;
+			// aapt resource value: 0x7f0900eb
+			public const int temperature = 2131296491;
 			
 			// aapt resource value: 0x7f09001a
 			public const int text = 2131296282;
@@ -3316,8 +3319,8 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f09006f
 			public const int title_template = 2131296367;
 			
-			// aapt resource value: 0x7f0900e7
-			public const int toolbar = 2131296487;
+			// aapt resource value: 0x7f0900e8
+			public const int toolbar = 2131296488;
 			
 			// aapt resource value: 0x7f09003e
 			public const int top = 2131296318;
@@ -3343,8 +3346,8 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f090013
 			public const int transition_transform = 2131296275;
 			
-			// aapt resource value: 0x7f0900f1
-			public const int trytogetweather = 2131296497;
+			// aapt resource value: 0x7f0900f2
+			public const int trytogetweather = 2131296498;
 			
 			// aapt resource value: 0x7f0900be
 			public const int tvAlbumName = 2131296446;
@@ -3355,17 +3358,17 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f0900bd
 			public const int tvArtistName = 2131296445;
 			
-			// aapt resource value: 0x7f0900de
-			public const int tvInlineText = 2131296478;
+			// aapt resource value: 0x7f0900df
+			public const int tvInlineText = 2131296479;
 			
 			// aapt resource value: 0x7f0900bc
 			public const int tvSongName = 2131296444;
 			
-			// aapt resource value: 0x7f0900db
-			public const int tvTexto = 2131296475;
+			// aapt resource value: 0x7f0900dc
+			public const int tvTexto = 2131296476;
 			
-			// aapt resource value: 0x7f0900da
-			public const int tvTitulo = 2131296474;
+			// aapt resource value: 0x7f0900db
+			public const int tvTitulo = 2131296475;
 			
 			// aapt resource value: 0x7f0900d9
 			public const int tvWhen = 2131296473;
@@ -3385,14 +3388,14 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f090026
 			public const int useLogo = 2131296294;
 			
-			// aapt resource value: 0x7f0900f0
-			public const int useimperialsystem = 2131296496;
+			// aapt resource value: 0x7f0900f1
+			public const int useimperialsystem = 2131296497;
 			
 			// aapt resource value: 0x7f090016
 			public const int view_offset_helper = 2131296278;
 			
-			// aapt resource value: 0x7f0900f2
-			public const int visible = 2131296498;
+			// aapt resource value: 0x7f0900f3
+			public const int visible = 2131296499;
 			
 			// aapt resource value: 0x7f0900a7
 			public const int wallpaper = 2131296423;
