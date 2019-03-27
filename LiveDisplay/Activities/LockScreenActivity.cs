@@ -292,7 +292,7 @@ namespace LiveDisplay
             clockFragment.Dispose();
             weatherFragment.Dispose();
 
-            StopFloatingNotificationService();
+            //StopFloatingNotificationService();
         }
 
         public override void OnBackPressed()
