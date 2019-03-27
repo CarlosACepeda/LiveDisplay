@@ -14,8 +14,7 @@ namespace LiveDisplay.Servicios
         {
             PackageManager packageManager = Application.Context.PackageManager;
 
-            var lol = packageManager.GetInstalledPackages(0);
-            return lol.ToList();
+            return packageManager.GetInstalledPackages(0).ToList();
         }
 
         public static void ToggleAppBlacklistState(string whichApp, bool isBlacklisted)
@@ -25,11 +24,12 @@ namespace LiveDisplay.Servicios
             configurationManager.SaveAValue(whichApp, isBlacklisted);
         }
 
-        public static bool IsAppBlacklisted(string whichApp)
+        public static LevelsOfAppBlocking IsAppBlacklisted(string whichApp)
         {
             ISharedPreferences sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
             ConfigurationManager configurationManager = new ConfigurationManager(sharedPreferences);
-            return configurationManager.RetrieveAValue(whichApp);
+            var lol= (LevelsOfAppBlocking)configurationManager.RetrieveAValue(whichApp, 0);
+            return lol;
         }
     }
 

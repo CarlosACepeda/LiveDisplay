@@ -34,6 +34,7 @@ namespace LiveDisplay.Servicios
 
         public override IBinder OnBind(Intent intent)
         {
+            
             //Workaround for Kitkat to Retrieve Notifications.
             if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
             {
@@ -214,18 +215,6 @@ namespace LiveDisplay.Servicios
             Log.Info("Livedisplay", "TransportControl update" + transportControlFlags);
         }
 
-        private void ToggleRemoteControllerKitkat()
-        {
-            using (ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context)))
-            {
-                if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetEnabled) == true)
-                {
-                }
-            }
-        }
 
-        private void ToggleActiveSessionsListenerLollipop()
-        {
-        }
     }
 }

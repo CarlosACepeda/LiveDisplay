@@ -76,25 +76,26 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         private void InsertNotification(StatusBarNotification sbn)
         {
-            //if (Blacklist.IsAppBlacklisted(sbn.PackageName) == false)
-            //{
-            statusBarNotifications.Add(sbn);
+            var blockingstatus = Blacklist.IsAppBlacklisted(sbn.PackageName);
+            if (!blockingstatus.HasFlag(LevelsOfAppBlocking.Blacklisted))
+            {
+                statusBarNotifications.Add(sbn);
             using (var h = new Handler(Looper.MainLooper))
                 h.Post(() => { notificationAdapter.NotifyItemInserted(statusBarNotifications.Count); });
-            OnNotificationPosted();
-            //}
-            //else
-            //{
-            //    var notificationSlave = NotificationSlave.NotificationSlaveInstance();
-            //    if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
-            //    {
-            //        notificationSlave.CancelNotification(sbn.Key);
-            //    }
-            //    else
-            //    {
-            //        notificationSlave.CancelNotification(sbn.PackageName, sbn.Tag, sbn.Id);
-            //    }
-            //}
+            OnNotificationPosted(blockingstatus.HasFlag(LevelsOfAppBlocking.None));
+            }
+            else
+            {
+                var notificationSlave = NotificationSlave.NotificationSlaveInstance();
+                if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
+                {
+                    notificationSlave.CancelNotification(sbn.Key);
+                }
+                else
+                {
+                    notificationSlave.CancelNotification(sbn.PackageName, sbn.Tag, sbn.Id);
+                }
+            }
         }
 
         private void OnNotificationUpdated(int position)
@@ -103,7 +104,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             {
                 Position = position
             }
-                );
+            );
         }
 
         private bool UpdateNotification(StatusBarNotification sbn)
@@ -164,7 +165,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             NotificationListSizeChanged?.Invoke(this, e);
         }
 
-        private void OnNotificationPosted()
+        private void OnNotificationPosted(bool shouldCauseWakeup)
         {
             NotificationPosted?.Invoke(this, new NotificationPostedEventArgs()
             {

@@ -114,7 +114,6 @@ namespace LiveDisplay.Fragments
             titulo.Dispose();
             when.Dispose();
             appName.Dispose();
-            notification.Dispose();
             closenotificationbutton.Dispose();
             base.OnDestroy();
         }
@@ -261,7 +260,7 @@ namespace LiveDisplay.Fragments
         {
             //This action is: 'Hide the notification, and set the timeoutStarted as finished(false)
             //because this action will be invoked only when the timeout has finished.
-            Action hideNotification = () => { notification.Visibility = ViewStates.Gone; timeoutStarted = false; };
+            Action hideNotification = () => { if(notification!=null) notification.Visibility = ViewStates.Gone; timeoutStarted = false; };
             //If the timeout has started, then cancel the action, and start again.
             if (timeoutStarted == true)
             {
