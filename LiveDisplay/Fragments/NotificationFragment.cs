@@ -9,6 +9,7 @@ using LiveDisplay.Adapters;
 using LiveDisplay.Servicios;
 using LiveDisplay.Servicios.Notificaciones;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
+using LiveDisplay.Servicios.Notificaciones.NotificationStyle;
 using LiveDisplay.Servicios.Wallpaper;
 using System;
 using System.Threading;
@@ -28,6 +29,7 @@ namespace LiveDisplay.Fragments
         private LinearLayout notification;
         private ImageButton closenotificationbutton;
         private bool timeoutStarted = false;
+        string currentNotificationStyle = string.Empty;
 
         #region Lifecycle events
 
@@ -142,7 +144,7 @@ namespace LiveDisplay.Fragments
                     Activity.RunOnUiThread(() =>
                     openNotification.ClickNotification()
                     );
-                    if (OpenNotification.NotificationIsAutoCancel(position) == true)
+                    if (OpenNotification.IsAutoCancellable(position) == true)
                     {
                         notification.Visibility = ViewStates.Invisible;
                         titulo.Text = null;
@@ -195,18 +197,14 @@ namespace LiveDisplay.Fragments
             position = e.Position;
             using (OpenNotification openNotification = new OpenNotification(e.Position))
             {
-                //ThreadPool.QueueUserWorkItem(method =>
-                //{
-                //    var notificationBigPicture = new BitmapDrawable(Resources, openNotification.GetBigPicture());
-                //    WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = notificationBigPicture, OpacityLevel = 125, SecondsOfAttention = 5 });
-                //});
-                titulo.Text = openNotification.GetTitle();
-                texto.Text = openNotification.GetText();
-                appName.Text = openNotification.GetAppName();
-                when.Text = openNotification.GetWhen();
+                titulo.Text = openNotification.Title();
+                texto.Text = openNotification.Text();
+                appName.Text = openNotification.AppName();
+                when.Text = openNotification.When();
                 notificationActions.RemoveAllViews();
-
-                if (openNotification.NotificationHasActionButtons() == true)
+                using (NotificationStyleApplier styleApplier = new NotificationStyleApplier(null, openNotification))
+                    styleApplier.ApplyStyle(openNotification.Style());
+                if (openNotification.HasActionButtons() == true)
                 {
                     var actions = openNotification.RetrieveActions();
                     foreach (var a in actions)
@@ -260,7 +258,7 @@ namespace LiveDisplay.Fragments
         {
             //This action is: 'Hide the notification, and set the timeoutStarted as finished(false)
             //because this action will be invoked only when the timeout has finished.
-            Action hideNotification = () => { if(notification!=null) notification.Visibility = ViewStates.Gone; timeoutStarted = false; };
+            Action hideNotification = () => { if (notification != null) notification.Visibility = ViewStates.Gone; timeoutStarted = false; };
             //If the timeout has started, then cancel the action, and start again.
             if (timeoutStarted == true)
             {
@@ -276,4 +274,5 @@ namespace LiveDisplay.Fragments
             }
         }
     }
+
 }

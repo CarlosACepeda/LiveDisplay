@@ -31,7 +31,7 @@ namespace LiveDisplay
     {
         private RecyclerView recycler;
         private RecyclerView.LayoutManager layoutManager;
-        private ImageView wallpaper;
+        private ImageView wallpaperView;
         private ImageView unlocker;
         private Button clearAll;
         private FrameLayout weatherandclockcontainer;
@@ -71,7 +71,7 @@ namespace LiveDisplay
             });
 
             //Views
-            wallpaper = FindViewById<ImageView>(Resource.Id.wallpaper);
+            wallpaperView = FindViewById<ImageView>(Resource.Id.wallpaper);
             unlocker = FindViewById<ImageView>(Resource.Id.unlocker);
             startCamera = FindViewById<Button>(Resource.Id.btnStartCamera);
             startDialer = FindViewById<Button>(Resource.Id.btnStartPhone);
@@ -102,7 +102,6 @@ namespace LiveDisplay
             //CatcherHelper events
             CatcherHelper.NotificationListSizeChanged += CatcherHelper_NotificationListSizeChanged;
 
-            //Load RecyclerView
 
             using (recycler = FindViewById<RecyclerView>(Resource.Id.NotificationListRecyclerView))
             {
@@ -117,7 +116,6 @@ namespace LiveDisplay
 
             LoadNotificationFragment();
 
-            //Load User Configs.
             LoadConfiguration();
 
             CheckNotificationListSize();
@@ -126,7 +124,7 @@ namespace LiveDisplay
         private void Fadeoutanimation_AnimationEnd(object sender, Animation.AnimationEndEventArgs e)
         {
             var fadeinanimation = AnimationUtils.LoadAnimation(Application.Context, Resource.Animation.abc_fade_in);
-            wallpaper.StartAnimation(fadeinanimation);
+            wallpaperView.StartAnimation(fadeinanimation);
         }
 
         private void WatchdogInterval_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -171,37 +169,51 @@ namespace LiveDisplay
 
         private void Wallpaper_NewWallpaperIssued(object sender, WallpaperChangedEventArgs e)
         {
+            bool defaultwallpaperchanged = false;
+            Drawable userwallpaper = null;
+            if (!defaultwallpaperchanged)
+            {
+                userwallpaper = wallpaperView.Background;
+            }
             if (e.SecondsOfAttention != 0)
             {
-                //ThreadPool.QueueUserWorkItem(m => wallpaper.StartAnimation(fadeoutanimation));
+                ThreadPool.QueueUserWorkItem(method =>
+                {
+                    RunOnUiThread(() =>
+                    {
+                        wallpaperView.StartAnimation(fadeoutanimation);
+                        wallpaperView.Background = e.Wallpaper;
+                        wallpaperView.Background.Alpha = e.OpacityLevel;
+                        defaultwallpaperchanged = true;
+                    });
+                    Thread.Sleep(e.SecondsOfAttention * 1000);
+                    if (wallpaperView != null)
+                    {
+                        if (defaultwallpaperchanged)
+                            RunOnUiThread(() => { wallpaperView.Background = userwallpaper; defaultwallpaperchanged = false; });
 
-                ////Grab the previous wallpaper so after the time has passed I can set the previous wallpaper.
-                //var previousWallpaper = wallpaper.Background;
-                //wallpaper.Background = e.Wallpaper;
-                //ThreadPool.QueueUserWorkItem(method =>
-                //{
-                //    Thread.Sleep(e.SecondsOfAttention * 1000);
-                //    if (wallpaper != null)
-                //    {
-                //    RunOnUiThread(() => wallpaper.Background = previousWallpaper);
-                //    }
-                //}
-                //);
+                    }
+                    else
+                    {
+                        wallpaperView.Background= userwallpaper;
+                    }
+                }
+                );
             }
             else
             {
                 RunOnUiThread(() =>
                 {
-                    wallpaper.StartAnimation(fadeoutanimation);
+                    wallpaperView.StartAnimation(fadeoutanimation);
 
                     if (e.Wallpaper == null)
                     {
-                        wallpaper.SetBackgroundColor(Color.Black);
+                        wallpaperView.SetBackgroundColor(Color.Black);
                     }
                     else
                     {
-                        wallpaper.Background = e.Wallpaper;
-                        wallpaper.Background.Alpha = e.OpacityLevel;
+                        wallpaperView.Background = e.Wallpaper;
+                        wallpaperView.Background.Alpha = e.OpacityLevel;
                     }
                 });
             }
@@ -283,8 +295,8 @@ namespace LiveDisplay
             unlocker.Dispose();
             clearAll.Dispose();
             lockscreen.Dispose();
-            wallpaper.Background.Dispose();
-            wallpaper.Dispose();
+            wallpaperView.Background.Dispose();
+            wallpaperView = null;
 
             //Dispose Fragments
             notificationFragment.Dispose();
