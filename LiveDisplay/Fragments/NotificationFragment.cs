@@ -29,7 +29,6 @@ namespace LiveDisplay.Fragments
         private LinearLayout notification;
         private ImageButton closenotificationbutton;
         private bool timeoutStarted = false;
-        string currentNotificationStyle = string.Empty;
 
         #region Lifecycle events
 
@@ -202,8 +201,8 @@ namespace LiveDisplay.Fragments
                 appName.Text = openNotification.AppName();
                 when.Text = openNotification.When();
                 notificationActions.RemoveAllViews();
-                using (NotificationStyleApplier styleApplier = new NotificationStyleApplier(null, openNotification))
-                    styleApplier.ApplyStyle(openNotification.Style());
+                //using (NotificationStyleApplier styleApplier = new NotificationStyleApplier(null, openNotification))
+                //    styleApplier.ApplyStyle(openNotification.Style());
                 if (openNotification.HasActionButtons() == true)
                 {
                     var actions = openNotification.RetrieveActions();

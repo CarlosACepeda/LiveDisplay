@@ -106,7 +106,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             try
             {
                 var timeinmillis = statusbarnotification.Notification.When.ToString();
-                DateTime dateTime = new DateTime(Convert.ToInt64(timeinmillis));
+                DateTime dateTime = new DateTime(long.Parse(timeinmillis));
                 if (dateTime.Hour == 0 && dateTime.Minute == 0)
                 {
                     return "";
@@ -142,7 +142,6 @@ namespace LiveDisplay.Servicios.Notificaciones
             {
                 var lmao=
                  statusbarnotification.Notification.Extras.GetString(Notification.ExtraTemplate);
-                Log.Info("LiveDisplay","The Current style for this notification is: "+ lmao + " " + AppName());
                 return lmao;
             }
             catch

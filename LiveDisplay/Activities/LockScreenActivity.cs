@@ -47,7 +47,6 @@ namespace LiveDisplay
         private readonly float threshold = 1000; //1 second of threshold.(used to implement the double tap.)
         private System.Timers.Timer watchDog; //the watchdog simply will start counting down until it gets resetted by OnUserInteraction() override.
         private Animation fadeoutanimation;
-
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -360,6 +359,11 @@ namespace LiveDisplay
 
         private void Unlocker_Touch(object sender, View.TouchEventArgs e)
         {
+            //Log.Info("LiveDisplay", "Y pos:" + lockscreen.GetY());
+            //lockscreen.SetY(lockscreen.GetY()-25);
+
+            //lockscreen.SetY(lockscreen.GetY() - e.Event.RawY);
+
             float startPoint = 0;
             float finalPoint = 0;
             if (e.Event.Action == MotionEventActions.Down)
