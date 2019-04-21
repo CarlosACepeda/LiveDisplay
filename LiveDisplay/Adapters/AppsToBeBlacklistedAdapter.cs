@@ -48,7 +48,7 @@ namespace LiveDisplay.Adapters
             using (Android.Support.V7.App.AlertDialog.Builder builder = new Android.Support.V7.App.AlertDialog.Builder(textView.Context))
             {
                 builder.SetTitle(textView.Text);
-                builder.SetMultiChoiceItems(new string[] { textView.Context.GetString(Resource.String.blacklisted), textView.Context.GetString(Resource.String.nonallowedtoturnonscreen) }, GetLevelOfBlocking(currentSelectedAppPackage), DialogMultichoiceClick);
+                builder.SetMultiChoiceItems(new string[] { textView.Context.GetString(Resource.String.blacklisted), textView.Context.GetString(Resource.String.partiallyblocked), textView.Context.GetString(Resource.String.nonallowedtoturnonscreen) }, GetLevelOfBlocking(currentSelectedAppPackage), DialogMultichoiceClick);
                 builder.SetPositiveButton("Ok", OnDialogPositiveButtonEventArgs);
 
                 builder.Create();
@@ -70,7 +70,15 @@ namespace LiveDisplay.Adapters
 
                     break;
 
-                case 1: //1 is 'Non allowed to turn on screen'
+                case 1: //1 is 'Only blocked in the app'
+                    if (e.IsChecked)
+                        levels |= LevelsOfAppBlocking.BlockInAppOnly;
+                    else
+                    {
+                        levels &= ~LevelsOfAppBlocking.BlockInAppOnly;
+                    }
+                    break;
+                case 2: //2 is Totally Blocked
                     if (e.IsChecked)
                         levels |= LevelsOfAppBlocking.NonAllowedToTurnScreenOn;
                     else
@@ -78,6 +86,7 @@ namespace LiveDisplay.Adapters
                         levels &= ~LevelsOfAppBlocking.NonAllowedToTurnScreenOn;
                     }
                     break;
+
             }
         }
 
@@ -85,6 +94,7 @@ namespace LiveDisplay.Adapters
         {
             bool blacklisted = false;
             bool nonallowedtoturnscreenon = false;
+            bool onlyremovesystem= false;
             using (ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context)))
             {
                 var flag = configurationManager.RetrieveAValue(forWhichApp, 0);
@@ -102,8 +112,12 @@ namespace LiveDisplay.Adapters
                     case LevelsOfAppBlocking.NonAllowedToTurnScreenOn:
                         nonallowedtoturnscreenon = true;
                         break;
+                    case LevelsOfAppBlocking.BlockInAppOnly:
+                        onlyremovesystem = true;
+                        break;
 
                     case LevelsOfAppBlocking.TotallyBlocked:
+                        onlyremovesystem = true;
                         blacklisted = true;
                         nonallowedtoturnscreenon = true;
                         break;
@@ -112,7 +126,7 @@ namespace LiveDisplay.Adapters
                         break;
                 }
             }
-            return new bool[2] { blacklisted, nonallowedtoturnscreenon };
+            return new bool[3] { blacklisted, onlyremovesystem, nonallowedtoturnscreenon };
         }
 
         private void OnDialogPositiveButtonEventArgs(object sender, DialogClickEventArgs e)

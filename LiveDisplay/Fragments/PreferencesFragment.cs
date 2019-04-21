@@ -6,17 +6,19 @@ using Android.Preferences;
 using Android.Runtime;
 using Android.Util;
 using Android.Views;
+using Android.Widget;
 using LiveDisplay.Activities;
 using LiveDisplay.Factories;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
+using System;
 
 namespace LiveDisplay.Fragments
 {
     public class PreferencesFragmentCompat : PreferenceFragment, ISharedPreferencesOnSharedPreferenceChangeListener
     {
         private ISharedPreferences sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
-
+        private bool isSleepstarttimesetted=false;
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -26,10 +28,47 @@ namespace LiveDisplay.Fragments
             Preference githubprojectpreference = FindPreference("contributetoproject");
             Preference blacklistpreference = FindPreference("blacklist");
             Preference weathersettingspreference = FindPreference("weathersettings");
+            Preference inactivehourssettingspreference = FindPreference("inactivetimesettings");
             wallpapersettingspreference.PreferenceClick += WallpaperSettingsPreference_PreferenceClick;
             blacklistpreference.PreferenceClick += Blacklistpreference_PreferenceClick;
             githubprojectpreference.PreferenceClick += Githubprojectpreference_PreferenceClick;
             weathersettingspreference.PreferenceClick += Weathersettingspreference_PreferenceClick;
+            inactivehourssettingspreference.PreferenceClick += Inactivehourssettingspreference_PreferenceClick;
+        }
+
+        private void PreferencesFragmentCompat_timepicked(object sender, TimePickerDialog.TimeSetEventArgs e)
+        {
+            //Simple trick to save two different values using the same timepicker.
+            
+            ConfigurationManager configurationManager = new ConfigurationManager(sharedPreferences);
+            if (isSleepstarttimesetted)
+            {
+                    configurationManager.SaveAValue(ConfigurationParameters.FinishSleepTime, string.Concat(e.HourOfDay.ToString() + e.Minute.ToString()));
+            }
+            else
+            {
+                configurationManager.SaveAValue(ConfigurationParameters.StartSleepTime, string.Concat(e.HourOfDay.ToString() + e.Minute.ToString()));
+                isSleepstarttimesetted = true;
+            }
+           
+        }
+
+        private void Inactivehourssettingspreference_PreferenceClick(object sender, Preference.PreferenceClickEventArgs e)
+        {
+            using (TimePickerDialog datePickerDialog = new TimePickerDialog(this.Context, PreferencesFragmentCompat_timepicked, DateTime.Now.Hour, DateTime.Now.Minute, false))
+            {
+                if (!isSleepstarttimesetted)
+                {
+                    Toast.MakeText(this.Context, "Set the Start hour", ToastLength.Long).Show();
+                }
+                else
+                {
+                    Toast.MakeText(this.Context, "Set the finish hour", ToastLength.Long).Show();
+
+                }
+                datePickerDialog.Create();
+                datePickerDialog.Show();
+            }
         }
 
         private void Weathersettingspreference_PreferenceClick(object sender, Preference.PreferenceClickEventArgs e)
@@ -77,6 +116,10 @@ namespace LiveDisplay.Fragments
         {
             base.OnPause();
             sharedPreferences.UnregisterOnSharedPreferenceChangeListener(this);
+        }
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
         }
 
         public override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)

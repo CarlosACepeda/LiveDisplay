@@ -31,7 +31,7 @@ namespace LiveDisplay
     {
         private RecyclerView recycler;
         private RecyclerView.LayoutManager layoutManager;
-        private ImageView wallpaper;
+        private ImageView wallpaperView;
         private ImageView unlocker;
         private Button clearAll;
         private FrameLayout weatherandclockcontainer;
@@ -47,7 +47,6 @@ namespace LiveDisplay
         private readonly float threshold = 1000; //1 second of threshold.(used to implement the double tap.)
         private System.Timers.Timer watchDog; //the watchdog simply will start counting down until it gets resetted by OnUserInteraction() override.
         private Animation fadeoutanimation;
-
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -71,7 +70,7 @@ namespace LiveDisplay
             });
 
             //Views
-            wallpaper = FindViewById<ImageView>(Resource.Id.wallpaper);
+            wallpaperView = FindViewById<ImageView>(Resource.Id.wallpaper);
             unlocker = FindViewById<ImageView>(Resource.Id.unlocker);
             startCamera = FindViewById<Button>(Resource.Id.btnStartCamera);
             startDialer = FindViewById<Button>(Resource.Id.btnStartPhone);
@@ -102,7 +101,6 @@ namespace LiveDisplay
             //CatcherHelper events
             CatcherHelper.NotificationListSizeChanged += CatcherHelper_NotificationListSizeChanged;
 
-            //Load RecyclerView
 
             using (recycler = FindViewById<RecyclerView>(Resource.Id.NotificationListRecyclerView))
             {
@@ -117,7 +115,6 @@ namespace LiveDisplay
 
             LoadNotificationFragment();
 
-            //Load User Configs.
             LoadConfiguration();
 
             CheckNotificationListSize();
@@ -126,7 +123,7 @@ namespace LiveDisplay
         private void Fadeoutanimation_AnimationEnd(object sender, Animation.AnimationEndEventArgs e)
         {
             var fadeinanimation = AnimationUtils.LoadAnimation(Application.Context, Resource.Animation.abc_fade_in);
-            wallpaper.StartAnimation(fadeinanimation);
+            wallpaperView.StartAnimation(fadeinanimation);
         }
 
         private void WatchdogInterval_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -171,37 +168,51 @@ namespace LiveDisplay
 
         private void Wallpaper_NewWallpaperIssued(object sender, WallpaperChangedEventArgs e)
         {
+            bool defaultwallpaperchanged = false;
+            Drawable userwallpaper = null;
+            if (!defaultwallpaperchanged)
+            {
+                userwallpaper = wallpaperView.Background;
+            }
             if (e.SecondsOfAttention != 0)
             {
-                //ThreadPool.QueueUserWorkItem(m => wallpaper.StartAnimation(fadeoutanimation));
+                ThreadPool.QueueUserWorkItem(method =>
+                {
+                    RunOnUiThread(() =>
+                    {
+                        wallpaperView.StartAnimation(fadeoutanimation);
+                        wallpaperView.Background = e.Wallpaper;
+                        wallpaperView.Background.Alpha = e.OpacityLevel;
+                        defaultwallpaperchanged = true;
+                    });
+                    Thread.Sleep(e.SecondsOfAttention * 1000);
+                    if (wallpaperView != null)
+                    {
+                        if (defaultwallpaperchanged)
+                            RunOnUiThread(() => { wallpaperView.Background = userwallpaper; defaultwallpaperchanged = false; });
 
-                ////Grab the previous wallpaper so after the time has passed I can set the previous wallpaper.
-                //var previousWallpaper = wallpaper.Background;
-                //wallpaper.Background = e.Wallpaper;
-                //ThreadPool.QueueUserWorkItem(method =>
-                //{
-                //    Thread.Sleep(e.SecondsOfAttention * 1000);
-                //    if (wallpaper != null)
-                //    {
-                //    RunOnUiThread(() => wallpaper.Background = previousWallpaper);
-                //    }
-                //}
-                //);
+                    }
+                    else
+                    {
+                        wallpaperView.Background= userwallpaper;
+                    }
+                }
+                );
             }
             else
             {
                 RunOnUiThread(() =>
                 {
-                    wallpaper.StartAnimation(fadeoutanimation);
+                    wallpaperView.StartAnimation(fadeoutanimation);
 
                     if (e.Wallpaper == null)
                     {
-                        wallpaper.SetBackgroundColor(Color.Black);
+                        wallpaperView.SetBackgroundColor(Color.Black);
                     }
                     else
                     {
-                        wallpaper.Background = e.Wallpaper;
-                        wallpaper.Background.Alpha = e.OpacityLevel;
+                        wallpaperView.Background = e.Wallpaper;
+                        wallpaperView.Background.Alpha = e.OpacityLevel;
                     }
                 });
             }
@@ -283,8 +294,8 @@ namespace LiveDisplay
             unlocker.Dispose();
             clearAll.Dispose();
             lockscreen.Dispose();
-            wallpaper.Background.Dispose();
-            wallpaper.Dispose();
+            wallpaperView.Background.Dispose();
+            wallpaperView = null;
 
             //Dispose Fragments
             notificationFragment.Dispose();
@@ -292,7 +303,7 @@ namespace LiveDisplay
             clockFragment.Dispose();
             weatherFragment.Dispose();
 
-            StopFloatingNotificationService();
+            //StopFloatingNotificationService();
         }
 
         public override void OnBackPressed()
@@ -348,6 +359,11 @@ namespace LiveDisplay
 
         private void Unlocker_Touch(object sender, View.TouchEventArgs e)
         {
+            //Log.Info("LiveDisplay", "Y pos:" + lockscreen.GetY());
+            //lockscreen.SetY(lockscreen.GetY()-25);
+
+            //lockscreen.SetY(lockscreen.GetY() - e.Event.RawY);
+
             float startPoint = 0;
             float finalPoint = 0;
             if (e.Event.Action == MotionEventActions.Down)
@@ -442,7 +458,7 @@ namespace LiveDisplay
                 }
                 int interval = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.TurnOffScreenDelayTime, "5000"));
                 watchDog.Interval = interval;
-                if (configurationManager.RetrieveAValue(ConfigurationParameters.TurnOnUserMovement) == true)
+                if (configurationManager.RetrieveAValue(ConfigurationParameters.EnableAwakeService) == true)
                 {
                     StartAwakeService();
                 }
@@ -482,7 +498,6 @@ namespace LiveDisplay
                 newUiOptions |= (int)SystemUiFlags.Immersive;
                 // This option will make bars disappear by themselves
                 newUiOptions |= (int)SystemUiFlags.ImmersiveSticky;
-
                 view.SystemUiVisibility = (StatusBarVisibility)newUiOptions;
                 Window.AddFlags(WindowManagerFlags.DismissKeyguard);
                 Window.AddFlags(WindowManagerFlags.ShowWhenLocked);

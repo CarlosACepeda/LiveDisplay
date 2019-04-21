@@ -2,6 +2,7 @@
 using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.OS;
+using Android.Service.Notification;
 using Android.Util;
 using LiveDisplay.Factories;
 using LiveDisplay.Misc;
@@ -14,17 +15,19 @@ namespace LiveDisplay.Servicios.Notificaciones
     internal class OpenNotification : IDisposable
     {
         private int position;
+        private StatusBarNotification statusbarnotification;
 
         public OpenNotification(int position)
         {
             this.position = position;
+            statusbarnotification = CatcherHelper.statusBarNotifications[position];
         }
 
-        public string GetTitle()
+        public string Title()
         {
             try
             {
-                return CatcherHelper.statusBarNotifications[position].Notification.Extras.Get(Notification.ExtraTitle).ToString();
+                return statusbarnotification.Notification.Extras.Get(Notification.ExtraTitle).ToString();
             }
             catch
             {
@@ -32,11 +35,11 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
         }
 
-        public string GetText()
+        public string Text()
         {
             try
             {
-                return CatcherHelper.statusBarNotifications[position].Notification.Extras.Get(Notification.ExtraText).ToString();
+                return statusbarnotification.Notification.Extras.Get(Notification.ExtraText).ToString();
             }
             catch
             {
@@ -48,7 +51,7 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             try
             {
-                CatcherHelper.statusBarNotifications[position].Notification.ContentIntent.Send();
+                statusbarnotification.Notification.ContentIntent.Send();
                 //Android Docs: For NotificationListeners: When implementing a custom click for notification
                 //Cancel the notification after it was clicked when this notification is autocancellable.
                 if (IsRemovable())
@@ -57,14 +60,14 @@ namespace LiveDisplay.Servicios.Notificaciones
                     {
                         if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
                         {
-                            int notiId = CatcherHelper.statusBarNotifications[position].Id;
-                            string notiTag = CatcherHelper.statusBarNotifications[position].Tag;
-                            string notiPack = CatcherHelper.statusBarNotifications[position].PackageName;
+                            int notiId = statusbarnotification.Id;
+                            string notiTag = statusbarnotification.Tag;
+                            string notiPack = statusbarnotification.PackageName;
                             notificationSlave.CancelNotification(notiPack, notiTag, notiId);
                         }
                         else
                         {
-                            notificationSlave.CancelNotification(CatcherHelper.statusBarNotifications[position].Key);
+                            notificationSlave.CancelNotification(statusbarnotification.Key);
                         }
                     }
                 }
@@ -77,33 +80,33 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         public List<Notification.Action> RetrieveActions()
         {
-            return CatcherHelper.statusBarNotifications[position].Notification.Actions.ToList();
+            return statusbarnotification.Notification.Actions.ToList();
         }
 
         internal bool IsRemovable()
         {
-            if (CatcherHelper.statusBarNotifications[position].IsClearable == true)
+            if (statusbarnotification.IsClearable == true)
             {
                 return true;
             }
             return false;
         }
 
-        public bool NotificationHasActionButtons()
+        public bool HasActionButtons()
         {
-            if (CatcherHelper.statusBarNotifications[position].Notification.Actions != null)
+            if (statusbarnotification.Notification.Actions != null)
             {
                 return true;
             }
             return false;
         }
 
-        internal string GetWhen()
+        internal string When()
         {
             try
             {
-                var timeinmillis = CatcherHelper.statusBarNotifications[position].Notification.When.ToString();
-                DateTime dateTime = new DateTime(Convert.ToInt64(timeinmillis));
+                var timeinmillis = statusbarnotification.Notification.When.ToString();
+                DateTime dateTime = new DateTime(long.Parse(timeinmillis));
                 if (dateTime.Hour == 0 && dateTime.Minute == 0)
                 {
                     return "";
@@ -116,11 +119,11 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
         }
 
-        internal string GetAppName()
+        internal string AppName()
         {
             try
             {
-                return PackageUtils.GetTheAppName(CatcherHelper.statusBarNotifications[position].PackageName);
+                return PackageUtils.GetTheAppName(statusbarnotification.PackageName);
             }
             catch
             {
@@ -128,12 +131,25 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
         }
 
-        internal Bitmap GetBigPicture()
+        internal Bitmap BigPicture()
         {
-            return CatcherHelper.statusBarNotifications[position].Notification.Extras.Get(Notification.ExtraPicture) as Bitmap;
+            return statusbarnotification.Notification.Extras.Get(Notification.ExtraPicture) as Bitmap;
         }
 
-        public static bool NotificationIsAutoCancel(int position)
+        internal string Style()
+        {
+            try
+            {
+                var lmao=
+                 statusbarnotification.Notification.Extras.GetString(Notification.ExtraTemplate);
+                return lmao;
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+        public static bool IsAutoCancellable(int position)
         {
             if (CatcherHelper.statusBarNotifications[position].Notification.Flags.HasFlag(NotificationFlags.AutoCancel) == true)
             {
@@ -150,6 +166,7 @@ namespace LiveDisplay.Servicios.Notificaciones
         public void Dispose()
         {
             position = -1;
+            statusbarnotification = null;
         }
     }
 

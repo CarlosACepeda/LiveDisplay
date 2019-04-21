@@ -27,7 +27,7 @@ This Application shows the list of current notifications on a beautiful and cust
 
 * Automatic device turn-on screen when a new notification is posted or when the user picks the phone up, or when you pick your phone out of your pocket, you can change this behavior.  *Functional*
 
-* Turning on the Screen automatically is disabled at night, or at the time you want, it's configurable, it helps to save battery. -*WIP*
+* Turning on the Screen automatically is disabled at night, or at the time you want, it's configurable, it helps to save battery. -*Functional*
 
 * LockScreen shortcuts, by default, the camera is launched, you can change it. - *WIP*
 
@@ -80,6 +80,6 @@ See also the list of [contributors](https://github.com/CarlosACepeda/LiveDisplay
 
 * [Yasujizr](https://github.com/Yasujizr) : *Icon design.*
 * I'm inspired by various apps that are not longer updated, so I decided to build my own App, taking ideas from several apps.
-* Huge influence by custom Rom features that aren't available on many stock rom phones.
+* Huge influence by [AcDisplay](https://github.com/AChep/AcDisplay) and NotificationPeek.
 * Friends who are testing this app! :-)
 * [Artem Chepurnoy](https://github.com/AChep) : *Guidance and help related to MediaController and NotificationListenerService, many thanks*

@@ -16,7 +16,7 @@
     <AndroidResgenFile>Resources\Resource.Designer.cs</AndroidResgenFile>
     <AndroidResgenClass>Resource</AndroidResgenClass>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <TargetFrameworkVersion>v8.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v9.0</TargetFrameworkVersion>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
@@ -210,7 +210,8 @@
     <Compile Include="Servicios\Music\MusicController.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationItemClickedEventArgs.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationListSizeChangedEventArgs.cs" />
-    <Compile Include="DataRepository\OpenNotification.cs" />
+    <Compile Include="Servicios\Notificaciones\NotificationStyle\NotificationStyleApplier.cs" />
+    <Compile Include="Servicios\Notificaciones\OpenNotification.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationCancelledEventArgsKitkat.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationCancelledEventArgsLollipop.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationPostedEventArgs.cs" />
@@ -554,6 +555,21 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-xxxhdpi\baseline_phone_white_48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\baseline_close_white_18.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\baseline_close_white_18.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\baseline_close_white_18.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\baseline_close_white_18.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\baseline_close_white_18.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Import Project="..\packages\Xamarin.Android.Support.Annotations.28.0.0\build\monoandroid81\Xamarin.Android.Support.Annotations.targets" Condition="Exists('..\packages\Xamarin.Android.Support.Annotations.28.0.0\build\monoandroid81\Xamarin.Android.Support.Annotations.targets')" />

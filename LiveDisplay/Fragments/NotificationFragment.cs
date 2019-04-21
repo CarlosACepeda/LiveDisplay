@@ -9,6 +9,7 @@ using LiveDisplay.Adapters;
 using LiveDisplay.Servicios;
 using LiveDisplay.Servicios.Notificaciones;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
+using LiveDisplay.Servicios.Notificaciones.NotificationStyle;
 using LiveDisplay.Servicios.Wallpaper;
 using System;
 using System.Threading;
@@ -26,6 +27,7 @@ namespace LiveDisplay.Fragments
         private TextView appName;
         private TextView when;
         private LinearLayout notification;
+        private ImageButton closenotificationbutton;
         private bool timeoutStarted = false;
 
         #region Lifecycle events
@@ -46,16 +48,46 @@ namespace LiveDisplay.Fragments
             when = v.FindViewById<TextView>(Resource.Id.tvWhen);
             appName = v.FindViewById<TextView>(Resource.Id.tvAppName);
             notification = v.FindViewById<LinearLayout>(Resource.Id.llNotification);
-
+            closenotificationbutton = v.FindViewById<ImageButton>(Resource.Id.closenotificationbutton);
             //Subscribe to events raised by several types.
             notification.Drag += Notification_Drag;
             notification.Click += LlNotification_Click;
+            closenotificationbutton.Click += Closenotificationbutton_Click;
             NotificationAdapterViewHolder.ItemClicked += ItemClicked;
             NotificationAdapterViewHolder.ItemLongClicked += ItemLongClicked;
             CatcherHelper.NotificationPosted += CatcherHelper_NotificationPosted;
             CatcherHelper.NotificationUpdated += CatcherHelper_NotificationUpdated;
             CatcherHelper.NotificationRemoved += CatcherHelper_NotificationRemoved;
             return v;
+        }
+
+        private void Closenotificationbutton_Click(object sender, EventArgs e)
+        {
+            using (OpenNotification openNotification = new OpenNotification(position))
+            {
+                if (openNotification.IsRemovable())
+                {
+                    using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())
+                    {
+                        if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+                        {
+                            int notiId = CatcherHelper.statusBarNotifications[position].Id;
+                            string notiTag = CatcherHelper.statusBarNotifications[position].Tag;
+                            string notiPack = CatcherHelper.statusBarNotifications[position].PackageName;
+                            slave.CancelNotification(notiPack, notiTag, notiId);
+                        }
+                        else
+                        {
+                            slave.CancelNotification(CatcherHelper.statusBarNotifications[position].Key);
+                        }
+                    }
+                    notification.Visibility = ViewStates.Invisible;
+                    titulo.Text = null;
+                    texto.Text = null;
+                    notificationActions.RemoveAllViews();
+                }
+            }
+
         }
 
         private void Notification_Drag(object sender, View.DragEventArgs e)
@@ -78,6 +110,12 @@ namespace LiveDisplay.Fragments
             CatcherHelper.NotificationUpdated -= CatcherHelper_NotificationUpdated;
             CatcherHelper.NotificationRemoved -= CatcherHelper_NotificationRemoved;
             CatcherHelper.NotificationPosted -= CatcherHelper_NotificationPosted;
+            notificationActions.Dispose();
+            texto.Dispose();
+            titulo.Dispose();
+            when.Dispose();
+            appName.Dispose();
+            closenotificationbutton.Dispose();
             base.OnDestroy();
         }
 
@@ -105,7 +143,7 @@ namespace LiveDisplay.Fragments
                     Activity.RunOnUiThread(() =>
                     openNotification.ClickNotification()
                     );
-                    if (OpenNotification.NotificationIsAutoCancel(position) == true)
+                    if (OpenNotification.IsAutoCancellable(position) == true)
                     {
                         notification.Visibility = ViewStates.Invisible;
                         titulo.Text = null;
@@ -158,18 +196,14 @@ namespace LiveDisplay.Fragments
             position = e.Position;
             using (OpenNotification openNotification = new OpenNotification(e.Position))
             {
-                ThreadPool.QueueUserWorkItem(method =>
-                {
-                    var notificationBigPicture = new BitmapDrawable(Resources, openNotification.GetBigPicture());
-                    WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = notificationBigPicture, OpacityLevel = 125, SecondsOfAttention = 5 });
-                });
-                titulo.Text = openNotification.GetTitle();
-                texto.Text = openNotification.GetText();
-                appName.Text = openNotification.GetAppName();
-                when.Text = openNotification.GetWhen();
+                titulo.Text = openNotification.Title();
+                texto.Text = openNotification.Text();
+                appName.Text = openNotification.AppName();
+                when.Text = openNotification.When();
                 notificationActions.RemoveAllViews();
-
-                if (openNotification.NotificationHasActionButtons() == true)
+                //using (NotificationStyleApplier styleApplier = new NotificationStyleApplier(null, openNotification))
+                //    styleApplier.ApplyStyle(openNotification.Style());
+                if (openNotification.HasActionButtons() == true)
                 {
                     var actions = openNotification.RetrieveActions();
                     foreach (var a in actions)
@@ -198,6 +232,14 @@ namespace LiveDisplay.Fragments
                         notificationActions.AddView(anActionButton);
                     };
                 }
+                if (openNotification.IsRemovable())
+                {
+                    closenotificationbutton.Visibility = ViewStates.Visible;
+                }
+                else
+                {
+                    closenotificationbutton.Visibility = ViewStates.Invisible;
+                }
             }
             if (notification.Visibility != ViewStates.Visible)
             {
@@ -215,7 +257,7 @@ namespace LiveDisplay.Fragments
         {
             //This action is: 'Hide the notification, and set the timeoutStarted as finished(false)
             //because this action will be invoked only when the timeout has finished.
-            Action hideNotification = () => { notification.Visibility = ViewStates.Gone; timeoutStarted = false; };
+            Action hideNotification = () => { if (notification != null) notification.Visibility = ViewStates.Gone; timeoutStarted = false; };
             //If the timeout has started, then cancel the action, and start again.
             if (timeoutStarted == true)
             {
@@ -231,4 +273,5 @@ namespace LiveDisplay.Fragments
             }
         }
     }
+
 }

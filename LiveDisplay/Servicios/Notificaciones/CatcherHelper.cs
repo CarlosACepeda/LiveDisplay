@@ -76,25 +76,31 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         private void InsertNotification(StatusBarNotification sbn)
         {
-            //if (Blacklist.IsAppBlacklisted(sbn.PackageName) == false)
-            //{
-            statusBarNotifications.Add(sbn);
-            using (var h = new Handler(Looper.MainLooper))
-                h.Post(() => { notificationAdapter.NotifyItemInserted(statusBarNotifications.Count); });
-            OnNotificationPosted();
-            //}
-            //else
-            //{
-            //    var notificationSlave = NotificationSlave.NotificationSlaveInstance();
-            //    if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
-            //    {
-            //        notificationSlave.CancelNotification(sbn.Key);
-            //    }
-            //    else
-            //    {
-            //        notificationSlave.CancelNotification(sbn.PackageName, sbn.Tag, sbn.Id);
-            //    }
-            //}
+            var blockingstatus = Blacklist.ReturnBlockLevel(sbn.PackageName);
+
+            if (!blockingstatus.HasFlag(LevelsOfAppBlocking.Blacklisted))
+            {
+                if (!blockingstatus.HasFlag(LevelsOfAppBlocking.BlockInAppOnly))
+                {
+                    statusBarNotifications.Add(sbn);
+
+                    using (var h = new Handler(Looper.MainLooper))
+                        h.Post(() => { notificationAdapter.NotifyItemInserted(statusBarNotifications.Count); });
+                    OnNotificationPosted(blockingstatus.HasFlag(LevelsOfAppBlocking.None));
+                }
+            }
+            else
+            {
+                var notificationSlave = NotificationSlave.NotificationSlaveInstance();
+                if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
+                {
+                    notificationSlave.CancelNotification(sbn.Key);
+                }
+                else
+                {
+                    notificationSlave.CancelNotification(sbn.PackageName, sbn.Tag, sbn.Id);
+                }
+            }
         }
 
         private void OnNotificationUpdated(int position)
@@ -103,13 +109,13 @@ namespace LiveDisplay.Servicios.Notificaciones
             {
                 Position = position
             }
-                );
+            );
         }
 
         private bool UpdateNotification(StatusBarNotification sbn)
         {
             int indice = GetNotificationPosition(sbn);
-            if (indice >= 0 /*&& Blacklist.IsAppBlacklisted(sbn.PackageName) == false*/)
+            if (indice >= 0 )
             {
                 statusBarNotifications.RemoveAt(indice);
                 statusBarNotifications.Add(sbn);
@@ -122,10 +128,6 @@ namespace LiveDisplay.Servicios.Notificaciones
             return false;
         }
 
-        private void RemoveNotificationFromGroup()
-        {
-            //After this, fire event.
-        }
 
         public void OnNotificationRemoved(StatusBarNotification sbn)
         {
@@ -154,9 +156,7 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         private int GetNotificationPosition(StatusBarNotification sbn)
         {
-            int index = statusBarNotifications.IndexOf(statusBarNotifications.FirstOrDefault(o => o.Id == sbn.Id && o.PackageName == sbn.PackageName));
-
-            return index;
+            return statusBarNotifications.IndexOf(statusBarNotifications.FirstOrDefault(o => o.Id == sbn.Id && o.PackageName == sbn.PackageName));
         }
 
         private void OnNotificationListSizeChanged(NotificationListSizeChangedEventArgs e)
@@ -164,11 +164,11 @@ namespace LiveDisplay.Servicios.Notificaciones
             NotificationListSizeChanged?.Invoke(this, e);
         }
 
-        private void OnNotificationPosted()
+        private void OnNotificationPosted(bool shouldCauseWakeup)
         {
             NotificationPosted?.Invoke(this, new NotificationPostedEventArgs()
             {
-                ShouldCauseWakeUp = true
+                ShouldCauseWakeUp = shouldCauseWakeup
             });
         }
 

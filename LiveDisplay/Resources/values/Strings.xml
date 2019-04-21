@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="about">About...</string>
-  <string name="aboutinfo">This app is developed with &lt;3 by Carlos Cepeda, you can support me by donating me! i hope youre enjoying this app as much as i developed it </string>
+  <string name="aboutinfo">Developed with love by UndergroundDev(Carlos Cepeda)</string>
   <string name="aboutinfotitle">About this application:</string>
   <string name="accessesstatusdisabled">Accesses are disabled</string>
   <string name="accessesstatusenabled">Accesses are enabled!</string>
@@ -31,6 +31,7 @@
   <string name="dialogfordeviceaccessdescription">Permissions required:  \nLock screen: Control how and when to lock the screen</string>
   <string name="doubletaptosleep">Double tap to sleep</string>
   <string name="doubletaptosleepdesc">Touch twice anywhere on the lock screen to turn off the screen</string>
+  <string name="enableawake">Enable Awake service</string>
   <string name="enabledeviceaccess">Enable device Access</string>
   <string name="enablefloatingpermission">Draw over other apps</string>
   <string name="enablenotificationlistener">Enable Notification Access</string>
@@ -58,6 +59,7 @@
   <string name="nonallowedtoturnonscreen">Non allowed to turn on screen</string>
   <string name="notificationsettings">Notifications</string>
   <string name="opciones">Options</string>
+  <string name="partiallyblocked">Block only in the app</string>
   <string name="pickwallpaper">Pick one</string>
   <string name="placeholder">Insert a string here</string>
   <string name="rus">Russian</string>
@@ -74,7 +76,7 @@
   <string name="turnonnewnotification_desc">Turn on screen if a new notification incomes</string>
   <string name="turnonusermovement">Turn on screen on device pick up</string>
   <string name="version">Version</string>
-  <string name="versionnumber">0.7.6</string>
+  <string name="versionnumber">0.8.0</string>
   <string name="wallpaperblur">Blur</string>
   <string name="wallpaperopacity">Opacity</string>
   <string name="weatherwidget">Weather Widget</string>

@@ -162,6 +162,7 @@ namespace LiveDisplay.Servicios.Music
             TransportControls?.Dispose();
             MediaMetadata?.Dispose();
             instance = null;
+            Log.Info("LiveDisplay", "MusicController dispose method");
         }
     }
 }

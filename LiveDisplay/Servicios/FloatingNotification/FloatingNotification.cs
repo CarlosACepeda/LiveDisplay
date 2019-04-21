@@ -114,13 +114,13 @@ namespace LiveDisplay.Servicios.FloatingNotification
                 position = e.Position;
                 using (OpenNotification openNotification = new OpenNotification(e.Position))
                 {
-                    floatingNotificationAppName.Text = notification.GetAppName();
-                    floatingNotificationWhen.Text = notification.GetWhen();
-                    floatingNotificationTitle.Text = notification.GetTitle();
-                    floatingNotificationText.Text = notification.GetText();
+                    floatingNotificationAppName.Text = notification.AppName();
+                    floatingNotificationWhen.Text = notification.When();
+                    floatingNotificationTitle.Text = notification.Title();
+                    floatingNotificationText.Text = notification.Text();
                     floatingNotificationActionsContainer.RemoveAllViews();
 
-                    if (openNotification.NotificationHasActionButtons() == true)
+                    if (openNotification.HasActionButtons() == true)
                     {
                         var actions = openNotification.RetrieveActions();
                         foreach (var a in actions)

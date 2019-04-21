@@ -178,6 +178,7 @@ namespace LiveDisplay.Activities
                     return true;
 
                 case Resource.Id.action_sendtestnotification:
+                   
                     if (isApplicationHealthy)
                     {
                         using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())

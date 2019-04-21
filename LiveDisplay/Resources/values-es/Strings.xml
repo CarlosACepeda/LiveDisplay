@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="about">Acerca de...</string>
-  <string name="aboutinfo">Esta aplicación es desarrollada con &lt;3 por Carlos Cepeda, puedes ayudarme a través de una donación!, espero que disfrutes mucho esta app como yo desarrollandola!</string>
+  <string name="aboutinfo">Desarrollada por UndergroundDev</string>
   <string name="aboutinfotitle">Acerca de esta aplicación:</string>
   <string name="accessesstatusdisabled">Accesos no activados</string>
   <string name="accessesstatusenabled">Accesos activados!</string>
@@ -29,6 +29,7 @@
   <string name="dialogfordeviceaccessdescription">Permisos requeridos: \nBloquear la pantalla: \nControlar cómo y cuando se apaga la pantalla</string>
   <string name="doubletaptosleep">Doble pulsación para suspender</string>
   <string name="doubletaptosleepdesc">Pulsa dos veces en la pantalla de bloqueo para apagar la pantalla</string>
+  <string name="enableawake">Activar servicio Awake</string>
   <string name="enabledeviceaccess">Acceso al Dispositivo</string>
   <string name="enablefloatingpermission">Dibujar sobre otras aplicaciones</string>
   <string name="enablenotificationlistener">Acceder a las Notificaciones</string>
@@ -55,6 +56,7 @@
   <string name="nonallowedtoturnonscreen">No permitido para encender la pantalla</string>
   <string name="notificationsettings">Notificaciones</string>
   <string name="opciones">Opciones</string>
+  <string name="partiallyblocked">Solo en la app</string>
   <string name="pickwallpaper">Elige uno</string>
   <string name="placeholder">Inserta una cadena aquí</string>
   <string name="rus">Ruso</string>
@@ -71,7 +73,7 @@
   <string name="turnonnewnotification_desc">Prender la pantalla si una nueva notificacion llega</string>
   <string name="turnonusermovement">Prender la pantalla al levantar el dispositivo</string>
   <string name="version">Versión</string>
-  <string name="versionnumber">0.7.6</string>
+  <string name="versionnumber">0.8.0</string>
   <string name="wallpaperblur">Difuminación</string>
   <string name="wallpaperopacity">Opacidad</string>
   <string name="weatherwidget">Widget del Clima</string>
