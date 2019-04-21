@@ -458,7 +458,7 @@ namespace LiveDisplay
                 }
                 int interval = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.TurnOffScreenDelayTime, "5000"));
                 watchDog.Interval = interval;
-                if (configurationManager.RetrieveAValue(ConfigurationParameters.TurnOnUserMovement) == true)
+                if (configurationManager.RetrieveAValue(ConfigurationParameters.EnableAwakeService) == true)
                 {
                     StartAwakeService();
                 }
@@ -498,7 +498,6 @@ namespace LiveDisplay
                 newUiOptions |= (int)SystemUiFlags.Immersive;
                 // This option will make bars disappear by themselves
                 newUiOptions |= (int)SystemUiFlags.ImmersiveSticky;
-
                 view.SystemUiVisibility = (StatusBarVisibility)newUiOptions;
                 Window.AddFlags(WindowManagerFlags.DismissKeyguard);
                 Window.AddFlags(WindowManagerFlags.ShowWhenLocked);

@@ -28,8 +28,10 @@
 
         //For Awake Settings: (Awake is fused with notification settings now, but here is separated to maintain
         //clearance about which settings are from
+        public const string EnableAwakeService = "enableawake?";
         public const string TurnOnNewNotification = "turnonnewnotification?";
-
+        public const string StartSleepTime = "startsleeptime";
+        public const string FinishSleepTime = "finishsleeptime";
         public const string TurnOnUserMovement = "turnonusermovement?";
         public const string StartLockscreenDelayTime = "startlockscreendelaytime";
         public const string TurnOffScreenDelayTime = "turnoffscreendelaytime";

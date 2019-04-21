@@ -75,6 +75,11 @@
         ></SwitchPreference>-->
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/awakesettings">
+      <SwitchPreference
+        android:defaultValue="false"
+        android:key="enableawake?"
+        android:title="@string/enableawake">
+      </SwitchPreference>
       <Preference
         android:key="inactivetimesettings"
         android:title="@string/inactivetimesettings"

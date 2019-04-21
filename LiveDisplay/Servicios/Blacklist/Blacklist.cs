@@ -24,12 +24,11 @@ namespace LiveDisplay.Servicios
             configurationManager.SaveAValue(whichApp, isBlacklisted);
         }
 
-        public static LevelsOfAppBlocking IsAppBlacklisted(string whichApp)
+        public static LevelsOfAppBlocking ReturnBlockLevel(string whichApp)
         {
             ISharedPreferences sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
             ConfigurationManager configurationManager = new ConfigurationManager(sharedPreferences);
-            var lol= (LevelsOfAppBlocking)configurationManager.RetrieveAValue(whichApp, 0);
-            return lol;
+            return (LevelsOfAppBlocking)configurationManager.RetrieveAValue(whichApp, 0);
         }
     }
 
@@ -39,6 +38,7 @@ namespace LiveDisplay.Servicios
         None = 0,
         Blacklisted = 1,
         NonAllowedToTurnScreenOn = 2,
-        TotallyBlocked = Blacklisted | NonAllowedToTurnScreenOn
+        BlockInAppOnly=4,
+        TotallyBlocked = Blacklisted | NonAllowedToTurnScreenOn | BlockInAppOnly
     }
 }

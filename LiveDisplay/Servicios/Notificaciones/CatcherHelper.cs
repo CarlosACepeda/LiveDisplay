@@ -76,13 +76,18 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         private void InsertNotification(StatusBarNotification sbn)
         {
-            var blockingstatus = Blacklist.IsAppBlacklisted(sbn.PackageName);
+            var blockingstatus = Blacklist.ReturnBlockLevel(sbn.PackageName);
+
             if (!blockingstatus.HasFlag(LevelsOfAppBlocking.Blacklisted))
             {
-                statusBarNotifications.Add(sbn);
-            using (var h = new Handler(Looper.MainLooper))
-                h.Post(() => { notificationAdapter.NotifyItemInserted(statusBarNotifications.Count); });
-            OnNotificationPosted(blockingstatus.HasFlag(LevelsOfAppBlocking.None));
+                if (!blockingstatus.HasFlag(LevelsOfAppBlocking.BlockInAppOnly))
+                {
+                    statusBarNotifications.Add(sbn);
+
+                    using (var h = new Handler(Looper.MainLooper))
+                        h.Post(() => { notificationAdapter.NotifyItemInserted(statusBarNotifications.Count); });
+                    OnNotificationPosted(blockingstatus.HasFlag(LevelsOfAppBlocking.None));
+                }
             }
             else
             {
@@ -110,7 +115,7 @@ namespace LiveDisplay.Servicios.Notificaciones
         private bool UpdateNotification(StatusBarNotification sbn)
         {
             int indice = GetNotificationPosition(sbn);
-            if (indice >= 0 /*&& Blacklist.IsAppBlacklisted(sbn.PackageName) == false*/)
+            if (indice >= 0 )
             {
                 statusBarNotifications.RemoveAt(indice);
                 statusBarNotifications.Add(sbn);
@@ -123,10 +128,6 @@ namespace LiveDisplay.Servicios.Notificaciones
             return false;
         }
 
-        private void RemoveNotificationFromGroup()
-        {
-            //After this, fire event.
-        }
 
         public void OnNotificationRemoved(StatusBarNotification sbn)
         {
@@ -155,9 +156,7 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         private int GetNotificationPosition(StatusBarNotification sbn)
         {
-            int index = statusBarNotifications.IndexOf(statusBarNotifications.FirstOrDefault(o => o.Id == sbn.Id && o.PackageName == sbn.PackageName));
-
-            return index;
+            return statusBarNotifications.IndexOf(statusBarNotifications.FirstOrDefault(o => o.Id == sbn.Id && o.PackageName == sbn.PackageName));
         }
 
         private void OnNotificationListSizeChanged(NotificationListSizeChangedEventArgs e)
@@ -169,7 +168,7 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             NotificationPosted?.Invoke(this, new NotificationPostedEventArgs()
             {
-                ShouldCauseWakeUp = true
+                ShouldCauseWakeUp = shouldCauseWakeup
             });
         }
 
