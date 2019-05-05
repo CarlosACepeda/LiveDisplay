@@ -168,39 +168,7 @@ namespace LiveDisplay
 
         private void Wallpaper_NewWallpaperIssued(object sender, WallpaperChangedEventArgs e)
         {
-            bool defaultwallpaperchanged = false;
-            Drawable userwallpaper = null;
-            if (!defaultwallpaperchanged)
-            {
-                userwallpaper = wallpaperView.Background;
-            }
-            if (e.SecondsOfAttention != 0)
-            {
-                ThreadPool.QueueUserWorkItem(method =>
-                {
-                    RunOnUiThread(() =>
-                    {
-                        wallpaperView.StartAnimation(fadeoutanimation);
-                        wallpaperView.Background = e.Wallpaper;
-                        wallpaperView.Background.Alpha = e.OpacityLevel;
-                        defaultwallpaperchanged = true;
-                    });
-                    Thread.Sleep(e.SecondsOfAttention * 1000);
-                    if (wallpaperView != null)
-                    {
-                        if (defaultwallpaperchanged)
-                            RunOnUiThread(() => { wallpaperView.Background = userwallpaper; defaultwallpaperchanged = false; });
-
-                    }
-                    else
-                    {
-                        wallpaperView.Background= userwallpaper;
-                    }
-                }
-                );
-            }
-            else
-            {
+           
                 RunOnUiThread(() =>
                 {
                     wallpaperView.StartAnimation(fadeoutanimation);
@@ -215,7 +183,6 @@ namespace LiveDisplay
                         wallpaperView.Background.Alpha = e.OpacityLevel;
                     }
                 });
-            }
             GC.Collect();
         }
 

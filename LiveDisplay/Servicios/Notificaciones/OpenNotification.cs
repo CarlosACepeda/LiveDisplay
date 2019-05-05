@@ -105,8 +105,7 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             try
             {
-                var timeinmillis = statusbarnotification.Notification.When.ToString();
-                DateTime dateTime = new DateTime(long.Parse(timeinmillis));
+                DateTime dateTime = new DateTime(statusbarnotification.Notification.When);
                 if (dateTime.Hour == 0 && dateTime.Minute == 0)
                 {
                     return "";
@@ -132,7 +131,7 @@ namespace LiveDisplay.Servicios.Notificaciones
         }
 
         internal Bitmap BigPicture()
-        {
+        { 
             return statusbarnotification.Notification.Extras.Get(Notification.ExtraPicture) as Bitmap;
         }
 
@@ -140,9 +139,7 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             try
             {
-                var lmao=
-                 statusbarnotification.Notification.Extras.GetString(Notification.ExtraTemplate);
-                return lmao;
+               return statusbarnotification.Notification.Extras.GetString(Notification.ExtraTemplate);
             }
             catch
             {
@@ -199,7 +196,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
             catch
             {
-                Log.Info("LiveDisplay", "Click notification failed");
+                Log.Info("LiveDisplay", "Click notification action failed");
             }
         }
 

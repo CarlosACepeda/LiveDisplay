@@ -1,4 +1,4 @@
-﻿using Android.App;
+﻿using Android.Support.V4.App;
 using Android.Graphics.Drawables;
 using Android.Media;
 using Android.Media.Session;
@@ -13,6 +13,10 @@ using LiveDisplay.Servicios.Music.MediaEventArgs;
 using LiveDisplay.Servicios.Wallpaper;
 using System;
 using System.Timers;
+using Android.App;
+using Fragment = Android.App.Fragment;
+using System.Threading;
+using Timer = System.Timers.Timer;
 
 namespace LiveDisplay.Fragments
 {
@@ -214,18 +218,18 @@ namespace LiveDisplay.Fragments
             tvAlbum.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyAlbum);
             tvArtist.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyArtist);
             skbSeekSongTime.Max = (int)e.MediaMetadata.GetLong(MediaMetadata.MetadataKeyDuration);
-            using (var albumart = e.MediaMetadata.GetBitmap(MediaMetadata.MetadataKeyAlbumArt))
+            ThreadPool.QueueUserWorkItem(m =>
             {
-                using (var wallpaper = new BitmapDrawable(Resources, albumart))
+                var albumart = e.MediaMetadata.GetBitmap(MediaMetadata.MetadataKeyAlbumArt);
+                var wallpaper = new BitmapDrawable(Resources, albumart);
+
+                int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, 255);
+                WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
                 {
-                    int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, 255);
-                    WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
-                    {
-                        Wallpaper = wallpaper,
-                        OpacityLevel = (short)opacitylevel
-                    });
-                }
-            }
+                    Wallpaper = wallpaper,
+                    OpacityLevel = (short)opacitylevel
+                });
+            });
             GC.Collect();
         }
 

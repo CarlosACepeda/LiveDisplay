@@ -14,6 +14,7 @@ namespace LiveDisplay.Servicios.Music
     /// </summary>
     internal class MusicController : MediaController.Callback
     {
+
         #region Class members
 
         public static PlaybackStateCode MusicStatus { get; private set; }
@@ -78,11 +79,11 @@ namespace LiveDisplay.Servicios.Music
                     TransportControls.Rewind();
                     break;
 
-                case Misc.MediaActionFlags.Stop:
+                case MediaActionFlags.Stop:
                     TransportControls.Stop();
                     break;
 
-                case Misc.MediaActionFlags.RetrieveMediaInformation:
+                case MediaActionFlags.RetrieveMediaInformation:
                     //Send media information.
                     OnMediaMetadataChanged(new MediaMetadataChangedEventArgs
                     {

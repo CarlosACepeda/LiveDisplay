@@ -61,11 +61,11 @@
     <EnableLLVM>false</EnableLLVM>
     <BundleAssemblies>false</BundleAssemblies>
     <AndroidSupportedAbis>armeabi-v7a;x86</AndroidSupportedAbis>
-    <AndroidCreatePackagePerAbi>false</AndroidCreatePackagePerAbi>
-    <EnableProguard>true</EnableProguard>
+    <AndroidCreatePackagePerAbi>true</AndroidCreatePackagePerAbi>
+    <EnableProguard>false</EnableProguard>
     <AndroidEnableMultiDex>false</AndroidEnableMultiDex>
     <AndroidEnableSGenConcurrent>false</AndroidEnableSGenConcurrent>
-    <Debugger>Xamarin</Debugger>
+    <Debugger>Native</Debugger>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BlurImage, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">

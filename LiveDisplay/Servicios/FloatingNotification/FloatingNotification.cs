@@ -30,6 +30,8 @@ namespace LiveDisplay.Servicios.FloatingNotification
             return null;
         }
 
+        //TODO: Create a touchListener, and if the touch registered by this touchlistener is outside the bounds of the
+        //actual floating notification the same will be hidden, this change is more of UX.
         [return: GeneratedEnum]
         public override StartCommandResult OnStartCommand(Intent intent, [GeneratedEnum] StartCommandFlags flags, int startId)
         {
@@ -108,16 +110,13 @@ namespace LiveDisplay.Servicios.FloatingNotification
 
         private void NotificationAdapterViewHolder_ItemClicked(object sender, Notificaciones.NotificationEventArgs.NotificationItemClickedEventArgs e)
         {
-            position = e.Position;
-            using (OpenNotification notification = new OpenNotification(e.Position))
-            {
                 position = e.Position;
                 using (OpenNotification openNotification = new OpenNotification(e.Position))
                 {
-                    floatingNotificationAppName.Text = notification.AppName();
-                    floatingNotificationWhen.Text = notification.When();
-                    floatingNotificationTitle.Text = notification.Title();
-                    floatingNotificationText.Text = notification.Text();
+                    floatingNotificationAppName.Text = openNotification.AppName();
+                    floatingNotificationWhen.Text = openNotification.When();
+                    floatingNotificationTitle.Text = openNotification.Title();
+                    floatingNotificationText.Text = openNotification.Text();
                     floatingNotificationActionsContainer.RemoveAllViews();
 
                     if (openNotification.HasActionButtons() == true)
@@ -158,7 +157,6 @@ namespace LiveDisplay.Servicios.FloatingNotification
                 {
                     floatingNotificationView.Visibility = ViewStates.Invisible;
                 }
-            };
         }
 
         private void FloatingNotificationView_Click(object sender, EventArgs e)
