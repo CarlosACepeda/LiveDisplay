@@ -5,6 +5,7 @@ using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Preferences;
 using Android.Runtime;
+using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
 using Com.JackAndPhantom;
@@ -15,9 +16,10 @@ using System.Threading;
 
 namespace LiveDisplay.Activities
 {
-    [Activity(Label = "bash", Theme = "@style/LiveDisplayThemeDark")]
-    public class BackgroundSettingsActivity : Activity
+    [Activity(Label = "bash", Theme = "@style/LiveDisplayThemeDark.NoActionBar")]
+    public class BackgroundSettingsActivity : AppCompatActivity
     {
+        private Android.Support.V7.Widget.Toolbar toolbar;
         private ImageView wallpaperPreview;
         private SeekBar blur;
         private SeekBar opacity;
@@ -33,6 +35,12 @@ namespace LiveDisplay.Activities
 
             // Create your application here
             SetContentView(Resource.Layout.BackgroundSettings);
+
+            using (toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.mainToolbar))
+            {
+                SetSupportActionBar(toolbar);
+            }
+
             wallpaperPreview = FindViewById<ImageView>(Resource.Id.wallpaperPreview);
             blur = FindViewById<SeekBar>(Resource.Id.blur);
             opacity = FindViewById<SeekBar>(Resource.Id.opacity);

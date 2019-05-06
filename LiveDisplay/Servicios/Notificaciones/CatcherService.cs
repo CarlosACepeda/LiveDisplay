@@ -3,12 +3,10 @@ using Android.Content;
 using Android.Media;
 using Android.Media.Session;
 using Android.OS;
-using Android.Preferences;
 using Android.Runtime;
 using Android.Service.Notification;
 using Android.Util;
 using LiveDisplay.BroadcastReceivers;
-using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Music;
 using LiveDisplay.Servicios.Notificaciones;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
@@ -34,7 +32,6 @@ namespace LiveDisplay.Servicios
 
         public override IBinder OnBind(Intent intent)
         {
-            
             //Workaround for Kitkat to Retrieve Notifications.
             if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
             {
@@ -214,7 +211,5 @@ namespace LiveDisplay.Servicios
         {
             Log.Info("Livedisplay", "TransportControl update" + transportControlFlags);
         }
-
-
     }
 }

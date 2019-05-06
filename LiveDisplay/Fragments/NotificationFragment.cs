@@ -1,6 +1,5 @@
 ﻿using Android.App;
 using Android.Graphics;
-using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Util;
 using Android.Views;
@@ -9,10 +8,7 @@ using LiveDisplay.Adapters;
 using LiveDisplay.Servicios;
 using LiveDisplay.Servicios.Notificaciones;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
-using LiveDisplay.Servicios.Notificaciones.NotificationStyle;
-using LiveDisplay.Servicios.Wallpaper;
 using System;
-using System.Threading;
 
 namespace LiveDisplay.Fragments
 {
@@ -87,7 +83,6 @@ namespace LiveDisplay.Fragments
                     notificationActions.RemoveAllViews();
                 }
             }
-
         }
 
         private void Notification_Drag(object sender, View.DragEventArgs e)
@@ -273,5 +268,4 @@ namespace LiveDisplay.Fragments
             }
         }
     }
-
 }

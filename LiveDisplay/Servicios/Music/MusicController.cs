@@ -14,7 +14,6 @@ namespace LiveDisplay.Servicios.Music
     /// </summary>
     internal class MusicController : MediaController.Callback
     {
-
         #region Class members
 
         public static PlaybackStateCode MusicStatus { get; private set; }

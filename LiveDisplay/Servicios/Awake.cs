@@ -22,6 +22,7 @@ namespace LiveDisplay.Servicios
         private bool isLaidDown = false;
         private static int currentstartsleeptime = int.Parse(configurationManager.GetString(ConfigurationParameters.StartSleepTime, "0")); //12am
         private static int currentfinishsleeptime = int.Parse(configurationManager.GetString(ConfigurationParameters.FinishSleepTime, "500"));//5am
+
         public static void WakeUpScreen()
         {
             //Check the current time and only react if the time this method is called is within the allowed hours.
@@ -29,21 +30,21 @@ namespace LiveDisplay.Servicios
             //Generates the hour as a 4 characters number in 24 hours for example: 2210 (10:10pm)
             var currenttime = int.Parse(string.Concat(DateTime.Now.Hour.ToString() + DateTime.Now.Minute.ToString()));
 
-            if(currentfinishsleeptime < currenttime && currenttime < currentstartsleeptime)
-            if (configurationManager.GetBoolean(ConfigurationParameters.TurnOnNewNotification, false) == true|| configurationManager.GetBoolean(ConfigurationParameters.TurnOnUserMovement, false) == true)
-            {
-                PowerManager pm = ((PowerManager)Application.Context.GetSystemService(PowerService));
-                var screenLock = pm.NewWakeLock(WakeLockFlags.ScreenDim | WakeLockFlags.AcquireCausesWakeup, "Turn On Screen");
-                screenLock.Acquire();
-                ThreadPool.QueueUserWorkItem(o =>
+            if (currentfinishsleeptime < currenttime && currenttime < currentstartsleeptime)
+                if (configurationManager.GetBoolean(ConfigurationParameters.TurnOnNewNotification, false) == true || configurationManager.GetBoolean(ConfigurationParameters.TurnOnUserMovement, false) == true)
                 {
-                    Thread.Sleep(500);
-                    if (screenLock.IsHeld == true)
+                    PowerManager pm = ((PowerManager)Application.Context.GetSystemService(PowerService));
+                    var screenLock = pm.NewWakeLock(WakeLockFlags.ScreenDim | WakeLockFlags.AcquireCausesWakeup, "Turn On Screen");
+                    screenLock.Acquire();
+                    ThreadPool.QueueUserWorkItem(o =>
                     {
-                        screenLock.Release();
-                    }
-                });
-            }
+                        Thread.Sleep(500);
+                        if (screenLock.IsHeld == true)
+                        {
+                            screenLock.Release();
+                        }
+                    });
+                }
         }
 
         public static void TurnOffScreen()

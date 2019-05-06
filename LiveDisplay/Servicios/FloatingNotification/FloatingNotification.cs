@@ -85,32 +85,34 @@ namespace LiveDisplay.Servicios.FloatingNotification
         private void NotificationAdapterViewHolder_ItemLongClicked(object sender, Notificaciones.NotificationEventArgs.NotificationItemClickedEventArgs e)
         {
             position = e.Position;
-            using (OpenNotification openNotification = new OpenNotification(e.Position))
-            {
-                if (openNotification.IsRemovable())
+            if (position > 0) //Avoid out of bounds exceptions, i guess, the out of bounds vaue is -1, i guess, too.
+                using (OpenNotification openNotification = new OpenNotification(e.Position))
                 {
-                    using (NotificationSlave notificationSlave = NotificationSlave.NotificationSlaveInstance())
+                    if (openNotification.IsRemovable())
                     {
-                        if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+                        using (NotificationSlave notificationSlave = NotificationSlave.NotificationSlaveInstance())
                         {
-                            int notiId = CatcherHelper.statusBarNotifications[position].Id;
-                            string notiTag = CatcherHelper.statusBarNotifications[position].Tag;
-                            string notiPack = CatcherHelper.statusBarNotifications[position].PackageName;
-                            notificationSlave.CancelNotification(notiPack, notiTag, notiId);
+                            if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+                            {
+                                int notiId = CatcherHelper.statusBarNotifications[position].Id;
+                                string notiTag = CatcherHelper.statusBarNotifications[position].Tag;
+                                string notiPack = CatcherHelper.statusBarNotifications[position].PackageName;
+                                notificationSlave.CancelNotification(notiPack, notiTag, notiId);
+                            }
+                            else
+                            {
+                                notificationSlave.CancelNotification(CatcherHelper.statusBarNotifications[position].Key);
+                            }
                         }
-                        else
-                        {
-                            notificationSlave.CancelNotification(CatcherHelper.statusBarNotifications[position].Key);
-                        }
+                        floatingNotificationView.Visibility = ViewStates.Gone;
                     }
-                    floatingNotificationView.Visibility = ViewStates.Gone;
                 }
-            }
         }
 
         private void NotificationAdapterViewHolder_ItemClicked(object sender, Notificaciones.NotificationEventArgs.NotificationItemClickedEventArgs e)
         {
-                position = e.Position;
+            position = e.Position;
+            if (position > 0) //Avoid out of bounds exceptions, i guess, the out of bounds vaue is -1, i guess, too.
                 using (OpenNotification openNotification = new OpenNotification(e.Position))
                 {
                     floatingNotificationAppName.Text = openNotification.AppName();
@@ -149,20 +151,21 @@ namespace LiveDisplay.Servicios.FloatingNotification
                     }
                 }
 
-                if (floatingNotificationView.Visibility != ViewStates.Visible)
-                {
-                    floatingNotificationView.Visibility = ViewStates.Visible;
-                }
-                else
-                {
-                    floatingNotificationView.Visibility = ViewStates.Invisible;
-                }
+            if (floatingNotificationView.Visibility != ViewStates.Visible)
+            {
+                floatingNotificationView.Visibility = ViewStates.Visible;
+            }
+            else
+            {
+                floatingNotificationView.Visibility = ViewStates.Invisible;
+            }
         }
 
         private void FloatingNotificationView_Click(object sender, EventArgs e)
         {
-            using (OpenNotification openNotification = new OpenNotification(position))
-                openNotification.ClickNotification();
+            if (position > 0) //Avoid out of bounds exceptions, i guess, the out of bounds vaue is -1, i guess, too.
+                using (OpenNotification openNotification = new OpenNotification(position))
+                    openNotification.ClickNotification();
             floatingNotificationView.Visibility = ViewStates.Gone;
         }
 

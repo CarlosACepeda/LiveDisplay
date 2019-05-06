@@ -38,7 +38,7 @@ namespace LiveDisplay.Servicios
         None = 0,
         Blacklisted = 1,
         NonAllowedToTurnScreenOn = 2,
-        BlockInAppOnly=4,
+        BlockInAppOnly = 4,
         TotallyBlocked = Blacklisted | NonAllowedToTurnScreenOn | BlockInAppOnly
     }
 }

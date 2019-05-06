@@ -47,6 +47,7 @@ namespace LiveDisplay
         private readonly float threshold = 1000; //1 second of threshold.(used to implement the double tap.)
         private System.Timers.Timer watchDog; //the watchdog simply will start counting down until it gets resetted by OnUserInteraction() override.
         private Animation fadeoutanimation;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -100,7 +101,6 @@ namespace LiveDisplay
 
             //CatcherHelper events
             CatcherHelper.NotificationListSizeChanged += CatcherHelper_NotificationListSizeChanged;
-
 
             using (recycler = FindViewById<RecyclerView>(Resource.Id.NotificationListRecyclerView))
             {
@@ -168,21 +168,20 @@ namespace LiveDisplay
 
         private void Wallpaper_NewWallpaperIssued(object sender, WallpaperChangedEventArgs e)
         {
-           
-                RunOnUiThread(() =>
-                {
-                    wallpaperView.StartAnimation(fadeoutanimation);
+            RunOnUiThread(() =>
+            {
+                wallpaperView.StartAnimation(fadeoutanimation);
 
-                    if (e.Wallpaper == null)
-                    {
-                        wallpaperView.SetBackgroundColor(Color.Black);
-                    }
-                    else
-                    {
-                        wallpaperView.Background = e.Wallpaper;
-                        wallpaperView.Background.Alpha = e.OpacityLevel;
-                    }
-                });
+                if (e.Wallpaper == null)
+                {
+                    wallpaperView.SetBackgroundColor(Color.Black);
+                }
+                else
+                {
+                    wallpaperView.Background = e.Wallpaper;
+                    wallpaperView.Background.Alpha = e.OpacityLevel;
+                }
+            });
             GC.Collect();
         }
 

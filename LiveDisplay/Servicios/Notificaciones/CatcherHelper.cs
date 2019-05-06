@@ -115,7 +115,7 @@ namespace LiveDisplay.Servicios.Notificaciones
         private bool UpdateNotification(StatusBarNotification sbn)
         {
             int indice = GetNotificationPosition(sbn);
-            if (indice >= 0 )
+            if (indice >= 0)
             {
                 statusBarNotifications.RemoveAt(indice);
                 statusBarNotifications.Add(sbn);
@@ -127,7 +127,6 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
             return false;
         }
-
 
         public void OnNotificationRemoved(StatusBarNotification sbn)
         {

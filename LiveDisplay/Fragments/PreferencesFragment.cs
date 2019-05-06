@@ -18,7 +18,8 @@ namespace LiveDisplay.Fragments
     public class PreferencesFragmentCompat : PreferenceFragment, ISharedPreferencesOnSharedPreferenceChangeListener
     {
         private ISharedPreferences sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
-        private bool isSleepstarttimesetted=false;
+        private bool isSleepstarttimesetted = false;
+
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -39,18 +40,17 @@ namespace LiveDisplay.Fragments
         private void PreferencesFragmentCompat_timepicked(object sender, TimePickerDialog.TimeSetEventArgs e)
         {
             //Simple trick to save two different values using the same timepicker.
-            
+
             ConfigurationManager configurationManager = new ConfigurationManager(sharedPreferences);
             if (isSleepstarttimesetted)
             {
-                    configurationManager.SaveAValue(ConfigurationParameters.FinishSleepTime, string.Concat(e.HourOfDay.ToString() + e.Minute.ToString()));
+                configurationManager.SaveAValue(ConfigurationParameters.FinishSleepTime, string.Concat(e.HourOfDay.ToString() + e.Minute.ToString()));
             }
             else
             {
                 configurationManager.SaveAValue(ConfigurationParameters.StartSleepTime, string.Concat(e.HourOfDay.ToString() + e.Minute.ToString()));
                 isSleepstarttimesetted = true;
             }
-           
         }
 
         private void Inactivehourssettingspreference_PreferenceClick(object sender, Preference.PreferenceClickEventArgs e)
@@ -64,7 +64,6 @@ namespace LiveDisplay.Fragments
                 else
                 {
                     Toast.MakeText(this.Context, "Set the finish hour", ToastLength.Long).Show();
-
                 }
                 datePickerDialog.Create();
                 datePickerDialog.Show();
@@ -117,6 +116,7 @@ namespace LiveDisplay.Fragments
             base.OnPause();
             sharedPreferences.UnregisterOnSharedPreferenceChangeListener(this);
         }
+
         public override void OnDestroy()
         {
             base.OnDestroy();

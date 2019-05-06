@@ -5,7 +5,7 @@
   <string name="aboutinfotitle">Acerca de esta aplicación:</string>
   <string name="accessesstatusdisabled">Accesos no activados</string>
   <string name="accessesstatusenabled">Accesos activados!</string>
-  <string name="achep_ty">El hombre detrás de AcDisplay, ayuda y guía!</string>
+  <string name="achep_ty">Ayuda y guía!</string>
   <string name="acknowledgments">Agradecimientos</string>
   <string name="alertnopermissions">Debes permitir los permisos requeridos!</string>
   <string name="app_name">LiveDisplay</string>
@@ -60,12 +60,14 @@
   <string name="pickwallpaper">Elige uno</string>
   <string name="placeholder">Inserta una cadena aquí</string>
   <string name="rus">Ruso</string>
+  <string name="searchappedittexthint">Nombre de la app...</string>
+  <string name="searchapptitle">Busca una aplicación</string>
   <string name="sendtestnotification">Enviar notificacion de prueba</string>
   <string name="settings">Ajustes</string>
   <string name="showalbumart">Mostrar portada del álbum</string>
   <string name="showclock">No mostrar el reloj</string>
   <string name="tenseconds">10 segundos</string>
-  <string name="testnotificationtext">Manten presionado una notificación de la lista para quitarla</string>
+  <string name="testnotificationtext">Manten presionado una notificación de la lista o presiona X para quitarla</string>
   <string name="translations">Traducciones</string>
   <string name="turnoffdelay">Apagar pantalla automaticamente</string>
   <string name="turnoffdelay_desc">Si la pantalla se enciende(p.e.j. una nueva notificación llega) y no hay interaccion por parte del usuario, apagar la pantalla en...</string>
@@ -73,7 +75,7 @@
   <string name="turnonnewnotification_desc">Prender la pantalla si una nueva notificacion llega</string>
   <string name="turnonusermovement">Prender la pantalla al levantar el dispositivo</string>
   <string name="version">Versión</string>
-  <string name="versionnumber">0.8.0</string>
+  <string name="versionnumber">0.8.1</string>
   <string name="wallpaperblur">Difuminación</string>
   <string name="wallpaperopacity">Opacidad</string>
   <string name="weatherwidget">Widget del Clima</string>

@@ -1,4 +1,4 @@
-﻿using Android.Support.V4.App;
+﻿using Android.App;
 using Android.Graphics.Drawables;
 using Android.Media;
 using Android.Media.Session;
@@ -12,10 +12,9 @@ using LiveDisplay.Servicios.Music;
 using LiveDisplay.Servicios.Music.MediaEventArgs;
 using LiveDisplay.Servicios.Wallpaper;
 using System;
-using System.Timers;
-using Android.App;
-using Fragment = Android.App.Fragment;
 using System.Threading;
+using System.Timers;
+using Fragment = Android.App.Fragment;
 using Timer = System.Timers.Timer;
 
 namespace LiveDisplay.Fragments

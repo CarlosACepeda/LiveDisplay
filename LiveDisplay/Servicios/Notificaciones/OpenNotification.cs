@@ -131,7 +131,7 @@ namespace LiveDisplay.Servicios.Notificaciones
         }
 
         internal Bitmap BigPicture()
-        { 
+        {
             return statusbarnotification.Notification.Extras.Get(Notification.ExtraPicture) as Bitmap;
         }
 
@@ -139,13 +139,14 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             try
             {
-               return statusbarnotification.Notification.Extras.GetString(Notification.ExtraTemplate);
+                return statusbarnotification.Notification.Extras.GetString(Notification.ExtraTemplate);
             }
             catch
             {
                 return string.Empty;
             }
         }
+
         public static bool IsAutoCancellable(int position)
         {
             if (CatcherHelper.statusBarNotifications[position].Notification.Flags.HasFlag(NotificationFlags.AutoCancel) == true)

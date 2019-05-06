@@ -1,14 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout 
+	xmlns:a="http://schemas.android.com/apk/res-auto" 
+	xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-	<android.support.v7.widget.RecyclerView
-		android:id="@+id/blacklistRecyclerView"
+	<android.support.v7.widget.Toolbar
+		android:id="@+id/mainToolbar"
+		android:layout_width="match_parent"
+		android:layout_height="?attr/actionBarSize"
+		android:theme="@style/AppToolbar"
+		a:popupTheme="@style/popupTheme"
+		android:background="?attr/colorPrimary"/>
+	<TextView
+		android:textAppearance="?android:attr/textAppearanceLarge"
+		android:text="@string/searchapptitle"
+		android:padding="10dp"
+		android:layout_height="wrap_content"
+		android:layout_width="match_parent"/>
+	<EditText
+		android:hint="@string/searchappedittexthint"
+		android:id="@+id/searchboxapp"
+		android:padding="10dp"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"/>
+	<FrameLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		
 		>
+		<ProgressBar
+			android:visibility="invisible"
+			android:id="@+id/loadingblacklistitemsprogressbar"
+			android:layout_height="match_parent"
+			android:layout_width="match_parent"/>
+		<android.support.v7.widget.RecyclerView
+			android:padding="10dp"
+			android:id="@+id/blacklistRecyclerView"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent">
 		</android.support.v7.widget.RecyclerView>
-
+	</FrameLayout>
 </LinearLayout>

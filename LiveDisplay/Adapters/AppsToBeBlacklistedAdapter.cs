@@ -78,6 +78,7 @@ namespace LiveDisplay.Adapters
                         levels &= ~LevelsOfAppBlocking.BlockInAppOnly;
                     }
                     break;
+
                 case 2: //2 is Totally Blocked
                     if (e.IsChecked)
                         levels |= LevelsOfAppBlocking.NonAllowedToTurnScreenOn;
@@ -86,7 +87,6 @@ namespace LiveDisplay.Adapters
                         levels &= ~LevelsOfAppBlocking.NonAllowedToTurnScreenOn;
                     }
                     break;
-
             }
         }
 
@@ -94,7 +94,7 @@ namespace LiveDisplay.Adapters
         {
             bool blacklisted = false;
             bool nonallowedtoturnscreenon = false;
-            bool onlyremovesystem= false;
+            bool onlyremovesystem = false;
             using (ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context)))
             {
                 var flag = configurationManager.RetrieveAValue(forWhichApp, 0);
@@ -112,6 +112,7 @@ namespace LiveDisplay.Adapters
                     case LevelsOfAppBlocking.NonAllowedToTurnScreenOn:
                         nonallowedtoturnscreenon = true;
                         break;
+
                     case LevelsOfAppBlocking.BlockInAppOnly:
                         onlyremovesystem = true;
                         break;

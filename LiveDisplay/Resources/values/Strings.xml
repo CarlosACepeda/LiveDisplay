@@ -6,7 +6,7 @@
   <string name="accessesstatusdisabled">Accesses are disabled</string>
   <string name="accessesstatusenabled">Accesses are enabled!</string>
   <string name="achep">Artem Chepurnoy</string>
-  <string name="achep_ty">The AcDisplay man himself, help and guidance!</string>
+  <string name="achep_ty">Help and guidance!</string>
   <string name="acknowledgments">Acknowledgments</string>
   <string name="alertnopermissions">You must allow the required permission!</string>
   <string name="app_name">LiveDisplay</string>
@@ -63,12 +63,14 @@
   <string name="pickwallpaper">Pick one</string>
   <string name="placeholder">Insert a string here</string>
   <string name="rus">Russian</string>
+  <string name="searchappedittexthint">App name...</string>
+  <string name="searchapptitle">Search for an app</string>
   <string name="sendtestnotification">Send test notification</string>
   <string name="settings">Settings</string>
   <string name="showalbumart">Show media cover art</string>
   <string name="showclock">Don\'t show the clock</string>
   <string name="tenseconds">10 seconds</string>
-  <string name="testnotificationtext">Long press a notification from the list to clear it</string>
+  <string name="testnotificationtext">Long press a notification from the list or press the X button to clear it</string>
   <string name="translations">Translations</string>
   <string name="turnoffdelay">Automatically turn screen off</string>
   <string name="turnoffdelay_desc">If the screen turns on(e.g.: A new notification is posted) and there is not user interaction, turn off the screen in...</string>
@@ -76,7 +78,7 @@
   <string name="turnonnewnotification_desc">Turn on screen if a new notification incomes</string>
   <string name="turnonusermovement">Turn on screen on device pick up</string>
   <string name="version">Version</string>
-  <string name="versionnumber">0.8.0</string>
+  <string name="versionnumber">0.8.1</string>
   <string name="wallpaperblur">Blur</string>
   <string name="wallpaperopacity">Opacity</string>
   <string name="weatherwidget">Weather Widget</string>
