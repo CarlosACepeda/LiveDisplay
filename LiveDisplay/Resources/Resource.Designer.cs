@@ -4089,50 +4089,50 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f0b0013
 			public const int search_menu_title = 2131427347;
 			
-			// aapt resource value: 0x7f0b007d
-			public const int searchappedittexthint = 2131427453;
-			
-			// aapt resource value: 0x7f0b007c
-			public const int searchapptitle = 2131427452;
-			
 			// aapt resource value: 0x7f0b0068
-			public const int sendtestnotification = 2131427432;
+			public const int searchappedittexthint = 2131427432;
 			
 			// aapt resource value: 0x7f0b0069
-			public const int settings = 2131427433;
+			public const int searchapptitle = 2131427433;
 			
 			// aapt resource value: 0x7f0b006a
-			public const int showalbumart = 2131427434;
+			public const int sendtestnotification = 2131427434;
 			
 			// aapt resource value: 0x7f0b006b
-			public const int showclock = 2131427435;
+			public const int settings = 2131427435;
+			
+			// aapt resource value: 0x7f0b006c
+			public const int showalbumart = 2131427436;
+			
+			// aapt resource value: 0x7f0b006d
+			public const int showclock = 2131427437;
 			
 			// aapt resource value: 0x7f0b0028
 			public const int status_bar_notification_info_overflow = 2131427368;
 			
-			// aapt resource value: 0x7f0b006c
-			public const int tenseconds = 2131427436;
-			
-			// aapt resource value: 0x7f0b006d
-			public const int testnotificationtext = 2131427437;
-			
 			// aapt resource value: 0x7f0b006e
-			public const int translations = 2131427438;
+			public const int tenseconds = 2131427438;
 			
 			// aapt resource value: 0x7f0b006f
-			public const int turnoffdelay = 2131427439;
+			public const int testnotificationtext = 2131427439;
 			
 			// aapt resource value: 0x7f0b0070
-			public const int turnoffdelay_desc = 2131427440;
+			public const int translations = 2131427440;
 			
 			// aapt resource value: 0x7f0b0071
-			public const int turnonnewnotification = 2131427441;
+			public const int turnoffdelay = 2131427441;
 			
 			// aapt resource value: 0x7f0b0072
-			public const int turnonnewnotification_desc = 2131427442;
+			public const int turnoffdelay_desc = 2131427442;
 			
 			// aapt resource value: 0x7f0b0073
-			public const int turnonusermovement = 2131427443;
+			public const int turnonnewnotification = 2131427443;
+			
+			// aapt resource value: 0x7f0b0074
+			public const int turnonnewnotification_desc = 2131427444;
+			
+			// aapt resource value: 0x7f0b0075
+			public const int turnonusermovement = 2131427445;
 			
 			// aapt resource value: 0x7f0b0000
 			public const int v7_preference_off = 2131427328;
@@ -4140,29 +4140,29 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f0b0001
 			public const int v7_preference_on = 2131427329;
 			
-			// aapt resource value: 0x7f0b0074
-			public const int version = 2131427444;
-			
-			// aapt resource value: 0x7f0b0075
-			public const int versionnumber = 2131427445;
-			
 			// aapt resource value: 0x7f0b0076
-			public const int wallpaperblur = 2131427446;
+			public const int version = 2131427446;
 			
 			// aapt resource value: 0x7f0b0077
-			public const int wallpaperopacity = 2131427447;
+			public const int versionnumber = 2131427447;
 			
 			// aapt resource value: 0x7f0b0078
-			public const int weatherwidget = 2131427448;
+			public const int wallpaperblur = 2131427448;
 			
 			// aapt resource value: 0x7f0b0079
-			public const int weatherwidgetenabled = 2131427449;
+			public const int wallpaperopacity = 2131427449;
 			
 			// aapt resource value: 0x7f0b007a
-			public const int yasujizr = 2131427450;
+			public const int weatherwidget = 2131427450;
 			
 			// aapt resource value: 0x7f0b007b
-			public const int yasujizr_ty = 2131427451;
+			public const int weatherwidgetenabled = 2131427451;
+			
+			// aapt resource value: 0x7f0b007c
+			public const int yasujizr = 2131427452;
+			
+			// aapt resource value: 0x7f0b007d
+			public const int yasujizr_ty = 2131427453;
 			
 			static String()
 			{

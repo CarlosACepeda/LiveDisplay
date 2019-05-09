@@ -55,17 +55,17 @@ namespace LiveDisplay.Fragments
 
         private void Inactivehourssettingspreference_PreferenceClick(object sender, Preference.PreferenceClickEventArgs e)
         {
-            using (TimePickerDialog datePickerDialog = new TimePickerDialog(this.Context, PreferencesFragmentCompat_timepicked, DateTime.Now.Hour, DateTime.Now.Minute, false))
+            using (TimePickerDialog datePickerDialog = new TimePickerDialog(Activity, PreferencesFragmentCompat_timepicked, DateTime.Now.Hour, DateTime.Now.Minute, false))
             {
                 if (!isSleepstarttimesetted)
                 {
-                    Toast.MakeText(this.Context, "Set the Start hour", ToastLength.Long).Show();
+                    Toast.MakeText(Activity, "Set the Start hour", ToastLength.Long).Show();
                 }
                 else
                 {
-                    Toast.MakeText(this.Context, "Set the finish hour", ToastLength.Long).Show();
+                    Toast.MakeText(Activity, "Set the finish hour", ToastLength.Long).Show();
                 }
-                datePickerDialog.Create();
+                //datePickerDialog.Create();
                 datePickerDialog.Show();
             }
         }

@@ -112,7 +112,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
         private void NotificationAdapterViewHolder_ItemClicked(object sender, Notificaciones.NotificationEventArgs.NotificationItemClickedEventArgs e)
         {
             position = e.Position;
-            if (position > 0) //Avoid out of bounds exceptions, i guess, the out of bounds vaue is -1, i guess, too.
+            if (position > -1) //Avoid out of bounds exceptions, i guess, the out of bounds vaue is -1, i guess, too.
                 using (OpenNotification openNotification = new OpenNotification(e.Position))
                 {
                     floatingNotificationAppName.Text = openNotification.AppName();
@@ -163,7 +163,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
 
         private void FloatingNotificationView_Click(object sender, EventArgs e)
         {
-            if (position > 0) //Avoid out of bounds exceptions, i guess, the out of bounds vaue is -1, i guess, too.
+            if (position > -1) //Avoid out of bounds exceptions, i guess, the out of bounds vaue is -1, i guess, too.
                 using (OpenNotification openNotification = new OpenNotification(position))
                     openNotification.ClickNotification();
             floatingNotificationView.Visibility = ViewStates.Gone;
