@@ -170,20 +170,42 @@ namespace LiveDisplay.Servicios
         //Events:
         private void NotificationSlave_NotificationCancelledLollipop(object sender, NotificationCancelledEventArgsLollipop e)
         {
-            CancelNotification(e.Key);
+            try
+            {
+                CancelNotification(e.Key);
+            }
+            catch (Java.Lang.SecurityException)
+            {
+                Log.Info("LiveDisplay", "Fail to dismiss the notification, listener was not ready");
+            }
         }
 
         private void NotificationSlave_NotificationCancelled(object sender, NotificationCancelledEventArgsKitkat e)
         {
+            try
+            {
 #pragma warning disable CS0618 // El tipo o el miembro están obsoletos
-            CancelNotification(e.NotificationPackage, e.NotificationTag, e.NotificationId);
+                CancelNotification(e.NotificationPackage, e.NotificationTag, e.NotificationId);
 #pragma warning restore CS0618 // El tipo o el miembro están obsoletos
+            }
+            catch (Java.Lang.SecurityException)
+            {
+                Log.Info("LiveDisplay", "Fail to dismiss the notification, listener was not ready");
+            }
         }
 
         private void NotificationSlave_AllNotificationsCancelled(object sender, EventArgs e)
         {
-            CancelAllNotifications();
-            catcherHelper.CancelAllNotifications();
+            try
+            {
+                CancelAllNotifications();
+                catcherHelper.CancelAllNotifications();
+            }
+            catch (Java.Lang.SecurityException)
+            {
+                Log.Info("LiveDisplay", "Fail to dismiss the notification, listener was not ready");
+
+            }
         }
 
         public void OnClientChange(bool clearing)

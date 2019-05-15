@@ -299,7 +299,15 @@ namespace LiveDisplay.Fragments
 
         private void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            skbSeekSongTime.SetProgress(skbSeekSongTime.Progress + 1000, true);
+            if (Build.VERSION.SdkInt > BuildVersionCodes.M)
+            {
+                skbSeekSongTime.SetProgress(skbSeekSongTime.Progress + 1000, true);
+            }
+            else
+            {
+                skbSeekSongTime.Progress = skbSeekSongTime.Progress + 1000;
+            }
+
         }
     }
 }

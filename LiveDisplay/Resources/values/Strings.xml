@@ -43,6 +43,7 @@
   <string name="fiveseconds">5 seconds</string>
   <string name="githubproject">Want to help?</string>
   <string name="help">Help</string>
+  <string name="helptext">To remove this app go to Settings&gt; Device Administrators, then Uncheck LiveDisplay, now you should be able to uninstall normally</string>
   <string name="hidesystemicons">Do not show system icons</string>
   <string name="humidity">Humidity</string>
   <string name="idk">¯\_(ツ)_/¯</string>

@@ -205,6 +205,16 @@ namespace LiveDisplay.Activities
                     }
                     break;
 
+                case Resource.Id.action_help:
+                    using (Android.Support.V7.App.AlertDialog.Builder builder = new Android.Support.V7.App.AlertDialog.Builder(this))
+                    {
+                        builder.SetMessage(Resource.String.helptext);
+                        builder.SetPositiveButton("ok, cool", null as EventHandler<DialogClickEventArgs>);
+                        builder.Show();
+                    }
+
+                    break;
+
                 default:
                     break;
             }
@@ -278,7 +288,7 @@ namespace LiveDisplay.Activities
         {
             ThreadPool.QueueUserWorkItem(m =>
             {
-                AppCenter.Start("0ec5320c-34b4-498b-a9c2-dae7614997fa", typeof(Analytics), typeof(Crashes));
+                AppCenter.Start("0ec5320c-34b4-498b-a9c2-dae7614997fa", typeof(Analytics), typeof(Crashes), typeof(ErrorReport));
             });
         }
     }
