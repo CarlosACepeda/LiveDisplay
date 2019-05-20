@@ -1,4 +1,5 @@
-﻿using Android.Media;
+﻿using Android.App;
+using Android.Media;
 using Android.Media.Session;
 using Android.Util;
 using LiveDisplay.Misc;
@@ -21,6 +22,7 @@ namespace LiveDisplay.Servicios.Music
         public MediaController.TransportControls TransportControls { get; set; }
         public MediaMetadata MediaMetadata { get; set; }
         private static MusicController instance;
+        public static PendingIntent ActivityIntent { get; set; }
 
         #region events
 
@@ -86,7 +88,8 @@ namespace LiveDisplay.Servicios.Music
                     //Send media information.
                     OnMediaMetadataChanged(new MediaMetadataChangedEventArgs
                     {
-                        MediaMetadata = MediaMetadata
+                        MediaMetadata = MediaMetadata,
+                        ActivityIntent= ActivityIntent
                     });
                     //Send Playbackstate of the media.
                     OnMediaPlaybackChanged(new MediaPlaybackStateChangedEventArgs
@@ -157,12 +160,18 @@ namespace LiveDisplay.Servicios.Music
             //release resources.
 
             base.Dispose(disposing);
+        }
+
+        public override void OnSessionDestroyed()
+        {
+            
             Jukebox.MediaEvent -= Jukebox_MediaEvent;
             PlaybackState?.Dispose();
             TransportControls?.Dispose();
             MediaMetadata?.Dispose();
             instance = null;
             Log.Info("LiveDisplay", "MusicController dispose method");
+            base.OnSessionDestroyed();
         }
     }
 }

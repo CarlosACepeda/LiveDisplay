@@ -12,7 +12,7 @@ using System.Threading;
 
 namespace LiveDisplay.Activities
 {
-    [Activity(Label = "Weather", Theme = "@style/LiveDisplayThemeDark.NoActionBar")]
+    [Activity(Label = "@string/weather", Theme = "@style/LiveDisplayThemeDark.NoActionBar")]
     public class WeatherSettingsActivity : AppCompatActivity
     {
         private ConfigurationManager configurationManager;

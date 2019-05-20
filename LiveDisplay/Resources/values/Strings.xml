@@ -13,7 +13,7 @@
   <string name="askfortranslations">Want to help with translations?</string>
   <string name="awakesettings">Awake</string>
   <string name="blacklist">Blacklist</string>
-  <string name="blacklistdesc">Don\'t show notifications from the apps selected, these won\'t appear in the status bar too, unless the notifications are Sticky notifications(that can\'t be removed by the system itself)</string>
+  <string name="blacklistdesc">Don\'t show notifications from the apps selected.</string>
   <string name="blacklisted">Blacklisted</string>
   <string name="blacklistitemtag">idk</string>
   <string name="blackwallpaper">Black</string>
@@ -76,14 +76,18 @@
   <string name="turnoffdelay">Automatically turn screen off</string>
   <string name="turnoffdelay_desc">If the screen turns on(e.g.: A new notification is posted) and there is not user interaction, turn off the screen in...</string>
   <string name="turnonnewnotification">Turn on screen</string>
-  <string name="turnonnewnotification_desc">Turn on screen if a new notification incomes</string>
+  <string name="turnonnewnotification_desc">Turn on screen if a new notification is received</string>
   <string name="turnonusermovement">Turn on screen on device pick up</string>
   <string name="version">Version</string>
-  <string name="versionnumber">0.8.1</string>
+  <string name="versionnumber">0.8.2</string>
   <string name="wallpaperblur">Blur</string>
   <string name="wallpaperopacity">Opacity</string>
   <string name="weatherwidget">Weather Widget</string>
   <string name="weatherwidgetenabled">Enable Weather Widget</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
+  <string name="testweathersettingsbutton">Test me!</string>
+  <string name="useimperialunits">Use Imperial units</string>
+  <string name="entercityplaceholder">Enter a city here</string>
+  <string name="weather">Weather</string>
 </resources>

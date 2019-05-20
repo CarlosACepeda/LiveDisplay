@@ -105,12 +105,9 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             try
             {
-                DateTime dateTime = new DateTime(statusbarnotification.Notification.When);
-                if (dateTime.Hour == 0 && dateTime.Minute == 0)
-                {
-                    return "";
-                }
-                return dateTime.Hour + ":" + dateTime.Minute;
+                Java.Util.Calendar calendar = Java.Util.Calendar.Instance;
+                calendar.TimeInMillis = statusbarnotification.Notification.When;
+                return string.Concat(calendar.Get(Java.Util.CalendarField.Hour), ":", calendar.Get(Java.Util.CalendarField.Minute));
             }
             catch
             {

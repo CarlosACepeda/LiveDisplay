@@ -2,17 +2,73 @@
 <RelativeLayout xmlns:a="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
     a:layout_width="match_parent"
-    a:layout_height="match_parent"
+    a:layout_height="wrap_content"
+	a:id="@+id/weatherclockcontainer"
     a:gravity="bottom">
+	<LinearLayout
+		a:id="@+id/weatherinfo"
+		a:visibility="invisible"
+		a:layout_height="wrap_content"
+		a:layout_width="match_parent"
+		a:orientation="vertical">
+	<LinearLayout
+		a:layout_width="match_parent"
+		a:layout_height="wrap_content"
+		a:orientation="horizontal"
+		a:id="@+id/maintemperatureinfo"
+		>
+	<TextView
+		a:text="19c°"
+		a:textAppearance="?android:attr/textAppearanceLarge"
+		a:layout_width="wrap_content"
+		a:layout_height="wrap_content"
+		a:paddingRight="10dp"
+		a:minWidth="25px"
+		a:minHeight="25px"
+		a:id="@+id/temperature" />
+	<TextView
+		a:text="Bogotá"
+		a:textAppearance="?android:attr/textAppearanceMedium"
+		a:layout_width="match_parent"
+		a:layout_height="wrap_content"
+		a:minWidth="25px"
+		a:minHeight="25px"
+		a:id="@+id/city" />
+	</LinearLayout>
+	<LinearLayout
+		a:layout_below="@id/maintemperatureinfo"
+		a:orientation="horizontal"
+		a:layout_width="match_parent"
+		a:layout_height="wrap_content">
+		<TextView
+			a:text="17c°"
+			a:textAppearance="?android:attr/textAppearanceMedium"
+			a:layout_width="wrap_content"
+			a:layout_height="wrap_content"
+			a:id="@+id/minimumtemperature" />
+		<TextView
+			a:text="|"
+            a:layout_width="5dp"
+            a:layout_height="wrap_content" />
+		<TextView
+			a:text="25c°"
+			a:textAppearance="?android:attr/textAppearanceMedium"
+			a:layout_width="wrap_content"
+			a:layout_height="wrap_content"
+			a:id="@+id/maximumtemperature" />
+	</LinearLayout>
+	</LinearLayout>
     <TextClock
         a:id="@+id/clockLock"
         a:background="?android:selectableItemBackground"
         a:layout_width="wrap_content"
         a:layout_height="wrap_content"
+		a:layout_below="@id/weatherinfo"
         a:textSize="45dp"
+		tools:text="1:45pm"
         a:fontFamily="sans-serif-condensed-light"
 		tools:visibility="visible"
-        a:gravity="bottom" />
+        />
     <ImageView
         a:id="@+id/batteryIcon"
         a:layout_toRightOf="@id/clockLock"

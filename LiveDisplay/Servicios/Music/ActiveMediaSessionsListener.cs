@@ -16,15 +16,15 @@ namespace LiveDisplay.Servicios.Music
 
         private MusicController musicController;
 
-        //Al parecer hay varios controladores de Multimedia y toca recuperarlos.
         public void OnActiveSessionsChanged(IList<MediaController> controllers)
         {
-            if (controllers.Count > 0)
-            {
-                musicController = MusicController.GetInstance();
-                mediaController = controllers[0];
+           //Pick the best mediacontroller.
+           if(controllers.Count>0)
+           mediaController = controllers[0];
+            if (mediaController?.GetTransportControls() != null) //Ensure that this session has transport controls we can control
                 try
                 {
+                    musicController = MusicController.GetInstance();
                     mediaController.RegisterCallback(musicController);
                     //Retrieve the controls to control the media, duh.
                     musicController.TransportControls = mediaController.GetTransportControls();
@@ -33,23 +33,10 @@ namespace LiveDisplay.Servicios.Music
                 }
                 catch
                 {
-                    musicController.Dispose();
-                    Log.Info("LiveDisplay", "Couldn't register a mediacallback");
-                }
-            }
-            else if (mediaController != null && controllers.Count == 0)
-            {
-                Log.Info("LiveDisplay", "mediacontroller null or no controllers.");
-                try
-                {
-                    mediaController.UnregisterCallback(musicController);
+                    mediaController?.UnregisterCallback(musicController);
                     musicController.Dispose();
                 }
-                catch (Exception e)
-                {
-                    Log.Info("LiveDisplay", "Unregistering MediaController callback failed" + e.Message);
-                }
-            }
+            
         }
     }
 }

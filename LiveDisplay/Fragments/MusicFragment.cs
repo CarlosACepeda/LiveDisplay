@@ -4,6 +4,7 @@ using Android.Media;
 using Android.Media.Session;
 using Android.OS;
 using Android.Preferences;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
 using LiveDisplay.Misc;
@@ -26,6 +27,8 @@ namespace LiveDisplay.Fragments
         private LinearLayout musicPlayerContainer;
         private SeekBar skbSeekSongTime;
         private PlaybackStateCode playbackState;
+        private PendingIntent activityIntent; //A Pending intent if available to start the activity associated with this music fragent.
+
         private Timer timer;
         private ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context));
 
@@ -84,6 +87,14 @@ namespace LiveDisplay.Fragments
             skbSeekSongTime.ProgressChanged += SkbSeekSongTime_ProgressChanged;
             skbSeekSongTime.StopTrackingTouch += SkbSeekSongTime_StopTrackingTouch;
             musicPlayerContainer.LongClick += MusicPlayerContainer_LongClick;
+            musicPlayerContainer.Click += MusicPlayerContainer_Click;
+        }
+
+        private void MusicPlayerContainer_Click(object sender, EventArgs e)
+        {
+            try { activityIntent.Send(); }
+            catch { Log.Info("LiveDisplay", "Failed to send the Music pending intent"); }
+                
         }
 
         private void BtnSkipNext_LongClick(object sender, View.LongClickEventArgs e)
@@ -213,6 +224,7 @@ namespace LiveDisplay.Fragments
 
         private void MusicController_MediaMetadataChanged(object sender, MediaMetadataChangedEventArgs e)
         {
+            activityIntent = e.ActivityIntent;
             tvTitle.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyTitle);
             tvAlbum.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyAlbum);
             tvArtist.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyArtist);

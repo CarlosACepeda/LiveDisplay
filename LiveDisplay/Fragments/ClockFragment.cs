@@ -17,9 +17,15 @@ namespace LiveDisplay.Fragments
     {
         private TextView date;
         private TextClock clock;
+        private RelativeLayout weatherclockcontainer;
         private TextView battery;
         private ImageView batteryIcon;
         private BatteryReceiver batteryReceiver;
+        private TextView temperature;
+        private TextView minimumTemperature;
+        private TextView maximumTemperature;
+        private TextView city;
+        private LinearLayout weatherinfo;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
@@ -43,12 +49,17 @@ namespace LiveDisplay.Fragments
             View v = inflater.Inflate(Resource.Layout.cLock, container, false);
             date = v.FindViewById<TextView>(Resource.Id.txtFechaLock);
             clock = v.FindViewById<TextClock>(Resource.Id.clockLock);
+            weatherclockcontainer = v.FindViewById<RelativeLayout>(Resource.Id.weatherclockcontainer);
             battery = v.FindViewById<TextView>(Resource.Id.batteryLevel);
             batteryIcon = v.FindViewById<ImageView>(Resource.Id.batteryIcon);
+            temperature = v.FindViewById<TextView>(Resource.Id.temperature);
+            minimumTemperature = v.FindViewById<TextView>(Resource.Id.minimumtemperature);
+            maximumTemperature = v.FindViewById<TextView>(Resource.Id.maximumtemperature);
             LoadDate();
 
             //View Events
             clock.Click += Clock_Click;
+            weatherclockcontainer.Click += Weatherclockcontainer_Click;
             BatteryReceiver.BatteryInfoChanged += BatteryReceiver_BatteryInfoChanged;
             ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context));
 
@@ -58,6 +69,23 @@ namespace LiveDisplay.Fragments
                 Activity.RunOnUiThread(() => clock.Visibility = ViewStates.Invisible);
             }
             return v;
+        }
+
+        private void Weatherclockcontainer_Click(object sender, EventArgs e)
+        {
+            //TODO: al mostrar, también mostrar la información del clima.
+            //Y esta se debe guardar.
+            var view = sender as View;
+            weatherinfo = view.FindViewById<LinearLayout>(Resource.Id.weatherinfo);
+            if (weatherinfo.Visibility == ViewStates.Visible)
+            {
+                weatherinfo.Visibility = ViewStates.Invisible;
+            }
+            else
+            {
+                weatherinfo.Visibility = ViewStates.Visible;
+            }
+            weatherinfo.Dispose();
         }
 
         public override void OnDestroyView()

@@ -1,5 +1,6 @@
 ﻿using Android.App;
 using Android.Content;
+using Android.Content.PM;
 using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.Media;
@@ -64,9 +65,12 @@ namespace LiveDisplay
                 if (Checkers.IsNotificationListenerEnabled() == false || canDrawOverlays == false || Checkers.IsThisAppADeviceAdministrator() == false)
                 {
                     RunOnUiThread(() =>
-                    Toast.MakeText(Application.Context, "You dont have the required permissions", ToastLength.Long).Show()
+                    {
+                        Toast.MakeText(Application.Context, "You dont have the required permissions", ToastLength.Long).Show();
+                        Finish();
+                    }
                     );
-                    Finish();
+                    
                 }
             });
 
@@ -77,8 +81,6 @@ namespace LiveDisplay
             startDialer = FindViewById<Button>(Resource.Id.btnStartPhone);
             clearAll = FindViewById<Button>(Resource.Id.btnClearAllNotifications);
             lockscreen = FindViewById<LinearLayout>(Resource.Id.contenedorPrincipal);
-            weatherandclockcontainer = FindViewById<FrameLayout>(Resource.Id.weatherandcLockplaceholder);
-
             fadeoutanimation = AnimationUtils.LoadAnimation(Application.Context, Resource.Animation.abc_fade_out);
             fadeoutanimation.AnimationEnd += Fadeoutanimation_AnimationEnd;
 
@@ -91,7 +93,6 @@ namespace LiveDisplay
             startCamera.Click += StartCamera_Click;
             startDialer.Click += StartDialer_Click;
             lockscreen.Touch += Lockscreen_Touch;
-            weatherandclockcontainer.LongClick += Weatherandclockcontainer_LongClick;
 
             watchDog = new System.Timers.Timer();
             watchDog.AutoReset = false;
@@ -157,14 +158,6 @@ namespace LiveDisplay
             StartMusicController();
         }
 
-        private void Weatherandclockcontainer_LongClick(object sender, View.LongClickEventArgs e)
-        {
-            using (var fragmentTransaction = FragmentManager.BeginTransaction())
-            {
-                fragmentTransaction.Replace(Resource.Id.weatherandcLockplaceholder, weatherFragment);
-                fragmentTransaction.Commit();
-            }
-        }
 
         private void Wallpaper_NewWallpaperIssued(object sender, WallpaperChangedEventArgs e)
         {
@@ -385,17 +378,28 @@ namespace LiveDisplay
                         break;
 
                     case "1":
-                        using (var wallpaper = (BitmapDrawable)WallpaperManager.GetInstance(Application.Context).Drawable)
+                        if (Checkers.ThisAppHasReadStoragePermission() == true)
+                            using (var wallpaper = (BitmapDrawable)WallpaperManager.GetInstance(Application.Context).Drawable)
+                            {
+                                int savedblurlevel = configurationManager.RetrieveAValue(ConfigurationParameters.BlurLevel, 1);
+                                int savedOpacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, 255);
+                                BlurImage blurImage = new BlurImage(Application.Context);
+                                if (savedblurlevel > 0)
+                                {
+                                    blurImage.Load(wallpaper.Bitmap).Intensity(savedblurlevel).Async(true);
+                                    var blurredwallpaper = new BitmapDrawable(Resources, blurImage.GetImageBlur());
+                                    WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = blurredwallpaper, OpacityLevel = (short)savedOpacitylevel });
+                                }
+                                else
+                                {
+                                    WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = wallpaper, OpacityLevel = (short)savedOpacitylevel });
+                                }
+                                blurImage = null;
+                            }
+                        else
                         {
-                            int savedblurlevel = configurationManager.RetrieveAValue(ConfigurationParameters.BlurLevel, 1);
-                            int savedOpacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, 255);
-                            BlurImage blurImage = new BlurImage(Application.Context);
-                            blurImage.Load(wallpaper.Bitmap).Intensity(savedblurlevel).Async(true);
-                            var blurredwallpaper = new BitmapDrawable(Resources, blurImage.GetImageBlur());
-                            WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = blurredwallpaper, OpacityLevel = (short)savedOpacitylevel });
-                            blurImage = null;
+                            RunOnUiThread(() => Toast.MakeText(Application.Context, "You have setted the system wallpaper, but the app can't read it, try to change the Wallpaper option again", ToastLength.Long).Show());
                         }
-
                         break;
 
                     case "2":

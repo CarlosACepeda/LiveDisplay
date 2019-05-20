@@ -12,7 +12,7 @@
   <string name="askfortranslations">Quieres ayudar con las traducciones?</string>
   <string name="awakesettings">Awake</string>
   <string name="blacklist">Lista Negra</string>
-  <string name="blacklistdesc">No mostrar notificaciones de las apps seleccionadas, estas se quitaran también de la barra de estado, a menos que sean notificaciones pegajosas (que no pueden ser removidas por el sistema)</string>
+  <string name="blacklistdesc">No mostrar notificaciones de las apps seleccionadas</string>
   <string name="blacklisted">En lista negra</string>
   <string name="blackwallpaper">Negro</string>
   <string name="changewallpaper">Cambiar fondo de pantalla</string>
@@ -76,11 +76,15 @@
   <string name="turnonnewnotification_desc">Prender la pantalla si una nueva notificacion llega</string>
   <string name="turnonusermovement">Prender la pantalla al levantar el dispositivo</string>
   <string name="version">Versión</string>
-  <string name="versionnumber">0.8.1</string>
+  <string name="versionnumber">0.8.2</string>
   <string name="wallpaperblur">Difuminación</string>
   <string name="wallpaperopacity">Opacidad</string>
   <string name="weatherwidget">Widget del Clima</string>
   <string name="weatherwidgetenabled">Activar el Widget del Clima</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">Diseño del icono de esta app!</string>
+  <string name="testweathersettingsbutton">Pruébame</string>
+  <string name="useimperialunits">Usar unidades imperiales</string>
+  <string name="entercityplaceholder">Introduce una ciudad aquí</string>
+  <string name="weather">Clima</string>
 </resources>
