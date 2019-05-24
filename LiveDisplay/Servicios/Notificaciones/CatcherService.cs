@@ -47,7 +47,7 @@ namespace LiveDisplay.Servicios
                 remoteController.SetArtworkConfiguration(450, 450);
                 audioManager = (AudioManager)Application.Context.GetSystemService(AudioService);
                 audioManager.RegisterRemoteController(remoteController);
-                musicControllerKitkat = MusicControllerKitkat.GetInstance();
+                musicControllerKitkat = MusicControllerKitkat.GetInstance(remoteController);
             }
             return base.OnBind(intent);
         }
@@ -106,7 +106,7 @@ namespace LiveDisplay.Servicios
         private void RetrieveNotificationFromStatusBar()
         {
             statusBarNotifications = new List<StatusBarNotification>();
-            foreach (var notification in GetActiveNotifications().ToList())
+            foreach (var notification in GetActiveNotifications()?.ToList())
             {
                 if ((notification.IsOngoing == false || notification.Notification.Flags.HasFlag(NotificationFlags.NoClear)) && notification.IsClearable == true)
                 {
@@ -211,7 +211,7 @@ namespace LiveDisplay.Servicios
         public void OnClientChange(bool clearing)
         {
             Log.Info("LiveDisplay", "clearing: " + clearing);
-            musicControllerKitkat = MusicControllerKitkat.GetInstance();
+            musicControllerKitkat = MusicControllerKitkat.GetInstance(remoteController);
         }
 
         public void OnClientMetadataUpdate(RemoteController.MetadataEditor metadataEditor)

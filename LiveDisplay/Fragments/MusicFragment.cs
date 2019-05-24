@@ -68,6 +68,8 @@ namespace LiveDisplay.Fragments
             skbSeekSongTime = null;
             MusicController.MediaPlaybackChanged -= MusicController_MediaPlaybackChanged;
             MusicController.MediaMetadataChanged -= MusicController_MediaMetadataChanged;
+            MusicControllerKitkat.MediaMetadataChanged -= MusicControllerKitkat_MediaMetadataChanged;
+            MusicControllerKitkat.MediaPlaybackChanged -= MusicControllerKitkat_MediaPlaybackChanged;
             timer.Elapsed -= Timer_Elapsed;
             timer.Dispose();
             base.OnDestroy();
@@ -99,12 +101,28 @@ namespace LiveDisplay.Fragments
 
         private void BtnSkipNext_LongClick(object sender, View.LongClickEventArgs e)
         {
-            Jukebox.FastFoward();
+            bool isNotKitkat = Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch;
+            if (isNotKitkat)
+            {
+                Jukebox.FastFoward();
+            }
+            else
+            {
+                JukeboxKitkat.FastFoward();
+            }
         }
 
         private void BtnSkipPrevious_LongClick(object sender, View.LongClickEventArgs e)
         {
-            Jukebox.Rewind();
+            bool isNotKitkat = Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch;
+            if (isNotKitkat)
+            {
+                Jukebox.Rewind();
+            }
+            else
+            {
+                JukeboxKitkat.Rewind();
+            }
         }
 
         private void MusicPlayerContainer_LongClick(object sender, View.LongClickEventArgs e)
@@ -121,45 +139,108 @@ namespace LiveDisplay.Fragments
 
         private void SkbSeekSongTime_StopTrackingTouch(object sender, SeekBar.StopTrackingTouchEventArgs e)
         {
-            //When user stop dragging then seek to the position previously saved in ProgressChangedEvent
-            Jukebox.SeekTo(e.SeekBar.Progress);
-            skbSeekSongTime.SetProgress(e.SeekBar.Progress, true);
+            if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
+            {
+                //When user stop dragging then seek to the position previously saved in ProgressChangedEvent
+                Jukebox.SeekTo(e.SeekBar.Progress);
+                if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1)
+                {
+                    skbSeekSongTime.SetProgress(e.SeekBar.Progress, true);
+                }
+                else
+                {
+                    skbSeekSongTime.Progress = e.SeekBar.Progress;
+                }
+
+            }
+            else
+            {
+                JukeboxKitkat.SeekTo(e.SeekBar.Progress);
+                skbSeekSongTime.Progress = e.SeekBar.Progress;
+            }
+
         }
 
         private void SkbSeekSongTime_ProgressChanged(object sender, SeekBar.ProgressChangedEventArgs e)
         {
             //This will save the current song time.
-            skbSeekSongTime.SetProgress(e.Progress, true);
+            bool isNotMarshmallow = Build.VERSION.SdkInt > BuildVersionCodes.M;
+            if (isNotMarshmallow)
+            {
+                skbSeekSongTime.SetProgress(e.Progress, true);
+            }
+            else
+            {
+                skbSeekSongTime.Progress = e.Progress;
+            }
         }
 
         private void BtnSkipNext_Click(object sender, EventArgs e)
         {
-            Jukebox.SkipToNext();
+            bool isNotKitkat = Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch;
+            if (isNotKitkat)
+            {
+                Jukebox.SkipToNext();
+            }
+            else
+            {
+                JukeboxKitkat.SkipToNext();
+            }
         }
 
         private void BtnPlayPause_Click(object sender, EventArgs e)
         {
+            bool isNotKitkat= Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch;
             switch (playbackState)
             {
                 //If the media is paused, then Play.
                 case PlaybackStateCode.Paused:
-                    Jukebox.Play();
+                    if (isNotKitkat)
+                    {
+                        Jukebox.Play();
+                    }
+                    else
+                    {
+                        JukeboxKitkat.Play();
+                    }
                     break;
                 //If the media is playing, then pause.
                 case PlaybackStateCode.Playing:
-                    Jukebox.Pause();
+                    if (isNotKitkat)
+                    {
+                        Jukebox.Pause();
+                    }
+                    else
+                    {
+                        JukeboxKitkat.Pause();
+                    }
 
                     break;
 
                 default:
-                    Jukebox.Stop();
+                    if (isNotKitkat)
+                    {
+                        Jukebox.Stop();
+                    }
+                    else
+                    {
+                        JukeboxKitkat.Stop();
+                    }
                     break;
             }
         }
 
         private void BtnSkipPrevious_Click(object sender, EventArgs e)
         {
-            Jukebox.SkipToPrevious();
+            bool isNotKitkat = Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch;
+            if (isNotKitkat)
+            {
+                Jukebox.SkipToPrevious();
+            }
+            else
+            {
+                JukeboxKitkat.SkipToPrevious();
+            }
         }
 
         #endregion Fragment Views events
@@ -293,8 +374,16 @@ namespace LiveDisplay.Fragments
         private void RetrieveMediaInformation()
         {
             //Syntactic sugar, cause a MediaMetadata and a Mediaplayback event to be fired in the Publisher class.
-            //(MusicController class)
-            Jukebox.RetrieveMediaInformation();
+            //(MusicController class) 
+            //Or in Catcher class, if its Kitkat.
+            if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
+            {
+                Jukebox.RetrieveMediaInformation();
+            }
+            else
+            {
+                JukeboxKitkat.RetrieveMediaInformation();
+            }
         }
 
         private void MoveSeekbar(bool move)

@@ -378,7 +378,12 @@ namespace LiveDisplay
                         break;
 
                     case "1":
-                        if (Checkers.ThisAppHasReadStoragePermission() == true)
+                        bool hasReadStoragePermission = true;
+                        if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1) //In Lollipop and less this permission is granted at Install time.
+                        {
+                            hasReadStoragePermission = Checkers.ThisAppCanDrawOverlays();
+                        }
+                        if (hasReadStoragePermission)
                             using (var wallpaper = (BitmapDrawable)WallpaperManager.GetInstance(Application.Context).Drawable)
                             {
                                 int savedblurlevel = configurationManager.RetrieveAValue(ConfigurationParameters.BlurLevel, 1);

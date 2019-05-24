@@ -1,7 +1,9 @@
 ﻿using Android.Media;
 using Android.Util;
+using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Music.MediaEventArgs;
 using System;
+using Android.Views;
 
 namespace LiveDisplay.Servicios.Music
 {
@@ -18,78 +20,85 @@ namespace LiveDisplay.Servicios.Music
         public static RemoteControlPlayState MusicStatus { get; private set; }
         public RemoteControlPlayState PlaybackState { get; set; }
         public RemoteController.MetadataEditor MediaMetadata { get; set; }
+        public RemoteController TransportControls { get; set; }
+        public long CurrentMediaPosition { get; set; }
 
         public static event EventHandler<MediaPlaybackStateChangedKitkatEventArgs> MediaPlaybackChanged;
 
         public static event EventHandler<MediaMetadataChangedKitkatEventArgs> MediaMetadataChanged;
 
-        internal static MusicControllerKitkat GetInstance()
+        internal static MusicControllerKitkat GetInstance(RemoteController remoteController)
         {
             if (instance == null)
             {
-                instance = new MusicControllerKitkat();
+                instance = new MusicControllerKitkat(remoteController);
             }
             return instance;
         }
 
-        private MusicControllerKitkat()
+        private MusicControllerKitkat(RemoteController remoteController)
         {
-            Jukebox.MediaEvent += Jukebox_MediaEvent;
+            JukeboxKitkat.MediaEvent += Jukebox_MediaEvent;
+            TransportControls = remoteController;
         }
 
         private void Jukebox_MediaEvent(object sender, MediaActionEventArgs e)
         {
             switch (e.MediaActionFlags)
             {
-                //case MediaActionFlags.Play:
-                //    Play();
-                //    break;
+                case MediaActionFlags.Play:
+                    TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Down, Keycode.MediaPlay));
+                    break;
 
-                //case MediaActionFlags.Pause:
-                //    TransportControls.Pause();
-                //    break;
+                case MediaActionFlags.Pause:
+                    TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Down, Keycode.MediaPause));
+                    break;
 
-                //case MediaActionFlags.SkipToNext:
-                //    TransportControls.SkipToNext();
-                //    break;
+                case MediaActionFlags.SkipToNext:
+                    TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Down, Keycode.MediaNext));
+                    break;
 
-                //case MediaActionFlags.SkipToPrevious:
-                //    TransportControls.SkipToPrevious();
-                //    break;
+                case MediaActionFlags.SkipToPrevious:
+                    TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Down, Keycode.MediaPrevious));
+                    break;
 
-                //case MediaActionFlags.SeekTo:
-                //    TransportControls.SeekTo(e.Time);
-                //    break;
+                case MediaActionFlags.SeekTo:
+                    TransportControls.SeekTo(e.Time);
+                    break;
 
-                //case MediaActionFlags.FastFoward:
-                //    TransportControls.FastForward();
-                //    break;
+                case MediaActionFlags.FastFoward:
+                    TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Down, Keycode.MediaFastForward));
+                    break;
 
-                //case MediaActionFlags.Rewind:
-                //    TransportControls.Rewind();
-                //    break;
+                case MediaActionFlags.Rewind:
+                    TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Down, Keycode.MediaRewind));
+                    break;
 
-                //case Misc.MediaActionFlags.Stop:
-                //    TransportControls.Stop();
-                //    break;
+                case MediaActionFlags.Stop:
+                    TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Down, Keycode.MediaStop));
+                    break;
 
-                //case Misc.MediaActionFlags.RetrieveMediaInformation:
-                //    //Send media information.
-                //    OnMediaMetadataChanged(new MediaMetadataChangedEventArgs
-                //    {
-                //        MediaMetadata = MediaMetadata
-                //    });
-                //    //Send Playbackstate of the media.
-                //    OnMediaPlaybackChanged(new MediaPlaybackStateChangedEventArgs
-                //    {
-                //        PlaybackState = PlaybackState.State,
-                //        CurrentTime = PlaybackState.Position
-                //    });
+                case MediaActionFlags.RetrieveMediaInformation:
+                    //Send media information.
+                    OnMediaMetadataChanged(new MediaMetadataChangedKitkatEventArgs
+                    {
+                        Title = MediaMetadata.GetString((MediaMetadataEditKey)MetadataKey.Title, ""),
+                        Artist = MediaMetadata.GetString((MediaMetadataEditKey)MetadataKey.Artist, ""),
+                        Album = MediaMetadata.GetString((MediaMetadataEditKey)MetadataKey.Album, ""),
+                        AlbumArt = MediaMetadata.GetBitmap(MediaMetadataEditKey.BitmapKeyArtwork, null),
+                        Duration = MediaMetadata.GetLong((MediaMetadataEditKey)MetadataKey.Duration, 0)
+                    });
+                    //Send Playbackstate of the media.
+                    OnMediaPlaybackChanged(new MediaPlaybackStateChangedKitkatEventArgs
+                    {
+                        PlaybackState = PlaybackState,
+                        CurrentTime = CurrentMediaPosition,
+                    });
 
-                //    break;
+                    break;
 
-                //default:
-                //    break;
+                default:
+                    break;
             }
         }
 
