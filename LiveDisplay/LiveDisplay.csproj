@@ -163,6 +163,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Activities\ActivitiesEventArgs\LockScreenLifecycleEventArgs.cs" />
+    <Compile Include="Activities\ActivityStates.cs" />
     <Compile Include="Activities\BackgroundSettingsActivity.cs" />
     <Compile Include="Activities\BlacklistActivity.cs" />
     <Compile Include="Activities\SettingsActivity.cs" />

@@ -200,11 +200,21 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         public Drawable GetActionIcon()
         {
-            if (Build.VERSION.SdkInt < BuildVersionCodes.N)
+            try
             {
-                return IconFactory.ReturnActionIconDrawable(action.Icon, action.ActionIntent.CreatorPackage);
+                if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1)
+                {
+                    return IconFactory.ReturnActionIconDrawable(action.Icon, action.ActionIntent.CreatorPackage);
+                }
+                else
+                {
+                    return IconFactory.ReturnActionIconDrawable(action.Class.GetField("icon").GetInt(action.Class), action.ActionIntent.CreatorPackage);
+                }
             }
-            return null;
+            catch
+            {
+                return null;
+            }
         }
 
         private void GetRemoteInput()

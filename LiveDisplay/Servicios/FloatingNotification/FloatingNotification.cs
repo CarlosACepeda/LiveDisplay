@@ -8,6 +8,7 @@ using Android.Views;
 using Android.Widget;
 using LiveDisplay.Adapters;
 using LiveDisplay.Servicios.Notificaciones;
+using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
 using System;
 
 namespace LiveDisplay.Servicios.FloatingNotification
@@ -76,13 +77,93 @@ namespace LiveDisplay.Servicios.FloatingNotification
             floatingNotificationText = floatingNotificationView.FindViewById<TextView>(Resource.Id.floatingtext);
             floatingNotificationActionsContainer = floatingNotificationView.FindViewById<LinearLayout>(Resource.Id.floatingNotificationActions);
 
+            CatcherHelper.NotificationUpdated += CatcherHelper_NotificationUpdated;
+            CatcherHelper.NotificationRemoved += CatcherHelper_NotificationRemoved;
+            CatcherHelper.NotificationPosted += CatcherHelper_NotificationPosted;
             NotificationAdapterViewHolder.ItemClicked += NotificationAdapterViewHolder_ItemClicked;
             NotificationAdapterViewHolder.ItemLongClicked += NotificationAdapterViewHolder_ItemLongClicked;
-
+            LockScreenActivity.OnActivityStateChanged += LockScreenActivity_OnActivityStateChanged;
             floatingNotificationView.Click += FloatingNotificationView_Click;
         }
 
-        private void NotificationAdapterViewHolder_ItemLongClicked(object sender, Notificaciones.NotificationEventArgs.NotificationItemClickedEventArgs e)
+        private void LockScreenActivity_OnActivityStateChanged(object sender, Activities.ActivitiesEventArgs.LockScreenLifecycleEventArgs e)
+        {
+            switch (e.State)
+            {
+                case Activities.ActivityStates.Paused:
+                    if (floatingNotificationView.Visibility == ViewStates.Visible)
+                        floatingNotificationView.Visibility = ViewStates.Invisible;
+                    break;
+                case Activities.ActivityStates.Resumed:
+                    //?
+                    break;
+                case Activities.ActivityStates.Destroyed:
+                    if (floatingNotificationView.Visibility == ViewStates.Visible)
+                        floatingNotificationView.Visibility = ViewStates.Invisible;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void CatcherHelper_NotificationPosted(object sender, NotificationPostedEventArgs e)
+        {
+            if (e.ShouldCauseWakeUp == true)
+            {
+                Awake.WakeUpScreen();
+            }
+        }
+
+        private void CatcherHelper_NotificationRemoved(object sender, EventArgs e)
+        {
+            floatingNotificationView.Visibility = ViewStates.Gone;
+
+        }
+
+        private void CatcherHelper_NotificationUpdated(object sender, NotificationItemClickedEventArgs e)
+        {
+            if (position > -1) //Avoid out of bounds exceptions, i guess, the out of bounds vaue is -1, i guess, too.
+                using (OpenNotification openNotification = new OpenNotification(e.Position))
+                {
+                    floatingNotificationAppName.Text = openNotification.AppName();
+                    floatingNotificationWhen.Text = openNotification.When();
+                    floatingNotificationTitle.Text = openNotification.Title();
+                    floatingNotificationText.Text = openNotification.Text();
+                    floatingNotificationActionsContainer.RemoveAllViews();
+
+                    if (openNotification.HasActionButtons() == true)
+                    {
+                        var actions = openNotification.RetrieveActions();
+                        foreach (var a in actions)
+                        {
+                            OpenAction openAction = new OpenAction(a);
+                            float weight = (float)1 / actions.Count;
+
+                            Button anActionButton = new Button(Application.Context)
+                            {
+                                LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MatchParent, weight),
+                                Text = openAction.GetTitle(),
+                            };
+                            anActionButton.SetTypeface(Typeface.Create("sans-serif-condensed", TypefaceStyle.Normal), TypefaceStyle.Normal);
+                            anActionButton.SetMaxLines(1);
+                            anActionButton.SetTextColor(Color.Black);
+                            anActionButton.Click += (o, eventargs) =>
+                            {
+                                openAction.ClickAction();
+                            };
+                            anActionButton.Gravity = GravityFlags.CenterVertical;
+                            TypedValue outValue = new TypedValue();
+                            Application.Context.Theme.ResolveAttribute(Android.Resource.Attribute.SelectableItemBackgroundBorderless, outValue, true);
+                            anActionButton.SetBackgroundResource(outValue.ResourceId);
+                            //anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction.GetActionIcon(), null, null, null);
+                            floatingNotificationActionsContainer.AddView(anActionButton);
+                        };
+                    }
+                }
+
+        }
+
+        private void NotificationAdapterViewHolder_ItemLongClicked(object sender, NotificationItemClickedEventArgs e)
         {
             position = e.Position;
             if (position > 0) //Avoid out of bounds exceptions, i guess, the out of bounds vaue is -1, i guess, too.
@@ -109,7 +190,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
                 }
         }
 
-        private void NotificationAdapterViewHolder_ItemClicked(object sender, Notificaciones.NotificationEventArgs.NotificationItemClickedEventArgs e)
+        private void NotificationAdapterViewHolder_ItemClicked(object sender, NotificationItemClickedEventArgs e)
         {
             position = e.Position;
             if (position > -1) //Avoid out of bounds exceptions, i guess, the out of bounds vaue is -1, i guess, too.
@@ -145,7 +226,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
                             TypedValue outValue = new TypedValue();
                             Application.Context.Theme.ResolveAttribute(Android.Resource.Attribute.SelectableItemBackgroundBorderless, outValue, true);
                             anActionButton.SetBackgroundResource(outValue.ResourceId);
-                            anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction.GetActionIcon(), null, null, null);
+                            //anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction.GetActionIcon(), null, null, null);
                             floatingNotificationActionsContainer.AddView(anActionButton);
                         };
                     }
@@ -172,9 +253,13 @@ namespace LiveDisplay.Servicios.FloatingNotification
         public override void OnDestroy()
         {
             base.OnDestroy();
+            LockScreenActivity.OnActivityStateChanged -= LockScreenActivity_OnActivityStateChanged;
             floatingNotificationView.Click -= FloatingNotificationView_Click;
             NotificationAdapterViewHolder.ItemClicked -= NotificationAdapterViewHolder_ItemClicked;
             NotificationAdapterViewHolder.ItemLongClicked -= NotificationAdapterViewHolder_ItemLongClicked;
+            CatcherHelper.NotificationUpdated -= CatcherHelper_NotificationUpdated;
+            CatcherHelper.NotificationRemoved -= CatcherHelper_NotificationRemoved;
+            CatcherHelper.NotificationPosted -= CatcherHelper_NotificationPosted;
             if (floatingNotificationView != null)
             {
                 floatingNotificationAppName.Dispose();

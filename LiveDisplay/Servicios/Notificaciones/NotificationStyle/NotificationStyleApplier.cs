@@ -1,7 +1,13 @@
-﻿using Android.Content.Res;
+﻿using Android.App;
+using Android.Content.Res;
+using Android.Graphics;
 using Android.Graphics.Drawables;
+using Android.OS;
+using Android.Util;
 using Android.Views;
+using Android.Widget;
 using LiveDisplay.Servicios.Wallpaper;
+using System;
 using System.Threading;
 
 namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
@@ -18,9 +24,11 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
         private const string MessagingStyle = "android.app.Notification$MessagingStyle";
         private Resources resources;
         private OpenNotification openNotification;
+        private View notificationView;
 
-        public NotificationStyleApplier(View notificationView, OpenNotification openNotification)
+        public NotificationStyleApplier(ref LinearLayout notificationView, OpenNotification openNotification)
         {
+            this.notificationView = notificationView;
             this.openNotification = openNotification;
         }
 
@@ -29,22 +37,102 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
             switch (which)
             {
                 case BigPictureStyle:
-                    ThreadPool.QueueUserWorkItem(method =>
-                    {
-                        var notificationBigPicture = new BitmapDrawable(openNotification.BigPicture());
-                        WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = notificationBigPicture, OpacityLevel = 125, SecondsOfAttention = 5 });
-                    });
+                    //Idk how to implement this yet.
+
+                    //ThreadPool.QueueUserWorkItem(method =>
+                    //{
+                    //    var notificationBigPicture = new BitmapDrawable(openNotification.BigPicture());
+                    //using (var h = new Handler(Looper.MainLooper)) //Using UI Thread
+                    //    h.Post(() =>
+                    //    {
+                    //        if (notificationView != null)
+                    //            notificationView.Background = notificationBigPicture;
+                    //    });
+                    //});
+                    ApplyDefault();
                     break;
 
                 case InboxStyle:
                     break;
 
                 case MediaStyle:
+
+                    //in the media style, grab the action buttons, remove the text and load images instead
+                    var actionsViews= notificationView.FindViewById<LinearLayout>(Resource.Id.notificationActions);
+                    if (openNotification.HasActionButtons() == true)
+                    {
+                        var actions = openNotification.RetrieveActions();
+                        foreach (var a in actions)
+                        {
+                            OpenAction openAction = new OpenAction(a);
+                            float weight = (float)1 / actions.Count;
+
+                            Button anActionButton = new Button(Application.Context)
+                            {
+                                LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MatchParent, weight),
+                            };
+                            anActionButton.Click += (o, eventargs) =>
+                            {
+                                openAction.ClickAction();
+                            };
+                            anActionButton.Gravity = GravityFlags.CenterVertical;
+                            TypedValue outValue = new TypedValue();
+                            Application.Context.Theme.ResolveAttribute(Android.Resource.Attribute.SelectableItemBackgroundBorderless, outValue, true);
+                            anActionButton.SetBackgroundResource(outValue.ResourceId);
+                            anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction.GetActionIcon(), null, null, null);
+                            actionsViews.AddView(anActionButton);
+                        };
+                    }
+
                     break;
 
                 case MessagingStyle:
                     break;
+                default:
+                    ApplyDefault();
+                    break;
             }
+        }
+
+        private void ApplyDefault()
+        {
+            var actionsViews = notificationView.FindViewById<LinearLayout>(Resource.Id.notificationActions);
+            if (openNotification.HasActionButtons() == true)
+            {
+                var actions = openNotification.RetrieveActions();
+                foreach (var a in actions)
+                {
+                    OpenAction openAction = new OpenAction(a);
+                    float weight = (float)1 / actions.Count;
+
+                    Button anActionButton = new Button(Application.Context)
+                    {
+                        LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MatchParent, weight),
+                        Text = openAction.GetTitle()
+                    };
+                    anActionButton.TransformationMethod = null;
+                    anActionButton.SetTypeface(Typeface.Create("sans-serif-condensed", TypefaceStyle.Normal), TypefaceStyle.Normal);
+                    anActionButton.SetMaxLines(1);
+                    anActionButton.SetTextColor(Color.White);
+                    anActionButton.Click += (o, eventargs) =>
+                    {
+                        openAction.ClickAction();
+                    };
+                    anActionButton.Gravity = GravityFlags.CenterVertical;
+                    TypedValue outValue = new TypedValue();
+                    Application.Context.Theme.ResolveAttribute(Android.Resource.Attribute.SelectableItemBackgroundBorderless, outValue, true);
+                    anActionButton.SetBackgroundResource(outValue.ResourceId);
+                    //anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction.GetActionIcon(), null, null, null);
+                    actionsViews.AddView(anActionButton);
+
+                }
+                
+            }
+
+        }
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
         }
     }
 }

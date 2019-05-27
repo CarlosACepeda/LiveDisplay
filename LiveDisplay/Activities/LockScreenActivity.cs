@@ -14,6 +14,7 @@ using Android.Views;
 using Android.Views.Animations;
 using Android.Widget;
 using Com.JackAndPhantom;
+using LiveDisplay.Activities.ActivitiesEventArgs;
 using LiveDisplay.Fragments;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
@@ -48,6 +49,7 @@ namespace LiveDisplay
         private readonly float threshold = 1000; //1 second of threshold.(used to implement the double tap.)
         private System.Timers.Timer watchDog; //the watchdog simply will start counting down until it gets resetted by OnUserInteraction() override.
         private Animation fadeoutanimation;
+        public static event EventHandler<LockScreenLifecycleEventArgs> OnActivityStateChanged;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -224,11 +226,13 @@ namespace LiveDisplay
             AddFlags();
             watchDog.Stop();
             watchDog.Start();
+            OnActivityStateChanged?.Invoke(this, new LockScreenLifecycleEventArgs { State = Activities.ActivityStates.Resumed });
         }
 
         protected override void OnPause()
         {
             watchDog.Stop();
+            OnActivityStateChanged?.Invoke(this, new LockScreenLifecycleEventArgs { State = Activities.ActivityStates.Paused });
             GC.Collect();
             base.OnPause();
         }
@@ -236,7 +240,7 @@ namespace LiveDisplay
         protected override void OnDestroy()
         {
             base.OnDestroy();
-
+            OnActivityStateChanged?.Invoke(this, new LockScreenLifecycleEventArgs { State = Activities.ActivityStates.Destroyed });
             //Unbind events
             unlocker.Touch -= Unlocker_Touch;
             clearAll.Click -= BtnClearAll_Click;
@@ -253,7 +257,7 @@ namespace LiveDisplay
             unlocker.Dispose();
             clearAll.Dispose();
             lockscreen.Dispose();
-            wallpaperView.Background.Dispose();
+            wallpaperView.Background?.Dispose();
             wallpaperView = null;
 
             //Dispose Fragments
@@ -381,7 +385,7 @@ namespace LiveDisplay
                         bool hasReadStoragePermission = true;
                         if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1) //In Lollipop and less this permission is granted at Install time.
                         {
-                            hasReadStoragePermission = Checkers.ThisAppCanDrawOverlays();
+                            hasReadStoragePermission = Checkers.ThisAppHasReadStoragePermission();
                         }
                         if (hasReadStoragePermission)
                             using (var wallpaper = (BitmapDrawable)WallpaperManager.GetInstance(Application.Context).Drawable)

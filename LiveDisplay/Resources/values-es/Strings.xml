@@ -36,6 +36,7 @@
   <string name="enablequickreply">Activar la respuesta rápida</string>
   <string name="enablequickreplydesc">Contesta directamente a mensajes desde la notificación como se muestra en Nougat y versiones superiores</string>
   <string name="eng">Inglés</string>
+  <string name="entercityplaceholder">Introduce una ciudad aquí</string>
   <string name="esp">Español</string>
   <string name="fifteenseconds">15 segundos</string>
   <string name="fiveseconds">5 segundos</string>
@@ -69,22 +70,21 @@
   <string name="showclock">No mostrar el reloj</string>
   <string name="tenseconds">10 segundos</string>
   <string name="testnotificationtext">Manten presionado una notificación de la lista o presiona X para quitarla</string>
+  <string name="testweathersettingsbutton">Pruébame</string>
   <string name="translations">Traducciones</string>
   <string name="turnoffdelay">Apagar pantalla automaticamente</string>
   <string name="turnoffdelay_desc">Si la pantalla se enciende(p.e.j. una nueva notificación llega) y no hay interaccion por parte del usuario, apagar la pantalla en...</string>
   <string name="turnonnewnotification">Encender pantalla</string>
   <string name="turnonnewnotification_desc">Prender la pantalla si una nueva notificacion llega</string>
   <string name="turnonusermovement">Prender la pantalla al levantar el dispositivo</string>
+  <string name="useimperialunits">Usar unidades imperiales</string>
   <string name="version">Versión</string>
-  <string name="versionnumber">0.8.2</string>
+  <string name="versionnumber">0.8.3</string>
   <string name="wallpaperblur">Difuminación</string>
   <string name="wallpaperopacity">Opacidad</string>
+  <string name="weather">Clima</string>
   <string name="weatherwidget">Widget del Clima</string>
   <string name="weatherwidgetenabled">Activar el Widget del Clima</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">Diseño del icono de esta app!</string>
-  <string name="testweathersettingsbutton">Pruébame</string>
-  <string name="useimperialunits">Usar unidades imperiales</string>
-  <string name="entercityplaceholder">Introduce una ciudad aquí</string>
-  <string name="weather">Clima</string>
 </resources>

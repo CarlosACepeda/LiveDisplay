@@ -38,6 +38,7 @@
   <string name="enablequickreply">Enable quick Notification Reply</string>
   <string name="enablequickreplydesc">Answer directly from Notification to messages, as seen in Nougat and beyond</string>
   <string name="eng">English</string>
+  <string name="entercityplaceholder">Enter a city here</string>
   <string name="esp">Spanish</string>
   <string name="fifteenseconds">15 seconds</string>
   <string name="fiveseconds">5 seconds</string>
@@ -72,22 +73,21 @@
   <string name="showclock">Don\'t show the clock</string>
   <string name="tenseconds">10 seconds</string>
   <string name="testnotificationtext">Long press a notification from the list or press the X button to clear it</string>
+  <string name="testweathersettingsbutton">Test me!</string>
   <string name="translations">Translations</string>
   <string name="turnoffdelay">Automatically turn screen off</string>
   <string name="turnoffdelay_desc">If the screen turns on(e.g.: A new notification is posted) and there is not user interaction, turn off the screen in...</string>
   <string name="turnonnewnotification">Turn on screen</string>
   <string name="turnonnewnotification_desc">Turn on screen if a new notification is received</string>
   <string name="turnonusermovement">Turn on screen on device pick up</string>
+  <string name="useimperialunits">Use Imperial units</string>
   <string name="version">Version</string>
-  <string name="versionnumber">0.8.2</string>
+  <string name="versionnumber">0.8.3</string>
   <string name="wallpaperblur">Blur</string>
   <string name="wallpaperopacity">Opacity</string>
+  <string name="weather">Weather</string>
   <string name="weatherwidget">Weather Widget</string>
   <string name="weatherwidgetenabled">Enable Weather Widget</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
-  <string name="testweathersettingsbutton">Test me!</string>
-  <string name="useimperialunits">Use Imperial units</string>
-  <string name="entercityplaceholder">Enter a city here</string>
-  <string name="weather">Weather</string>
 </resources>

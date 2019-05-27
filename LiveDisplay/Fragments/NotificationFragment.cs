@@ -8,6 +8,7 @@ using LiveDisplay.Adapters;
 using LiveDisplay.Servicios;
 using LiveDisplay.Servicios.Notificaciones;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
+using LiveDisplay.Servicios.Notificaciones.NotificationStyle;
 using System;
 
 namespace LiveDisplay.Fragments
@@ -196,37 +197,10 @@ namespace LiveDisplay.Fragments
                 appName.Text = openNotification.AppName();
                 when.Text = openNotification.When();
                 notificationActions.RemoveAllViews();
-                //using (NotificationStyleApplier styleApplier = new NotificationStyleApplier(null, openNotification))
-                //    styleApplier.ApplyStyle(openNotification.Style());
-                if (openNotification.HasActionButtons() == true)
-                {
-                    var actions = openNotification.RetrieveActions();
-                    foreach (var a in actions)
-                    {
-                        OpenAction openAction = new OpenAction(a);
-                        float weight = (float)1 / actions.Count;
-
-                        Button anActionButton = new Button(Application.Context)
-                        {
-                            LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MatchParent, weight),
-                            Text = openAction.GetTitle()
-                        };
-                        anActionButton.TransformationMethod = null;
-                        anActionButton.SetTypeface(Typeface.Create("sans-serif-condensed", TypefaceStyle.Normal), TypefaceStyle.Normal);
-                        anActionButton.SetMaxLines(1);
-                        anActionButton.SetTextColor(Color.White);
-                        anActionButton.Click += (o, eventargs) =>
-                         {
-                             openAction.ClickAction();
-                         };
-                        anActionButton.Gravity = GravityFlags.CenterVertical;
-                        TypedValue outValue = new TypedValue();
-                        Application.Context.Theme.ResolveAttribute(Android.Resource.Attribute.SelectableItemBackgroundBorderless, outValue, true);
-                        anActionButton.SetBackgroundResource(outValue.ResourceId);
-                        anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction.GetActionIcon(), null, null, null);
-                        notificationActions.AddView(anActionButton);
-                    };
-                }
+                //Watch out for possible memory leaks here.
+                using (NotificationStyleApplier styleApplier = new NotificationStyleApplier(ref notification, openNotification))
+                    styleApplier.ApplyStyle(openNotification.Style());                   
+                
                 if (openNotification.IsRemovable())
                 {
                     closenotificationbutton.Visibility = ViewStates.Visible;
