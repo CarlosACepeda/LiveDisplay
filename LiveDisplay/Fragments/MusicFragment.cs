@@ -296,11 +296,12 @@ namespace LiveDisplay.Fragments
             tvAlbum.Text = e.Album;
             tvArtist.Text = e.Artist;
             skbSeekSongTime.Max = (int)e.Duration;
-            WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
-            {
-                Wallpaper = new BitmapDrawable(Resources, e.AlbumArt)
-            });
-            GC.Collect(0);
+            if (configurationManager.RetrieveAValue(ConfigurationParameters.ShowAlbumArt))
+                WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
+                {
+                    Wallpaper = new BitmapDrawable(Resources, e.AlbumArt)
+                });
+                GC.Collect(0);
         }
 
         private void MusicController_MediaMetadataChanged(object sender, MediaMetadataChangedEventArgs e)
@@ -316,6 +317,7 @@ namespace LiveDisplay.Fragments
                 var wallpaper = new BitmapDrawable(Resources, albumart);
 
                 int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, 255);
+                if(configurationManager.RetrieveAValue(ConfigurationParameters.ShowAlbumArt))
                 WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
                 {
                     Wallpaper = wallpaper,

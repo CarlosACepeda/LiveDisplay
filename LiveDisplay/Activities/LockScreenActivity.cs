@@ -36,7 +36,6 @@ namespace LiveDisplay
         private ImageView wallpaperView;
         private ImageView unlocker;
         private Button clearAll;
-        private FrameLayout weatherandclockcontainer;
         private NotificationFragment notificationFragment;
         private MusicFragment musicFragment;
         private ClockFragment clockFragment;
@@ -173,7 +172,7 @@ namespace LiveDisplay
                 }
                 else
                 {
-                    wallpaperView.Background = e.Wallpaper;
+                    wallpaperView.Background= e.Wallpaper;
                     wallpaperView.Background.Alpha = e.OpacityLevel;
                 }
             });
@@ -469,6 +468,9 @@ namespace LiveDisplay
         {
             using (var view = Window.DecorView)
             {
+                //if (Build.VERSION.SdkInt > BuildVersionCodes.OMr1)
+                    Window.Attributes.LayoutInDisplayCutoutMode = LayoutInDisplayCutoutMode.ShortEdges;
+
                 var uiOptions = (int)view.SystemUiVisibility;
                 var newUiOptions = uiOptions;
 
@@ -480,6 +482,7 @@ namespace LiveDisplay
                 view.SystemUiVisibility = (StatusBarVisibility)newUiOptions;
                 Window.AddFlags(WindowManagerFlags.DismissKeyguard);
                 Window.AddFlags(WindowManagerFlags.ShowWhenLocked);
+                
             }
         }
 
