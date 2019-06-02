@@ -102,6 +102,14 @@
       </SwitchPreference>
       <ListPreference
         android:defaultValue="0"
+        android:key="doubletapontoppactionbehavior"
+        android:title="@string/doubletaptopaction"
+        android:summary="@string/doubletaptopactiondesc"
+        android:entries="@array/listentrieschangedoubletapbehavior"
+        android:entryValues="@array/listvalueschangedoubletapbehavior">
+      </ListPreference>
+      <ListPreference
+        android:defaultValue="0"
         android:key="startlockscreendelaytime"
         android:title="@string/lockdelay"
         android:summary="@string/lockdelay_desc"

@@ -34,7 +34,7 @@
     and also the RecyclerView containing the notification list
     -->
     <LinearLayout
-                a:layout_weight="75"
+                a:layout_weight="73"
                 a:orientation="horizontal"
                 a:layout_width="match_parent"
                 a:weightSum="10"
@@ -57,7 +57,7 @@
      </LinearLayout>
     <!--This FrameLayout contains the clock and later the System icons which aren't available... yet.-->
         <FrameLayout
-            a:layout_weight="16"
+            a:layout_weight="18"
             a:layout_width="match_parent"
             a:layout_height="0dp"
             a:id="@+id/weatherandcLockplaceholder" />
@@ -67,7 +67,7 @@
             a:layout_weight="5"
             a:layout_height="0dp">
 			    <!--the actual Unlock widget.-->
-            <ImageView
+            <!--<ImageView
                 a:alpha="0.7"
                 a:layout_gravity="center_vertical"
                 a:src="@drawable/ic_unlock"
@@ -75,7 +75,7 @@
                 a:layout_height="match_parent"
                 a:background="@android:color/transparent"
                 a:layout_weight="0.9"
-                a:id="@+id/unlocker" />
+                a:id="@+id/unlocker" />-->
         <!--This button is the camera shortcut.-->
             <Button
                 a:alpha="0.7"

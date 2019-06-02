@@ -122,8 +122,12 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                     TypedValue outValue = new TypedValue();
                     Application.Context.Theme.ResolveAttribute(Android.Resource.Attribute.SelectableItemBackgroundBorderless, outValue, true);
                     anActionButton.SetBackgroundResource(outValue.ResourceId);
-                    //anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction.GetActionIcon(), null, null, null);
-                    actionsViews.AddView(anActionButton);
+                    Handler looper = new Handler(Looper.MainLooper);
+                    looper.Post(() =>
+                    {
+                        anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction.GetActionIcon(), null, null, null);
+                        actionsViews.AddView(anActionButton);
+                    });
 
                 }
                 

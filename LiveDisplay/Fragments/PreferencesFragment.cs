@@ -205,6 +205,18 @@ namespace LiveDisplay.Fragments
                             break;
                     }
                     break;
+                case ConfigurationParameters.DoubleTapOnTopActionBehavior:
+                    Preference doubletaptopbehavior = FindPreference("doubletapontoppactionbehavior");
+                    switch (sharedPreferences.GetString(ConfigurationParameters.DoubleTapOnTopActionBehavior, "0"))
+                    {
+                        case "0":
+                            doubletaptopbehavior.SetSummary(Resource.String.doubletaptopactiondesc);
+                            break;
+                        case "1":
+                            doubletaptopbehavior.SetSummary(Resource.String.doubletaptopactioninverteddesc);
+                            break;
+                    }
+                    break;
             }
         }
     }

@@ -1,5 +1,9 @@
-﻿using LiveDisplay.DataRepository;
+﻿using Android.App;
+using Android.Content;
+using Android.Support.V7.Preferences;
+using LiveDisplay.DataRepository;
 using LiveDisplay.Misc;
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using static Newtonsoft.Json.JsonConvert;
@@ -8,6 +12,8 @@ namespace LiveDisplay.Servicios.Weather
 {
     internal class Weather
     {
+        private readonly static ConfigurationManager configurationManager = new ConfigurationManager(Application.Context.GetSharedPreferences("weatherpreferences", FileCreationMode.Private));
+
         //This class will be the one that connects to the api and provide Lockscreen with Weather information.
         public static async Task<WeatherRoot> GetWeather(string city, string country, UnitsFlags unitsformat)
         {
@@ -36,8 +42,28 @@ namespace LiveDisplay.Servicios.Weather
 
                     if (string.IsNullOrWhiteSpace(json)) return null;
 
+
                     WeatherRoot weatherRoot =
-                    DeserializeObject<WeatherRoot>(json);
+                    DeserializeObject<WeatherRoot>(json);                    
+
+                    configurationManager.SaveAValue(ConfigurationParameters.WeatherCity, weatherRoot.Name);
+                    configurationManager.SaveAValue(ConfigurationParameters.WeatherDescription, weatherRoot.Weather[0].Description);
+                    configurationManager.SaveAValue(ConfigurationParameters.WeatherHumidity, weatherRoot.MainWeather.Humidity.ToString()+ "%");
+                    configurationManager.SaveAValue(ConfigurationParameters.WeatherLastUpdated, DateTime.Now.ToString("ddd"+ "," + "hh:mm"));
+                    configurationManager.SaveAValue(ConfigurationParameters.WeatherMaximum, weatherRoot.MainWeather.MaxTemperature.ToString());
+                    configurationManager.SaveAValue(ConfigurationParameters.WeatherMaximum, weatherRoot.MainWeather.MinTemperature.ToString());
+
+                    string unitsuffix = "°k";
+                    switch (unitsformat)
+                    {
+                        case UnitsFlags.Imperial:
+                            unitsuffix = "°f";
+                            break;
+                        case UnitsFlags.Metric:
+                            unitsuffix = "°c";
+                            break;
+                    }
+                    configurationManager.SaveAValue(ConfigurationParameters.WeatherTemperatureUnit, unitsuffix);
                     return weatherRoot;
                 }
                 catch

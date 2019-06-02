@@ -29,11 +29,16 @@
   <string name="dialogcancelbutton">Cancel</string>
   <string name="dialogcancelledclick">Ok, you can change this setting later in Notifications section!</string>
   <string name="dialogfordeviceaccessdescription">Permissions required:  \nLock screen: Control how and when to lock the screen</string>
+  <string name="doubletapinvertedbehavior">Inverted</string>
+  <string name="doubletapnormalbehavior">Normal</string>
+  <string name="doubletaptopaction">Double tap behavior</string>
+  <string name="doubletaptopactiondesc">Double tapping on the half top of the lockscreen locks the device</string>
+  <string name="doubletaptopactioninverteddesc">Double tapping on the half top of the lockscreen unlocks the device</string>
   <string name="doubletaptosleep">Double tap to sleep</string>
   <string name="doubletaptosleepdesc">Touch twice anywhere on the lock screen to turn off the screen</string>
   <string name="enableawake">Enable Awake service</string>
   <string name="enabledeviceaccess">Enable device Access</string>
-  <string name="enablefloatingpermission">Draw over other apps</string>
+  <string name="enablefloatingpermission">DIsplay over other apps</string>
   <string name="enablenotificationlistener">Enable Notification Access</string>
   <string name="enablequickreply">Enable quick Notification Reply</string>
   <string name="enablequickreplydesc">Answer directly from Notification to messages, as seen in Nougat and beyond</string>

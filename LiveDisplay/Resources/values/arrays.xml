@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<resources>
+  <string-array name="listentrieschangewallpaper">
+    <item>@string/blackwallpaper</item>
+    <item>@string/defaultwallpaper</item>
+    <item>@string/pickwallpaper</item>
+  </string-array>
+  <string-array name="listvalueschangewallpaper">
+    <item>0</item>
+    <item>1</item>
+    <item>2</item>
+  </string-array>
+  <string-array name="listentrieschangedoubletapbehavior">
+    <item>@string/doubletapnormalbehavior</item>
+    <item>@string/doubletapinvertedbehavior</item>
+  </string-array>
+  <string-array name="listvalueschangedoubletapbehavior">
+    <item>0</item>
+    <item>1</item>
+  </string-array>
+
+  <string-array name="listentriesstartlock">
+    <item>@string/immediately</item>
+    <item>@string/fiveseconds</item>
+    <item>@string/tenseconds</item>
+    <item>@string/fifteenseconds</item>
+  </string-array>
+  <string-array name="listvaluesstartlock">
+    <item>0</item>
+    <item>5000</item>
+    <item>10000</item>
+    <item>15000</item>
+  </string-array>
+
+  <string-array name="listentriesturnoff">
+    <item>@string/fiveseconds</item>
+    <item>@string/tenseconds</item>
+    <item>@string/fifteenseconds</item>
+  </string-array>
+  <string-array name="listvaluesturnoff">
+    <item>5000</item>
+    <item>10000</item>
+    <item>15000</item>
+  </string-array>
+  
+</resources>

@@ -6,6 +6,7 @@ using Android.Preferences;
 using Android.Provider;
 using Android.Runtime;
 using Android.Support.V7.App;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
 using LiveDisplay.BroadcastReceivers;
@@ -24,11 +25,14 @@ namespace LiveDisplay.Activities
     [Activity(Label = "@string/app_name", Theme = "@style/LiveDisplayThemeDark.NoActionBar", TaskAffinity = "livedisplay.main", MainLauncher = true)]
     internal class MainActivity : AppCompatActivity
     {
+        private static ISharedPreferences configurationManager = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
+
         private Android.Support.V7.Widget.Toolbar toolbar;
         private TextView enableNotificationAccess, enableDeviceAdmin;
         private TextView enableDrawOverAccess;
         private RelativeLayout enableDrawOverAccessContainer;
         private bool isApplicationHealthy;
+
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -36,7 +40,9 @@ namespace LiveDisplay.Activities
             SetContentView(Resource.Layout.Main);
             BindViews();
             StartAppCenterMonotoring();
+
         }
+
 
         protected override void OnResume()
         {

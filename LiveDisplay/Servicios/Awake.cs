@@ -20,17 +20,47 @@ namespace LiveDisplay.Servicios
         private SensorManager sensorManager;
         private Sensor sensor;
         private bool isLaidDown = false;
-        private static int currentstartsleeptime = int.Parse(configurationManager.GetString(ConfigurationParameters.StartSleepTime, "0")); //12am
-        private static int currentfinishsleeptime = int.Parse(configurationManager.GetString(ConfigurationParameters.FinishSleepTime, "500"));//5am
+        private static bool sleeping = false;
 
         public static void WakeUpScreen()
         {
             //Check the current time and only react if the time this method is called is within the allowed hours.
-
+            int start = int.Parse(configurationManager.GetString(ConfigurationParameters.StartSleepTime, "0")); //12am
+            int end = int.Parse(configurationManager.GetString(ConfigurationParameters.FinishSleepTime, "500"));//5am
             //Generates the hour as a 4 characters number in 24 hours for example: 2210 (10:10pm)
-            var currenttime = int.Parse(string.Concat(DateTime.Now.Hour.ToString() + DateTime.Now.Minute.ToString()));
+            var now = int.Parse(string.Concat(DateTime.Now.Hour.ToString() + DateTime.Now.Minute.ToString()));
 
-            if (currentfinishsleeptime < currenttime && currenttime < currentstartsleeptime)
+            if (start <= end) //The times are in the same day.
+            {
+                if (now >= start && now <= end)
+                {
+                    Log.Info("HELLO", "Im Sleeping");
+                    sleeping = true;
+                }
+                else
+                {
+                    Log.Info("HELLO", "Im Active");
+                    sleeping = false;
+                }
+
+            }
+            else //The times are in different days.
+            {
+                if (now >= start || now <= end)
+                {
+                    Log.Info("HELLO", "Im Sleeping");
+                    sleeping = true;
+                }
+                else
+                {
+                    Log.Info("HELLO", "Im Active");
+                    sleeping = false;
+                }
+            }
+
+
+
+            if (!sleeping)
                 if (configurationManager.GetBoolean(ConfigurationParameters.TurnOnNewNotification, false) == true || configurationManager.GetBoolean(ConfigurationParameters.TurnOnUserMovement, false) == true)
                 {
                     PowerManager pm = ((PowerManager)Application.Context.GetSystemService(PowerService));

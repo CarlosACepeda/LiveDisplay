@@ -11,6 +11,7 @@
         public const string BlurLevel = "blurlevel";
         public const string OpacityLevel = "opacitylevel";
         public const string LockOnBoot = "lockonboot?";
+        public const string DoubleTapOnTopActionBehavior = "doubletapontoppactionbehavior";
 
         //For Music Widget settings
         public const string MusicWidgetEnabled = "musicwidgetenabled?";
@@ -18,10 +19,14 @@
         public const string ShowAlbumArt = "showalbumart?";
 
         //For Weather Widget settings
-        public const string WeatherWidgetEnabled = "weatherwidgetenabled?";
-
-        public const string City = "city";
-        public const string UseImperialSystem = "useimperialsystem?";
+        public const string WeatherMinimum = "weatherminimum";
+        public const string WeatherMaximum = "weathermaximum";
+        public const string WeatherLastUpdated = "weatherlastupdated";
+        public const string WeatherHumidity = "weatherhumidity";
+        public const string WeatherDescription = "weatherdescription";
+        public const string WeatherCity = "weathercity";
+        public const string WeatherUseImperialSystem = "useimperialsystem?";
+        public const string WeatherTemperatureUnit = "weathertemperatureunit";
 
         //For Notifications Settings :
         public const string EnableQuickReply = "enablequickreply?";

@@ -40,10 +40,10 @@ namespace LiveDisplay.Fragments
             TelephonyManager tm = (TelephonyManager)Activity.GetSystemService(Context.TelephonyService);
             string countryCode = tm.NetworkCountryIso;
 
-            string thecity = configurationManager.RetrieveAValue(ConfigurationParameters.City, "");
+            string thecity = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherCity, "");
             UnitsFlags unitsFlags = UnitsFlags.Metric;
             string temperatureSuffix = "°C";
-            if (configurationManager.RetrieveAValue(ConfigurationParameters.UseImperialSystem) == true)
+            if (configurationManager.RetrieveAValue(ConfigurationParameters.WeatherUseImperialSystem) == true)
             {
                 unitsFlags = UnitsFlags.Imperial;
                 temperatureSuffix = "°F";

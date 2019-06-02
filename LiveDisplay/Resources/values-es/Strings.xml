@@ -27,11 +27,16 @@
   <string name="dialogcancelbutton">Cancelar</string>
   <string name="dialogcancelledclick">Muy bien, puedes cambiar esta opción después en la sección \'Notificaciones\'</string>
   <string name="dialogfordeviceaccessdescription">Permisos requeridos: \nBloquear la pantalla: \nControlar cómo y cuando se apaga la pantalla</string>
+  <string name="doubletapinvertedbehavior">Invertido</string>
+  <string name="doubletapnormalbehavior">Normal</string>
+  <string name="doubletaptopaction">Comportamiento de la doble pulsación</string>
+  <string name="doubletaptopactiondesc">Tocar dos veces la mitad superior de la pantalla de bloqueo bloquea el dispositivo</string>
+  <string name="doubletaptopactioninverteddesc">Tocar dos veces la mitad superior de la pantalla de bloqueo desbloquea el dispositivo</string>
   <string name="doubletaptosleep">Doble pulsación para suspender</string>
   <string name="doubletaptosleepdesc">Pulsa dos veces en la pantalla de bloqueo para apagar la pantalla</string>
   <string name="enableawake">Activar servicio Awake</string>
   <string name="enabledeviceaccess">Acceso al Dispositivo</string>
-  <string name="enablefloatingpermission">Dibujar sobre otras aplicaciones</string>
+  <string name="enablefloatingpermission">Mostrar sobre otras aplicaciones</string>
   <string name="enablenotificationlistener">Acceder a las Notificaciones</string>
   <string name="enablequickreply">Activar la respuesta rápida</string>
   <string name="enablequickreplydesc">Contesta directamente a mensajes desde la notificación como se muestra en Nougat y versiones superiores</string>

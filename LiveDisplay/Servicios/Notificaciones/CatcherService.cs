@@ -62,8 +62,15 @@ namespace LiveDisplay.Servicios
             using (var h = new Handler(Looper.MainLooper)) //Using UI Thread because seems to crash in some devices.
                 h.Post(() =>
                 {
-                    mediaSessionManager.AddOnActiveSessionsChangedListener(activeMediaSessionsListener, new ComponentName(this, Java.Lang.Class.FromType(typeof(Catcher))));
-                    Log.Info("LiveDisplay", "Added Media Sess. Changed Listener");
+                    try
+                    {
+                        mediaSessionManager.AddOnActiveSessionsChangedListener(activeMediaSessionsListener, new ComponentName(this, Java.Lang.Class.FromType(typeof(Catcher))));
+                        Log.Info("LiveDisplay", "Added Media Sess. Changed Listener");
+                    }
+                    catch
+                    {
+                        Log.Info("LiveDisplay", "Failed to register Media Session Callback");
+                    }
                 });
 
             SubscribeToEvents();

@@ -34,7 +34,7 @@ namespace LiveDisplay
         private RecyclerView recycler;
         private RecyclerView.LayoutManager layoutManager;
         private ImageView wallpaperView;
-        private ImageView unlocker;
+        //private ImageView unlocker;
         private Button clearAll;
         private NotificationFragment notificationFragment;
         private MusicFragment musicFragment;
@@ -46,6 +46,7 @@ namespace LiveDisplay
         private float firstTouchTime = -1;
         private float finalTouchTime;
         private readonly float threshold = 1000; //1 second of threshold.(used to implement the double tap.)
+        private int halfscreenheight; //To decide the behavior of the double tap.
         private System.Timers.Timer watchDog; //the watchdog simply will start counting down until it gets resetted by OnUserInteraction() override.
         private Animation fadeoutanimation;
         public static event EventHandler<LockScreenLifecycleEventArgs> OnActivityStateChanged;
@@ -77,7 +78,7 @@ namespace LiveDisplay
 
             //Views
             wallpaperView = FindViewById<ImageView>(Resource.Id.wallpaper);
-            unlocker = FindViewById<ImageView>(Resource.Id.unlocker);
+            //unlocker = FindViewById<ImageView>(Resource.Id.unlocker);
             startCamera = FindViewById<Button>(Resource.Id.btnStartCamera);
             startDialer = FindViewById<Button>(Resource.Id.btnStartPhone);
             clearAll = FindViewById<Button>(Resource.Id.btnClearAllNotifications);
@@ -90,7 +91,7 @@ namespace LiveDisplay
             clockFragment = new ClockFragment();
             weatherFragment = new WeatherFragment();
             clearAll.Click += BtnClearAll_Click;
-            unlocker.Touch += Unlocker_Touch;
+            //unlocker.Touch += Unlocker_Touch;
             startCamera.Click += StartCamera_Click;
             startDialer.Click += StartDialer_Click;
             lockscreen.Touch += Lockscreen_Touch;
@@ -98,6 +99,8 @@ namespace LiveDisplay
             watchDog = new System.Timers.Timer();
             watchDog.AutoReset = false;
             watchDog.Elapsed += WatchdogInterval_Elapsed;
+
+            halfscreenheight = Resources.DisplayMetrics.HeightPixels / 2;
 
             WallpaperPublisher.NewWallpaperIssued += Wallpaper_NewWallpaperIssued;
 
@@ -196,7 +199,31 @@ namespace LiveDisplay
                             finalTouchTime = e.Event.DownTime;
                             if (firstTouchTime + threshold > finalTouchTime)
                             {
-                                Awake.TurnOffScreen();
+                                //0 Equals: Normal Behavior
+                                if (configuration.RetrieveAValue(ConfigurationParameters.DoubleTapOnTopActionBehavior, "0") == "0")
+                                {
+                                    if (e.Event.RawY < halfscreenheight)
+                                    {
+                                        Awake.TurnOffScreen();
+                                    }
+                                    else
+                                    {
+                                        Finish();
+                                    }
+                                }
+                                //The other value is "1" which means Inverted.
+                                else
+                                {
+                                    if (e.Event.RawY < halfscreenheight)
+                                    {
+                                        Finish();
+                                    }
+                                    else
+                                    {
+                                        Awake.TurnOffScreen();
+                                    }
+                                }
+
                             }
                             //Reset the values of touch
                             firstTouchTime = -1;
@@ -241,7 +268,7 @@ namespace LiveDisplay
             base.OnDestroy();
             OnActivityStateChanged?.Invoke(this, new LockScreenLifecycleEventArgs { State = Activities.ActivityStates.Destroyed });
             //Unbind events
-            unlocker.Touch -= Unlocker_Touch;
+            //unlocker.Touch -= Unlocker_Touch;
             clearAll.Click -= BtnClearAll_Click;
             WallpaperPublisher.NewWallpaperIssued -= Wallpaper_NewWallpaperIssued;
             CatcherHelper.NotificationListSizeChanged -= CatcherHelper_NotificationListSizeChanged;
@@ -253,7 +280,7 @@ namespace LiveDisplay
             //Dispose Views
             //Views
             recycler.Dispose();
-            unlocker.Dispose();
+            //unlocker.Dispose();
             clearAll.Dispose();
             lockscreen.Dispose();
             wallpaperView.Background?.Dispose();
@@ -299,16 +326,19 @@ namespace LiveDisplay
 
         private void CatcherHelper_NotificationListSizeChanged(object sender, NotificationListSizeChangedEventArgs e)
         {
-            if (e.ThereAreNotifications)
+            RunOnUiThread(() =>
             {
-                if (clearAll != null)
-                    clearAll.Visibility = ViewStates.Visible;
-            }
-            else
-            {
-                if (clearAll != null)
-                    clearAll.Visibility = ViewStates.Invisible;
-            }
+                if (e.ThereAreNotifications)
+                {
+                    if (clearAll != null)
+                        clearAll.Visibility = ViewStates.Visible;
+                }
+                else
+                {
+                    if (clearAll != null)
+                        clearAll.Visibility = ViewStates.Invisible;
+                }
+            });
         }
 
         private void BtnClearAll_Click(object sender, EventArgs e)
@@ -468,7 +498,7 @@ namespace LiveDisplay
         {
             using (var view = Window.DecorView)
             {
-                //if (Build.VERSION.SdkInt > BuildVersionCodes.OMr1)
+                if (Build.VERSION.SdkInt > BuildVersionCodes.OMr1)
                     Window.Attributes.LayoutInDisplayCutoutMode = LayoutInDisplayCutoutMode.ShortEdges;
 
                 var uiOptions = (int)view.SystemUiVisibility;

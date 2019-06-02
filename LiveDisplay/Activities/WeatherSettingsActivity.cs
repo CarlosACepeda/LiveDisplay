@@ -96,11 +96,11 @@ namespace LiveDisplay.Activities
             switch (e.IsChecked)
             {
                 case true:
-                    configurationManager.SaveAValue(ConfigurationParameters.UseImperialSystem, true);
+                    configurationManager.SaveAValue(ConfigurationParameters.WeatherUseImperialSystem, true);
                     break;
 
                 case false:
-                    configurationManager.SaveAValue(ConfigurationParameters.UseImperialSystem, false);
+                    configurationManager.SaveAValue(ConfigurationParameters.WeatherUseImperialSystem, false);
                     break;
 
                 default:
@@ -112,7 +112,7 @@ namespace LiveDisplay.Activities
         {
             if (e.HasFocus == false)
             {
-                configurationManager.SaveAValue(ConfigurationParameters.City, city.Text);
+                configurationManager.SaveAValue(ConfigurationParameters.WeatherCity, city.Text);
             }
             currentcity = city.Text;
         }
@@ -121,17 +121,17 @@ namespace LiveDisplay.Activities
         {
             using (configurationManager = new ConfigurationManager(sharedPreferences))
             {
-                currentcity = configurationManager.RetrieveAValue(ConfigurationParameters.City, "");
+                currentcity = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherCity, "");
                 city.Text = currentcity;
                 useimperialsystem.Checked =
-                    configurationManager.RetrieveAValue(ConfigurationParameters.UseImperialSystem);
+                    configurationManager.RetrieveAValue(ConfigurationParameters.WeatherUseImperialSystem);
             }
         }
 
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            configurationManager.SaveAValue(ConfigurationParameters.City, city.Text); //Save before exit, because it might be possible that the EditText never loses focus.
+            configurationManager.SaveAValue(ConfigurationParameters.WeatherCity, city.Text); //Save before exit, because it might be possible that the EditText never loses focus.
 
             city.FocusChange -= City_FocusChange;
             useimperialsystem.CheckedChange -= Useimperialsystem_CheckedChange;
