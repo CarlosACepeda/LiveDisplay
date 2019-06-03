@@ -15,7 +15,7 @@ namespace LiveDisplay.Fragments
 {
     public class ClockFragment : Fragment
     {
-        private readonly ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context));
+        private readonly ConfigurationManager configurationManager = new ConfigurationManager(Application.Context.GetSharedPreferences("weatherpreferences", FileCreationMode.Private));
         private TextView date;
         private TextClock clock;
         private RelativeLayout weatherclockcontainer;
@@ -83,17 +83,17 @@ namespace LiveDisplay.Fragments
         private void LoadWeather()
         {
             string thecity = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherCity, "");
+            string currentweather = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherCurrent, "");
             string minimumtemperature= configurationManager.RetrieveAValue(ConfigurationParameters.WeatherMinimum, "");
             string maximumtemperature = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherMaximum, "");
-            string temperatureunit = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherTemperatureUnit, "");
             string weatherhumidity = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherHumidity, "");
             string weatherdescription = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherDescription, "");
             string weatherlastupdated = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherLastUpdated, "");
 
-
+            temperature.Text = currentweather;
             city.Text = thecity;
-            minimumTemperature.Text = string.Concat(minimumtemperature, temperatureunit);
-            maximumTemperature.Text = string.Concat(maximumtemperature, temperatureunit);
+            minimumTemperature.Text = minimumtemperature;
+            maximumTemperature.Text = maximumtemperature;
             humidity.Text = weatherhumidity;
             description.Text = weatherdescription;
             lastupdated.Text = weatherlastupdated;
@@ -104,17 +104,17 @@ namespace LiveDisplay.Fragments
 
         private void Weatherclockcontainer_Click(object sender, EventArgs e)
         {
-            //var view = sender as View;
-            //weatherinfo = view.FindViewById<LinearLayout>(Resource.Id.weatherinfo);
-            //if (weatherinfo.Visibility == ViewStates.Visible)
-            //{
-            //    weatherinfo.Visibility = ViewStates.Invisible;
-            //}
-            //else
-            //{
-            //    weatherinfo.Visibility = ViewStates.Visible;
-            //}
-            //weatherinfo.Dispose();
+            var view = sender as View;
+            weatherinfo = view.FindViewById<LinearLayout>(Resource.Id.weatherinfo);
+            if (weatherinfo.Visibility == ViewStates.Visible)
+            {
+                weatherinfo.Visibility = ViewStates.Invisible;
+            }
+            else
+            {
+                weatherinfo.Visibility = ViewStates.Visible;
+            }
+            weatherinfo.Dispose();
         }
 
         public override void OnDestroyView()

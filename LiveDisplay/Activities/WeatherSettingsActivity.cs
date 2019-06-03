@@ -8,6 +8,7 @@ using Android.Widget;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
 using LiveDisplay.Servicios.Weather;
+using System;
 using System.Threading;
 
 namespace LiveDisplay.Activities
@@ -25,9 +26,9 @@ namespace LiveDisplay.Activities
         private TextView minimumTemperature;
         private TextView maximumTemperature;
         private Button trytogetweather;
+        private string units = "";
 
         private string currentcity = "";
-        private UnitsFlags units;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -69,14 +70,30 @@ namespace LiveDisplay.Activities
             {
                 countryCode = tm.NetworkCountryIso;
             }
-            if (units == UnitsFlags.Imperial)
+            switch(units)
             {
+                case "imperial":
                 temperatureSuffix = "°f";
+                    break;
+                case "metric":
+                    temperatureSuffix = "°c";
+                    break;
             }
 
             ThreadPool.QueueUserWorkItem(async m =>
             {
                 var weather = await Weather.GetWeather(currentcity, countryCode, units);
+
+                configurationManager.SaveAValue(ConfigurationParameters.WeatherCity, currentcity);
+                configurationManager.SaveAValue(ConfigurationParameters.WeatherCountryCode, countryCode);
+                configurationManager.SaveAValue(ConfigurationParameters.WeatherDescription, weather?.Weather[0].Description);
+                configurationManager.SaveAValue(ConfigurationParameters.WeatherHumidity, weather?.MainWeather.Humidity.ToString() + "%");
+                configurationManager.SaveAValue(ConfigurationParameters.WeatherLastUpdated, DateTime.Now.ToString("ddd hh:mm"));
+                configurationManager.SaveAValue(ConfigurationParameters.WeatherCurrent, weather?.MainWeather.Temperature.ToString() + temperatureSuffix);
+                configurationManager.SaveAValue(ConfigurationParameters.WeatherMaximum, weather?.MainWeather.MaxTemperature.ToString() + temperatureSuffix);
+                configurationManager.SaveAValue(ConfigurationParameters.WeatherMinimum, weather?.MainWeather.MinTemperature.ToString() + temperatureSuffix);
+                configurationManager.SaveAValue(ConfigurationParameters.WeatherTemperatureMeasureUnit, units);
+
                 RunOnUiThread(() =>
                 {
                     temperature.Text = weather?.MainWeather.Temperature.ToString() + temperatureSuffix;
@@ -97,10 +114,12 @@ namespace LiveDisplay.Activities
             {
                 case true:
                     configurationManager.SaveAValue(ConfigurationParameters.WeatherUseImperialSystem, true);
+                    units = "imperial";
                     break;
 
                 case false:
                     configurationManager.SaveAValue(ConfigurationParameters.WeatherUseImperialSystem, false);
+                    units = "metric";
                     break;
 
                 default:

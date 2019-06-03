@@ -15,25 +15,10 @@ namespace LiveDisplay.Servicios.Weather
         private readonly static ConfigurationManager configurationManager = new ConfigurationManager(Application.Context.GetSharedPreferences("weatherpreferences", FileCreationMode.Private));
 
         //This class will be the one that connects to the api and provide Lockscreen with Weather information.
-        public static async Task<WeatherRoot> GetWeather(string city, string country, UnitsFlags unitsformat)
+        public static async Task<WeatherRoot> GetWeather(string city, string country, string measurementunit)
         {
-            string units = "";
-            switch (unitsformat)
-            {
-                case UnitsFlags.Metric:
-                    units = "metric";
-                    break;
 
-                case UnitsFlags.Imperial:
-                    units = "imperial";
-                    break;
-
-                default:
-                    units = "metric";
-                    break;
-            }
-
-            string url = string.Format("http://api.openweathermap.org/data/2.5/weather?q={0},{1}&units={2}&appid=9ca11a6f4426446b991ff390d4f7430f", city, country, units);
+            string url = string.Format("http://api.openweathermap.org/data/2.5/weather?q={0},{1}&units={2}&appid=9ca11a6f4426446b991ff390d4f7430f", city, country, measurementunit);
             using (var client = new HttpClient())
             {
                 try
@@ -54,12 +39,12 @@ namespace LiveDisplay.Servicios.Weather
                     configurationManager.SaveAValue(ConfigurationParameters.WeatherMaximum, weatherRoot.MainWeather.MinTemperature.ToString());
 
                     string unitsuffix = "°k";
-                    switch (unitsformat)
+                    switch (measurementunit)
                     {
-                        case UnitsFlags.Imperial:
+                        case "imperial":
                             unitsuffix = "°f";
                             break;
-                        case UnitsFlags.Metric:
+                        case "metric":
                             unitsuffix = "°c";
                             break;
                     }

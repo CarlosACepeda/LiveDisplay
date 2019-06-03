@@ -19,6 +19,7 @@
         public const string ShowAlbumArt = "showalbumart?";
 
         //For Weather Widget settings
+        public const string WeatherCurrent = "weathercurrent";
         public const string WeatherMinimum = "weatherminimum";
         public const string WeatherMaximum = "weathermaximum";
         public const string WeatherLastUpdated = "weatherlastupdated";
@@ -27,6 +28,8 @@
         public const string WeatherCity = "weathercity";
         public const string WeatherUseImperialSystem = "useimperialsystem?";
         public const string WeatherTemperatureUnit = "weathertemperatureunit";
+        public const string WeatherCountryCode = "weathercountrycode";
+        public const string WeatherTemperatureMeasureUnit = "weathertemperaturemeasureunit";
 
         //For Notifications Settings :
         public const string EnableQuickReply = "enablequickreply?";

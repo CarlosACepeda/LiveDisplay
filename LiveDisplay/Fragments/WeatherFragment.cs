@@ -41,17 +41,17 @@ namespace LiveDisplay.Fragments
             string countryCode = tm.NetworkCountryIso;
 
             string thecity = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherCity, "");
-            UnitsFlags unitsFlags = UnitsFlags.Metric;
+            string units = "metric";
             string temperatureSuffix = "°C";
             if (configurationManager.RetrieveAValue(ConfigurationParameters.WeatherUseImperialSystem) == true)
             {
-                unitsFlags = UnitsFlags.Imperial;
+                units = "imperial";
                 temperatureSuffix = "°F";
             }
 
             ThreadPool.QueueUserWorkItem(async m =>
             {
-                var weather = await Weather.GetWeather(thecity, countryCode, unitsFlags);
+                var weather = await Weather.GetWeather(thecity, countryCode, units);
                 Activity.RunOnUiThread(() =>
                 {
                     temperature.Text = weather?.MainWeather.Temperature.ToString() + temperatureSuffix;

@@ -220,6 +220,7 @@
     <Compile Include="Servicios\Notificaciones\NotificationSlave.cs" />
     <Compile Include="Servicios\Wallpaper\WallpaperChangedEventArgs.cs" />
     <Compile Include="Servicios\Wallpaper\WallpaperPublisher.cs" />
+    <Compile Include="Servicios\Weather\GrabWeatherJob.cs" />
     <Compile Include="Servicios\Weather\IconsForWeatherConditions.cs" />
     <Compile Include="Servicios\Weather\Weather.cs" />
   </ItemGroup>
