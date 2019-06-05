@@ -49,6 +49,8 @@ namespace LiveDisplay
         private int halfscreenheight; //To decide the behavior of the double tap.
         private System.Timers.Timer watchDog; //the watchdog simply will start counting down until it gets resetted by OnUserInteraction() override.
         private Animation fadeoutanimation;
+        private string doubletapbehavior;
+
         public static event EventHandler<LockScreenLifecycleEventArgs> OnActivityStateChanged;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -101,6 +103,8 @@ namespace LiveDisplay
             watchDog.Elapsed += WatchdogInterval_Elapsed;
 
             halfscreenheight = Resources.DisplayMetrics.HeightPixels / 2;
+            
+
 
             WallpaperPublisher.NewWallpaperIssued += Wallpaper_NewWallpaperIssued;
 
@@ -200,7 +204,7 @@ namespace LiveDisplay
                             if (firstTouchTime + threshold > finalTouchTime)
                             {
                                 //0 Equals: Normal Behavior
-                                if (configuration.RetrieveAValue(ConfigurationParameters.DoubleTapOnTopActionBehavior, "0") == "0")
+                                if (doubletapbehavior=="0")
                                 {
                                     if (e.Event.RawY < halfscreenheight)
                                     {
@@ -470,6 +474,7 @@ namespace LiveDisplay
                 {
                     StartAwakeService();
                 }
+                doubletapbehavior = configurationManager.RetrieveAValue(ConfigurationParameters.DoubleTapOnTopActionBehavior, "0");
             }
         }
 

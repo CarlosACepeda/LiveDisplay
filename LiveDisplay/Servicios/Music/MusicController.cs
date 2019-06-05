@@ -30,6 +30,9 @@ namespace LiveDisplay.Servicios.Music
 
         public static event EventHandler<MediaMetadataChangedEventArgs> MediaMetadataChanged;
 
+        public static event EventHandler MusicPlaying;
+        public static event EventHandler MusicPaused;
+
         #endregion events
 
         #endregion Class members
