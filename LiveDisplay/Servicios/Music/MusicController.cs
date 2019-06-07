@@ -5,6 +5,7 @@ using Android.Util;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Music.MediaEventArgs;
 using System;
+using System.Threading;
 
 namespace LiveDisplay.Servicios.Music
 {
@@ -148,7 +149,10 @@ namespace LiveDisplay.Servicios.Music
 
         protected virtual void OnMediaPlaybackChanged(MediaPlaybackStateChangedEventArgs e)
         {
-            MediaPlaybackChanged?.Invoke(this, e);
+            ThreadPool.QueueUserWorkItem(m =>
+            {
+                MediaPlaybackChanged?.Invoke(this, e);
+            });
         }
 
         protected virtual void OnMediaMetadataChanged(MediaMetadataChangedEventArgs e)
