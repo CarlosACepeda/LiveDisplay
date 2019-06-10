@@ -14,6 +14,7 @@ using Android.Views;
 using Android.Views.Animations;
 using Android.Widget;
 using Com.JackAndPhantom;
+using LiveDisplay.Activities;
 using LiveDisplay.Activities.ActivitiesEventArgs;
 using LiveDisplay.Fragments;
 using LiveDisplay.Misc;
@@ -28,7 +29,7 @@ using System.Threading;
 
 namespace LiveDisplay
 {
-    [Activity(Label = "LockScreen", Theme = "@style/LiveDisplayThemeDark", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, TaskAffinity = "livedisplay.lockscreen", LaunchMode = Android.Content.PM.LaunchMode.SingleInstance, ExcludeFromRecents = true)]
+    [Activity(Label = "LockScreen", Theme = "@style/LiveDisplayThemeDark", MainLauncher = false, ScreenOrientation = ScreenOrientation.Portrait, TaskAffinity = "livedisplay.lockscreen", LaunchMode = LaunchMode.SingleInstance, ExcludeFromRecents = true)]
     public class LockScreenActivity : Activity
     {
         private RecyclerView recycler;
@@ -50,6 +51,7 @@ namespace LiveDisplay
         private System.Timers.Timer watchDog; //the watchdog simply will start counting down until it gets resetted by OnUserInteraction() override.
         private Animation fadeoutanimation;
         private string doubletapbehavior;
+        private bool isMusicWidgetPresent;
 
         public static event EventHandler<LockScreenLifecycleEventArgs> OnActivityStateChanged;
 
@@ -108,6 +110,7 @@ namespace LiveDisplay
 
             WallpaperPublisher.NewWallpaperIssued += Wallpaper_NewWallpaperIssued;
 
+
             //CatcherHelper events
             CatcherHelper.NotificationListSizeChanged += CatcherHelper_NotificationListSizeChanged;
 
@@ -147,23 +150,35 @@ namespace LiveDisplay
 
         private void MusicController_MusicPaused(object sender, EventArgs e)
         {
-            ThreadPool.QueueUserWorkItem(m => CheckIfMusicIsStillPaused());
+            CheckIfMusicIsStillPaused();
         }
 
         private void CheckIfMusicIsStillPaused()
         {
-            Thread.Sleep(5000); //Wait 5 seconds.
-
-            if (MusicController.MusicStatus != PlaybackStateCode.Playing)
+            ThreadPool.QueueUserWorkItem(method =>
             {
-                StopMusicController();
-                Log.Info("LiveDisplay", "Musicfragment stopped");
-            }
+                Thread.Sleep(5000); //Wait 5 seconds.
+
+                if (MusicController.MusicStatus != PlaybackStateCode.Playing)
+                {
+                    RunOnUiThread(() =>
+                    {
+                        StopMusicController();
+                        StopFloatingNotificationService();
+                        Log.Info("LiveDisplay", "Musicfragment stopped");
+                    });
+                }
+            });
         }
 
         private void MusicController_MusicPlaying(object sender, EventArgs e)
         {
-            StartMusicController();
+            if(isMusicWidgetPresent==false) //Avoid unnecessary calls
+            RunOnUiThread(() =>
+            {
+                StartMusicController();
+
+            });
         }
 
 
@@ -212,7 +227,14 @@ namespace LiveDisplay
                                     }
                                     else
                                     {
-                                        Finish();
+                                        //Finish();
+                                        //using (Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(TransparentActivity))))
+                                        //{
+                                        //    intent.AddFlags(ActivityFlags.NewTask | ActivityFlags.);
+                                        //    StartActivity(intent);
+                                        //}
+                                        MoveTaskToBack(true);
+
                                     }
                                 }
                                 //The other value is "1" which means Inverted.
@@ -220,7 +242,15 @@ namespace LiveDisplay
                                 {
                                     if (e.Event.RawY < halfscreenheight)
                                     {
-                                        Finish();
+                                        //Finish();
+                                        //using (Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(TransparentActivity))))
+                                        //{
+                                        //    intent.AddFlags(ActivityFlags.NewTask | ActivityFlags.MultipleTask);
+                                        //    StartActivity(intent);
+                                        //}
+                                        MoveTaskToBack(true);
+
+
                                     }
                                     else
                                     {
@@ -256,13 +286,18 @@ namespace LiveDisplay
             AddFlags();
             watchDog.Stop();
             watchDog.Start();
-            OnActivityStateChanged?.Invoke(this, new LockScreenLifecycleEventArgs { State = Activities.ActivityStates.Resumed });
+            OnActivityStateChanged?.Invoke(this, new LockScreenLifecycleEventArgs { State = ActivityStates.Resumed });
+            MusicController.MusicPlaying += MusicController_MusicPlaying;
+            MusicController.MusicPaused += MusicController_MusicPaused;
+
         }
 
         protected override void OnPause()
         {
             watchDog.Stop();
-            OnActivityStateChanged?.Invoke(this, new LockScreenLifecycleEventArgs { State = Activities.ActivityStates.Paused });
+            OnActivityStateChanged?.Invoke(this, new LockScreenLifecycleEventArgs { State = ActivityStates.Paused });
+            MusicController.MusicPlaying -= MusicController_MusicPlaying;
+            MusicController.MusicPaused -= MusicController_MusicPaused;
             GC.Collect();
             base.OnPause();
         }
@@ -270,7 +305,8 @@ namespace LiveDisplay
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            OnActivityStateChanged?.Invoke(this, new LockScreenLifecycleEventArgs { State = Activities.ActivityStates.Destroyed });
+            OnActivityStateChanged?.Invoke(this, new LockScreenLifecycleEventArgs { State = ActivityStates.Destroyed });
+
             //Unbind events
             //unlocker.Touch -= Unlocker_Touch;
             clearAll.Click -= BtnClearAll_Click;
@@ -296,7 +332,6 @@ namespace LiveDisplay
             clockFragment.Dispose();
             weatherFragment.Dispose();
 
-            //StopFloatingNotificationService();
         }
 
         public override void OnBackPressed()
@@ -599,6 +634,7 @@ namespace LiveDisplay
             }
         }
 
+        
         private void StartMusicController()
         {
             using (FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction())
@@ -608,11 +644,14 @@ namespace LiveDisplay
                 fragmentTransaction.DisallowAddToBackStack();
                 fragmentTransaction.Commit();
             }
+            isMusicWidgetPresent = true;
+            StartFloatingNotificationService();
         }
 
         private void StopMusicController()
         {
             LoadNotificationFragment();
+            isMusicWidgetPresent = false;
         }
     }
 }

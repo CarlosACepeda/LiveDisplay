@@ -263,98 +263,112 @@ namespace LiveDisplay.Fragments
 
         private void MusicControllerKitkat_MediaPlaybackChanged(object sender, MediaPlaybackStateChangedKitkatEventArgs e)
         {
-            switch (e.PlaybackState)
+            Activity?.RunOnUiThread(() =>
             {
-                case RemoteControlPlayState.Paused:
-                    btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
-                    playbackState = PlaybackStateCode.Paused;
-                    MoveSeekbar(false);
+                switch (e.PlaybackState)
+                {
+                    case RemoteControlPlayState.Paused:
+                        btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
+                        playbackState = PlaybackStateCode.Paused;
+                        MoveSeekbar(false);
 
-                    break;
+                        break;
 
-                case RemoteControlPlayState.Playing:
-                    btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_pause_white_24dp, 0, 0);
-                    playbackState = PlaybackStateCode.Playing;
-                    MoveSeekbar(true);
+                    case RemoteControlPlayState.Playing:
+                        btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_pause_white_24dp, 0, 0);
+                        playbackState = PlaybackStateCode.Playing;
+                        MoveSeekbar(true);
 
-                    break;
+                        break;
 
-                case RemoteControlPlayState.Stopped:
-                    btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
-                    playbackState = PlaybackStateCode.Stopped;
-                    MoveSeekbar(false);
-                    break;
+                    case RemoteControlPlayState.Stopped:
+                        btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
+                        playbackState = PlaybackStateCode.Stopped;
+                        MoveSeekbar(false);
+                        break;
 
-                default:
-                    break;
-            }
+                    default:
+                        break;
+                }
+            });
         }
 
         private void MusicControllerKitkat_MediaMetadataChanged(object sender, MediaMetadataChangedKitkatEventArgs e)
         {
-            tvTitle.Text = e.Title;
-            tvAlbum.Text = e.Album;
-            tvArtist.Text = e.Artist;
-            skbSeekSongTime.Max = (int)e.Duration;
-            if (configurationManager.RetrieveAValue(ConfigurationParameters.ShowAlbumArt))
-                WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
-                {
-                    Wallpaper = new BitmapDrawable(Resources, e.AlbumArt)
-                });
+            Activity?.RunOnUiThread(() =>
+            {
+                tvTitle.Text = e.Title;
+                tvAlbum.Text = e.Album;
+                tvArtist.Text = e.Artist;
+                skbSeekSongTime.Max = (int)e.Duration;
+                if (configurationManager.RetrieveAValue(ConfigurationParameters.ShowAlbumArt))
+                    WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
+                    {
+                        Wallpaper = new BitmapDrawable(Resources, e.AlbumArt)
+                    });
                 GC.Collect(0);
+            });
         }
 
         private void MusicController_MediaMetadataChanged(object sender, MediaMetadataChangedEventArgs e)
         {
-            activityIntent = e.ActivityIntent;
-            tvTitle.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyTitle);
-            tvAlbum.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyAlbum);
-            tvArtist.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyArtist);
-            skbSeekSongTime.Max = (int)e.MediaMetadata.GetLong(MediaMetadata.MetadataKeyDuration);
-            ThreadPool.QueueUserWorkItem(m =>
+            Activity?.RunOnUiThread(() =>
             {
-                var albumart = e.MediaMetadata.GetBitmap(MediaMetadata.MetadataKeyAlbumArt);
-                var wallpaper = new BitmapDrawable(Resources, albumart);
 
-                int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, 255);
-                if(configurationManager.RetrieveAValue(ConfigurationParameters.ShowAlbumArt))
-                WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
+                activityIntent = e.ActivityIntent;
+                tvTitle.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyTitle);
+                tvAlbum.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyAlbum);
+                tvArtist.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyArtist);
+                skbSeekSongTime.Max = (int)e.MediaMetadata.GetLong(MediaMetadata.MetadataKeyDuration);
+                ThreadPool.QueueUserWorkItem(m =>
                 {
-                    Wallpaper = wallpaper,
-                    OpacityLevel = (short)opacitylevel
+                    var albumart = e.MediaMetadata.GetBitmap(MediaMetadata.MetadataKeyAlbumArt);
+                    var wallpaper = new BitmapDrawable(Resources, albumart);
+
+                    int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, 255);
+                    if (configurationManager.RetrieveAValue(ConfigurationParameters.ShowAlbumArt))
+                        WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
+                        {
+                            Wallpaper = wallpaper,
+                            OpacityLevel = (short)opacitylevel
+                        });
                 });
             });
-            GC.Collect();
+            
         }
 
         private void MusicController_MediaPlaybackChanged(object sender, MediaPlaybackStateChangedEventArgs e)
         {
-            switch (e.PlaybackState)
+            Activity?.RunOnUiThread(() =>
             {
-                case PlaybackStateCode.Paused:
-                    btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
-                    playbackState = PlaybackStateCode.Paused;
-                    MoveSeekbar(false);
 
-                    break;
+                switch (e.PlaybackState)
+                {
+                    case PlaybackStateCode.Paused:
+                        btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
+                        playbackState = PlaybackStateCode.Paused;
+                        MoveSeekbar(false);
 
-                case PlaybackStateCode.Playing:
-                    btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_pause_white_24dp, 0, 0);
-                    playbackState = PlaybackStateCode.Playing;
-                    MoveSeekbar(true);
+                        break;
 
-                    break;
+                    case PlaybackStateCode.Playing:
+                        btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_pause_white_24dp, 0, 0);
+                        playbackState = PlaybackStateCode.Playing;
+                        MoveSeekbar(true);
 
-                case PlaybackStateCode.Stopped:
-                    btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
-                    playbackState = PlaybackStateCode.Stopped;
-                    MoveSeekbar(false);
-                    break;
+                        break;
 
-                default:
-                    break;
-            }
-            skbSeekSongTime.SetProgress((int)e.CurrentTime, true);
+                    case PlaybackStateCode.Stopped:
+                        btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
+                        playbackState = PlaybackStateCode.Stopped;
+                        MoveSeekbar(false);
+                        break;
+
+                    default:
+                        break;
+                }
+                skbSeekSongTime.SetProgress((int)e.CurrentTime, true);
+            });
         }
 
         #endregion Subscribing and Reacting to events

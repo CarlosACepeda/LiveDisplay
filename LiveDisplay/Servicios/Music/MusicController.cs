@@ -123,21 +123,12 @@ namespace LiveDisplay.Servicios.Music
 
         public override void OnMetadataChanged(MediaMetadata metadata)
         {
-            try
-            {
                 MediaMetadata = metadata;
 
                 OnMediaMetadataChanged(new MediaMetadataChangedEventArgs
                 {
                     MediaMetadata = metadata
                 });
-            }
-            catch
-            {
-                Log.Info("LiveDisplay", "Failed getting metadata MusicController.");
-                //Don't do anything.
-            }
-
             //Datos de la Media que se está reproduciendo.
 
             base.OnMetadataChanged(metadata);
@@ -151,13 +142,26 @@ namespace LiveDisplay.Servicios.Music
         {
             ThreadPool.QueueUserWorkItem(m =>
             {
+                switch(e.PlaybackState)
+                {
+                    case PlaybackStateCode.Playing:
+                        MusicPlaying?.Invoke(this, EventArgs.Empty);
+                        break;
+                    case PlaybackStateCode.Paused:
+                        MusicPaused?.Invoke(this, EventArgs.Empty);
+                        break;
+                }
                 MediaPlaybackChanged?.Invoke(this, e);
             });
         }
 
         protected virtual void OnMediaMetadataChanged(MediaMetadataChangedEventArgs e)
         {
-            MediaMetadataChanged?.Invoke(this, e);
+            ThreadPool.QueueUserWorkItem(m =>
+            {
+
+                MediaMetadataChanged?.Invoke(this, e);
+            });
         }
 
         #endregion Raising events.
