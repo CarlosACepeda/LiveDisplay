@@ -52,6 +52,7 @@ namespace LiveDisplay
         private Animation fadeoutanimation;
         private string doubletapbehavior;
         private bool isMusicWidgetPresent;
+        private ActivityStates currentActivityState;
 
         public static event EventHandler<LockScreenLifecycleEventArgs> OnActivityStateChanged;
 
@@ -158,14 +159,14 @@ namespace LiveDisplay
             ThreadPool.QueueUserWorkItem(method =>
             {
                 Thread.Sleep(5000); //Wait 5 seconds.
-
+                if (currentActivityState == ActivityStates.Resumed)            
                 if (MusicController.MusicStatus != PlaybackStateCode.Playing)
                 {
                     RunOnUiThread(() =>
-                    {
-                        StopMusicController();
-                        StopFloatingNotificationService();
-                        Log.Info("LiveDisplay", "Musicfragment stopped");
+                    {                        
+                       StopMusicController();
+                       StopFloatingNotificationService();
+                       Log.Info("LiveDisplay", "Musicfragment stopped");                        
                     });
                 }
             });
@@ -283,28 +284,36 @@ namespace LiveDisplay
         protected override void OnResume()
         {
             base.OnResume();
+            currentActivityState = ActivityStates.Resumed;
             AddFlags();
             watchDog.Stop();
             watchDog.Start();
             OnActivityStateChanged?.Invoke(this, new LockScreenLifecycleEventArgs { State = ActivityStates.Resumed });
             MusicController.MusicPlaying += MusicController_MusicPlaying;
             MusicController.MusicPaused += MusicController_MusicPaused;
+            if (isMusicWidgetPresent) //It'll always be true(?)
+            {
+                CheckIfMusicIsStillPaused();
+            }
 
         }
 
         protected override void OnPause()
         {
+            base.OnPause();
+            currentActivityState = ActivityStates.Paused;
             watchDog.Stop();
             OnActivityStateChanged?.Invoke(this, new LockScreenLifecycleEventArgs { State = ActivityStates.Paused });
             MusicController.MusicPlaying -= MusicController_MusicPlaying;
             MusicController.MusicPaused -= MusicController_MusicPaused;
             GC.Collect();
-            base.OnPause();
+            
         }
 
         protected override void OnDestroy()
         {
             base.OnDestroy();
+            currentActivityState = ActivityStates.Destroyed;
             OnActivityStateChanged?.Invoke(this, new LockScreenLifecycleEventArgs { State = ActivityStates.Destroyed });
 
             //Unbind events
@@ -650,8 +659,11 @@ namespace LiveDisplay
 
         private void StopMusicController()
         {
-            LoadNotificationFragment();
-            isMusicWidgetPresent = false;
+            if (currentActivityState == ActivityStates.Resumed)
+            {
+                LoadNotificationFragment();
+                isMusicWidgetPresent = false;
+            }
         }
     }
 }
