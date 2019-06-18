@@ -643,9 +643,11 @@ namespace LiveDisplay
             }
         }
 
-        
+
         private void StartMusicController()
         {
+            // я голоден... ; хД 
+            if(currentActivityState== ActivityStates.Resumed)
             using (FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction())
             {
                 fragmentTransaction.Replace(Resource.Id.MusicNotificationPlaceholder, musicFragment);
