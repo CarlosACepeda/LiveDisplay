@@ -1,21 +1,22 @@
-﻿using Android.App;
-using Android.Content.PM;
-using Android.Graphics;
-using Android.Graphics.Drawables;
-using Android.OS;
-using Android.Preferences;
-using Android.Runtime;
-using Android.Support.V7.App;
-using Android.Views;
-using Android.Widget;
-using Com.JackAndPhantom;
-using LiveDisplay.Misc;
-using LiveDisplay.Servicios;
-using System;
-using System.Threading;
+﻿namespace LiveDisplay.Activities
+{    
+    using Android.App;
+    using Android.Content.PM;
+    using Android.Graphics;
+    using Android.Graphics.Drawables;
+    using Android.OS;
+    using Android.Preferences;
+    using Android.Runtime;
+    using Android.Support.V7.App;
+    using Android.Views;
+    using Android.Widget;
+    using LiveDisplay.Misc;
+    using LiveDisplay.Servicios;
+    using System;
+    using System.Threading;
 
-namespace LiveDisplay.Activities
-{
+    using BlurImage = Com.JackAndPhantom.BlurImage;
+
     [Activity(Label = "@string/wallpapersettings", Theme = "@style/LiveDisplayThemeDark.NoActionBar")]
     public class BackgroundSettingsActivity : AppCompatActivity
     {

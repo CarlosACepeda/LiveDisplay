@@ -1,18 +1,19 @@
-﻿using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Preferences;
-using Android.Provider;
-using Android.Views;
-using Android.Widget;
-using Java.Util;
-using LiveDisplay.BroadcastReceivers;
-using LiveDisplay.Misc;
-using LiveDisplay.Servicios;
-using System;
-
-namespace LiveDisplay.Fragments
+﻿namespace LiveDisplay.Fragments
 {
+    using Android.App;
+    using Android.Content;
+    using Android.OS;
+    using Android.Preferences;
+    using Android.Provider;
+    using Android.Views;
+    using Android.Widget;
+    using Java.Util;
+    using LiveDisplay.BroadcastReceivers;
+    using LiveDisplay.Misc;
+    using LiveDisplay.Servicios;
+    using System;
+
+
     public class ClockFragment : Fragment
     {
         private readonly ConfigurationManager configurationManager = new ConfigurationManager(Application.Context.GetSharedPreferences("weatherpreferences", FileCreationMode.Private));
@@ -82,13 +83,13 @@ namespace LiveDisplay.Fragments
 
         private void LoadWeather()
         {
-            string thecity = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherCity, "");
-            string currentweather = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherCurrent, "");
-            string minimumtemperature = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherMinimum, "");
-            string maximumtemperature = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherMaximum, "");
-            string weatherhumidity = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherHumidity, "");
-            string weatherdescription = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherDescription, "");
-            string weatherlastupdated = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherLastUpdated, "");
+            string thecity = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherCity, string.Empty);
+            string currentweather = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherCurrent, string.Empty);
+            string minimumtemperature = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherMinimum, string.Empty);
+            string maximumtemperature = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherMaximum, string.Empty);
+            string weatherhumidity = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherHumidity, string.Empty);
+            string weatherdescription = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherDescription, string.Empty);
+            string weatherlastupdated = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherLastUpdated, string.Empty);
 
             temperature.Text = currentweather;
             city.Text = thecity;

@@ -1,20 +1,21 @@
-﻿using Android.App;
-using Android.Content;
-using Android.Graphics;
-using Android.Graphics.Drawables;
-using Android.Preferences;
-using Android.Renderscripts;
-using LiveDisplay.Misc;
-using LiveDisplay.Servicios;
-
-namespace LiveDisplay.Factories
+﻿namespace LiveDisplay.Factories
 {
-    //TODO: Correct me, I can be optimized.
+
+    using Android.App;
+    using Android.Content;
+    using Android.Graphics;
+    using Android.Graphics.Drawables;
+    using Android.Preferences;
+    using Android.Renderscripts;
+    using LiveDisplay.Misc;
+    using LiveDisplay.Servicios;
+
+    // TODO: Correct me, I can be optimized.
     internal class BackgroundFactory : Java.Lang.Object
     {
-        private static readonly short maxRadius = 25;
+        private static readonly short MaxRadius = 25;
 
-        //Retrieves a blurred image
+        // Retrieves a blurred image
         public static Drawable Difuminar(Drawable papelTapiz, short blurRadius)
         {
             Bitmap originalBitmap = ((BitmapDrawable)papelTapiz).Bitmap;
@@ -24,7 +25,7 @@ namespace LiveDisplay.Factories
             Allocation output = Allocation.CreateTyped(rs, input.Type);
             ScriptIntrinsicBlur script = ScriptIntrinsicBlur.Create(rs, Element.U8_4(rs));
             script.SetInput(input);
-            if (blurRadius < maxRadius)
+            if (blurRadius < MaxRadius)
             {
                 script.SetRadius(blurRadius);
             }

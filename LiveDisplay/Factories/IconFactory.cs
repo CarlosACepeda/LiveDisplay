@@ -1,10 +1,10 @@
-﻿using Android.App;
-using Android.Content;
-using Android.Graphics.Drawables;
-using Android.Support.V4.Content;
-
-namespace LiveDisplay.Factories
+﻿namespace LiveDisplay.Factories
 {
+    using Android.App;
+    using Android.Content;
+    using Android.Graphics.Drawables;
+    using Android.Support.V4.Content;
+
     internal class IconFactory
     {
         public static Drawable ReturnIconDrawable(int iconInt, string paquete)

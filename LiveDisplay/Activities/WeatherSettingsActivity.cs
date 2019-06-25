@@ -1,18 +1,18 @@
-﻿using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Support.V7.App;
-using Android.Telephony;
-using Android.Views;
-using Android.Widget;
-using LiveDisplay.Misc;
-using LiveDisplay.Servicios;
-using LiveDisplay.Servicios.Weather;
-using System;
-using System.Threading;
-
-namespace LiveDisplay.Activities
+﻿namespace LiveDisplay.Activities
 {
+    using Android.App;
+    using Android.Content;
+    using Android.OS;
+    using Android.Support.V7.App;
+    using Android.Telephony;
+    using Android.Views;
+    using Android.Widget;
+    using LiveDisplay.Misc;
+    using LiveDisplay.Servicios;
+    using LiveDisplay.Servicios.Weather;
+    using System;
+    using System.Threading;
+
     [Activity(Label = "@string/weather", Theme = "@style/LiveDisplayThemeDark.NoActionBar")]
     public class WeatherSettingsActivity : AppCompatActivity
     {

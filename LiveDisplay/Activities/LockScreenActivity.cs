@@ -1,34 +1,34 @@
-﻿using Android.App;
-using Android.Content;
-using Android.Content.PM;
-using Android.Graphics;
-using Android.Graphics.Drawables;
-using Android.Media;
-using Android.Media.Session;
-using Android.OS;
-using Android.Preferences;
-using Android.Provider;
-using Android.Support.V7.Widget;
-using Android.Util;
-using Android.Views;
-using Android.Views.Animations;
-using Android.Widget;
-using Com.JackAndPhantom;
-using LiveDisplay.Activities;
-using LiveDisplay.Activities.ActivitiesEventArgs;
-using LiveDisplay.Fragments;
-using LiveDisplay.Misc;
-using LiveDisplay.Servicios;
-using LiveDisplay.Servicios.FloatingNotification;
-using LiveDisplay.Servicios.Music;
-using LiveDisplay.Servicios.Notificaciones;
-using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
-using LiveDisplay.Servicios.Wallpaper;
-using System;
-using System.Threading;
-
-namespace LiveDisplay
+﻿namespace LiveDisplay
 {
+    using Android.App;
+    using Android.Content;
+    using Android.Content.PM;
+    using Android.Graphics;
+    using Android.Graphics.Drawables;
+    using Android.Media;
+    using Android.Media.Session;
+    using Android.OS;
+    using Android.Preferences;
+    using Android.Provider;
+    using Android.Support.V7.Widget;
+    using Android.Util;
+    using Android.Views;
+    using Android.Views.Animations;
+    using Android.Widget;
+    using Com.JackAndPhantom;
+    using LiveDisplay.Activities;
+    using LiveDisplay.Activities.ActivitiesEventArgs;
+    using LiveDisplay.Fragments;
+    using LiveDisplay.Misc;
+    using LiveDisplay.Servicios;
+    using LiveDisplay.Servicios.FloatingNotification;
+    using LiveDisplay.Servicios.Music;
+    using LiveDisplay.Servicios.Notificaciones;
+    using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
+    using LiveDisplay.Servicios.Wallpaper;
+    using System;
+    using System.Threading;
+
     [Activity(Label = "LockScreen", Theme = "@style/LiveDisplayThemeDark", MainLauncher = false, ScreenOrientation = ScreenOrientation.Portrait, TaskAffinity = "livedisplay.lockscreen", LaunchMode = LaunchMode.SingleInstance, ExcludeFromRecents = true)]
     public class LockScreenActivity : Activity
     {
@@ -103,8 +103,10 @@ namespace LiveDisplay
             startDialer.Click += StartDialer_Click;
             lockscreen.Touch += Lockscreen_Touch;
 
-            watchDog = new System.Timers.Timer();
-            watchDog.AutoReset = false;
+            watchDog = new System.Timers.Timer
+            {
+                AutoReset = false
+            };
             watchDog.Elapsed += WatchdogInterval_Elapsed;
 
             halfscreenheight = Resources.DisplayMetrics.HeightPixels / 2;

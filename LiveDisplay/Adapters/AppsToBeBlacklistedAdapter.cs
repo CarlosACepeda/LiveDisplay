@@ -155,6 +155,7 @@ namespace LiveDisplay.Adapters
     public class AppClickedEventArgs : EventArgs
     {
         public AppCompatTextView View { get; set; }
+
         public int LayoutPosition { get; set; }
     }
 }

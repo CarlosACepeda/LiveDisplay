@@ -1,15 +1,15 @@
-﻿using Android.Service.Notification;
-using Android.Support.V7.Widget;
-using Android.Views;
-using Android.Widget;
-using LiveDisplay.Factories;
-using LiveDisplay.Servicios.Notificaciones;
-using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
-using System;
-using System.Collections.Generic;
-
-namespace LiveDisplay.Adapters
+﻿namespace LiveDisplay.Adapters
 {
+    using Android.Service.Notification;
+    using Android.Support.V7.Widget;
+    using Android.Views;
+    using Android.Widget;
+    using LiveDisplay.Factories;
+    using LiveDisplay.Servicios.Notificaciones;
+    using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
+    using System;
+    using System.Collections.Generic;
+
     public class NotificationAdapter : RecyclerView.Adapter
     {
         public static int selectedItem = -1;

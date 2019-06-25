@@ -1,30 +1,31 @@
-﻿using Android.App;
-using Android.App.Admin;
-using Android.Content;
-using Android.OS;
-using Android.Preferences;
-using Android.Provider;
-using Android.Runtime;
-using Android.Support.V7.App;
-using Android.Views;
-using Android.Widget;
-using LiveDisplay.BroadcastReceivers;
-using LiveDisplay.Misc;
-using LiveDisplay.Servicios;
-
-//for CI.
-using Microsoft.AppCenter;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
-using System;
-using System.Threading;
-
-namespace LiveDisplay.Activities
+﻿namespace LiveDisplay.Activities
 {
+    using Android.App;
+    using Android.App.Admin;
+    using Android.Content;
+    using Android.OS;
+    using Android.Preferences;
+    using Android.Provider;
+    using Android.Runtime;
+    using Android.Support.V7.App;
+    using Android.Views;
+    using Android.Widget;
+    using LiveDisplay.BroadcastReceivers;
+    using LiveDisplay.Misc;
+    using LiveDisplay.Servicios;
+
+    //for CI.
+    using Microsoft.AppCenter;
+    using Microsoft.AppCenter.Analytics;
+    using Microsoft.AppCenter.Crashes;
+    using System;
+    using System.Threading;
+
+
     [Activity(Label = "@string/app_name", Theme = "@style/LiveDisplayThemeDark.NoActionBar", TaskAffinity = "livedisplay.main", MainLauncher = true)]
     internal class MainActivity : AppCompatActivity
     {
-        private static ISharedPreferences configurationManager = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
+        private static readonly ISharedPreferences configurationManager = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
 
         private Android.Support.V7.Widget.Toolbar toolbar;
         private TextView enableNotificationAccess, enableDeviceAdmin;
