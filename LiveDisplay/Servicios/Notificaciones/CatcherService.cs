@@ -211,7 +211,6 @@ namespace LiveDisplay.Servicios
             catch (Java.Lang.SecurityException)
             {
                 Log.Info("LiveDisplay", "Fail to dismiss the notification, listener was not ready");
-
             }
         }
 

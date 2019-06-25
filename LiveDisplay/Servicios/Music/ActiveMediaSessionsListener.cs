@@ -1,6 +1,4 @@
 ﻿using Android.Media.Session;
-using Android.Util;
-using System;
 using System.Collections.Generic;
 
 namespace LiveDisplay.Servicios.Music
@@ -18,30 +16,30 @@ namespace LiveDisplay.Servicios.Music
 
         public void OnActiveSessionsChanged(IList<MediaController> controllers)
         {
-           //Pick the best mediacontroller.
-           if(controllers.Count>0)
-           foreach(var mediacontroller in controllers)
-           {
-                if(mediacontroller?.GetTransportControls()!= null)//Ensure that this session has transport controls we can control
+            //Pick the best mediacontroller.
+            if (controllers.Count > 0)
+                foreach (var mediacontroller in controllers)
                 {
-                    mediaController= mediacontroller;
-                    try
+                    if (mediacontroller?.GetTransportControls() != null)//Ensure that this session has transport controls we can control
                     {
-                        musicController = MusicController.GetInstance();
-                        mediaController.RegisterCallback(musicController);
-                        //Retrieve the controls to control the media, duh.
-                        musicController.TransportControls = mediaController.GetTransportControls();
-                        musicController.MediaMetadata = mediaController.Metadata;
-                        musicController.PlaybackState = mediaController.PlaybackState;
+                        mediaController = mediacontroller;
+                        try
+                        {
+                            musicController = MusicController.GetInstance();
+                            mediaController.RegisterCallback(musicController);
+                            //Retrieve the controls to control the media, duh.
+                            musicController.TransportControls = mediaController.GetTransportControls();
+                            musicController.MediaMetadata = mediaController.Metadata;
+                            musicController.PlaybackState = mediaController.PlaybackState;
+                        }
+                        catch
+                        {
+                            mediaController?.UnregisterCallback(musicController);
+                            musicController.Dispose();
+                        }
+                        break;
                     }
-                    catch
-                    {
-                        mediaController?.UnregisterCallback(musicController);
-                        musicController.Dispose();
-                    }
-                    break;
                 }
-           }                           
         }
     }
 }

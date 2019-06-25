@@ -51,7 +51,6 @@ namespace LiveDisplay.Activities
 
             wallpaperbeingsetted.ItemSelected += Wallpaperbeingsetted_ItemSelected;
 
-
             opacity.Max = 255;
             blur.Max = 25;
             blur.StopTrackingTouch += Blur_StopTrackingTouch;
@@ -75,7 +74,6 @@ namespace LiveDisplay.Activities
 
         private void Wallpaperbeingsetted_ItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
         {
-            
         }
 
         private void LoadPreviousValues()

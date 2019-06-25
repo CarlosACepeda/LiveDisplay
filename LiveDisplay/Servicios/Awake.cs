@@ -64,8 +64,8 @@ namespace LiveDisplay.Servicios
                 {
                     PowerManager pm = ((PowerManager)Application.Context.GetSystemService(PowerService));
                     var screenLock = pm.NewWakeLock(WakeLockFlags.ScreenDim | WakeLockFlags.AcquireCausesWakeup, "Turn On Screen");
-                    if(isinPocket== false) //Dont wake up is the phone is inside a pocket.
-                    screenLock.Acquire();
+                    if (isinPocket == false) //Dont wake up is the phone is inside a pocket.
+                        screenLock.Acquire();
                     ThreadPool.QueueUserWorkItem(o =>
                     {
                         Thread.Sleep(500);
@@ -201,7 +201,7 @@ namespace LiveDisplay.Servicios
                     }
                     else //The sensor is a different value but I will just assume the phone prox. Sensor is not being blocked.
                     {
-                       isinPocket = false;
+                        isinPocket = false;
                     }
 
                     break;

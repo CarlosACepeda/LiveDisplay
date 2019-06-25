@@ -1,9 +1,9 @@
 ﻿using Android.Media;
 using Android.Util;
+using Android.Views;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Music.MediaEventArgs;
 using System;
-using Android.Views;
 
 namespace LiveDisplay.Servicios.Music
 {
@@ -26,7 +26,9 @@ namespace LiveDisplay.Servicios.Music
         public static event EventHandler<MediaPlaybackStateChangedKitkatEventArgs> MediaPlaybackChanged;
 
         public static event EventHandler<MediaMetadataChangedKitkatEventArgs> MediaMetadataChanged;
+
         public static event EventHandler MusicPlaying;
+
         public static event EventHandler MusicPaused;
 
         internal static MusicControllerKitkat GetInstance(RemoteController remoteController)

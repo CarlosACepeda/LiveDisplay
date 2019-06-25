@@ -70,11 +70,12 @@ namespace LiveDisplay.Activities
             {
                 countryCode = tm.NetworkCountryIso;
             }
-            switch(units)
+            switch (units)
             {
                 case "imperial":
-                temperatureSuffix = "°f";
+                    temperatureSuffix = "°f";
                     break;
+
                 case "metric":
                     temperatureSuffix = "°c";
                     break;

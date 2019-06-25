@@ -9,7 +9,7 @@
     <item>@string/albumartappearancesetting</item>
     <item>@string/defaultwallpaperappearance</item>
   </string-array>
-  
+
   <string-array name="listvalueschangewallpaper">
     <item>0</item>
     <item>1</item>
@@ -47,5 +47,4 @@
     <item>10000</item>
     <item>15000</item>
   </string-array>
-  
 </resources>

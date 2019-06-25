@@ -1,6 +1,5 @@
 ﻿using Android.App;
 using Android.Content;
-using Android.Support.V7.Preferences;
 using LiveDisplay.DataRepository;
 using LiveDisplay.Misc;
 using System;
@@ -17,7 +16,6 @@ namespace LiveDisplay.Servicios.Weather
         //This class will be the one that connects to the api and provide Lockscreen with Weather information.
         public static async Task<WeatherRoot> GetWeather(string city, string country, string measurementunit)
         {
-
             string url = string.Format("http://api.openweathermap.org/data/2.5/weather?q={0},{1}&units={2}&appid=9ca11a6f4426446b991ff390d4f7430f", city, country, measurementunit);
             using (var client = new HttpClient())
             {
@@ -27,14 +25,13 @@ namespace LiveDisplay.Servicios.Weather
 
                     if (string.IsNullOrWhiteSpace(json)) return null;
 
-
                     WeatherRoot weatherRoot =
-                    DeserializeObject<WeatherRoot>(json);                    
+                    DeserializeObject<WeatherRoot>(json);
 
                     configurationManager.SaveAValue(ConfigurationParameters.WeatherCity, weatherRoot.Name);
                     configurationManager.SaveAValue(ConfigurationParameters.WeatherDescription, weatherRoot.Weather[0].Description);
-                    configurationManager.SaveAValue(ConfigurationParameters.WeatherHumidity, weatherRoot.MainWeather.Humidity.ToString()+ "%");
-                    configurationManager.SaveAValue(ConfigurationParameters.WeatherLastUpdated, DateTime.Now.ToString("ddd"+ "," + "hh:mm"));
+                    configurationManager.SaveAValue(ConfigurationParameters.WeatherHumidity, weatherRoot.MainWeather.Humidity.ToString() + "%");
+                    configurationManager.SaveAValue(ConfigurationParameters.WeatherLastUpdated, DateTime.Now.ToString("ddd" + "," + "hh:mm"));
                     configurationManager.SaveAValue(ConfigurationParameters.WeatherMaximum, weatherRoot.MainWeather.MaxTemperature.ToString());
                     configurationManager.SaveAValue(ConfigurationParameters.WeatherMaximum, weatherRoot.MainWeather.MinTemperature.ToString());
 
@@ -44,6 +41,7 @@ namespace LiveDisplay.Servicios.Weather
                         case "imperial":
                             unitsuffix = "°f";
                             break;
+
                         case "metric":
                             unitsuffix = "°c";
                             break;

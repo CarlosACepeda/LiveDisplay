@@ -1,22 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Android.App;
+﻿using Android.App;
 using Android.App.Job;
 using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 using LiveDisplay.Misc;
+using System.Threading.Tasks;
 
 namespace LiveDisplay.Servicios.Weather
 {
-    class GrabWeatherJob : JobService
+    internal class GrabWeatherJob : JobService
     {
-
         public override bool OnStartJob(JobParameters @params)
         {
             ConfigurationManager configurationManager = new ConfigurationManager(Application.Context.GetSharedPreferences("weatherpreferences", FileCreationMode.Private));

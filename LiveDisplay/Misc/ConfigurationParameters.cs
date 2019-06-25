@@ -20,6 +20,7 @@
 
         //For Weather Widget settings
         public const string WeatherCurrent = "weathercurrent";
+
         public const string WeatherMinimum = "weatherminimum";
         public const string WeatherMaximum = "weathermaximum";
         public const string WeatherLastUpdated = "weatherlastupdated";

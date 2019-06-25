@@ -96,7 +96,6 @@ namespace LiveDisplay.Fragments
         {
             try { activityIntent.Send(); }
             catch { Log.Info("LiveDisplay", "Failed to send the Music pending intent"); }
-                
         }
 
         private void BtnSkipNext_LongClick(object sender, View.LongClickEventArgs e)
@@ -151,14 +150,12 @@ namespace LiveDisplay.Fragments
                 {
                     skbSeekSongTime.Progress = e.SeekBar.Progress;
                 }
-
             }
             else
             {
                 JukeboxKitkat.SeekTo(e.SeekBar.Progress);
                 skbSeekSongTime.Progress = e.SeekBar.Progress;
             }
-
         }
 
         private void SkbSeekSongTime_ProgressChanged(object sender, SeekBar.ProgressChangedEventArgs e)
@@ -190,7 +187,7 @@ namespace LiveDisplay.Fragments
 
         private void BtnPlayPause_Click(object sender, EventArgs e)
         {
-            bool isNotKitkat= Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch;
+            bool isNotKitkat = Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch;
             switch (playbackState)
             {
                 //If the media is paused, then Play.
@@ -314,7 +311,6 @@ namespace LiveDisplay.Fragments
         {
             Activity?.RunOnUiThread(() =>
             {
-
                 activityIntent = e.ActivityIntent;
                 tvTitle.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyTitle);
                 tvAlbum.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyAlbum);
@@ -334,14 +330,12 @@ namespace LiveDisplay.Fragments
                         });
                 });
             });
-            
         }
 
         private void MusicController_MediaPlaybackChanged(object sender, MediaPlaybackStateChangedEventArgs e)
         {
             Activity?.RunOnUiThread(() =>
             {
-
                 switch (e.PlaybackState)
                 {
                     case PlaybackStateCode.Paused:
@@ -390,7 +384,7 @@ namespace LiveDisplay.Fragments
         private void RetrieveMediaInformation()
         {
             //Syntactic sugar, cause a MediaMetadata and a Mediaplayback event to be fired in the Publisher class.
-            //(MusicController class) 
+            //(MusicController class)
             //Or in Catcher class, if its Kitkat.
             if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
             {
@@ -424,7 +418,6 @@ namespace LiveDisplay.Fragments
             {
                 skbSeekSongTime.Progress = skbSeekSongTime.Progress + 1000;
             }
-
         }
     }
 }

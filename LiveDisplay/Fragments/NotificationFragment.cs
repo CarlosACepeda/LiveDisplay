@@ -1,5 +1,4 @@
 ﻿using Android.App;
-using Android.Graphics;
 using Android.OS;
 using Android.Util;
 using Android.Views;
@@ -199,8 +198,8 @@ namespace LiveDisplay.Fragments
                 notificationActions.RemoveAllViews();
                 //Watch out for possible memory leaks here.
                 using (NotificationStyleApplier styleApplier = new NotificationStyleApplier(ref notification, openNotification))
-                    styleApplier.ApplyStyle(openNotification.Style());                   
-                
+                    styleApplier.ApplyStyle(openNotification.Style());
+
                 if (openNotification.IsRemovable())
                 {
                     closenotificationbutton.Visibility = ViewStates.Visible;

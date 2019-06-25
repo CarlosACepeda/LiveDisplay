@@ -33,6 +33,7 @@ namespace LiveDisplay.Misc
         {
             return Settings.CanDrawOverlays(Application.Context);
         }
+
         public static bool ThisAppHasReadStoragePermission()
         {
             if (Application.Context.CheckSelfPermission("android.permission.READ_EXTERNAL_STORAGE") == Android.Content.PM.Permission.Granted)

@@ -94,13 +94,16 @@ namespace LiveDisplay.Servicios.FloatingNotification
                     if (floatingNotificationView.Visibility == ViewStates.Visible)
                         floatingNotificationView.Visibility = ViewStates.Invisible;
                     break;
+
                 case Activities.ActivityStates.Resumed:
                     //?
                     break;
+
                 case Activities.ActivityStates.Destroyed:
                     if (floatingNotificationView.Visibility == ViewStates.Visible)
                         floatingNotificationView.Visibility = ViewStates.Invisible;
                     break;
+
                 default:
                     break;
             }
@@ -117,7 +120,6 @@ namespace LiveDisplay.Servicios.FloatingNotification
         private void CatcherHelper_NotificationRemoved(object sender, EventArgs e)
         {
             floatingNotificationView.Visibility = ViewStates.Gone;
-
         }
 
         private void CatcherHelper_NotificationUpdated(object sender, NotificationItemClickedEventArgs e)
@@ -160,7 +162,6 @@ namespace LiveDisplay.Servicios.FloatingNotification
                         };
                     }
                 }
-
         }
 
         private void NotificationAdapterViewHolder_ItemLongClicked(object sender, NotificationItemClickedEventArgs e)

@@ -32,6 +32,7 @@ namespace LiveDisplay.Servicios.Music
         public static event EventHandler<MediaMetadataChangedEventArgs> MediaMetadataChanged;
 
         public static event EventHandler MusicPlaying;
+
         public static event EventHandler MusicPaused;
 
         #endregion events
@@ -93,7 +94,7 @@ namespace LiveDisplay.Servicios.Music
                     OnMediaMetadataChanged(new MediaMetadataChangedEventArgs
                     {
                         MediaMetadata = MediaMetadata,
-                        ActivityIntent= ActivityIntent
+                        ActivityIntent = ActivityIntent
                     });
                     //Send Playbackstate of the media.
                     OnMediaPlaybackChanged(new MediaPlaybackStateChangedEventArgs
@@ -123,12 +124,12 @@ namespace LiveDisplay.Servicios.Music
 
         public override void OnMetadataChanged(MediaMetadata metadata)
         {
-                MediaMetadata = metadata;
+            MediaMetadata = metadata;
 
-                OnMediaMetadataChanged(new MediaMetadataChangedEventArgs
-                {
-                    MediaMetadata = metadata
-                });
+            OnMediaMetadataChanged(new MediaMetadataChangedEventArgs
+            {
+                MediaMetadata = metadata
+            });
             //Datos de la Media que se está reproduciendo.
 
             base.OnMetadataChanged(metadata);
@@ -142,11 +143,12 @@ namespace LiveDisplay.Servicios.Music
         {
             ThreadPool.QueueUserWorkItem(m =>
             {
-                switch(e.PlaybackState)
+                switch (e.PlaybackState)
                 {
                     case PlaybackStateCode.Playing:
                         MusicPlaying?.Invoke(this, EventArgs.Empty);
                         break;
+
                     case PlaybackStateCode.Paused:
                         MusicPaused?.Invoke(this, EventArgs.Empty);
                         break;
@@ -159,7 +161,6 @@ namespace LiveDisplay.Servicios.Music
         {
             ThreadPool.QueueUserWorkItem(m =>
             {
-
                 MediaMetadataChanged?.Invoke(this, e);
             });
         }
@@ -175,7 +176,6 @@ namespace LiveDisplay.Servicios.Music
 
         public override void OnSessionDestroyed()
         {
-            
             Jukebox.MediaEvent -= Jukebox_MediaEvent;
             PlaybackState?.Dispose();
             TransportControls?.Dispose();

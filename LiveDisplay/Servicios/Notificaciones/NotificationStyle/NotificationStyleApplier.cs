@@ -1,14 +1,10 @@
 ﻿using Android.App;
 using Android.Content.Res;
 using Android.Graphics;
-using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
-using LiveDisplay.Servicios.Wallpaper;
-using System;
-using System.Threading;
 
 namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
 {
@@ -58,7 +54,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                 case MediaStyle:
 
                     //in the media style, grab the action buttons, remove the text and load images instead
-                    var actionsViews= notificationView.FindViewById<LinearLayout>(Resource.Id.notificationActions);
+                    var actionsViews = notificationView.FindViewById<LinearLayout>(Resource.Id.notificationActions);
                     if (openNotification.HasActionButtons() == true)
                     {
                         var actions = openNotification.RetrieveActions();
@@ -88,6 +84,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
 
                 case MessagingStyle:
                     break;
+
                 default:
                     ApplyDefault();
                     break;
@@ -128,12 +125,10 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                         anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction.GetActionIcon(), null, null, null);
                         actionsViews.AddView(anActionButton);
                     });
-
                 }
-                
             }
-
         }
+
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);

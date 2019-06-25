@@ -6,7 +6,6 @@ using Android.Preferences;
 using Android.Provider;
 using Android.Runtime;
 using Android.Support.V7.App;
-using Android.Util;
 using Android.Views;
 using Android.Widget;
 using LiveDisplay.BroadcastReceivers;
@@ -33,16 +32,13 @@ namespace LiveDisplay.Activities
         private RelativeLayout enableDrawOverAccessContainer;
         private bool isApplicationHealthy;
 
-
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.Main);
             BindViews();
             StartAppCenterMonotoring();
-
         }
-
 
         protected override void OnResume()
         {

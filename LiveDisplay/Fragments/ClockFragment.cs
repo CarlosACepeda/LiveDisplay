@@ -84,7 +84,7 @@ namespace LiveDisplay.Fragments
         {
             string thecity = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherCity, "");
             string currentweather = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherCurrent, "");
-            string minimumtemperature= configurationManager.RetrieveAValue(ConfigurationParameters.WeatherMinimum, "");
+            string minimumtemperature = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherMinimum, "");
             string maximumtemperature = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherMaximum, "");
             string weatherhumidity = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherHumidity, "");
             string weatherdescription = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherDescription, "");
@@ -97,9 +97,6 @@ namespace LiveDisplay.Fragments
             humidity.Text = weatherhumidity;
             description.Text = weatherdescription;
             lastupdated.Text = weatherlastupdated;
-
-            
-
         }
 
         private void Weatherclockcontainer_Click(object sender, EventArgs e)
