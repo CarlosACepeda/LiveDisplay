@@ -7,6 +7,7 @@
   <string name="accessesstatusenabled">Accesos activados!</string>
   <string name="achep_ty">Ayuda y guía!</string>
   <string name="acknowledgments">Agradecimientos</string>
+  <string name="albumartappearancesetting">Carátula del Álbum</string>
   <string name="alertnopermissions">Debes permitir los permisos requeridos!</string>
   <string name="app_name">LiveDisplay</string>
   <string name="askfortranslations">Quieres ayudar con las traducciones?</string>
@@ -23,6 +24,7 @@
   <string name="contactme">Contáctame</string>
   <string name="contributetoprojectdesc">LiveDisplay en Github</string>
   <string name="defaultwallpaper">Papel tapiz por defecto</string>
+  <string name="defaultwallpaperappearance">Papel Tapiz por defecto</string>
   <string name="dialogallowbutton">Permitir</string>
   <string name="dialogcancelbutton">Cancelar</string>
   <string name="dialogcancelledclick">Muy bien, puedes cambiar esta opción después en la sección \'Notificaciones\'</string>
@@ -88,12 +90,10 @@
   <string name="wallpaperblur">Difuminación</string>
   <string name="wallpaperopacity">Opacidad</string>
   <string name="wallpapersettingappliestoalbumart">La configuración actual también afecta las carátulas de album</string>
+  <string name="wallpapersettings">Configuracion del Papel Tapiz</string>
   <string name="weather">Clima</string>
   <string name="weatherwidget">Widget del Clima</string>
   <string name="weatherwidgetenabled">Activar el Widget del Clima</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">Diseño del icono de esta app!</string>
-  <string name="albumartappearancesetting">Carátula del Álbum</string>
-  <string name="defaultwallpaperappearance">Papel Tapiz por defecto</string>
-  <string name="wallpapersettings">Configuracion del Papel Tapiz</string>
 </resources>
