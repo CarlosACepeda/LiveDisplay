@@ -16,13 +16,14 @@ using System.Threading;
 
 namespace LiveDisplay.Activities
 {
-    [Activity(Label = "bash", Theme = "@style/LiveDisplayThemeDark.NoActionBar")]
+    [Activity(Label = "@string/wallpapersettings", Theme = "@style/LiveDisplayThemeDark.NoActionBar")]
     public class BackgroundSettingsActivity : AppCompatActivity
     {
         private Android.Support.V7.Widget.Toolbar toolbar;
         private ImageView wallpaperPreview;
         private SeekBar blur;
         private SeekBar opacity;
+        private Spinner wallpaperbeingsetted;
         private WallpaperManager wallpaperManager;
         private ConfigurationManager configurationManager;
 
@@ -36,7 +37,7 @@ namespace LiveDisplay.Activities
             // Create your application here
             SetContentView(Resource.Layout.BackgroundSettings);
 
-            using (toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.mainToolbar))
+            using (toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar))
             {
                 SetSupportActionBar(toolbar);
             }
@@ -44,6 +45,13 @@ namespace LiveDisplay.Activities
             wallpaperPreview = FindViewById<ImageView>(Resource.Id.wallpaperPreview);
             blur = FindViewById<SeekBar>(Resource.Id.blur);
             opacity = FindViewById<SeekBar>(Resource.Id.opacity);
+            wallpaperbeingsetted = FindViewById<Spinner>(Resource.Id.wallpaperbeingsetted);
+            var spinnerAdapter = ArrayAdapter.CreateFromResource(this, Resource.Array.listentriescurrentwallpapersetting, Android.Resource.Layout.SimpleSpinnerDropDownItem);
+            wallpaperbeingsetted.Adapter = spinnerAdapter;
+
+            wallpaperbeingsetted.ItemSelected += Wallpaperbeingsetted_ItemSelected;
+
+
             opacity.Max = 255;
             blur.Max = 25;
             blur.StopTrackingTouch += Blur_StopTrackingTouch;
@@ -63,6 +71,11 @@ namespace LiveDisplay.Activities
             {
                 LoadPreviousValues();
             }
+        }
+
+        private void Wallpaperbeingsetted_ItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
+        {
+            
         }
 
         private void LoadPreviousValues()

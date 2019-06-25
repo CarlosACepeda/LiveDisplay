@@ -35,8 +35,10 @@ namespace LiveDisplay
         private RecyclerView recycler;
         private RecyclerView.LayoutManager layoutManager;
         private ImageView wallpaperView;
+
         //private ImageView unlocker;
         private Button clearAll;
+
         private NotificationFragment notificationFragment;
         private MusicFragment musicFragment;
         private ClockFragment clockFragment;
@@ -51,6 +53,7 @@ namespace LiveDisplay
         private System.Timers.Timer watchDog; //the watchdog simply will start counting down until it gets resetted by OnUserInteraction() override.
         private Animation fadeoutanimation;
         private string doubletapbehavior;
+        private bool doubletapenabled;
         private bool isMusicWidgetPresent;
         private ActivityStates currentActivityState;
 
@@ -77,7 +80,6 @@ namespace LiveDisplay
                         Finish();
                     }
                     );
-                    
                 }
             });
 
@@ -106,11 +108,8 @@ namespace LiveDisplay
             watchDog.Elapsed += WatchdogInterval_Elapsed;
 
             halfscreenheight = Resources.DisplayMetrics.HeightPixels / 2;
-            
-
 
             WallpaperPublisher.NewWallpaperIssued += Wallpaper_NewWallpaperIssued;
-
 
             //CatcherHelper events
             CatcherHelper.NotificationListSizeChanged += CatcherHelper_NotificationListSizeChanged;
@@ -159,29 +158,27 @@ namespace LiveDisplay
             ThreadPool.QueueUserWorkItem(method =>
             {
                 Thread.Sleep(5000); //Wait 5 seconds.
-                if (currentActivityState == ActivityStates.Resumed)            
-                if (MusicController.MusicStatus != PlaybackStateCode.Playing)
-                {
-                    RunOnUiThread(() =>
-                    {                        
-                       StopMusicController();
-                       StopFloatingNotificationService();
-                       Log.Info("LiveDisplay", "Musicfragment stopped");                        
-                    });
-                }
+                if (currentActivityState == ActivityStates.Resumed)
+                    if (MusicController.MusicStatus != PlaybackStateCode.Playing)
+                    {
+                        RunOnUiThread(() =>
+                        {
+                            StopMusicController();
+                            StopFloatingNotificationService();
+                            Log.Info("LiveDisplay", "Musicfragment stopped");
+                        });
+                    }
             });
         }
 
         private void MusicController_MusicPlaying(object sender, EventArgs e)
         {
-            if(isMusicWidgetPresent==false) //Avoid unnecessary calls
-            RunOnUiThread(() =>
-            {
-                StartMusicController();
-
-            });
+            if (isMusicWidgetPresent == false) //Avoid unnecessary calls
+                RunOnUiThread(() =>
+                {
+                    StartMusicController();
+                });
         }
-
 
         private void Wallpaper_NewWallpaperIssued(object sender, WallpaperChangedEventArgs e)
         {
@@ -195,7 +192,7 @@ namespace LiveDisplay
                 }
                 else
                 {
-                    wallpaperView.Background= e.Wallpaper;
+                    wallpaperView.Background = e.Wallpaper;
                     wallpaperView.Background.Alpha = e.OpacityLevel;
                 }
             });
@@ -204,66 +201,59 @@ namespace LiveDisplay
 
         private void Lockscreen_Touch(object sender, View.TouchEventArgs e)
         {
-            using (ConfigurationManager configuration = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context)))
+            if (doubletapenabled) //Lazy loaded.
             {
-                if (configuration.RetrieveAValue(ConfigurationParameters.DoubleTapToSleep) == true)
+                if (e.Event.Action == MotionEventActions.Up)
                 {
-                    if (e.Event.Action == MotionEventActions.Up)
+                    if (firstTouchTime == -1)
                     {
-                        if (firstTouchTime == -1)
+                        firstTouchTime = e.Event.DownTime;
+                    }
+                    else if (firstTouchTime != -1)
+                    {
+                        finalTouchTime = e.Event.DownTime;
+                        if (firstTouchTime + threshold > finalTouchTime)
                         {
-                            firstTouchTime = e.Event.DownTime;
-                        }
-                        else if (firstTouchTime != -1)
-                        {
-                            finalTouchTime = e.Event.DownTime;
-                            if (firstTouchTime + threshold > finalTouchTime)
+                            //0 Equals: Normal Behavior
+                            if (doubletapbehavior == "0")
                             {
-                                //0 Equals: Normal Behavior
-                                if (doubletapbehavior=="0")
+                                if (e.Event.RawY < halfscreenheight)
                                 {
-                                    if (e.Event.RawY < halfscreenheight)
-                                    {
-                                        Awake.TurnOffScreen();
-                                    }
-                                    else
-                                    {
-                                        //Finish();
-                                        //using (Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(TransparentActivity))))
-                                        //{
-                                        //    intent.AddFlags(ActivityFlags.NewTask | ActivityFlags.);
-                                        //    StartActivity(intent);
-                                        //}
-                                        MoveTaskToBack(true);
-
-                                    }
+                                    Awake.TurnOffScreen();
                                 }
-                                //The other value is "1" which means Inverted.
                                 else
                                 {
-                                    if (e.Event.RawY < halfscreenheight)
-                                    {
-                                        //Finish();
-                                        //using (Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(TransparentActivity))))
-                                        //{
-                                        //    intent.AddFlags(ActivityFlags.NewTask | ActivityFlags.MultipleTask);
-                                        //    StartActivity(intent);
-                                        //}
-                                        MoveTaskToBack(true);
-
-
-                                    }
-                                    else
-                                    {
-                                        Awake.TurnOffScreen();
-                                    }
+                                    //Finish();
+                                    //using (Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(TransparentActivity))))
+                                    //{
+                                    //    intent.AddFlags(ActivityFlags.NewTask | ActivityFlags.);
+                                    //    StartActivity(intent);
+                                    //}
+                                    MoveTaskToBack(true);
                                 }
-
                             }
-                            //Reset the values of touch
-                            firstTouchTime = -1;
-                            finalTouchTime = -1;
+                            //The other value is "1" which means Inverted.
+                            else
+                            {
+                                if (e.Event.RawY < halfscreenheight)
+                                {
+                                    //Finish();
+                                    //using (Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(TransparentActivity))))
+                                    //{
+                                    //    intent.AddFlags(ActivityFlags.NewTask | ActivityFlags.MultipleTask);
+                                    //    StartActivity(intent);
+                                    //}
+                                    MoveTaskToBack(true);
+                                }
+                                else
+                                {
+                                    Awake.TurnOffScreen();
+                                }
+                            }
                         }
+                        //Reset the values of touch
+                        firstTouchTime = -1;
+                        finalTouchTime = -1;
                     }
                 }
             }
@@ -295,7 +285,6 @@ namespace LiveDisplay
             {
                 CheckIfMusicIsStillPaused();
             }
-
         }
 
         protected override void OnPause()
@@ -307,7 +296,6 @@ namespace LiveDisplay
             MusicController.MusicPlaying -= MusicController_MusicPlaying;
             MusicController.MusicPaused -= MusicController_MusicPaused;
             GC.Collect();
-            
         }
 
         protected override void OnDestroy()
@@ -340,7 +328,6 @@ namespace LiveDisplay
             musicFragment.Dispose();
             clockFragment.Dispose();
             weatherFragment.Dispose();
-
         }
 
         public override void OnBackPressed()
@@ -519,6 +506,7 @@ namespace LiveDisplay
                     StartAwakeService();
                 }
                 doubletapbehavior = configurationManager.RetrieveAValue(ConfigurationParameters.DoubleTapOnTopActionBehavior, "0");
+                doubletapenabled = configurationManager.RetrieveAValue(ConfigurationParameters.DoubleTapToSleep);
             }
         }
 
@@ -561,7 +549,6 @@ namespace LiveDisplay
                 view.SystemUiVisibility = (StatusBarVisibility)newUiOptions;
                 Window.AddFlags(WindowManagerFlags.DismissKeyguard);
                 Window.AddFlags(WindowManagerFlags.ShowWhenLocked);
-                
             }
         }
 
@@ -643,11 +630,9 @@ namespace LiveDisplay
             }
         }
 
-
         private void StartMusicController()
         {
-            // я голоден... ; хД 
-            if(currentActivityState== ActivityStates.Resumed)
+            // я голоден... ; хД
             using (FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction())
             {
                 fragmentTransaction.Replace(Resource.Id.MusicNotificationPlaceholder, musicFragment);

@@ -90,9 +90,13 @@
   <string name="versionnumber">0.8.3</string>
   <string name="wallpaperblur">Blur</string>
   <string name="wallpaperopacity">Opacity</string>
+  <string name="wallpapersettingappliestoalbumart">Current setting also affects album artwork</string>
   <string name="weather">Weather</string>
   <string name="weatherwidget">Weather Widget</string>
   <string name="weatherwidgetenabled">Enable Weather Widget</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
+  <string name="albumartappearancesetting">Album Artwork</string>
+  <string name="defaultwallpaperappearance">Default Wallpaper</string>
+  <string name="wallpapersettings">s</string>
 </resources>

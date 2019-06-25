@@ -18,9 +18,11 @@ namespace LiveDisplay.Servicios
     {
         private static ISharedPreferences configurationManager = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
         private SensorManager sensorManager;
-        private Sensor sensor;
+        private Sensor accelerometerSensor;
+        private Sensor proximitySensor;
         private bool isLaidDown = false;
         private static bool sleeping = false;
+        private static bool isinPocket = false;
 
         public static void WakeUpScreen()
         {
@@ -42,7 +44,6 @@ namespace LiveDisplay.Servicios
                     Log.Info("HELLO", "Im Active");
                     sleeping = false;
                 }
-
             }
             else //The times are in different days.
             {
@@ -58,13 +59,12 @@ namespace LiveDisplay.Servicios
                 }
             }
 
-
-
             if (!sleeping)
                 if (configurationManager.GetBoolean(ConfigurationParameters.TurnOnNewNotification, false) == true || configurationManager.GetBoolean(ConfigurationParameters.TurnOnUserMovement, false) == true)
                 {
                     PowerManager pm = ((PowerManager)Application.Context.GetSystemService(PowerService));
                     var screenLock = pm.NewWakeLock(WakeLockFlags.ScreenDim | WakeLockFlags.AcquireCausesWakeup, "Turn On Screen");
+                    if(isinPocket== false) //Dont wake up is the phone is inside a pocket.
                     screenLock.Acquire();
                     ThreadPool.QueueUserWorkItem(o =>
                     {
@@ -79,7 +79,7 @@ namespace LiveDisplay.Servicios
 
         public static void TurnOffScreen()
         {
-            PowerManager pm = ((PowerManager)Application.Context.GetSystemService(Context.PowerService));
+            PowerManager pm = ((PowerManager)Application.Context.GetSystemService(PowerService));
             DevicePolicyManager policy;
             if (Build.VERSION.SdkInt < BuildVersionCodes.KitkatWatch)
             {
@@ -87,7 +87,7 @@ namespace LiveDisplay.Servicios
                 if (pm.IsScreenOn == true)
 #pragma warning restore CS0618 // El tipo o el miembro están obsoletos
                 {
-                    policy = (DevicePolicyManager)Application.Context.GetSystemService(Context.DevicePolicyService);
+                    policy = (DevicePolicyManager)Application.Context.GetSystemService(DevicePolicyService);
                     try
                     {
                         policy.LockNow();
@@ -102,7 +102,7 @@ namespace LiveDisplay.Servicios
             {
                 if (pm.IsInteractive == true)
                 {
-                    policy = (DevicePolicyManager)Application.Context.GetSystemService(Context.DevicePolicyService);
+                    policy = (DevicePolicyManager)Application.Context.GetSystemService(DevicePolicyService);
                     try
                     {
                         policy.LockNow();
@@ -125,9 +125,10 @@ namespace LiveDisplay.Servicios
         {
             sensorManager = GetSystemService(SensorService) as SensorManager;
 
-            sensor = sensorManager.GetDefaultSensor(SensorType.Accelerometer);
-
-            sensorManager.RegisterListener(this, sensor, SensorDelay.Normal);
+            accelerometerSensor = sensorManager.GetDefaultSensor(SensorType.Accelerometer);
+            proximitySensor = sensorManager.GetDefaultSensor(SensorType.Proximity);
+            sensorManager.RegisterListener(this, accelerometerSensor, SensorDelay.Normal);
+            sensorManager.RegisterListener(this, proximitySensor, SensorDelay.Normal);
 
             return StartCommandResult.Sticky;
         }
@@ -138,55 +139,82 @@ namespace LiveDisplay.Servicios
 
         public void OnSensorChanged(SensorEvent e)
         {
-            if (e.Sensor.Type == SensorType.Accelerometer)
+            switch (e.Sensor.Type)
             {
-                //Detect phone on plain surface:
-                //Z axis must have the following value:
-                //>10 m/s2;
-                //Y axis must be less than 3m/s2 so, the device can be slightly tilted and still being
-                //in a Plain surface.
+                case SensorType.Accelerometer:
+                    //Detect phone on plain surface:
+                    //Z axis must have the following value:
+                    //>10 m/s2;
+                    //Y axis must be less than 3m/s2 so, the device can be slightly tilted and still being
+                    //in a Plain surface.
 
-                if (e.Values[2] > 10 && e.Values[1] < 3)
-                {
-                    isLaidDown = true;
-                }
-                //after, use this value to decide if wake up or not the screen.
-                //We don't want to awake the screen if the device is already vertical for some reason.
-
-                //Put a timer of 3 seconds, and if the device is still with these values,
-                //the phone is left in a plain surface.
-                //New feature? Don't awake phone on new Notification while phone is left alone
-                //To avoid Unnecesary awake if the user won't see it.
-
-                //Detect if User has grabbed the phone back up:
-                //Z axis must be less than 10 m/s2("Example: 9.5") it means that Z  axis is not being
-                //Accelerated and
-                //Y axis must be greater than 3m/s20
-                else if (ScreenOnOffReceiver.IsScreenOn == false && isLaidDown == true)
-                {
-                    if (e.Values[2] < 9.6f && e.Values[1] > 3)
-                    {
-                        //Awake the phone:
-                        WakeUpScreen();
-                        isLaidDown = false;
-                    }
-                    else
+                    if (e.Values[2] > 10 && e.Values[1] < 3)
                     {
                         isLaidDown = true;
                     }
-                }
+                    //after, use this value to decide if wake up or not the screen.
+                    //We don't want to turn on the screen if the device is already vertical for some reason.
+
+                    //Put a timer of 3 seconds, and if the device is still with these values,
+                    //the phone is left in a plain surface.
+                    //New feature? Don't awake phone on new Notification while phone is left alone
+                    //To avoid Unnecesary awake if the user won't see it.
+
+                    //Detect if User has grabbed the phone back up:
+                    //Z axis must be less than 10 m/s2("Example: 9.5") it means that Z  axis is not being
+                    //Accelerated and
+                    //Y axis must be greater than 3m/s20
+                    else if (ScreenOnOffReceiver.IsScreenOn == false && isLaidDown == true)
+                    {
+                        if (e.Values[2] < 9.6f && e.Values[1] > 3)
+                        {
+                            //Awake the phone
+                            WakeUpScreen();
+                            isLaidDown = false;
+                        }
+                        else
+                        {
+                            isLaidDown = true;
+                        }
+                    }
+
+                    //The less Z axis m/s2 value is, and the more Y axis m/s2 value is, the phone more vertically is.
+
+                    //Notes:
+                    //X axis is not necessary as I don't need to know if the phone is being moved Horizontally.
+
+                    break;
+
+                case SensorType.Proximity:
+                    Log.Info("Livedisplay", "value 1 " + e.Values[0]);
+                    if (e.Values[0] == 0)
+                    {
+                        //Phone is in front of something or something is blocking the sensor.
+                        if (isLaidDown == false) //We need to check if the phone is vertical enough and the proximity sensor covered
+                                                 //To assume is in a pocket.
+                            isinPocket = true;
+                        else
+                        {
+                            isinPocket = false; //Nothing is blocking the sensor, and I bet there arent ghost pockets without tangible
+                            //boundaries so the Proximity sensor does not detect anything. xD
+                        }
+                    }
+                    else //The sensor is a different value but I will just assume the phone prox. Sensor is not being blocked.
+                    {
+                       isinPocket = false;
+                    }
+
+                    break;
+
+                default:
+                    break;
             }
-
-            //The less Z axis m/s2 value is, and the more Y axis m/s2 value is, the phone more vertically is.
-
-            //Notes:
-            //X axis is not necessary as I don't need to know if the phone is being moved Horizontally.
         }
 
         public override void OnDestroy()
         {
             sensorManager.UnregisterListener(this);
-            sensor.Dispose();
+            accelerometerSensor.Dispose();
             sensorManager.Dispose();
             base.OnDestroy();
         }
