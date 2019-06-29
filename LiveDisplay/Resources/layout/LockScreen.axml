@@ -4,14 +4,9 @@
 	xmlns:tools="http://schemas.android.com/tools"
     a:layout_width="match_parent"
     a:layout_height="match_parent">
-    <!--This is a ImageView that holds the Wallpaper-->
-    <ImageView
-    a:layout_width="match_parent"
-    a:layout_height="match_parent"
-    a:id="@+id/wallpaper"/>
     <LinearLayout 
         a:animateLayoutChanges="true"
-        a:id="@+id/contenedorPrincipal"
+          a:id="@+id/contenedorPrincipal"
         a:orientation="vertical"
         a:layout_width="match_parent"
         a:layout_height="match_parent"

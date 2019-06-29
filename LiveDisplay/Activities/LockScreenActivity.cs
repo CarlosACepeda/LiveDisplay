@@ -1,5 +1,6 @@
 ﻿namespace LiveDisplay
 {
+    using Android.Animation;
     using Android.App;
     using Android.Content;
     using Android.Content.PM;
@@ -34,7 +35,6 @@
     {
         private RecyclerView recycler;
         private RecyclerView.LayoutManager layoutManager;
-        private ImageView wallpaperView;
 
         //private ImageView unlocker;
         private Button clearAll;
@@ -56,6 +56,7 @@
         private bool doubletapenabled;
         private bool isMusicWidgetPresent;
         private ActivityStates currentActivityState;
+        private ViewPropertyAnimator viewPropertyAnimator;
 
         public static event EventHandler<LockScreenLifecycleEventArgs> OnActivityStateChanged;
 
@@ -63,7 +64,6 @@
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.LockScreen);
-            Window.DecorView.SetBackgroundColor(Color.Black);
             ThreadPool.QueueUserWorkItem(isApphealthy =>
             {
                 bool canDrawOverlays = true;
@@ -84,12 +84,16 @@
             });
 
             //Views
-            wallpaperView = FindViewById<ImageView>(Resource.Id.wallpaper);
+            //wallpaperView = FindViewById<ImageView>(Resource.Id.wallpaper);
             //unlocker = FindViewById<ImageView>(Resource.Id.unlocker);
             startCamera = FindViewById<Button>(Resource.Id.btnStartCamera);
             startDialer = FindViewById<Button>(Resource.Id.btnStartPhone);
             clearAll = FindViewById<Button>(Resource.Id.btnClearAllNotifications);
             lockscreen = FindViewById<LinearLayout>(Resource.Id.contenedorPrincipal);
+            viewPropertyAnimator = Window.DecorView.Animate();
+            viewPropertyAnimator.SetListener(new LockScreenAnimationHelper(Window));
+            
+
             fadeoutanimation = AnimationUtils.LoadAnimation(Application.Context, Resource.Animation.abc_fade_out);
             fadeoutanimation.AnimationEnd += Fadeoutanimation_AnimationEnd;
 
@@ -137,7 +141,7 @@
         private void Fadeoutanimation_AnimationEnd(object sender, Animation.AnimationEndEventArgs e)
         {
             var fadeinanimation = AnimationUtils.LoadAnimation(Application.Context, Resource.Animation.abc_fade_in);
-            wallpaperView.StartAnimation(fadeinanimation);
+            Window.DecorView.StartAnimation(fadeinanimation);
         }
 
         private void WatchdogInterval_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -184,18 +188,21 @@
 
         private void Wallpaper_NewWallpaperIssued(object sender, WallpaperChangedEventArgs e)
         {
+
             RunOnUiThread(() =>
             {
-                wallpaperView.StartAnimation(fadeoutanimation);
+                Window.DecorView.Animate().SetDuration(100).Alpha(0f);
 
                 if (e.Wallpaper == null)
                 {
-                    wallpaperView.SetBackgroundColor(Color.Black);
+                    Window.DecorView.SetBackgroundColor(Color.Black);
                 }
                 else
                 {
-                    wallpaperView.Background = e.Wallpaper;
-                    wallpaperView.Background.Alpha = e.OpacityLevel;
+                    e.Wallpaper.Alpha= e.OpacityLevel;
+                    Window.SetBackgroundDrawable(e.Wallpaper);
+                    //wallpaperView.Background = e.Wallpaper;
+                    //wallpaperView.Background.Alpha = e.OpacityLevel;
                 }
             });
             GC.Collect();
@@ -278,6 +285,7 @@
             base.OnResume();
             currentActivityState = ActivityStates.Resumed;
             AddFlags();
+            watchDog.Elapsed += WatchdogInterval_Elapsed;
             watchDog.Stop();
             watchDog.Start();
             OnActivityStateChanged?.Invoke(this, new LockScreenLifecycleEventArgs { State = ActivityStates.Resumed });
@@ -294,6 +302,7 @@
             base.OnPause();
             currentActivityState = ActivityStates.Paused;
             watchDog.Stop();
+            watchDog.Elapsed -= WatchdogInterval_Elapsed;
             OnActivityStateChanged?.Invoke(this, new LockScreenLifecycleEventArgs { State = ActivityStates.Paused });
             MusicController.MusicPlaying -= MusicController_MusicPlaying;
             MusicController.MusicPaused -= MusicController_MusicPaused;
@@ -322,8 +331,10 @@
             //unlocker.Dispose();
             clearAll.Dispose();
             lockscreen.Dispose();
-            wallpaperView.Background?.Dispose();
-            wallpaperView = null;
+            //wallpaperView.Background?.Dispose();
+            //wallpaperView = null;
+
+            viewPropertyAnimator.Dispose();
 
             //Dispose Fragments
             notificationFragment.Dispose();
@@ -653,6 +664,31 @@
                 LoadNotificationFragment();
                 isMusicWidgetPresent = false;
             }
+        }
+
+    }
+    public class LockScreenAnimationHelper : Java.Lang.Object, Animator.IAnimatorListener
+    {
+        private Window lockScreenWindow;
+        public LockScreenAnimationHelper(Window window)
+        {
+            lockScreenWindow = window; 
+        }
+        public void OnAnimationCancel(Animator animation)
+        {
+        }
+
+        public void OnAnimationEnd(Animator animation)
+        {
+            lockScreenWindow.DecorView.Animate().SetDuration(100).Alpha(1f);
+        }
+
+        public void OnAnimationRepeat(Animator animation)
+        {
+        }
+
+        public void OnAnimationStart(Animator animation)
+        {
         }
     }
 }
