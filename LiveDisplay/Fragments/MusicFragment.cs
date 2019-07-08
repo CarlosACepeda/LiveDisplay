@@ -319,14 +319,16 @@ namespace LiveDisplay.Fragments
                 ThreadPool.QueueUserWorkItem(m =>
                 {
                     var albumart = e.MediaMetadata.GetBitmap(MediaMetadata.MetadataKeyAlbumArt);
-                    var wallpaper = new BitmapDrawable(Resources, albumart);
+                    var wallpaper = new BitmapDrawable(Activity.Resources, albumart);
+                    int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtOpacityLevel, 255);
+                    int blurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtBlurLevel, 1); //Never used (for now)
 
-                    int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, 255);
                     if (configurationManager.RetrieveAValue(ConfigurationParameters.ShowAlbumArt))
                         WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
                         {
-                            Wallpaper = wallpaper,
-                            OpacityLevel = (short)opacitylevel
+                            Wallpaper= wallpaper,
+                            OpacityLevel = (short)opacitylevel,
+                            BlurLevel = 0, //Causes a crash That currently I cant debug, damn, thats why is 0. (No blur) and ignoring the value the used have setted.
                         });
                 });
             });

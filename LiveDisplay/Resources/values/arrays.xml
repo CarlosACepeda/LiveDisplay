@@ -6,8 +6,8 @@
     <item>@string/pickwallpaper</item>
   </string-array>
   <string-array name="listentriescurrentwallpapersetting">
-    <item>@string/albumartappearancesetting</item>
     <item>@string/defaultwallpaperappearance</item>
+    <item>@string/albumartappearancesetting</item>
   </string-array>
 
   <string-array name="listvalueschangewallpaper">

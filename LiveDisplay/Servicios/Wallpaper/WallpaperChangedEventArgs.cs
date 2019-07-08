@@ -1,11 +1,13 @@
 ﻿using Android.Graphics.Drawables;
 using System;
+using Android.Content;
+using Android.Graphics;
 
 namespace LiveDisplay.Servicios.Wallpaper
 {
     public class WallpaperChangedEventArgs : EventArgs
     {
-        public Drawable Wallpaper { get; set; }
+        public BitmapDrawable Wallpaper { get; set; }
         public short OpacityLevel { get; set; }
         public short BlurLevel { get; set; }
 

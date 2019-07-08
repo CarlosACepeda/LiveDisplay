@@ -91,12 +91,6 @@
       android:summary="@string/turnonnewnotification_desc">
       </SwitchPreference>
       <SwitchPreference
-        android:defaultValue="true"
-        android:key="doubletaptosleep?"
-        android:title="@string/doubletaptosleep"
-        android:summary="@string/doubletaptosleepdesc">
-      </SwitchPreference>
-      <SwitchPreference
         android:key="turnonusermovement?"
         android:title="@string/turnonusermovement">
       </SwitchPreference>

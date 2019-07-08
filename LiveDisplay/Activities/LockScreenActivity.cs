@@ -53,7 +53,6 @@
         private System.Timers.Timer watchDog; //the watchdog simply will start counting down until it gets resetted by OnUserInteraction() override.
         private Animation fadeoutanimation;
         private string doubletapbehavior;
-        private bool doubletapenabled;
         private bool isMusicWidgetPresent;
         private ActivityStates currentActivityState;
         private ViewPropertyAnimator viewPropertyAnimator;
@@ -146,6 +145,7 @@
 
         private void WatchdogInterval_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
+            if (currentActivityState== ActivityStates.Resumed)
             Awake.TurnOffScreen();
         }
 
@@ -191,7 +191,17 @@
 
             RunOnUiThread(() =>
             {
-                Window.DecorView.Animate().SetDuration(100).Alpha(0f);
+                if (e.BlurLevel > 0)
+                {
+                    if (e.Wallpaper?.Bitmap!=null)
+                    {
+                        BlurImage blurImage = new BlurImage(Application.Context);
+                        blurImage.Load(e.Wallpaper.Bitmap).Intensity(e.BlurLevel);
+                        e.Wallpaper = new BitmapDrawable(Resources, blurImage.GetImageBlur());
+                    }
+                }
+
+                Window.DecorView.Animate().SetDuration(100).Alpha(0.5f);
 
                 if (e.Wallpaper == null)
                 {
@@ -201,8 +211,6 @@
                 {
                     e.Wallpaper.Alpha= e.OpacityLevel;
                     Window.SetBackgroundDrawable(e.Wallpaper);
-                    //wallpaperView.Background = e.Wallpaper;
-                    //wallpaperView.Background.Alpha = e.OpacityLevel;
                 }
             });
             GC.Collect();
@@ -210,8 +218,6 @@
 
         private void Lockscreen_Touch(object sender, View.TouchEventArgs e)
         {
-            if (doubletapenabled) //Lazy loaded.
-            {
                 if (e.Event.Action == MotionEventActions.Up)
                 {
                     if (firstTouchTime == -1)
@@ -265,7 +271,6 @@
                         finalTouchTime = -1;
                     }
                 }
-            }
         }
 
         private void CheckNotificationListSize()
@@ -465,22 +470,11 @@
                             hasReadStoragePermission = Checkers.ThisAppHasReadStoragePermission();
                         }
                         if (hasReadStoragePermission)
-                            using (var wallpaper = (BitmapDrawable)WallpaperManager.GetInstance(Application.Context).Drawable)
+                            using (var wallpaper = WallpaperManager.GetInstance(Application.Context).Drawable)
                             {
                                 int savedblurlevel = configurationManager.RetrieveAValue(ConfigurationParameters.BlurLevel, 1);
                                 int savedOpacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, 255);
-                                BlurImage blurImage = new BlurImage(Application.Context);
-                                if (savedblurlevel > 0)
-                                {
-                                    blurImage.Load(wallpaper.Bitmap).Intensity(savedblurlevel).Async(true);
-                                    var blurredwallpaper = new BitmapDrawable(Resources, blurImage.GetImageBlur());
-                                    WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = blurredwallpaper, OpacityLevel = (short)savedOpacitylevel });
-                                }
-                                else
-                                {
-                                    WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = wallpaper, OpacityLevel = (short)savedOpacitylevel });
-                                }
-                                blurImage = null;
+                                 WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = (BitmapDrawable)wallpaper, OpacityLevel = (short)savedOpacitylevel, BlurLevel= (short)savedblurlevel });
                             }
                         else
                         {
@@ -519,7 +513,6 @@
                     StartAwakeService();
                 }
                 doubletapbehavior = configurationManager.RetrieveAValue(ConfigurationParameters.DoubleTapOnTopActionBehavior, "0");
-                doubletapenabled = configurationManager.RetrieveAValue(ConfigurationParameters.DoubleTapToSleep);
             }
         }
 

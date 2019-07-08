@@ -10,6 +10,9 @@
         public const string ChangeWallpaper = "changewallpaper";
         public const string BlurLevel = "blurlevel";
         public const string OpacityLevel = "opacitylevel";
+        public const string AlbumArtBlurLevel = "albumartblurlevel";
+        public const string AlbumArtOpacityLevel = "albumartopacitylevel";
+        public const string DefaultWallpaperSettingsAppliesToAlbumArt = "copywallpsettingsfromdefaultwallpaper";
         public const string LockOnBoot = "lockonboot?";
         public const string DoubleTapOnTopActionBehavior = "doubletapontoppactionbehavior";
 
@@ -32,7 +35,7 @@
         public const string WeatherCountryCode = "weathercountrycode";
         public const string WeatherTemperatureMeasureUnit = "weathertemperaturemeasureunit";
 
-        //For Notifications Settings :
+        //For Notifications Settings: This setting is not ussed anymore by the app, but it might be useful someday...
         public const string EnableQuickReply = "enablequickreply?";
 
         //For Awake Settings: (Awake is fused with notification settings now, but here is separated to maintain
@@ -45,6 +48,5 @@
         public const string TurnOnUserMovement = "turnonusermovement?";
         public const string StartLockscreenDelayTime = "startlockscreendelaytime";
         public const string TurnOffScreenDelayTime = "turnoffscreendelaytime";
-        public const string DoubleTapToSleep = "doubletaptosleep?";
     }
 }
