@@ -1,6 +1,7 @@
 ﻿using Android.App;
 using Android.App.Admin;
 using Android.Content;
+using Android.OS;
 using Android.Provider;
 using LiveDisplay.BroadcastReceivers;
 using LiveDisplay.Servicios;
@@ -31,16 +32,24 @@ namespace LiveDisplay.Misc
 
         public static bool ThisAppCanDrawOverlays()
         {
-            return Settings.CanDrawOverlays(Application.Context);
+            if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1)
+                return Settings.CanDrawOverlays(Application.Context);
+
+            return true;
         }
 
         public static bool ThisAppHasReadStoragePermission()
         {
-            if (Application.Context.CheckSelfPermission("android.permission.READ_EXTERNAL_STORAGE") == Android.Content.PM.Permission.Granted)
-            {
-                return true;
-            }
-            return false;
+            if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1)
+                if (Application.Context.CheckSelfPermission("android.permission.READ_EXTERNAL_STORAGE") == Android.Content.PM.Permission.Granted)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            return true;
         }
     }
 }
