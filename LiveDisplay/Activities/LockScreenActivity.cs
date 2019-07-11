@@ -218,7 +218,7 @@
 
         private void Lockscreen_Touch(object sender, View.TouchEventArgs e)
         {
-                if (e.Event.Action == MotionEventActions.Up)
+                if (e.Event.Action == MotionEventActions.Down)
                 {
                     if (firstTouchTime == -1)
                     {
@@ -227,10 +227,15 @@
                     else if (firstTouchTime != -1)
                     {
                         finalTouchTime = e.Event.DownTime;
-                    if (firstTouchTime + threshold > finalTouchTime)
-                    {
-                        //0 Equals: Normal Behavior
-                        if (doubletapbehavior == "0")
+                        if (firstTouchTime + threshold < finalTouchTime)
+                        {
+                            firstTouchTime = finalTouchTime; //Let's set the last tap as the first, so the user doesnt have to press twice again
+                            return;
+                        }
+                        else if(firstTouchTime + threshold > finalTouchTime)
+                        {
+                            //0 Equals: Normal Behavior
+                            if (doubletapbehavior == "0")
                         {
                             if (e.Event.RawY < halfscreenheight)
                             {
@@ -247,8 +252,8 @@
                                 MoveTaskToBack(true);
                             }
                         }
-                        //The other value is "1" which means Inverted.
-                        else
+                            //The other value is "1" which means Inverted.
+                            else
                         {
                             if (e.Event.RawY < halfscreenheight)
                             {
@@ -265,12 +270,8 @@
                                 Awake.TurnOffScreen();
                             }
                         }
-                    }
-                    else
-                    {
-                        firstTouchTime = finalTouchTime;
-                    }
-                    //Reset the values of touch
+                        }
+                        //Reset the values of touch
                         firstTouchTime = -1;
                         finalTouchTime = -1;
                     }
