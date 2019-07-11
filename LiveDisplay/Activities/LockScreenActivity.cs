@@ -227,46 +227,50 @@
                     else if (firstTouchTime != -1)
                     {
                         finalTouchTime = e.Event.DownTime;
-                        if (firstTouchTime + threshold > finalTouchTime)
+                    if (firstTouchTime + threshold > finalTouchTime)
+                    {
+                        //0 Equals: Normal Behavior
+                        if (doubletapbehavior == "0")
                         {
-                            //0 Equals: Normal Behavior
-                            if (doubletapbehavior == "0")
+                            if (e.Event.RawY < halfscreenheight)
                             {
-                                if (e.Event.RawY < halfscreenheight)
-                                {
-                                    Awake.TurnOffScreen();
-                                }
-                                else
-                                {
-                                    //Finish();
-                                    //using (Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(TransparentActivity))))
-                                    //{
-                                    //    intent.AddFlags(ActivityFlags.NewTask | ActivityFlags.);
-                                    //    StartActivity(intent);
-                                    //}
-                                    MoveTaskToBack(true);
-                                }
+                                Awake.TurnOffScreen();
                             }
-                            //The other value is "1" which means Inverted.
                             else
                             {
-                                if (e.Event.RawY < halfscreenheight)
-                                {
-                                    //Finish();
-                                    //using (Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(TransparentActivity))))
-                                    //{
-                                    //    intent.AddFlags(ActivityFlags.NewTask | ActivityFlags.MultipleTask);
-                                    //    StartActivity(intent);
-                                    //}
-                                    MoveTaskToBack(true);
-                                }
-                                else
-                                {
-                                    Awake.TurnOffScreen();
-                                }
+                                //Finish();
+                                //using (Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(TransparentActivity))))
+                                //{
+                                //    intent.AddFlags(ActivityFlags.NewTask | ActivityFlags.);
+                                //    StartActivity(intent);
+                                //}
+                                MoveTaskToBack(true);
                             }
                         }
-                        //Reset the values of touch
+                        //The other value is "1" which means Inverted.
+                        else
+                        {
+                            if (e.Event.RawY < halfscreenheight)
+                            {
+                                //Finish();
+                                //using (Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(TransparentActivity))))
+                                //{
+                                //    intent.AddFlags(ActivityFlags.NewTask | ActivityFlags.MultipleTask);
+                                //    StartActivity(intent);
+                                //}
+                                MoveTaskToBack(true);
+                            }
+                            else
+                            {
+                                Awake.TurnOffScreen();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        firstTouchTime = finalTouchTime;
+                    }
+                    //Reset the values of touch
                         firstTouchTime = -1;
                         finalTouchTime = -1;
                     }
