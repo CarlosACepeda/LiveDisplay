@@ -44,7 +44,7 @@ namespace LiveDisplay.Servicios
                 SubscribeToEvents();
                 RegisterReceivers();
                 remoteController = new RemoteController(Application.Context, this);
-                remoteController.SetArtworkConfiguration(450, 450);
+                remoteController.SetArtworkConfiguration(Resources.DisplayMetrics.WidthPixels, Resources.DisplayMetrics.HeightPixels);
                 audioManager = (AudioManager)Application.Context.GetSystemService(AudioService);
                 audioManager.RegisterRemoteController(remoteController);
                 musicControllerKitkat = MusicControllerKitkat.GetInstance(remoteController);

@@ -52,18 +52,22 @@ namespace LiveDisplay.Servicios.Music
             {
                 case MediaActionFlags.Play:
                     TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Down, Keycode.MediaPlay));
+                    TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Up, Keycode.MediaPlay));
                     break;
 
                 case MediaActionFlags.Pause:
                     TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Down, Keycode.MediaPause));
+                    TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Up, Keycode.MediaPause));
                     break;
 
                 case MediaActionFlags.SkipToNext:
                     TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Down, Keycode.MediaNext));
+                    TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Up, Keycode.MediaNext));
                     break;
 
                 case MediaActionFlags.SkipToPrevious:
                     TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Down, Keycode.MediaPrevious));
+                    TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Up, Keycode.MediaPrevious));
                     break;
 
                 case MediaActionFlags.SeekTo:
@@ -71,15 +75,19 @@ namespace LiveDisplay.Servicios.Music
                     break;
 
                 case MediaActionFlags.FastFoward:
-                    TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Down, Keycode.MediaFastForward));
+                    TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Down, Keycode.MediaFastForward));                
+                    TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Up, Keycode.MediaFastForward));
                     break;
 
                 case MediaActionFlags.Rewind:
                     TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Down, Keycode.MediaRewind));
+                    TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Up, Keycode.MediaRewind));
                     break;
 
                 case MediaActionFlags.Stop:
                     TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Down, Keycode.MediaStop));
+                    TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Up, Keycode.MediaStop));
+
                     break;
 
                 case MediaActionFlags.RetrieveMediaInformation:
@@ -115,6 +123,15 @@ namespace LiveDisplay.Servicios.Music
             {
                 PlaybackState = state
             });
+            switch (state)
+            {
+                case RemoteControlPlayState.Playing:
+                    MusicPlaying?.Invoke(null, EventArgs.Empty);
+                    break;
+                case RemoteControlPlayState.Paused:
+                    MusicPaused?.Invoke(null, EventArgs.Empty);
+                    break;
+            }
         }
 
         public void OnMetadataChanged(RemoteController.MetadataEditor mediaMetadata)

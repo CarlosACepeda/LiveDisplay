@@ -164,16 +164,28 @@
             ThreadPool.QueueUserWorkItem(method =>
             {
                 Thread.Sleep(5000); //Wait 5 seconds.
+                bool notplaying = false;
                 if (currentActivityState == ActivityStates.Resumed)
-                    if (MusicController.MusicStatus != PlaybackStateCode.Playing)
-                    {
-                        RunOnUiThread(() =>
+                    if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
+                        if (MusicController.MusicStatus != PlaybackStateCode.Playing )
                         {
-                            StopMusicController();
-                            StopFloatingNotificationService();
-                            Log.Info("LiveDisplay", "Musicfragment stopped");
-                        });
-                    }
+                            notplaying = true;
+                        }
+                        else if(MusicControllerKitkat.MusicStatus!= RemoteControlPlayState.Playing)
+                        {
+                            notplaying = true;
+                        }
+
+                if (notplaying)
+                {
+                    RunOnUiThread(() =>
+                    {
+                        StopMusicController();
+                        StopFloatingNotificationService();
+                        Log.Info("LiveDisplay", "Musicfragment stopped");
+                    });
+
+                }
             });
         }
 
@@ -299,12 +311,34 @@
             watchDog.Stop();
             watchDog.Start();
             OnActivityStateChanged?.Invoke(this, new LockScreenLifecycleEventArgs { State = ActivityStates.Resumed });
-            MusicController.MusicPlaying += MusicController_MusicPlaying;
-            MusicController.MusicPaused += MusicController_MusicPaused;
+            if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
+            {
+                MusicController.MusicPlaying += MusicController_MusicPlaying;
+                MusicController.MusicPaused += MusicController_MusicPaused;
+            }
+            else
+            {
+                MusicControllerKitkat.MusicPlaying += MusicControllerKitkat_MusicPlaying;
+                MusicControllerKitkat.MusicPaused += MusicControllerKitkat_MusicPaused;
+            }
             if (isMusicWidgetPresent) //It'll always be true(?)
             {
                 CheckIfMusicIsStillPaused();
             }
+        }
+
+        private void MusicControllerKitkat_MusicPaused(object sender, EventArgs e)
+        {
+            CheckIfMusicIsStillPaused();
+        }
+
+        private void MusicControllerKitkat_MusicPlaying(object sender, EventArgs e)
+        {
+            if (isMusicWidgetPresent == false) //Avoid unnecessary calls
+                RunOnUiThread(() =>
+                {
+                    StartMusicController();
+                });
         }
 
         protected override void OnPause()
@@ -314,8 +348,17 @@
             watchDog.Stop();
             watchDog.Elapsed -= WatchdogInterval_Elapsed;
             OnActivityStateChanged?.Invoke(this, new LockScreenLifecycleEventArgs { State = ActivityStates.Paused });
-            MusicController.MusicPlaying -= MusicController_MusicPlaying;
-            MusicController.MusicPaused -= MusicController_MusicPaused;
+            if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
+            {
+
+                MusicController.MusicPlaying -= MusicController_MusicPlaying;
+                MusicController.MusicPaused -= MusicController_MusicPaused;
+            }
+            else
+            {
+                MusicControllerKitkat.MusicPlaying -= MusicControllerKitkat_MusicPlaying;
+                MusicControllerKitkat.MusicPaused -= MusicControllerKitkat_MusicPaused;
+            }
             GC.Collect();
         }
 
