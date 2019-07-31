@@ -115,6 +115,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
             {
                 Awake.WakeUpScreen();
             }
+            floatingNotificationView.Visibility = ViewStates.Visible;
         }
 
         private void CatcherHelper_NotificationRemoved(object sender, EventArgs e)
@@ -124,7 +125,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
 
         private void CatcherHelper_NotificationUpdated(object sender, NotificationItemClickedEventArgs e)
         {
-            if (position > -1) //Avoid out of bounds exceptions, i guess, the out of bounds vaue is -1, i guess, too.
+            if (position > -1) //Avoid out of bounds exceptions, i guess, the out of bounds value is -1.
                 using (OpenNotification openNotification = new OpenNotification(e.Position))
                 {
                     floatingNotificationAppName.Text = openNotification.AppName();
@@ -167,7 +168,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
         private void NotificationAdapterViewHolder_ItemLongClicked(object sender, NotificationItemClickedEventArgs e)
         {
             position = e.Position;
-            if (position > 0) //Avoid out of bounds exceptions, i guess, the out of bounds vaue is -1, i guess, too.
+            if (position > -1) //Avoid out of bounds exceptions, i guess, the out of bounds vaue is -1, i guess, too.
                 using (OpenNotification openNotification = new OpenNotification(e.Position))
                 {
                     if (openNotification.IsRemovable())

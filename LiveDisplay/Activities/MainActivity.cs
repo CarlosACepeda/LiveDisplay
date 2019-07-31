@@ -114,15 +114,9 @@
 
         private void IsApplicationHealthy()
         {
-            bool canDrawOverlays = true;
-            if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1) //In Lollipop and less this permission is granted at Install time.
-            {
-                canDrawOverlays = Checkers.ThisAppCanDrawOverlays();
-            }
-
             using (var accessestext = FindViewById<TextView>(Resource.Id.health))
             {
-                if (Checkers.IsNotificationListenerEnabled() == true && Checkers.IsThisAppADeviceAdministrator() && canDrawOverlays == true)
+                if (Checkers.IsNotificationListenerEnabled() == true && Checkers.IsThisAppADeviceAdministrator() && Checkers.ThisAppCanDrawOverlays())
                 {
                     accessestext.SetText(Resource.String.accessesstatusenabled);
                     accessestext.SetTextColor(Android.Graphics.Color.Green);
