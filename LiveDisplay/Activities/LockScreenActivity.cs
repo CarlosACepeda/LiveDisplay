@@ -30,7 +30,7 @@
     using System;
     using System.Threading;
 
-    [Activity(Label = "LockScreen", Theme = "@style/LiveDisplayThemeDark", MainLauncher = false, ScreenOrientation = ScreenOrientation.Portrait, TaskAffinity = "livedisplay.lockscreen", LaunchMode = LaunchMode.SingleInstance, ExcludeFromRecents = true)]
+    [Activity(Label = "LockScreen", Theme = "@style/LiveDisplayThemeDark", ScreenOrientation = ScreenOrientation.Portrait, MainLauncher = false, TaskAffinity = "livedisplay.lockscreen", LaunchMode = LaunchMode.SingleInstance, ExcludeFromRecents = true)]
     public class LockScreenActivity : Activity
     {
         private RecyclerView recycler;
@@ -182,6 +182,14 @@
                     {
                         StopMusicController();
                         StopFloatingNotificationService();
+                    using (ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context)))                   
+                        using (var wallpaper = WallpaperManager.GetInstance(Application.Context).Drawable)
+                        {
+                            int savedblurlevel = configurationManager.RetrieveAValue(ConfigurationParameters.BlurLevel, 1);
+                            int savedOpacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, 255);
+                            WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = (BitmapDrawable)wallpaper, OpacityLevel = (short)savedOpacitylevel, BlurLevel = (short)savedblurlevel });
+                        }
+
                         Log.Info("LiveDisplay", "Musicfragment stopped");
                     });
 

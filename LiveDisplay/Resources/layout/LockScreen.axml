@@ -6,25 +6,37 @@
     a:layout_height="match_parent">
     <LinearLayout 
         a:animateLayoutChanges="true"
-          a:id="@+id/contenedorPrincipal"
+        a:id="@+id/contenedorPrincipal"
         a:orientation="vertical"
         a:layout_width="match_parent"
         a:layout_height="match_parent"
         a:weightSum="100"
         a:gravity="bottom">
+	<RelativeLayout
+			a:layout_weight="4"
+			a:layout_width="match_parent"
+			a:layout_height="0dp"			
+			>
+		<TextView
+				a:layout_width="wrap_content"
+				a:layout_height="match_parent"
+				a:text=""
+				a:paddingLeft="15dp"
+				a:paddingTop="3dp"
+				a:fontFamily="sans-serif-condensed-light"
+				/>	
     <!--ClearAll button-->
     <Button
-            a:layout_weight="4"
             a:background="?android:selectableItemBackground"
             a:text="@string/clearallnotifications"
             a:layout_width="wrap_content"
-            a:layout_height="0dp"
-            a:layout_gravity="right"
-            a:gravity="right"
+            a:layout_height="match_parent"
+			a:layout_alignParentRight="true"            
 			a:fontFamily="sans-serif-condensed-light"
             a:id="@+id/btnClearAllNotifications"
             a:textAllCaps="false"
             a:alpha="0.7" />
+	</RelativeLayout>
     <!--This linear layout contains the Framelayout used for containing Notification and Music Widgets, 
     and also the RecyclerView containing the notification list
     -->
