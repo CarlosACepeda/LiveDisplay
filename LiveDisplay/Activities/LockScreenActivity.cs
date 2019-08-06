@@ -135,6 +135,12 @@
             LoadConfiguration();
 
             CheckNotificationListSize();
+            OnActivityStateChanged += LockScreenActivity_OnActivityStateChanged;
+        }
+
+        private void LockScreenActivity_OnActivityStateChanged(object sender, LockScreenLifecycleEventArgs e)
+        {
+            currentActivityState = e.State;
         }
 
         private void Fadeoutanimation_AnimationEnd(object sender, Animation.AnimationEndEventArgs e)
@@ -161,38 +167,42 @@
 
         private void CheckIfMusicIsStillPaused()
         {
+            bool notplaying = false;
+
             ThreadPool.QueueUserWorkItem(method =>
             {
                 Thread.Sleep(5000); //Wait 5 seconds.
-                bool notplaying = false;
                 if (currentActivityState == ActivityStates.Resumed)
-                    if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
-                        if (MusicController.MusicStatus != PlaybackStateCode.Playing )
-                        {
-                            notplaying = true;
-                        }
-                        else if(MusicControllerKitkat.MusicStatus!= RemoteControlPlayState.Playing)
-                        {
-                            notplaying = true;
-                        }
-
-                if (notplaying)
                 {
-                    RunOnUiThread(() =>
+                    if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
                     {
-                        StopMusicController();
-                        StopFloatingNotificationService();
-                    using (ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context)))                   
-                        using (var wallpaper = WallpaperManager.GetInstance(Application.Context).Drawable)
+                        if (MusicController.MusicStatus != PlaybackStateCode.Playing)
                         {
-                            int savedblurlevel = configurationManager.RetrieveAValue(ConfigurationParameters.BlurLevel, 1);
-                            int savedOpacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, 255);
-                            WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = (BitmapDrawable)wallpaper, OpacityLevel = (short)savedOpacitylevel, BlurLevel = (short)savedblurlevel });
+                            notplaying = true;
                         }
+                    }
+                    else if (MusicControllerKitkat.MusicStatus != RemoteControlPlayState.Playing)
+                    {
+                        notplaying = true;
+                    }
 
-                        Log.Info("LiveDisplay", "Musicfragment stopped");
-                    });
+                    if (notplaying)
+                    {
+                        RunOnUiThread(() =>
+                        {
+                            StopMusicController();
+                            StopFloatingNotificationService();
+                            using (ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context)))
+                            using (var wallpaper = WallpaperManager.GetInstance(Application.Context).Drawable)
+                            {
+                                int savedblurlevel = configurationManager.RetrieveAValue(ConfigurationParameters.BlurLevel, 1);
+                                int savedOpacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, 255);
+                                WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = (BitmapDrawable)wallpaper, OpacityLevel = (short)savedOpacitylevel, BlurLevel = (short)savedblurlevel });
+                            }
 
+                        });
+
+                    }
                 }
             });
         }
@@ -313,12 +323,11 @@
         protected override void OnResume()
         {
             base.OnResume();
-            currentActivityState = ActivityStates.Resumed;
             AddFlags();
             watchDog.Elapsed += WatchdogInterval_Elapsed;
             watchDog.Stop();
             watchDog.Start();
-            OnActivityStateChanged?.Invoke(this, new LockScreenLifecycleEventArgs { State = ActivityStates.Resumed });
+            OnActivityStateChanged?.Invoke(null, new LockScreenLifecycleEventArgs { State = ActivityStates.Resumed });
             if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
             {
                 MusicController.MusicPlaying += MusicController_MusicPlaying;
@@ -352,10 +361,9 @@
         protected override void OnPause()
         {
             base.OnPause();
-            currentActivityState = ActivityStates.Paused;
             watchDog.Stop();
             watchDog.Elapsed -= WatchdogInterval_Elapsed;
-            OnActivityStateChanged?.Invoke(this, new LockScreenLifecycleEventArgs { State = ActivityStates.Paused });
+            OnActivityStateChanged?.Invoke(null, new LockScreenLifecycleEventArgs { State = ActivityStates.Paused });
             if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
             {
 
@@ -373,10 +381,10 @@
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            currentActivityState = ActivityStates.Destroyed;
-            OnActivityStateChanged?.Invoke(this, new LockScreenLifecycleEventArgs { State = ActivityStates.Destroyed });
-
+            OnActivityStateChanged?.Invoke(null, new LockScreenLifecycleEventArgs { State = ActivityStates.Destroyed });
             //Unbind events
+
+            OnActivityStateChanged -= LockScreenActivity_OnActivityStateChanged;
             //unlocker.Touch -= Unlocker_Touch;
             clearAll.Click -= BtnClearAll_Click;
             WallpaperPublisher.NewWallpaperIssued -= Wallpaper_NewWallpaperIssued;

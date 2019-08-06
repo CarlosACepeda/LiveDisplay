@@ -6,6 +6,7 @@ using Android.Runtime;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using LiveDisplay.Activities;
 using LiveDisplay.Adapters;
 using LiveDisplay.Servicios.Notificaciones;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
@@ -25,6 +26,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
         private TextView floatingNotificationWhen;
         private LinearLayout floatingNotificationActionsContainer;
         private int position; //Represents the notification position in the NotificationList.
+        private ActivityStates currentActivityState;
 
         public override IBinder OnBind(Intent intent)
         {
@@ -90,23 +92,27 @@ namespace LiveDisplay.Servicios.FloatingNotification
         {
             switch (e.State)
             {
-                case Activities.ActivityStates.Paused:
+                case ActivityStates.Paused:
                     if (floatingNotificationView.Visibility == ViewStates.Visible)
                         floatingNotificationView.Visibility = ViewStates.Invisible;
+
                     break;
 
-                case Activities.ActivityStates.Resumed:
+                case ActivityStates.Resumed:
                     //?
                     break;
 
-                case Activities.ActivityStates.Destroyed:
+                case ActivityStates.Destroyed:
                     if (floatingNotificationView.Visibility == ViewStates.Visible)
                         floatingNotificationView.Visibility = ViewStates.Invisible;
+
                     break;
 
                 default:
                     break;
             }
+            currentActivityState = e.State;
+
         }
 
         private void CatcherHelper_NotificationPosted(object sender, NotificationPostedEventArgs e)
@@ -115,6 +121,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
             {
                 Awake.WakeUpScreen();
             }
+            if(currentActivityState== ActivityStates.Resumed)
             floatingNotificationView.Visibility = ViewStates.Visible;
         }
 
