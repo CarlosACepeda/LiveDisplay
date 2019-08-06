@@ -65,13 +65,7 @@
             SetContentView(Resource.Layout.LockScreen);
             ThreadPool.QueueUserWorkItem(isApphealthy =>
             {
-                bool canDrawOverlays = true;
-                if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1) //In Lollipop and less this permission is granted at Install time.
-                {
-                    canDrawOverlays = Checkers.ThisAppCanDrawOverlays();
-                }
-
-                if (Checkers.IsNotificationListenerEnabled() == false || canDrawOverlays == false || Checkers.IsThisAppADeviceAdministrator() == false)
+                if (Checkers.IsNotificationListenerEnabled() == false || Checkers.ThisAppCanDrawOverlays() == false || Checkers.IsThisAppADeviceAdministrator() == false)
                 {
                     RunOnUiThread(() =>
                     {
