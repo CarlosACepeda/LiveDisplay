@@ -102,13 +102,22 @@ namespace LiveDisplay.Servicios
 
         public override bool OnUnbind(Intent intent)
         {
-            if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+            if (Build.VERSION.SdkInt <= BuildVersionCodes.N)
             {
-                catcherHelper.Dispose();
-                UnregisterReceiver(screenOnOffReceiver);
+                if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+                {
+                    catcherHelper.Dispose();
+                    UnregisterReceiver(screenOnOffReceiver);
 #pragma warning disable CS0618 // El tipo o el miembro están obsoletos
-                audioManager.UnregisterRemoteController(remoteController);
+                    audioManager.UnregisterRemoteController(remoteController);
 #pragma warning restore CS0618 // El tipo o el miembro están obsoletos
+                }
+                else
+                {
+                    catcherHelper.Dispose();
+                    mediaSessionManager.RemoveOnActiveSessionsChangedListener(activeMediaSessionsListener);
+                    UnregisterReceiver(screenOnOffReceiver);
+                }
             }
 
             return base.OnUnbind(intent);
