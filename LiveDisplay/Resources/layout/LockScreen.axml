@@ -41,6 +41,7 @@
     and also the RecyclerView containing the notification list
     -->
     <LinearLayout
+			
                 a:layout_weight="73"
                 a:orientation="horizontal"
                 a:layout_width="match_parent"

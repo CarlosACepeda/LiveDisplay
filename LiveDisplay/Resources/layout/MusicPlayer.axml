@@ -5,36 +5,40 @@
     android:animateLayoutChanges="true"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
     <TextView
+		android:paddingRight="30dp"
         android:text="Music Title"
+		android:textSize="22dp"
         android:fontFamily="sans-serif-condensed"
-        android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/tvSongName"
         android:textColor="@color/primary_text_default_material_dark"
         android:textStyle="normal" />
     <TextView
+		android:paddingRight="30dp"
+		android:textSize="17dp"
         android:text="Artist Name"
         android:fontFamily="sans-serif-condensed"
-        android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/tvArtistName"
         android:textColor="@color/primary_text_default_material_dark"
         android:textStyle="normal" />
     <TextView
+		android:paddingRight="30dp"
         android:text="Album Name"
+	    android:textSize="15dp"
         android:fontFamily="sans-serif-condensed"
-        android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/tvAlbumName"
         android:textStyle="italic"
         android:textColor="@color/primary_text_default_material_dark" />
     <SeekBar
-        android:visibility="gone"
+		android:paddingRight="30dp"
+        android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/seeksongTime" />
