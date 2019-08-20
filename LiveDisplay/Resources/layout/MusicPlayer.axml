@@ -38,7 +38,7 @@
         android:textColor="@color/primary_text_default_material_dark" />
     <SeekBar
 		android:paddingRight="30dp"
-        android:visibility="visible"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/seeksongTime" />
