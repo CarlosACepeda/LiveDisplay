@@ -131,7 +131,11 @@ namespace LiveDisplay.Servicios
                 if ((notification.IsOngoing == false || notification.Notification.Flags.HasFlag(NotificationFlags.NoClear)) && notification.IsClearable == true)
                 {
                     statusBarNotifications.Add(notification);
-
+                    //var test1= notification.Notification.Extras.GetString(Notification.ExtraTemplate);
+                    //var test2 = notification.Notification.Extras;
+                    //var test3 = notification.Notification.Flags;
+                    //var test4 = notification.Notification.Extras.GetCharSequence(Notification.ExtraSummaryText);
+                    //var test5 = notification.Notification.Extras.GetCharSequenceArray(Notification.ExtraTextLines);
                     //GetRemoteInput(notification);
                 }
             }

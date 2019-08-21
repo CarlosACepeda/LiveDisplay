@@ -17,7 +17,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
         private const string BigPictureStyle = "android.app.Notification$BigPictureStyle";
         private const string InboxStyle = "android.app.Notification$InboxStyle";
         private const string MediaStyle = "android.app.Notification$MediaStyle";
-        private const string MessagingStyle = "android.app.Notification$MessagingStyle";
+        private const string MessagingStyle = "android.app.Notification$MessagingStyle"; //Only available on API Level 24 and up.
         private Resources resources;
         private OpenNotification openNotification;
         private View notificationView;
@@ -49,6 +49,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                     break;
 
                 case InboxStyle:
+                    //In the inbox style also populate a view Called TextLines(non existent yet) to fill it with a series of TextLines supplied to that notification.
                     break;
 
                 case MediaStyle:
@@ -83,6 +84,9 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                     break;
 
                 case MessagingStyle:
+                    //Only available in API Level 24 and Up.
+                    //I think it'll be useless anyway, as for implementing the Messaging Style the user should be capable of answering to the messages from the notification itself.
+                    //And for now that's impossible.
                     break;
 
                 default:

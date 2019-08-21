@@ -47,6 +47,31 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
         }
 
+        public string GetSummaryText()
+        {
+            try
+            {
+                return statusbarnotification.Notification.Extras.Get(Notification.ExtraSummaryText).ToString();
+            }
+            catch
+            {
+                return "";
+            }
+
+        }
+        public string[] GetTextLines()
+        {
+            try
+            {
+                return statusbarnotification.Notification.Extras.GetCharSequenceArray(Notification.ExtraTextLines);
+            }
+            catch
+            {
+                return null;
+            }
+
+        }
+
         public void ClickNotification()
         {
             try

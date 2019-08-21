@@ -40,7 +40,7 @@
   <string name="doubletaptosleepdesc">Touch twice anywhere on the lock screen to turn off the screen</string>
   <string name="enableawake">Enable Awake service</string>
   <string name="enabledeviceaccess">Enable device Access</string>
-  <string name="enablefloatingpermission">DIsplay over other apps</string>
+  <string name="enablefloatingpermission">Display over other apps</string>
   <string name="enablenotificationlistener">Enable Notification Access</string>
   <string name="enablequickreply">Enable quick Notification Reply</string>
   <string name="enablequickreplydesc">Answer directly from Notification to messages, as seen in Nougat and beyond</string>
@@ -67,6 +67,7 @@
   <string name="musicwidgetenabled">Enable Music Widget</string>
   <string name="nonallowedtoturnonscreen">Non allowed to turn on screen</string>
   <string name="notificationsettings">Notifications</string>
+  <string name="notificationviewvisibilitytime">After clicking the notification hide it after...</string>
   <string name="opciones">Options</string>
   <string name="partiallyblocked">Block only in the app</string>
   <string name="pickwallpaper">Pick one</string>
