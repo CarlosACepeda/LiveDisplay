@@ -85,6 +85,31 @@ namespace LiveDisplay.Servicios
         public override void OnNotificationPosted(StatusBarNotification sbn)
         {
             catcherHelper.OnNotificationPosted(sbn);
+
+            //var test6 = sbn.Notification.Extras.Get(Notification.ExtraMediaSession) as MediaSession.Token;
+
+            //if (test6 != null)
+            //{
+            //    try
+            //    {
+            //        MediaController mediaController = new MediaController(this, test6);
+
+            //        var musicController = MusicController.GetInstance();
+            //        mediaController.RegisterCallback(musicController);
+            //        //Retrieve the controls to control the media, duh.
+            //        musicController.TransportControls = mediaController.GetTransportControls();
+            //        musicController.MediaMetadata = mediaController.Metadata;
+            //        musicController.PlaybackState = mediaController.PlaybackState;
+            //    }
+            //    catch
+            //    {
+            //        //mediaController?.UnregisterCallback(musicController);
+            //        //musicController.Dispose();
+            //    }
+
+
+            //    //mediaController.RegisterCallback(MusicController.GetInstance());
+            //}
         }
 
         public override void OnNotificationRemoved(StatusBarNotification sbn)
@@ -128,6 +153,15 @@ namespace LiveDisplay.Servicios
             statusBarNotifications = new List<StatusBarNotification>();
             foreach (var notification in GetActiveNotifications()?.ToList())
             {
+                //var test6 = notification.Notification.Extras.Get(Notification.ExtraMediaSession) as MediaSession.Token;
+
+                //if (test6 != null)
+                //{
+                //    MediaController mediaController = new MediaController(this, test6);
+
+                //    mediaController.RegisterCallback(MusicController.GetInstance());
+                //}
+
                 if ((notification.IsOngoing == false || notification.Notification.Flags.HasFlag(NotificationFlags.NoClear)) && notification.IsClearable == true)
                 {
                     statusBarNotifications.Add(notification);

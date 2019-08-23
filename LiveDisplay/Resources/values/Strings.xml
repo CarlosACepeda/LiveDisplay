@@ -100,4 +100,7 @@
   <string name="weatherwidgetenabled">Enable Weather Widget</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
+  <string name="secretmessageplaceholder">Enter the secret keyword</string>
+  <string name="secretmessagehint">Wings from Spanish</string>
+  <string name="hidden">Sghr hr mns sgd rdbqds xnt zqd knnjhmf enq</string>
 </resources>
