@@ -63,7 +63,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/tvTexto"
-        android:maxLines="4"
+        android:maxLines="6"
         android:minLines="0" />
 	<FrameLayout
 		android:layout_width="match_parent"

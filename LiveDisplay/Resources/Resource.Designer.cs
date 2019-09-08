@@ -2526,8 +2526,26 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f020053
 			public const int avd_hide_password = 2130837587;
 			
+			// aapt resource value: 0x7f02007c
+			public const int avd_hide_password_1 = 2130837628;
+			
+			// aapt resource value: 0x7f02007d
+			public const int avd_hide_password_2 = 2130837629;
+			
+			// aapt resource value: 0x7f02007e
+			public const int avd_hide_password_3 = 2130837630;
+			
 			// aapt resource value: 0x7f020054
 			public const int avd_show_password = 2130837588;
+			
+			// aapt resource value: 0x7f02007f
+			public const int avd_show_password_1 = 2130837631;
+			
+			// aapt resource value: 0x7f020080
+			public const int avd_show_password_2 = 2130837632;
+			
+			// aapt resource value: 0x7f020081
+			public const int avd_show_password_3 = 2130837633;
 			
 			// aapt resource value: 0x7f020055
 			public const int baseline_close_white_18 = 2130837589;
@@ -4044,6 +4062,9 @@ namespace LiveDisplay
 			// aapt resource value: 0x7f0b005c
 			public const int helptext = 2131427420;
 			
+			// aapt resource value: 0x7f0b008f
+			public const int hidden = 2131427471;
+			
 			// aapt resource value: 0x7f0b005d
 			public const int hidesystemicons = 2131427421;
 			
@@ -4130,6 +4151,12 @@ namespace LiveDisplay
 			
 			// aapt resource value: 0x7f0b0073
 			public const int searchapptitle = 2131427443;
+			
+			// aapt resource value: 0x7f0b008e
+			public const int secretmessagehint = 2131427470;
+			
+			// aapt resource value: 0x7f0b008d
+			public const int secretmessageplaceholder = 2131427469;
 			
 			// aapt resource value: 0x7f0b0074
 			public const int sendtestnotification = 2131427444;
