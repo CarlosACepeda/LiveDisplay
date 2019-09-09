@@ -130,13 +130,17 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             try
             {
-                Java.Util.Calendar calendar = Java.Util.Calendar.Instance;
-                calendar.TimeInMillis = statusbarnotification.Notification.When;
-                return string.Concat(calendar.Get(Java.Util.CalendarField.Hour), ":", calendar.Get(Java.Util.CalendarField.Minute));
+                if (statusbarnotification.Notification.Extras.GetBoolean(Notification.ExtraShowWhen) == true)
+                {
+                    Java.Util.Calendar calendar = Java.Util.Calendar.Instance;
+                    calendar.TimeInMillis = statusbarnotification.Notification.When;
+                    return string.Concat(calendar.Get(Java.Util.CalendarField.Hour), ":", calendar.Get(Java.Util.CalendarField.Minute));
+                }
+                return string.Empty;
             }
             catch
             {
-                return "";
+                return string.Empty;
             }
         }
 
