@@ -28,6 +28,8 @@ namespace LiveDisplay.Fragments
         private SeekBar skbSeekSongTime;
         private PlaybackStateCode playbackState;
         private PendingIntent activityIntent; //A Pending intent if available to start the activity associated with this music fragent.
+        BitmapDrawable CurrentAlbumArt; 
+
 
         private Timer timer;
         private ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context));
@@ -36,7 +38,6 @@ namespace LiveDisplay.Fragments
 
         public override void OnCreate(Bundle savedInstanceState)
         {
-            // Create your fragment here
             BindMusicControllerEvents();
 
             timer = new Timer
@@ -46,7 +47,30 @@ namespace LiveDisplay.Fragments
             timer.Elapsed += Timer_Elapsed;
             timer.Enabled = true;
 
+
+            WallpaperPublisher.CurrentWallpaperCleared += WallpaperPublisher_CurrentWallpaperHasBeenCleared;
+
             base.OnCreate(savedInstanceState);
+        }
+
+        private void WallpaperPublisher_CurrentWallpaperHasBeenCleared(object sender, CurrentWallpaperClearedEventArgs e)
+        {
+            if (e.PreviousWallpaperPoster == WallpaperPoster.MusicPlayer)
+            {
+                int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtOpacityLevel, 255);
+                int blurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtBlurLevel, 1); //Never used (for now)
+
+                if (configurationManager.RetrieveAValue(ConfigurationParameters.ShowAlbumArt))
+                    WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
+                    {
+                        Wallpaper = CurrentAlbumArt,
+                        OpacityLevel = (short)opacitylevel,
+                        BlurLevel = 0, //Causes a crash That currently I cant debug, damn, thats why is 0. (No blur) and ignoring the value the used have setted.
+                        WallpaperPoster = WallpaperPoster.MusicPlayer //We must nutify WallpaperPublisher who is posting the wallpaper, otherwise the wallpaper will be ignored.
+
+                    });
+
+            }
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -70,6 +94,8 @@ namespace LiveDisplay.Fragments
             MusicController.MediaMetadataChanged -= MusicController_MediaMetadataChanged;
             MusicControllerKitkat.MediaMetadataChanged -= MusicControllerKitkat_MediaMetadataChanged;
             MusicControllerKitkat.MediaPlaybackChanged -= MusicControllerKitkat_MediaPlaybackChanged;
+            WallpaperPublisher.CurrentWallpaperCleared -= WallpaperPublisher_CurrentWallpaperHasBeenCleared;
+            WallpaperPublisher.ReleaseWallpaper();
             timer.Elapsed -= Timer_Elapsed;
             timer.Dispose();
             base.OnDestroy();
@@ -298,10 +324,18 @@ namespace LiveDisplay.Fragments
                 tvAlbum.Text = e.Album;
                 tvArtist.Text = e.Artist;
                 skbSeekSongTime.Max = (int)e.Duration;
+                int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtOpacityLevel, 255);
+                int blurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtBlurLevel, 1); //Never used (for now)
+                CurrentAlbumArt = new BitmapDrawable(Resources, e.AlbumArt);
+
                 if (configurationManager.RetrieveAValue(ConfigurationParameters.ShowAlbumArt))
                     WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
                     {
-                        Wallpaper = new BitmapDrawable(Resources, e.AlbumArt)
+                        Wallpaper = new BitmapDrawable(Resources, e.AlbumArt),
+                        OpacityLevel = (short)opacitylevel,
+                        BlurLevel = 0, //Causes a crash That currently I cant debug, damn, thats why is 0. (No blur) and ignoring the value the used have setted.
+                        WallpaperPoster = WallpaperPoster.MusicPlayer //We must nutify WallpaperPublisher who is posting the wallpaper, otherwise it'll be ignored.
+
                     });
                 GC.Collect(0);
             });
@@ -322,6 +356,7 @@ namespace LiveDisplay.Fragments
                     var wallpaper = new BitmapDrawable(Activity.Resources, albumart);
                     int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtOpacityLevel, 255);
                     int blurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtBlurLevel, 1); //Never used (for now)
+                    CurrentAlbumArt = wallpaper;
 
                     if (configurationManager.RetrieveAValue(ConfigurationParameters.ShowAlbumArt))
                         WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
@@ -329,6 +364,7 @@ namespace LiveDisplay.Fragments
                             Wallpaper= wallpaper,
                             OpacityLevel = (short)opacitylevel,
                             BlurLevel = 0, //Causes a crash That currently I cant debug, damn, thats why is 0. (No blur) and ignoring the value the used have setted.
+                            WallpaperPoster= WallpaperPoster.MusicPlayer //We must nutify WallpaperPublisher who is posting the wallpaper, otherwise it'll be ignored.
                         });
                 });
             });

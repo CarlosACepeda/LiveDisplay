@@ -130,6 +130,14 @@
 
             CheckNotificationListSize();
             OnActivityStateChanged += LockScreenActivity_OnActivityStateChanged;
+            WallpaperPublisher.CurrentWallpaperCleared += WallpaperPublisher_CurrentWallpaperCleared;
+        }
+
+        private void WallpaperPublisher_CurrentWallpaperCleared(object sender, CurrentWallpaperClearedEventArgs e)
+        {
+            //<document me>
+            if(e.PreviousWallpaperPoster== WallpaperPoster.Lockscreen) 
+                LoadWallpaper(new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context)));
         }
 
         private void LockScreenActivity_OnActivityStateChanged(object sender, LockScreenLifecycleEventArgs e)
@@ -186,14 +194,6 @@
                         {
                             StopMusicController();
                             StopFloatingNotificationService();
-                            using (ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context)))
-                            using (var wallpaper = WallpaperManager.GetInstance(Application.Context).Drawable)
-                            {
-                                int savedblurlevel = configurationManager.RetrieveAValue(ConfigurationParameters.BlurLevel, 1);
-                                int savedOpacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, 255);
-                                WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = (BitmapDrawable)wallpaper, OpacityLevel = (short)savedOpacitylevel, BlurLevel = (short)savedblurlevel });
-                            }
-
                         });
 
                     }
@@ -514,52 +514,7 @@
             //Load configurations based on User configs.
             using (ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context)))
             {
-                switch (configurationManager.RetrieveAValue(ConfigurationParameters.ChangeWallpaper, "0"))
-                {
-                    case "0":
-
-                        WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = null });
-                        break;
-
-                    case "1":
-                        bool hasReadStoragePermission = true;
-                        if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1) //In Lollipop and less this permission is granted at Install time.
-                        {
-                            hasReadStoragePermission = Checkers.ThisAppHasReadStoragePermission();
-                        }
-                        if (hasReadStoragePermission)
-                            using (var wallpaper = WallpaperManager.GetInstance(Application.Context).Drawable)
-                            {
-                                int savedblurlevel = configurationManager.RetrieveAValue(ConfigurationParameters.BlurLevel, 1);
-                                int savedOpacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, 255);
-                                 WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = (BitmapDrawable)wallpaper, OpacityLevel = (short)savedOpacitylevel, BlurLevel= (short)savedblurlevel });
-                            }
-                        else
-                        {
-                            RunOnUiThread(() => Toast.MakeText(Application.Context, "You have setted the system wallpaper, but the app can't read it, try to change the Wallpaper option again", ToastLength.Long).Show());
-                        }
-                        break;
-
-                    case "2":
-                        //using (Bitmap bm = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.imagePath, "")))
-                        //{
-                        //    using (var backgroundFactory = new BackgroundFactory())
-                        //    {
-                        //        using (BackgroundFactory blurImage = new BackgroundFactory())
-                        //        {
-                        //            var drawable = blurImage.Difuminar(bm, sa);
-                        //            RunOnUiThread(() =>
-                        //            Window.DecorView.Background = drawable);
-                        //            drawable.Dispose();
-                        //        }
-                        //    }
-                        //}
-                        break;
-
-                    default:
-                        Window.DecorView.SetBackgroundColor(Color.Black);
-                        break;
-                }
+                LoadWallpaper(configurationManager);
                 if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetEnabled) == true)
                 {
                     CheckIfMusicIsPlaying(); //This method is the main entry for the music widget and the floating notification.
@@ -572,6 +527,57 @@
                 }
                 doubletapbehavior = configurationManager.RetrieveAValue(ConfigurationParameters.DoubleTapOnTopActionBehavior, "0");
             }
+        }
+
+        private void LoadWallpaper(ConfigurationManager configurationManager)
+        {
+            switch (configurationManager.RetrieveAValue(ConfigurationParameters.ChangeWallpaper, "0"))
+            {
+                case "0":
+
+                    WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = null, WallpaperPoster= WallpaperPoster.Lockscreen });
+                    break;
+
+                case "1":
+                    bool hasReadStoragePermission = true;
+                    if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1) //In Lollipop and less this permission is granted at Install time.
+                    {
+                        hasReadStoragePermission = Checkers.ThisAppHasReadStoragePermission();
+                    }
+                    if (hasReadStoragePermission)
+                    {
+                        var wallpaper = WallpaperManager.GetInstance(Application.Context).Drawable;
+                        int savedblurlevel = configurationManager.RetrieveAValue(ConfigurationParameters.BlurLevel, 1);
+                        int savedOpacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, 255);
+                        WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = (BitmapDrawable)wallpaper, OpacityLevel = (short)savedOpacitylevel, BlurLevel = (short)savedblurlevel, WallpaperPoster = WallpaperPoster.Lockscreen });
+                    }
+                    else
+                    {
+                        RunOnUiThread(() => Toast.MakeText(Application.Context, "You have setted the system wallpaper, but the app can't read it, try to change the Wallpaper option again", ToastLength.Long).Show());
+                    }
+                    break;
+
+                case "2":
+                    //using (Bitmap bm = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.imagePath, "")))
+                    //{
+                    //    using (var backgroundFactory = new BackgroundFactory())
+                    //    {
+                    //        using (BackgroundFactory blurImage = new BackgroundFactory())
+                    //        {
+                    //            var drawable = blurImage.Difuminar(bm, sa);
+                    //            RunOnUiThread(() =>
+                    //            Window.DecorView.Background = drawable);
+                    //            drawable.Dispose();
+                    //        }
+                    //    }
+                    //}
+                    break;
+
+                default:
+                    Window.DecorView.SetBackgroundColor(Color.Black);
+                    break;
+            }
+
         }
 
         private void LoadNotificationFragment()

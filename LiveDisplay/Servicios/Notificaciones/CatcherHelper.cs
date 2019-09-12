@@ -1,4 +1,5 @@
-﻿using Android.OS;
+﻿using Android.App;
+using Android.OS;
 using Android.Service.Notification;
 using LiveDisplay.Adapters;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
@@ -59,10 +60,29 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         public void OnNotificationPosted(StatusBarNotification sbn)
         {
-            if (!UpdateNotification(sbn))
-            {
-                InsertNotification(sbn);
-            }
+            //Before inserting let's check if this notification represents the summary of a group of notifications.
+            //If not then check if the notification is part of a group, if is then ignore it, because we already have the summary notification. (temporary, the objective
+            //eventually is to make the lockscreen capable of showing a group of notifications, so we can show all the notifications that belong to a group instead of just showing
+            //the notification that represents the summary of all the notifications that belong to that group.
+
+            //only valid since Lollipop, let's see how will i do this for Kitkat.
+            //Other apps are capable of doing it why I not. 
+
+            //if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+            //{
+            //    if (!sbn.Notification.Flags.HasFlag(NotificationFlags.GroupSummary))
+            //    {
+            //        if (statusBarNotifications.Where(no => no.GroupKey == sbn.GroupKey).FirstOrDefault() == null)
+            //        {
+                        if (!UpdateNotification(sbn))
+                        {
+                            InsertNotification(sbn);
+                        }
+            //        }
+            //    }
+            //}
+
+            
 
             if (statusBarNotifications.Count > 0)
             {

@@ -1,10 +1,13 @@
 ﻿using Android.App;
 using Android.Content.Res;
 using Android.Graphics;
+using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using LiveDisplay.Servicios.Wallpaper;
+using System.Threading;
 
 namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
 {
@@ -33,19 +36,16 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
             switch (which)
             {
                 case BigPictureStyle:
-                    //Idk how to implement this yet.
+                        var notificationBigPicture = new BitmapDrawable(openNotification.BigPicture());
+                        WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
+                        {
+                            BlurLevel=0,
+                            OpacityLevel= 125,
+                            SecondsOfAttention= 5,
+                            Wallpaper= notificationBigPicture,
+                            WallpaperPoster= WallpaperPoster.Notification,
+                        });
 
-                    //ThreadPool.QueueUserWorkItem(method =>
-                    //{
-                    //    var notificationBigPicture = new BitmapDrawable(openNotification.BigPicture());
-                    //using (var h = new Handler(Looper.MainLooper)) //Using UI Thread
-                    //    h.Post(() =>
-                    //    {
-                    //        if (notificationView != null)
-                    //            notificationView.Background = notificationBigPicture;
-                    //    });
-                    //});
-                    ApplyDefault();
                     break;
 
                 case InboxStyle:
