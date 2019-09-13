@@ -19,18 +19,18 @@
         private readonly ConfigurationManager configurationManager = new ConfigurationManager(Application.Context.GetSharedPreferences("weatherpreferences", FileCreationMode.Private));
         private TextView date;
         private TextClock clock;
-        private RelativeLayout weatherclockcontainer;
+        //private RelativeLayout weatherclockcontainer;
         private TextView battery;
         private ImageView batteryIcon;
         private BatteryReceiver batteryReceiver;
         private TextView temperature;
-        private TextView minimumTemperature;
-        private TextView maximumTemperature;
-        private TextView humidity;
+        //private TextView minimumTemperature;
+        //private TextView maximumTemperature;
+        //private TextView humidity;
         private TextView description;
-        private TextView lastupdated;
-        private TextView city;
-        private LinearLayout weatherinfo;
+        //private TextView lastupdated;
+        //private TextView city;
+        //private LinearLayout weatherinfo;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
@@ -54,22 +54,22 @@
             View v = inflater.Inflate(Resource.Layout.cLock, container, false);
             date = v.FindViewById<TextView>(Resource.Id.txtFechaLock);
             clock = v.FindViewById<TextClock>(Resource.Id.clockLock);
-            weatherclockcontainer = v.FindViewById<RelativeLayout>(Resource.Id.weatherclockcontainer);
+            //weatherclockcontainer = v.FindViewById<RelativeLayout>(Resource.Id.weatherclockcontainer);
             battery = v.FindViewById<TextView>(Resource.Id.batteryLevel);
             batteryIcon = v.FindViewById<ImageView>(Resource.Id.batteryIcon);
             temperature = v.FindViewById<TextView>(Resource.Id.temperature);
-            minimumTemperature = v.FindViewById<TextView>(Resource.Id.minimumtemperature);
-            maximumTemperature = v.FindViewById<TextView>(Resource.Id.maximumtemperature);
-            humidity = v.FindViewById<TextView>(Resource.Id.humidity);
+            //minimumTemperature = v.FindViewById<TextView>(Resource.Id.minimumtemperature);
+            //maximumTemperature = v.FindViewById<TextView>(Resource.Id.maximumtemperature);
+            //humidity = v.FindViewById<TextView>(Resource.Id.humidity);
             description = v.FindViewById<TextView>(Resource.Id.weatherdescription);
-            lastupdated = v.FindViewById<TextView>(Resource.Id.lastupdated);
-            city = v.FindViewById<TextView>(Resource.Id.city);
+            //lastupdated = v.FindViewById<TextView>(Resource.Id.lastupdated);
+            //city = v.FindViewById<TextView>(Resource.Id.city);
             LoadDate();
             LoadWeather();
 
             //View Events
             clock.Click += Clock_Click;
-            weatherclockcontainer.Click += Weatherclockcontainer_Click;
+            //weatherclockcontainer.Click += Weatherclockcontainer_Click;
             BatteryReceiver.BatteryInfoChanged += BatteryReceiver_BatteryInfoChanged;
             ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context));
 
@@ -92,27 +92,27 @@
             string weatherlastupdated = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherLastUpdated, string.Empty);
 
             temperature.Text = currentweather;
-            city.Text = thecity;
-            minimumTemperature.Text = minimumtemperature;
-            maximumTemperature.Text = maximumtemperature;
-            humidity.Text = weatherhumidity;
+            //city.Text = thecity;
+            //minimumTemperature.Text = minimumtemperature;
+            //maximumTemperature.Text = maximumtemperature;
+            //humidity.Text = weatherhumidity;
             description.Text = weatherdescription;
-            lastupdated.Text = weatherlastupdated;
+            //lastupdated.Text = weatherlastupdated;
         }
 
         private void Weatherclockcontainer_Click(object sender, EventArgs e)
         {
             var view = sender as View;
-            weatherinfo = view.FindViewById<LinearLayout>(Resource.Id.weatherinfo);
-            if (weatherinfo.Visibility == ViewStates.Visible)
-            {
-                weatherinfo.Visibility = ViewStates.Invisible;
-            }
-            else
-            {
-                weatherinfo.Visibility = ViewStates.Visible;
-            }
-            weatherinfo.Dispose();
+            //weatherinfo = view.FindViewById<LinearLayout>(Resource.Id.weatherinfo);
+            //if (weatherinfo.Visibility == ViewStates.Visible)
+            //{
+            //    weatherinfo.Visibility = ViewStates.Invisible;
+            //}
+            //else
+            //{
+            //    weatherinfo.Visibility = ViewStates.Visible;
+            //}
+            //weatherinfo.Dispose();
         }
 
         public override void OnDestroyView()

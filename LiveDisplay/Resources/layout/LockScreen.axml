@@ -42,7 +42,7 @@
     -->
     <LinearLayout
 			
-                a:layout_weight="73"
+                a:layout_weight="79"
                 a:orientation="horizontal"
                 a:layout_width="match_parent"
                 a:weightSum="10"
@@ -65,7 +65,7 @@
      </LinearLayout>
     <!--This FrameLayout contains the clock and later the System icons which aren't available... yet.-->
         <FrameLayout
-            a:layout_weight="18"
+            a:layout_weight="10"
             a:layout_width="match_parent"
             a:layout_height="0dp"
             a:id="@+id/weatherandcLockplaceholder" />
