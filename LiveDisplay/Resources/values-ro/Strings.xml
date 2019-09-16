@@ -14,14 +14,20 @@
   <string name="lockonboot">Blocați ecranul la pornire</string>
   <string name="musicwidgetenabled">Activează Widget de Muzică</string>
   <string name="notificationsettings">Notificări</string>
+  <string name="onehour">1 oră</string>
   <string name="opciones">Opțiuni</string>
   <string name="showalbumart">Arată coperta albumului</string>
   <string name="showclock">Ascunde ceasul</string>
+  <string name="sixhours">6 ore</string>
+  <string name="tenminutes">10 Minute</string>
   <string name="testnotificationtext">Es Ține apăsat pe o notificare din listă o presiona X pentru a o elimina</string>
+  <string name="thirtyminutes">30 Minute</string>
   <string name="turnonnewnotification">Aprinde ecranul</string>
+  <string name="twelvehours">12 ore</string>
   <string name="versionnumber">0.9.0-alpha1</string>
   <string name="wallpaperblur">Blurare</string>
   <string name="wallpaperopacity">Opacitate</string>
   <string name="weatherwidget">Widget de Climă</string>
   <string name="weatherwidgetenabled">Activează Widget de Climă</string>
+  <string name="updateweathereach">Actualizare climă fiecare</string>
 </resources>

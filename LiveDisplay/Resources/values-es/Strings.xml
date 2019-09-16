@@ -50,6 +50,7 @@
   <string name="githubproject">Quieres ayudar?</string>
   <string name="help">Ayuda</string>
   <string name="helptext">Para remover esta app dirígete a \'Administradores de Dispositivos\' en los ajustes de tu dispositivo, desactiva LiveDisplay y luego deinstala normalmente</string>
+  <string name="hidden">Drsd mn dr dk rdbqdsn ptd drsár atrbzmcn</string>
   <string name="hidesystemicons">No mostrar iconos del sistema</string>
   <string name="humidity">Humedad</string>
   <string name="idk">¯\_(ツ)_/¯</string>
@@ -65,6 +66,7 @@
   <string name="nonallowedtoturnonscreen">No permitido para encender la pantalla</string>
   <string name="notificationsettings">Notificaciones</string>
   <string name="notificationviewvisibilitytime">Después de clicar la notificación esconderla después de...</string>
+  <string name="onehour">1 Hora</string>
   <string name="opciones">Opciones</string>
   <string name="partiallyblocked">Solo en la app</string>
   <string name="pickwallpaper">Elige uno</string>
@@ -72,19 +74,24 @@
   <string name="rus">Ruso</string>
   <string name="searchappedittexthint">Nombre de la app...</string>
   <string name="searchapptitle">Busca una aplicación</string>
+  <string name="secretmessageplaceholder">Ingresa la palabra secreta</string>
   <string name="sendtestnotification">Enviar notificacion de prueba</string>
   <string name="settings">Ajustes</string>
   <string name="showalbumart">Mostrar portada del álbum</string>
   <string name="showclock">No mostrar el reloj</string>
+  <string name="sixhours">6 Horas</string>
+  <string name="tenminutes">10 Minutos</string>
   <string name="tenseconds">10 segundos</string>
   <string name="testnotificationtext">Manten presionado una notificación de la lista o presiona X para quitarla</string>
   <string name="testweathersettingsbutton">Pruébame</string>
+  <string name="thirtyminutes">30 Minutos</string>
   <string name="translations">Traducciones</string>
   <string name="turnoffdelay">Apagar pantalla automaticamente</string>
   <string name="turnoffdelay_desc">Si la pantalla se enciende(p.e.j. una nueva notificación llega) y no hay interaccion por parte del usuario, apagar la pantalla en...</string>
   <string name="turnonnewnotification">Encender pantalla</string>
   <string name="turnonnewnotification_desc">Prender la pantalla si una nueva notificacion llega</string>
   <string name="turnonusermovement">Prender la pantalla al levantar el dispositivo</string>
+  <string name="twelvehours">12 Horas</string>
   <string name="useimperialunits">Usar unidades imperiales</string>
   <string name="version">Versión</string>
   <string name="versionnumber">0.9.0-alpha1</string>
@@ -97,6 +104,5 @@
   <string name="weatherwidgetenabled">Activar el Widget del Clima</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">Diseño del icono de esta app!</string>
-  <string name="secretmessageplaceholder">Ingresa la palabra secreta</string>
-  <string name="hidden">Drsd mn dr dk rdbqdsn ptd drsár atrbzmcn</string>
+  <string name="updateweathereach">Actualizar clima cada</string>
 </resources>

@@ -36,9 +36,11 @@
 	android:layout_height="wrap_content" />
 	<TextView
 		tools:text="Update weather each:"
+		android:text="@string/updateweathereach"
 		android:layout_height="wrap_content"
 		android:layout_width="match_parent"/>
 	<Spinner
+		android:id="@+id/weatherupdatefrequency"		
 		android:layout_height="wrap_content"
 		android:layout_width="match_parent"
 	/>

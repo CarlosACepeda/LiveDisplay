@@ -28,6 +28,8 @@
         private TextView minimumTemperature;
         private TextView maximumTemperature;
         private Button trytogetweather;
+        private Spinner weatherupdatefrequency;
+
         private string units = "";
 
         private string currentcity = "";
@@ -57,8 +59,18 @@
             maximumTemperature = FindViewById<TextView>(Resource.Id.maximumtemperature);
             citytext = FindViewById<TextView>(Resource.Id.city);
             humidity = FindViewById<TextView>(Resource.Id.humidity);
+            weatherupdatefrequency = FindViewById<Spinner>(Resource.Id.weatherupdatefrequency);
 
+            var spinnerAdapter = ArrayAdapter.CreateFromResource(this, Resource.Array.listentriesweatherupdatefrequency, Android.Resource.Layout.SimpleSpinnerDropDownItem);
+
+            weatherupdatefrequency.Adapter = spinnerAdapter;
+            weatherupdatefrequency.ItemSelected += Weatherupdatefrequency_ItemSelected; 
             LoadConfiguration();
+        }
+
+        private void Weatherupdatefrequency_ItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
+        {
+            //TODO.
         }
 
         private void Trytogetweather_Click(object sender, System.EventArgs e)
@@ -72,30 +84,11 @@
             {
                 countryCode = tm.NetworkCountryIso;
             }
-            switch (units)
-            {
-                case "imperial":
-                    temperatureSuffix = "°f";
-                    break;
-
-                case "metric":
-                    temperatureSuffix = "°c";
-                    break;
-            }
 
             ThreadPool.QueueUserWorkItem(async m =>
             {
                 var weather = await Weather.GetWeather(currentcity, countryCode, units);
 
-                configurationManager.SaveAValue(ConfigurationParameters.WeatherCity, currentcity);
-                configurationManager.SaveAValue(ConfigurationParameters.WeatherCountryCode, countryCode);
-                configurationManager.SaveAValue(ConfigurationParameters.WeatherDescription, weather?.Weather[0].Description);
-                configurationManager.SaveAValue(ConfigurationParameters.WeatherHumidity, weather?.MainWeather.Humidity.ToString() + "%");
-                configurationManager.SaveAValue(ConfigurationParameters.WeatherLastUpdated, DateTime.Now.ToString("ddd hh:mm"));
-                configurationManager.SaveAValue(ConfigurationParameters.WeatherCurrent, weather?.MainWeather.Temperature.ToString() + temperatureSuffix);
-                configurationManager.SaveAValue(ConfigurationParameters.WeatherMaximum, weather?.MainWeather.MaxTemperature.ToString() + temperatureSuffix);
-                configurationManager.SaveAValue(ConfigurationParameters.WeatherMinimum, weather?.MainWeather.MinTemperature.ToString() + temperatureSuffix);
-                configurationManager.SaveAValue(ConfigurationParameters.WeatherTemperatureMeasureUnit, units);
 
                 RunOnUiThread(() =>
                 {

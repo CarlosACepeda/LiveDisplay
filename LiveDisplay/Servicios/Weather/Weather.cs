@@ -34,7 +34,19 @@ namespace LiveDisplay.Servicios.Weather
                     configurationManager.SaveAValue(ConfigurationParameters.WeatherLastUpdated, DateTime.Now.ToString("ddd" + "," + "hh:mm"));
                     configurationManager.SaveAValue(ConfigurationParameters.WeatherMaximum, weatherRoot.MainWeather.MaxTemperature.ToString());
                     configurationManager.SaveAValue(ConfigurationParameters.WeatherMaximum, weatherRoot.MainWeather.MinTemperature.ToString());
+                    string temperatureSuffix = "--";
+                    switch (measurementunit)
+                    {
+                        case "imperial":
+                            temperatureSuffix = "°f";
+                            break;
 
+                        case "metric":
+                            temperatureSuffix = "°c";
+                            break;
+                    }
+
+                    configurationManager.SaveAValue(ConfigurationParameters.WeatherCurrent, weatherRoot.MainWeather.Temperature.ToString() + temperatureSuffix);
                     string unitsuffix = "°k";
                     switch (measurementunit)
                     {
@@ -46,7 +58,7 @@ namespace LiveDisplay.Servicios.Weather
                             unitsuffix = "°c";
                             break;
                     }
-                    configurationManager.SaveAValue(ConfigurationParameters.WeatherTemperatureUnit, unitsuffix);
+                    configurationManager.SaveAValue(ConfigurationParameters.WeatherTemperatureUnit, unitsuffix); //??????
                     return weatherRoot;
                 }
                 catch

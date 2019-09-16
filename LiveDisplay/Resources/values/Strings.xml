@@ -52,6 +52,7 @@
   <string name="githubproject">Want to help?</string>
   <string name="help">Help</string>
   <string name="helptext">To remove this app go to Settings&gt; Device Administrators, then Uncheck LiveDisplay, now you should be able to uninstall normally</string>
+  <string name="hidden">Sghr hr mns sgd rdbqds xnt zqd knnjhmf enq</string>
   <string name="hidesystemicons">Do not show system icons</string>
   <string name="humidity">Humidity</string>
   <string name="idk">¯\_(ツ)_/¯</string>
@@ -68,6 +69,7 @@
   <string name="nonallowedtoturnonscreen">Non allowed to turn on screen</string>
   <string name="notificationsettings">Notifications</string>
   <string name="notificationviewvisibilitytime">After clicking the notification hide it after...</string>
+  <string name="onehour">1 Hour</string>
   <string name="opciones">Options</string>
   <string name="partiallyblocked">Block only in the app</string>
   <string name="pickwallpaper">Pick one</string>
@@ -75,19 +77,25 @@
   <string name="rus">Russian</string>
   <string name="searchappedittexthint">App name...</string>
   <string name="searchapptitle">Search for an app</string>
+  <string name="secretmessagehint">Wings from Spanish</string>
+  <string name="secretmessageplaceholder">Enter the secret keyword</string>
   <string name="sendtestnotification">Send test notification</string>
   <string name="settings">Settings</string>
   <string name="showalbumart">Show media cover art</string>
   <string name="showclock">Don\'t show the clock</string>
+  <string name="sixhours">6 Hours</string>
+  <string name="tenminutes">10 Minutes</string>
   <string name="tenseconds">10 seconds</string>
   <string name="testnotificationtext">Long press a notification from the list or press the X button to clear it</string>
   <string name="testweathersettingsbutton">Test me!</string>
+  <string name="thirtyminutes">30 Minutes</string>
   <string name="translations">Translations</string>
   <string name="turnoffdelay">Automatically turn screen off</string>
   <string name="turnoffdelay_desc">If the screen turns on(e.g.: A new notification is posted) and there is not user interaction, turn off the screen in...</string>
   <string name="turnonnewnotification">Turn on screen</string>
   <string name="turnonnewnotification_desc">Turn on screen if a new notification is received</string>
   <string name="turnonusermovement">Turn on screen on device pick up</string>
+  <string name="twelvehours">12 Hours</string>
   <string name="useimperialunits">Use Imperial units</string>
   <string name="version">Version</string>
   <string name="versionnumber">0.9.0-alpha1</string>
@@ -100,7 +108,5 @@
   <string name="weatherwidgetenabled">Enable Weather Widget</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
-  <string name="secretmessageplaceholder">Enter the secret keyword</string>
-  <string name="secretmessagehint">Wings from Spanish</string>
-  <string name="hidden">Sghr hr mns sgd rdbqds xnt zqd knnjhmf enq</string>
+  <string name="updateweathereach">Update weather each:</string>
 </resources>
