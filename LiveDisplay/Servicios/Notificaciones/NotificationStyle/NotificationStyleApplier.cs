@@ -80,6 +80,15 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                             actionsViews.AddView(anActionButton);
                         };
                     }
+                    var notificationMediaArtwork = new BitmapDrawable(openNotification.MediaArtwork());
+                    WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
+                    {
+                        BlurLevel = 0,
+                        OpacityLevel = 125,
+                        SecondsOfAttention = 5,
+                        Wallpaper = notificationMediaArtwork,
+                        WallpaperPoster = WallpaperPoster.Notification,
+                    });
 
                     break;
 

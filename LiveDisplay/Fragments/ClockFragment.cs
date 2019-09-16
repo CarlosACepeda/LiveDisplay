@@ -65,7 +65,6 @@
             //lastupdated = v.FindViewById<TextView>(Resource.Id.lastupdated);
             //city = v.FindViewById<TextView>(Resource.Id.city);
             LoadDate();
-            LoadWeather();
 
             //View Events
             clock.Click += Clock_Click;
@@ -79,6 +78,11 @@
                 Activity.RunOnUiThread(() => clock.Visibility = ViewStates.Invisible);
             }
             return v;
+        }
+        public override void OnResume()
+        {
+            LoadWeather();
+            base.OnResume();    
         }
 
         private void LoadWeather()

@@ -2,11 +2,14 @@
 using Android.App.Job;
 using Android.Content;
 using LiveDisplay.Misc;
+using System;
 using System.Threading.Tasks;
 
 namespace LiveDisplay.Servicios.Weather
 {
-    internal class GrabWeatherJob : JobService
+    [Service(Name = "com.underground.livedisplay.DownloadJob",
+         Permission = "android.permission.BIND_JOB_SERVICE")]
+    public class GrabWeatherJob : JobService
     {
         public override bool OnStartJob(JobParameters @params)
         {

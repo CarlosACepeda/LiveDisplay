@@ -5,11 +5,8 @@ namespace LiveDisplay.Servicios.Wallpaper
 {
     public class WallpaperPublisher
     {
-        private static bool payingAttention = false;
         private static WallpaperPoster CurrentWallpaperPoster { get; set; } = WallpaperPoster.None;
         private static WallpaperPoster PreviousWallpaperPoster { get; set; }
-
-        private static bool isWaiting;
 
         public static event EventHandler<CurrentWallpaperClearedEventArgs> CurrentWallpaperCleared; //This event notifies listeners that the wallpaper that was being displayed on the lockscreen has been removed.
                                                                              

@@ -160,6 +160,10 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             return statusbarnotification.Notification.Extras.Get(Notification.ExtraPicture) as Bitmap;
         }
+        internal Bitmap MediaArtwork()
+        {
+            return statusbarnotification.Notification.Extras.Get(Notification.ExtraLargeIcon) as Bitmap;
+        }
 
         internal string Style()
         {
