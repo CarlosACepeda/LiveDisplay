@@ -25,6 +25,7 @@
   <string name="clearallnotifications">Clear all</string>
   <string name="contactme">Contact me</string>
   <string name="contributetoprojectdesc">LiveDisplay on Github</string>
+  <string name="currentwallpaper">Current Wallpaper</string>
   <string name="defaultwallpaper">Default wallpaper</string>
   <string name="defaultwallpaperappearance">Default Wallpaper</string>
   <string name="dialogallowbutton">Allow</string>
@@ -96,6 +97,7 @@
   <string name="turnonnewnotification_desc">Turn on screen if a new notification is received</string>
   <string name="turnonusermovement">Turn on screen on device pick up</string>
   <string name="twelvehours">12 Hours</string>
+  <string name="updateweathereach">Update weather each:</string>
   <string name="useimperialunits">Use Imperial units</string>
   <string name="version">Version</string>
   <string name="versionnumber">0.9.0-alpha1</string>
@@ -108,5 +110,5 @@
   <string name="weatherwidgetenabled">Enable Weather Widget</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
-  <string name="updateweathereach">Update weather each:</string>
+  <string name="ok">Ok</string>
 </resources>

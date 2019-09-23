@@ -70,12 +70,28 @@
 
         private void Weatherupdatefrequency_ItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
         {
-            //TODO.
+
+            long interval_minutes = int.Parse(Resources.GetStringArray(Resource.Array.listvaluesweatherupdatefrequency)[e.Position]);
+
+            JobInfo.Builder jobBuilder = new JobInfo.Builder(56114281, new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(GrabWeatherJob))));
+            jobBuilder.SetPersisted(true);
+            jobBuilder.SetPeriodic(1000*60* interval_minutes);
+            jobBuilder.SetRequiredNetworkType(Android.App.Job.NetworkType.Unmetered);
+            JobScheduler jobScheduler = (JobScheduler)Application.Context.GetSystemService(Context.JobSchedulerService);
+            int result = jobScheduler.Schedule(jobBuilder.Build());
+            if (result == JobScheduler.ResultSuccess)
+            {
+                Log.Info("LiveDisplay", "Job Result Sucess");
+            }
+            else
+            {
+                Log.Info("LiveDisplay", "Job Result Not Sucess");
+            }
+
         }
 
         private void Trytogetweather_Click(object sender, System.EventArgs e)
         {
-            trytogetweather.Text = "wait...";
             trytogetweather.Enabled = false;
 
             string countryCode = "";
@@ -98,24 +114,24 @@
                     citytext.Text = weather?.Name + ": " + weather?.Weather[0].Description;
                     humidity.Text = Resources.GetString(Resource.String.humidity) + ": " + weather?.MainWeather.Humidity.ToString();
 
-                    trytogetweather.Text = "Test me";
+                    trytogetweather.Text =  GetString(Resource.String.testweathersettingsbutton);
                     trytogetweather.Enabled = true;
                 });
 
                 ;
-                JobInfo.Builder jobBuilder = new JobInfo.Builder(56114281, new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(GrabWeatherJob))));
-                jobBuilder.SetPersisted(true);
-                jobBuilder.SetPeriodic(1000 * 60 * 15); //15 Minutes.
-                JobScheduler jobScheduler = (JobScheduler)Application.Context.GetSystemService(Context.JobSchedulerService);
-                int result = jobScheduler.Schedule(jobBuilder.Build());
-                if (result == JobScheduler.ResultSuccess)
-                {
-                    Log.Info("LiveDisplay", "Job Result Sucess");
-                }
-                else
-                {
-                    Log.Info("LiveDisplay", "Job Result Not Sucess");
-                }
+                //JobInfo.Builder jobBuilder = new JobInfo.Builder(56114281, new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(GrabWeatherJob))));
+                //jobBuilder.SetPersisted(true);
+                //jobBuilder.SetPeriodic(1000 * 60 * 15); //15 Minutes.
+                //JobScheduler jobScheduler = (JobScheduler)Application.Context.GetSystemService(Context.JobSchedulerService);
+                //int result = jobScheduler.Schedule(jobBuilder.Build());
+                //if (result == JobScheduler.ResultSuccess)
+                //{
+                //    Log.Info("LiveDisplay", "Job Result Sucess");
+                //}
+                //else
+                //{
+                //    Log.Info("LiveDisplay", "Job Result Not Sucess");
+                //}
             });
         }
 

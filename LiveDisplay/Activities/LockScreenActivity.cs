@@ -336,6 +336,8 @@
             {
                 CheckIfMusicIsStillPaused();
             }
+            //LoadWallpaper(new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context)));
+
         }
 
         private void MusicControllerKitkat_MusicPaused(object sender, EventArgs e)
@@ -531,24 +533,22 @@
 
         private void LoadWallpaper(ConfigurationManager configurationManager)
         {
+
+            int savedblurlevel = configurationManager.RetrieveAValue(ConfigurationParameters.BlurLevel, 1);
+            int savedOpacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, 255);
+
             switch (configurationManager.RetrieveAValue(ConfigurationParameters.ChangeWallpaper, "0"))
             {
+
                 case "0":
 
                     WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = null, WallpaperPoster= WallpaperPoster.Lockscreen });
                     break;
 
                 case "1":
-                    bool hasReadStoragePermission = true;
-                    if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1) //In Lollipop and less this permission is granted at Install time.
-                    {
-                        hasReadStoragePermission = Checkers.ThisAppHasReadStoragePermission();
-                    }
-                    if (hasReadStoragePermission)
+                    if (Checkers.ThisAppHasReadStoragePermission())
                     {
                         var wallpaper = WallpaperManager.GetInstance(Application.Context).Drawable;
-                        int savedblurlevel = configurationManager.RetrieveAValue(ConfigurationParameters.BlurLevel, 1);
-                        int savedOpacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, 255);
                         WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = (BitmapDrawable)wallpaper, OpacityLevel = (short)savedOpacitylevel, BlurLevel = (short)savedblurlevel, WallpaperPoster = WallpaperPoster.Lockscreen });
                     }
                     else
@@ -558,19 +558,22 @@
                     break;
 
                 case "2":
-                    //using (Bitmap bm = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.imagePath, "")))
-                    //{
-                    //    using (var backgroundFactory = new BackgroundFactory())
-                    //    {
-                    //        using (BackgroundFactory blurImage = new BackgroundFactory())
-                    //        {
-                    //            var drawable = blurImage.Difuminar(bm, sa);
-                    //            RunOnUiThread(() =>
-                    //            Window.DecorView.Background = drawable);
-                    //            drawable.Dispose();
-                    //        }
-                    //    }
-                    //}
+
+                    var imagePath = configurationManager.RetrieveAValue(ConfigurationParameters.ImagePath, "");
+                    if (imagePath != "")
+                    {
+                        ThreadPool.QueueUserWorkItem(m =>
+                        {
+                            using (Bitmap bitmap = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.ImagePath, imagePath)))
+                            {
+                                BlurImage blurImage = new BlurImage(Application.Context);
+                                blurImage.Load(bitmap).Intensity(savedblurlevel).Async(true);
+                                Drawable drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
+                                WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = new BitmapDrawable(bitmap), OpacityLevel = (short)savedOpacitylevel, BlurLevel = (short)savedblurlevel, WallpaperPoster = WallpaperPoster.Lockscreen });
+                            }
+                        });
+
+                    }                        
                     break;
 
                 default:

@@ -14,14 +14,14 @@
       android:key="lockonboot?"
       android:title="@string/lockonboot">
     </SwitchPreference>
-    <ListPreference
+    <!--<ListPreference
       android:defaultValue="0"
       android:key="changewallpaper"
       android:title="@string/changewallpaper"
       android:text="@string/changewallpaperdesc"
       android:entries="@array/listentrieschangewallpaper"
       android:entryValues="@array/listvalueschangewallpaper">
-    </ListPreference>
+    </ListPreference>-->
     <Preference
       android:key="wallpapersettings"
       android:title="@string/changewallpaperappearance"
@@ -43,11 +43,11 @@
     </PreferenceCategory>
     <PreferenceCategory
       android:title="@string/weatherwidget">
-      <SwitchPreference
+      <!--<SwitchPreference
         android:defaultValue="false"
         android:key="weatherwidgetenabled?"
         android:title="@string/weatherwidgetenabled">
-      </SwitchPreference>
+      </SwitchPreference>-->
       <Preference
         android:key="weathersettings"
         android:title="@string/changeweatherpreferences"

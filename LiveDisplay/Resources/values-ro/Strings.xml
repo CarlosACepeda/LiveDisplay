@@ -24,10 +24,10 @@
   <string name="thirtyminutes">30 Minute</string>
   <string name="turnonnewnotification">Aprinde ecranul</string>
   <string name="twelvehours">12 ore</string>
+  <string name="updateweathereach">Actualizare climă fiecare</string>
   <string name="versionnumber">0.9.0-alpha1</string>
   <string name="wallpaperblur">Blurare</string>
   <string name="wallpaperopacity">Opacitate</string>
   <string name="weatherwidget">Widget de Climă</string>
   <string name="weatherwidgetenabled">Activează Widget de Climă</string>
-  <string name="updateweathereach">Actualizare climă fiecare</string>
 </resources>
