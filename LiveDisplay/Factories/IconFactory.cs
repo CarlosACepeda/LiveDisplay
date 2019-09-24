@@ -28,7 +28,7 @@
         {
             Context remotePackageContext = null;
             remotePackageContext = Application.Context.CreatePackageContext(paquete, 0);
-            return remotePackageContext.GetDrawable(icon);
+            return remotePackageContext.Resources.GetDrawable(icon);
         }
     }
 }

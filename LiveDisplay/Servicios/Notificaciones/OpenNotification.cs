@@ -241,7 +241,7 @@ namespace LiveDisplay.Servicios.Notificaciones
                 }
                 else
                 {
-                    return IconFactory.ReturnActionIconDrawable(action.Class.GetField("icon").GetInt(action.Class), action.ActionIntent.CreatorPackage);
+                    return IconFactory.ReturnActionIconDrawable(action.JniPeerMembers.InstanceFields.GetInt32Value("icon.I", action), action.ActionIntent.CreatorPackage);
                 }
             }
             catch
