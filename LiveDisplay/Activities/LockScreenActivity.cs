@@ -56,7 +56,7 @@
         private bool isMusicWidgetPresent;
         private ActivityStates currentActivityState;
         private ViewPropertyAnimator viewPropertyAnimator;
-
+        private ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context));
         public static event EventHandler<LockScreenLifecycleEventArgs> OnActivityStateChanged;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -224,8 +224,10 @@
                         e.Wallpaper = new BitmapDrawable(Resources, blurImage.GetImageBlur());
                     }
                 }
-
-                Window.DecorView.Animate().SetDuration(100).Alpha(0.5f);
+                if (configurationManager.RetrieveAValue(ConfigurationParameters.DisableWallpaperChangeAnim) == false) //If the animation is not disabled.
+                {
+                    Window.DecorView.Animate().SetDuration(100).Alpha(0.5f);
+                }
 
                 if (e.Wallpaper == null)
                 {
@@ -514,21 +516,19 @@
         private void LoadConfiguration()
         {
             //Load configurations based on User configs.
-            using (ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context)))
+            LoadWallpaper(configurationManager);
+            if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetEnabled) == true)
             {
-                LoadWallpaper(configurationManager);
-                if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetEnabled) == true)
-                {
-                    CheckIfMusicIsPlaying(); //This method is the main entry for the music widget and the floating notification.
-                }
-                int interval = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.TurnOffScreenDelayTime, "5000"));
-                watchDog.Interval = interval;
-                if (configurationManager.RetrieveAValue(ConfigurationParameters.EnableAwakeService) == true)
-                {
-                    StartAwakeService();
-                }
-                doubletapbehavior = configurationManager.RetrieveAValue(ConfigurationParameters.DoubleTapOnTopActionBehavior, "0");
+                CheckIfMusicIsPlaying(); //This method is the main entry for the music widget and the floating notification.
             }
+            int interval = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.TurnOffScreenDelayTime, "5000"));
+            watchDog.Interval = interval;
+            if (configurationManager.RetrieveAValue(ConfigurationParameters.EnableAwakeService) == true)
+            {
+                StartAwakeService();
+            }
+            doubletapbehavior = configurationManager.RetrieveAValue(ConfigurationParameters.DoubleTapOnTopActionBehavior, "0");
+            
         }
 
         private void LoadWallpaper(ConfigurationManager configurationManager)

@@ -6,7 +6,6 @@
         public const string ImagePath = "imagePath";
 
         public const string HiddenClock = "hiddenclock?";
-        public const string HiddenSystemIcons = "hiddensystemicons?";
         public const string ChangeWallpaper = "changewallpaper";
         public const string BlurLevel = "blurlevel";
         public const string OpacityLevel = "opacitylevel";
@@ -15,6 +14,7 @@
         public const string DefaultWallpaperSettingsAppliesToAlbumArt = "copywallpsettingsfromdefaultwallpaper";
         public const string LockOnBoot = "lockonboot?";
         public const string DoubleTapOnTopActionBehavior = "doubletapontoppactionbehavior";
+        public const string DisableWallpaperChangeAnim = "disablewallpaperchangeanim?";
 
         //For Music Widget settings
         public const string MusicWidgetEnabled = "musicwidgetenabled?";

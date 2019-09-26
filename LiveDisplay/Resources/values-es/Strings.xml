@@ -30,6 +30,7 @@
   <string name="dialogcancelbutton">Cancelar</string>
   <string name="dialogcancelledclick">Muy bien, puedes cambiar esta opción después en la sección \'Notificaciones\'</string>
   <string name="dialogfordeviceaccessdescription">Permisos requeridos: \nBloquear la pantalla: \nControlar cómo y cuando se apaga la pantalla</string>
+  <string name="disablewallpapertransitionanim">Deshabilitar la animación del Papel Tapiz</string>
   <string name="doubletapinvertedbehavior">Invertido</string>
   <string name="doubletapnormalbehavior">Normal</string>
   <string name="doubletaptopaction">Comportamiento de la doble pulsación</string>
@@ -67,6 +68,7 @@
   <string name="nonallowedtoturnonscreen">No permitido para encender la pantalla</string>
   <string name="notificationsettings">Notificaciones</string>
   <string name="notificationviewvisibilitytime">Después de clicar la notificación esconderla después de...</string>
+  <string name="ok">Ok</string>
   <string name="onehour">1 Hora</string>
   <string name="opciones">Opciones</string>
   <string name="partiallyblocked">Solo en la app</string>
@@ -106,5 +108,5 @@
   <string name="weatherwidgetenabled">Activar el Widget del Clima</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">Diseño del icono de esta app!</string>
-  <string name="ok">Ok</string>
+  <string name="disablewallpapertransitionanimdesc">Mejora el rendimiento</string>
 </resources>

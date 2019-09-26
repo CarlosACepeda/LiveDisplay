@@ -32,6 +32,7 @@
   <string name="dialogcancelbutton">Cancel</string>
   <string name="dialogcancelledclick">Ok, you can change this setting later in Notifications section!</string>
   <string name="dialogfordeviceaccessdescription">Permissions required:  \nLock screen: Control how and when to lock the screen</string>
+  <string name="disablewallpapertransitionanim">Disable Wallpaper animation</string>
   <string name="doubletapinvertedbehavior">Inverted</string>
   <string name="doubletapnormalbehavior">Normal</string>
   <string name="doubletaptopaction">Double tap behavior</string>
@@ -70,6 +71,7 @@
   <string name="nonallowedtoturnonscreen">Non allowed to turn on screen</string>
   <string name="notificationsettings">Notifications</string>
   <string name="notificationviewvisibilitytime">After clicking the notification hide it after...</string>
+  <string name="ok">Ok</string>
   <string name="onehour">1 Hour</string>
   <string name="opciones">Options</string>
   <string name="partiallyblocked">Block only in the app</string>
@@ -110,5 +112,5 @@
   <string name="weatherwidgetenabled">Enable Weather Widget</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
-  <string name="ok">Ok</string>
+  <string name="disablewallpapertransitionanimdesc">Improves performance</string>
 </resources>
