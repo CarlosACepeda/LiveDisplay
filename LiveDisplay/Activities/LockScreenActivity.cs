@@ -236,6 +236,7 @@
                 else
                 {
                     e.Wallpaper.Alpha= e.OpacityLevel;
+                    Window.SetBackgroundDrawable(null); //Clear wallpaper first(?)
                     Window.SetBackgroundDrawable(e.Wallpaper);
                 }
             });
@@ -342,10 +343,7 @@
 
         }
 
-        private void MusicControllerKitkat_MusicPaused(object sender, EventArgs e)
-        {
-            CheckIfMusicIsStillPaused();
-        }
+        private void MusicControllerKitkat_MusicPaused(object sender, EventArgs e) => CheckIfMusicIsStillPaused();
 
         private void MusicControllerKitkat_MusicPlaying(object sender, EventArgs e)
         {
@@ -515,12 +513,13 @@
 
         private void LoadConfiguration()
         {
-            //Load configurations based on User configs.
+            //Load configurations based on User configurations.
             LoadWallpaper(configurationManager);
             if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetEnabled) == true)
             {
                 CheckIfMusicIsPlaying(); //This method is the main entry for the music widget and the floating notification.
             }
+
             int interval = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.TurnOffScreenDelayTime, "5000"));
             watchDog.Interval = interval;
             if (configurationManager.RetrieveAValue(ConfigurationParameters.EnableAwakeService) == true)
@@ -548,12 +547,13 @@
                 case "1":
                     if (Checkers.ThisAppHasReadStoragePermission())
                     {
+                        WallpaperManager.GetInstance(Application.Context).ForgetLoadedWallpaper();
                         var wallpaper = WallpaperManager.GetInstance(Application.Context).Drawable;
                         WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = (BitmapDrawable)wallpaper, OpacityLevel = (short)savedOpacitylevel, BlurLevel = (short)savedblurlevel, WallpaperPoster = WallpaperPoster.Lockscreen });
                     }
                     else
                     {
-                        RunOnUiThread(() => Toast.MakeText(Application.Context, "You have setted the system wallpaper, but the app can't read it, try to change the Wallpaper option again", ToastLength.Long).Show());
+                        RunOnUiThread(() => Toast.MakeText(Application.Context, "You have set the system wallpaper, but the app can't read it, try to change the Wallpaper option again", ToastLength.Long).Show());
                     }
                     break;
 

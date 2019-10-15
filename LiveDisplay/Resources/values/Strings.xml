@@ -33,6 +33,7 @@
   <string name="dialogcancelledclick">Ok, you can change this setting later in Notifications section!</string>
   <string name="dialogfordeviceaccessdescription">Permissions required:  \nLock screen: Control how and when to lock the screen</string>
   <string name="disablewallpapertransitionanim">Disable Wallpaper animation</string>
+  <string name="disablewallpapertransitionanimdesc">Improves performance</string>
   <string name="doubletapinvertedbehavior">Inverted</string>
   <string name="doubletapnormalbehavior">Normal</string>
   <string name="doubletaptopaction">Double tap behavior</string>
@@ -57,7 +58,7 @@
   <string name="hidden">Sghr hr mns sgd rdbqds xnt zqd knnjhmf enq</string>
   <string name="hidesystemicons">Do not show system icons</string>
   <string name="humidity">Humidity</string>
-  <string name="idk">¯\_(ツ)_/¯</string>
+  <string name="idk">¯\\_(ツ)_/¯</string>
   <string name="immediately">Immediately</string>
   <string name="inactivetimesettings">Inactive hours</string>
   <string name="inactivetimesettingsdesc">Disable Awake at certain hours</string>
@@ -112,5 +113,4 @@
   <string name="weatherwidgetenabled">Enable Weather Widget</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
-  <string name="disablewallpapertransitionanimdesc">Improves performance</string>
 </resources>

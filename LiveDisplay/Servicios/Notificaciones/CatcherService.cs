@@ -165,7 +165,7 @@ namespace LiveDisplay.Servicios
                 if ((notification.IsOngoing == false || notification.Notification.Flags.HasFlag(NotificationFlags.NoClear)) && notification.IsClearable == true)
                 {
                     statusBarNotifications.Add(notification);
-                    //var test1= notification.Notification.Extras.GetString(Notification.ExtraTemplate);
+                    //var test1 = notification.Notification.Extras.GetString(Notification.ExtraTemplate);
                     //var test2 = notification.Notification.Extras;
                     //var test3 = notification.Notification.Flags;
                     //var test4 = notification.Notification.Extras.GetCharSequence(Notification.ExtraSummaryText);
@@ -180,22 +180,28 @@ namespace LiveDisplay.Servicios
         //No se puede implementar. :/
         private void GetRemoteInput(StatusBarNotification sbn)
         {
+            Intent intent = new Intent();
+            Bundle bundle = new Bundle();
             RemoteInput remoteInput;
             if (sbn.Notification.Actions != null)
                 foreach (var item in sbn.Notification.Actions)
                 {
-                    List<RemoteInput> remoteInputs;
+                    RemoteInput[] remoteInputs;
                     if (item.GetRemoteInputs() != null)
                     {
-                        remoteInputs = item.GetRemoteInputs().ToList();
+                        remoteInputs = item.GetRemoteInputs();
                         foreach (var remoteinput in remoteInputs)
                         {
                             if (remoteinput.ResultKey != null)
                             {
                                 remoteInput = remoteinput;
-                                remoteInput.Extras.PutCharSequence(remoteinput.ResultKey, ":)");
-                                item.Extras.PutCharSequence(remoteinput.ResultKey, ":)");
-                                item.ActionIntent.Send();
+                                bundle.PutCharSequence(remoteinput.ResultKey, string.Empty);
+
+                                RemoteInput.AddResultsToIntent(remoteInputs, intent, bundle) ;
+
+                                //remoteInput.Extras.PutCharSequence(remoteinput.ResultKey, ":)");
+                                //item.Extras.PutCharSequence(remoteinput.ResultKey, ":)");
+                                item.ActionIntent.Send(Application.Context, Result.Ok, intent);
                                 var i = item.ActionIntent;
 
                                 break;

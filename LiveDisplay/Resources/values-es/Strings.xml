@@ -31,6 +31,7 @@
   <string name="dialogcancelledclick">Muy bien, puedes cambiar esta opción después en la sección \'Notificaciones\'</string>
   <string name="dialogfordeviceaccessdescription">Permisos requeridos: \nBloquear la pantalla: \nControlar cómo y cuando se apaga la pantalla</string>
   <string name="disablewallpapertransitionanim">Deshabilitar la animación del Papel Tapiz</string>
+  <string name="disablewallpapertransitionanimdesc">Mejora el rendimiento</string>
   <string name="doubletapinvertedbehavior">Invertido</string>
   <string name="doubletapnormalbehavior">Normal</string>
   <string name="doubletaptopaction">Comportamiento de la doble pulsación</string>
@@ -55,7 +56,7 @@
   <string name="hidden">Drsd mn dr dk rdbqdsn ptd drsár atrbzmcn</string>
   <string name="hidesystemicons">No mostrar iconos del sistema</string>
   <string name="humidity">Humedad</string>
-  <string name="idk">¯\_(ツ)_/¯</string>
+  <string name="idk">¯\\_(ツ)_/¯</string>
   <string name="immediately">De inmediato</string>
   <string name="inactivetimesettings">Horas inactivas</string>
   <string name="inactivetimesettingsdesc">Desactivar Awake en ciertas horas</string>
@@ -108,5 +109,4 @@
   <string name="weatherwidgetenabled">Activar el Widget del Clima</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">Diseño del icono de esta app!</string>
-  <string name="disablewallpapertransitionanimdesc">Mejora el rendimiento</string>
 </resources>

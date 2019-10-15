@@ -23,7 +23,7 @@
             return icon.LoadDrawable(remotePackageContext);
         }
 
-        //Overload for Retrieving Action Buttons on Lollipop an less.
+        //Overload for Retrieving Action Buttons in Lollipop and less.
         public static Drawable ReturnActionIconDrawable(int icon, string paquete)
         {
             Context remotePackageContext = null;

@@ -268,6 +268,11 @@ namespace LiveDisplay.Servicios.Notificaciones
             return action.GetRemoteInputs()[1].Label;
         }
 
+        public bool SendInlineResponse(string responseText)
+        {
+            return true;
+        }
+
         public void Dispose()
         {
             action.Dispose();
