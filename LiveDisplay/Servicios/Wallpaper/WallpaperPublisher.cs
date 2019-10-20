@@ -25,14 +25,18 @@ namespace LiveDisplay.Servicios.Wallpaper
                 CurrentWallpaperPoster = e.WallpaperPoster;
             }
 
+            bool alreadywaiting = false;
             //The seconds of attention Property is to indicate for how long should the Lockscreen (or any listener of NewWallpaperIssued event) show this Wallpaper. 
             //After the time has passed we notify that the wallpaper is now cleared (which means that any caller can now set another wallpaper)
             if (e.SecondsOfAttention > 0)
             {
+                if(alreadywaiting==false)
                 ThreadPool.QueueUserWorkItem(method =>
                 {
+                    alreadywaiting = true;
                     Thread.Sleep(e.SecondsOfAttention * 1000);
                     CurrentWallpaperCleared?.Invoke(null, new CurrentWallpaperClearedEventArgs { PreviousWallpaperPoster = PreviousWallpaperPoster });
+                    alreadywaiting = false;
                 }
                 );
             }

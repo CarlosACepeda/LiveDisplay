@@ -39,6 +39,16 @@
 				android:layout_height="wrap_content"
 				android:textSize="12dp"
 				android:id="@+id/tvWhen" />
+            <Space
+                android:layout_width="3dp"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:textSize="12dp"
+                android:id="@+id/tvnotifSubtext"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:textColor="@color/primary_text_default_material_dark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
 		</LinearLayout>
 		<ImageButton
 			android:id="@+id/closenotificationbutton"
@@ -86,6 +96,7 @@
 			android:visibility="gone"
 			>
 			<EditText
+                android:inputType="text"
 				android:hint="bash"
 				android:id="@+id/tvInlineText"
 				android:layout_width="0dp"

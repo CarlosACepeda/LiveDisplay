@@ -42,9 +42,9 @@
     <BundleAssemblies>false</BundleAssemblies>
     <Debugger>Xamarin</Debugger>
     <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
-    <EnableProguard>false</EnableProguard>
     <AndroidCreatePackagePerAbi>false</AndroidCreatePackagePerAbi>
     <AndroidEnableMultiDex>false</AndroidEnableMultiDex>
+    <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>

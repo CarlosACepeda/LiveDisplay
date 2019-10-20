@@ -4102,6 +4102,9 @@ namespace LiveDisplay
 			// aapt resource value: 0x7F0900F7
 			public const int tvInlineText = 2131296503;
 			
+			// aapt resource value: 0x7F0900FC
+			public const int tvnotifSubtext = 2131296508;
+			
 			// aapt resource value: 0x7F0900F8
 			public const int tvSongName = 2131296504;
 			
@@ -4114,53 +4117,53 @@ namespace LiveDisplay
 			// aapt resource value: 0x7F0900FB
 			public const int tvWhen = 2131296507;
 			
-			// aapt resource value: 0x7F0900FC
-			public const int txtFechaLock = 2131296508;
-			
 			// aapt resource value: 0x7F0900FD
-			public const int uniform = 2131296509;
+			public const int txtFechaLock = 2131296509;
 			
 			// aapt resource value: 0x7F0900FE
-			public const int unlabeled = 2131296510;
+			public const int uniform = 2131296510;
 			
 			// aapt resource value: 0x7F0900FF
-			public const int up = 2131296511;
-			
-			// aapt resource value: 0x7F090101
-			public const int useimperialsystem = 2131296513;
+			public const int unlabeled = 2131296511;
 			
 			// aapt resource value: 0x7F090100
-			public const int useLogo = 2131296512;
+			public const int up = 2131296512;
 			
 			// aapt resource value: 0x7F090102
-			public const int view_offset_helper = 2131296514;
+			public const int useimperialsystem = 2131296514;
+			
+			// aapt resource value: 0x7F090101
+			public const int useLogo = 2131296513;
 			
 			// aapt resource value: 0x7F090103
-			public const int visible = 2131296515;
-			
-			// aapt resource value: 0x7F090105
-			public const int wallpaperbeingsetted = 2131296517;
+			public const int view_offset_helper = 2131296515;
 			
 			// aapt resource value: 0x7F090104
-			public const int wallpaperPreview = 2131296516;
+			public const int visible = 2131296516;
 			
 			// aapt resource value: 0x7F090106
-			public const int weatherandcLockplaceholder = 2131296518;
+			public const int wallpaperbeingsetted = 2131296518;
+			
+			// aapt resource value: 0x7F090105
+			public const int wallpaperPreview = 2131296517;
 			
 			// aapt resource value: 0x7F090107
-			public const int weatherclockcontainer = 2131296519;
+			public const int weatherandcLockplaceholder = 2131296519;
 			
 			// aapt resource value: 0x7F090108
-			public const int weatherdescription = 2131296520;
+			public const int weatherclockcontainer = 2131296520;
 			
 			// aapt resource value: 0x7F090109
-			public const int weatherupdatefrequency = 2131296521;
+			public const int weatherdescription = 2131296521;
 			
 			// aapt resource value: 0x7F09010A
-			public const int withText = 2131296522;
+			public const int weatherupdatefrequency = 2131296522;
 			
 			// aapt resource value: 0x7F09010B
-			public const int wrap_content = 2131296523;
+			public const int withText = 2131296523;
+			
+			// aapt resource value: 0x7F09010C
+			public const int wrap_content = 2131296524;
 			
 			static Id()
 			{

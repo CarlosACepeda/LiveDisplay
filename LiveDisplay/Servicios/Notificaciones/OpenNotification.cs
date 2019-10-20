@@ -1,9 +1,11 @@
 ﻿using Android.App;
+using Android.Content;
 using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Service.Notification;
 using Android.Util;
+using Java.Util;
 using LiveDisplay.Factories;
 using LiveDisplay.Misc;
 using System;
@@ -71,7 +73,17 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
 
         }
-
+        public string SubText()
+        {
+            try
+            {
+                return statusbarnotification.Notification.Extras.GetCharSequence(Notification.ExtraSubText).ToString();
+            }
+            catch
+            {
+                return null;
+            }
+        }
         public void ClickNotification()
         {
             try
@@ -134,7 +146,7 @@ namespace LiveDisplay.Servicios.Notificaciones
                 {
                     Java.Util.Calendar calendar = Java.Util.Calendar.Instance;
                     calendar.TimeInMillis = statusbarnotification.Notification.When;
-                    return string.Concat(calendar.Get(Java.Util.CalendarField.Hour), ":", calendar.Get(Java.Util.CalendarField.Minute));
+                    return string.Format("{0:D2}:{1:D2} {2}", calendar.Get(CalendarField.Hour), calendar.Get(CalendarField.Minute), calendar.GetDisplayName((int)CalendarField.AmPm, (int)CalendarStyle.Short, Locale.Default));
                 }
                 return string.Empty;
             }
@@ -230,6 +242,19 @@ namespace LiveDisplay.Servicios.Notificaciones
                 Log.Info("LiveDisplay", "Click notification action failed");
             }
         }
+        public bool ActionRepresentDirectReply()
+        {
+            var remoteInputs = action.GetRemoteInputs();
+            if (remoteInputs == null || remoteInputs?.Length == 0) return false;
+
+            //In order to consider an action who represents a Direct Reply we check for the ResultKey of that remote input.
+            foreach (var remoteInput in remoteInputs)
+            {
+                if (remoteInput.ResultKey != null)
+                    return true;
+            }
+            return false;
+        }
 
         public Drawable GetActionIcon()
         {
@@ -262,6 +287,39 @@ namespace LiveDisplay.Servicios.Notificaciones
                 }
             }
         }
+        private void GetRemoteInput(StatusBarNotification sbn)
+        {
+            Intent intent = new Intent();
+            Bundle bundle = new Bundle();
+            RemoteInput remoteInput;
+            if (sbn.Notification.Actions != null)
+                foreach (var item in sbn.Notification.Actions)
+                {
+                    RemoteInput[] remoteInputs;
+                    if (item.GetRemoteInputs() != null)
+                    {
+                        remoteInputs = item.GetRemoteInputs();
+                        foreach (var remoteinput in remoteInputs)
+                        {
+                            if (remoteinput.ResultKey != null)
+                            {
+                                remoteInput = remoteinput;
+                                bundle.PutCharSequence(remoteinput.ResultKey, string.Empty);
+
+                                RemoteInput.AddResultsToIntent(remoteInputs, intent, bundle);
+
+                                //remoteInput.Extras.PutCharSequence(remoteinput.ResultKey, ":)");
+                                //item.Extras.PutCharSequence(remoteinput.ResultKey, ":)");
+                                item.ActionIntent.Send(Application.Context, Result.Ok, intent);
+                                var i = item.ActionIntent;
+
+                                break;
+                            }
+                        }
+                    }
+                }
+        }
+
 
         public string GetPlaceholderTextForInlineResponse()
         {

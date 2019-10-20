@@ -21,6 +21,18 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
         private const string InboxStyle = "android.app.Notification$InboxStyle";
         private const string MediaStyle = "android.app.Notification$MediaStyle";
         private const string MessagingStyle = "android.app.Notification$MessagingStyle"; //Only available on API Level 24 and up.
+        private const string BigTextStyle = "android.app.Notification$BigTextStyle";
+
+
+        private LinearLayout notificationActions;
+        private TextView titulo;
+        private TextView texto;
+        private TextView appName;
+        private TextView subtext;
+        private TextView when;
+        private EditText inlineresponse;
+        private Button sendinlineresponse;
+
         private Resources resources;
         private OpenNotification openNotification;
         private View notificationView;
@@ -102,6 +114,11 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                     ApplyDefault();
                     break;
             }
+        }
+
+        private void AnActionButton_Click(object sender, System.EventArgs e)
+        {
+            
         }
 
         private void ApplyDefault()

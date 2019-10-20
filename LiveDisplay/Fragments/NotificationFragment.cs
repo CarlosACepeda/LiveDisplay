@@ -21,6 +21,7 @@ namespace LiveDisplay.Fragments
         private TextView titulo;
         private TextView texto;
         private TextView appName;
+        private TextView subtext;
         private TextView when;
         private LinearLayout notification;
         private ImageButton closenotificationbutton;
@@ -43,6 +44,7 @@ namespace LiveDisplay.Fragments
             titulo = v.FindViewById<TextView>(Resource.Id.tvTitulo);
             when = v.FindViewById<TextView>(Resource.Id.tvWhen);
             appName = v.FindViewById<TextView>(Resource.Id.tvAppName);
+            subtext = v.FindViewById<TextView>(Resource.Id.tvnotifSubtext);
             notification = v.FindViewById<LinearLayout>(Resource.Id.llNotification);
             closenotificationbutton = v.FindViewById<ImageButton>(Resource.Id.closenotificationbutton);
             //Subscribe to events raised by several types.
@@ -110,6 +112,7 @@ namespace LiveDisplay.Fragments
             titulo.Dispose();
             when.Dispose();
             appName.Dispose();
+            subtext.Dispose();
             closenotificationbutton.Dispose();
             base.OnDestroy();
         }
@@ -195,6 +198,7 @@ namespace LiveDisplay.Fragments
                 texto.Text = openNotification.Text();
                 appName.Text = openNotification.AppName();
                 when.Text = openNotification.When();
+                subtext.Text = openNotification.SubText();
                 notificationActions.RemoveAllViews();
                 //Watch out for possible memory leaks here.
                 using (NotificationStyleApplier styleApplier = new NotificationStyleApplier(ref notification, openNotification))
