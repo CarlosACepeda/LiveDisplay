@@ -1,5 +1,7 @@
 ﻿using Android.App;
+using Android.Content;
 using Android.OS;
+using LiveDisplay.Activities;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
 using System;
 
@@ -80,17 +82,17 @@ namespace LiveDisplay.Servicios
             builder.SetContentText(text);
             builder.SetAutoCancel(autoCancellable);
             builder.SetSmallIcon(Resource.Drawable.ic_stat_default_appicon);
+            builder.SetAutoCancel(true);
 
-            //        RemoteInput remoteInput = new RemoteInput.Builder("test")
-            //.SetLabel("Your inline response").Build();
+            RemoteInput remoteInput = new RemoteInput.Builder("test1").SetLabel("This is the place where you write").Build();
 
-            //        Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(SettingsActivity)));
+            Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(SettingsActivity)));
 
-            //        PendingIntent pendingIntent = PendingIntent.GetActivity(Application.Context, 35, intent, PendingIntentFlags.UpdateCurrent);
+            PendingIntent pendingIntent = PendingIntent.GetActivity(Application.Context, 35, intent, PendingIntentFlags.UpdateCurrent);
 
-            //        Notification.Action.Builder action = new Notification.Action.Builder(Resource.Drawable.ic_stat_default_appicon, "Answer", pendingIntent).AddRemoteInput(remoteInput);
+            Notification.Action.Builder action = new Notification.Action.Builder(Resource.Drawable.ic_stat_default_appicon, "Answer", pendingIntent).AddRemoteInput(remoteInput);
 
-            //        builder.AddAction(action.Build());
+            builder.AddAction(action.Build());
 
             notificationManager.Notify(1, builder.Build());
         }
