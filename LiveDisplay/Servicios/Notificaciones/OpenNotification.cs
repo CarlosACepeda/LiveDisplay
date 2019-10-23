@@ -61,15 +61,33 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
 
         }
-        public string[] GetTextLines()
+        public string GetTextLines()
         {
             try
             {
-                return statusbarnotification.Notification.Extras.GetCharSequenceArray(Notification.ExtraTextLines);
+                string textlinesformatted = string.Empty;
+                var textLines= statusbarnotification.Notification.Extras.GetCharSequenceArray(Notification.ExtraTextLines);
+                foreach (var line in textLines)
+                {
+                    textlinesformatted = textlinesformatted + line + " \n"; //Add new line.
+                }
+                return textlinesformatted;
             }
             catch
             {
                 return null;
+            }
+
+        }
+        public string GetBigText()
+        {
+            try
+            {
+                return statusbarnotification.Notification.Extras.Get(Notification.ExtraBigText).ToString();
+            }
+            catch
+            {
+                return "";
             }
 
         }
@@ -196,6 +214,31 @@ namespace LiveDisplay.Servicios.Notificaciones
                 return true;
             }
             return false;
+        }
+        //<test only, check if this notification is part of a group or is a group summary or any info related with group notifications.>
+        internal string GetGroupInfo()
+        {
+            string result = "";
+            if (statusbarnotification.Notification.Flags.HasFlag(NotificationFlags.GroupSummary) == true)
+            {
+                result = result + " This is summary!";
+            }
+            else
+            {
+                result = result + " This is NOT summary!";
+
+            }
+
+            if (Style()!= null)
+                result= result+ "The Style is+ " + Style();
+            else
+                result = result + " It does not have Style!";
+
+            if (statusbarnotification.IsGroup)
+                result = result + " Is Group";
+            else
+                result = result + " Is not group";
+            return result;
         }
 
         public static void SendInlineText(string text)

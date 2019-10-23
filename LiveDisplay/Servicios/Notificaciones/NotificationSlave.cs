@@ -66,7 +66,7 @@ namespace LiveDisplay.Servicios
             builder.SetContentText(text);
             builder.SetAutoCancel(autoCancellable);
 #pragma warning disable CS0618 // 'Notification.Builder.SetPriority(int)' está obsoleto: 'deprecated'
-            builder.SetPriority(Convert.ToInt32(NotificationPriority.Low));
+            builder.SetPriority(Convert.ToInt32(notificationPriority));
 #pragma warning restore CS0618 // 'Notification.Builder.SetPriority(int)' está obsoleto: 'deprecated'
 
             builder.SetSmallIcon(Resource.Drawable.ic_stat_default_appicon);
