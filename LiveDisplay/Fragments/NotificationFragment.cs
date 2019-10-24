@@ -14,9 +14,7 @@ namespace LiveDisplay.Fragments
 {
     public class NotificationFragment : Fragment
     {
-        public static event EventHandler NotificationClicked;
-
-        private int position;
+        private OpenNotification openNotification; //the current OpenNotification instance active.
         private LinearLayout notification;
         private bool timeoutStarted = false;
         private NotificationStyleApplier styleApplier;
@@ -66,6 +64,7 @@ namespace LiveDisplay.Fragments
             CatcherHelper.NotificationUpdated -= CatcherHelper_NotificationUpdated;
             CatcherHelper.NotificationRemoved -= CatcherHelper_NotificationRemoved;
             CatcherHelper.NotificationPosted -= CatcherHelper_NotificationPosted;
+            openNotification.Dispose();
             base.OnDestroy();
         }
 
@@ -88,16 +87,12 @@ namespace LiveDisplay.Fragments
             notification.Visibility = ViewStates.Visible;
             try
             {
-                using (OpenNotification openNotification = new OpenNotification(position))
+                Activity.RunOnUiThread(() => openNotification.ClickNotification());
+                if (openNotification.IsAutoCancellable())
                 {
-                    Activity.RunOnUiThread(() =>
-                    openNotification.ClickNotification()
-                    );
-                    if (OpenNotification.IsAutoCancellable(position) == true)
-                    {
-                        notification.Visibility = ViewStates.Invisible;
-                    }
+                    notification.Visibility = ViewStates.Invisible;
                 }
+
             }
             catch
             {
@@ -107,49 +102,26 @@ namespace LiveDisplay.Fragments
 
         private void ItemLongClicked(object sender, NotificationItemClickedEventArgs e)
         {
-            position = e.Position;
             notification.Visibility = ViewStates.Visible;
-            using (OpenNotification openNotification = new OpenNotification(e.Position))
-            {
-                //If the notification is removable...
-                if (openNotification.IsRemovable())
-                {
-                    //Then remove the notification
-                    using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())
-                    {
-                        if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
-                        {
-                            int notiId = CatcherHelper.statusBarNotifications[position].Id;
-                            string notiTag = CatcherHelper.statusBarNotifications[position].Tag;
-                            string notiPack = CatcherHelper.statusBarNotifications[position].PackageName;
-                            slave.CancelNotification(notiPack, notiTag, notiId);
-                        }
-                        else
-                        {
-                            slave.CancelNotification(CatcherHelper.statusBarNotifications[position].Key);
-                        }
-                    }
-                    notification.Visibility = ViewStates.Invisible;
-                }
-            }
+            openNotification = new OpenNotification(e.StatusBarNotification);
+            openNotification.Cancel();
+             notification.Visibility = ViewStates.Invisible;
+            
         }
 
         private void ItemClicked(object sender, NotificationItemClickedEventArgs e)
         {
-            position = e.Position;
-            using (OpenNotification openNotification = new OpenNotification(e.Position))
-            {
-                Toast.MakeText(Activity, openNotification.GetGroupInfo() , ToastLength.Short).Show();
-                //Watch out for possible memory leaks here.
-                styleApplier?.ApplyStyle(openNotification);
-            }
+            openNotification = new OpenNotification(e.StatusBarNotification);
+            Toast.MakeText(Activity, openNotification.GetGroupInfo(), ToastLength.Short).Show();
+            //Watch out for possible memory leaks here.
+            styleApplier?.ApplyStyle(openNotification);
+
             if (notification.Visibility != ViewStates.Visible)
             {
                 notification.Visibility = ViewStates.Visible;
                 StartTimeout();
             }
 
-            NotificationClicked?.Invoke(null, EventArgs.Empty);
         }
 
         #endregion Events Implementation:

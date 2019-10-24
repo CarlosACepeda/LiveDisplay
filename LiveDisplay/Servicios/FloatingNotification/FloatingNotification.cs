@@ -26,6 +26,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
         private TextView floatingNotificationWhen;
         private LinearLayout floatingNotificationActionsContainer;
         private int position; //Represents the notification position in the NotificationList.
+        private OpenNotification openNotification; //Represents the openNotification instance corresponding with this floating notification.
         private ActivityStates currentActivityState;
 
         public override IBinder OnBind(Intent intent)
@@ -133,7 +134,8 @@ namespace LiveDisplay.Servicios.FloatingNotification
         private void CatcherHelper_NotificationUpdated(object sender, NotificationItemClickedEventArgs e)
         {
             if (position > -1) //Avoid out of bounds exceptions, i guess, the out of bounds value is -1.
-                using (OpenNotification openNotification = new OpenNotification(e.Position))
+                openNotification = new OpenNotification(e.StatusBarNotification);
+                using (OpenNotification openNotification = new OpenNotification(e.StatusBarNotification))
                 {
                     floatingNotificationAppName.Text = openNotification.AppName();
                     floatingNotificationWhen.Text = openNotification.When();
@@ -176,26 +178,12 @@ namespace LiveDisplay.Servicios.FloatingNotification
         {
             position = e.Position;
             if (position > -1) //Avoid out of bounds exceptions, i guess, the out of bounds vaue is -1, i guess, too.
-                using (OpenNotification openNotification = new OpenNotification(e.Position))
+                openNotification = new OpenNotification(e.StatusBarNotification);
+                using (OpenNotification openNotification = new OpenNotification(e.StatusBarNotification))
                 {
-                    if (openNotification.IsRemovable())
-                    {
-                        using (NotificationSlave notificationSlave = NotificationSlave.NotificationSlaveInstance())
-                        {
-                            if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
-                            {
-                                int notiId = CatcherHelper.statusBarNotifications[position].Id;
-                                string notiTag = CatcherHelper.statusBarNotifications[position].Tag;
-                                string notiPack = CatcherHelper.statusBarNotifications[position].PackageName;
-                                notificationSlave.CancelNotification(notiPack, notiTag, notiId);
-                            }
-                            else
-                            {
-                                notificationSlave.CancelNotification(CatcherHelper.statusBarNotifications[position].Key);
-                            }
-                        }
-                        floatingNotificationView.Visibility = ViewStates.Gone;
-                    }
+                    openNotification.Cancel();
+                    floatingNotificationView.Visibility = ViewStates.Gone;
+
                 }
         }
 
@@ -203,7 +191,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
         {
             position = e.Position;
             if (position > -1) //Avoid out of bounds exceptions, i guess, the out of bounds vaue is -1, i guess, too.
-                using (OpenNotification openNotification = new OpenNotification(e.Position))
+                using (OpenNotification openNotification = new OpenNotification(e.StatusBarNotification))
                 {
                     floatingNotificationAppName.Text = openNotification.AppName();
                     floatingNotificationWhen.Text = openNotification.When();
@@ -254,7 +242,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
         private void FloatingNotificationView_Click(object sender, EventArgs e)
         {
             if (position > -1) //Avoid out of bounds exceptions, i guess, the out of bounds vaue is -1, i guess, too.
-                using (OpenNotification openNotification = new OpenNotification(position))
+                using (openNotification)
                     openNotification.ClickNotification();
             floatingNotificationView.Visibility = ViewStates.Gone;
         }

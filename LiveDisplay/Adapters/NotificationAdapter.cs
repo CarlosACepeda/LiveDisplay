@@ -53,6 +53,7 @@
         public static event EventHandler<NotificationItemClickedEventArgs> ItemLongClicked;
 
         public ImageView Icono { get; set; }
+        public OpenNotification OpenNotification { get; set; }
 
         public NotificationAdapterViewHolder(View itemView) : base(itemView)
         {
@@ -63,7 +64,8 @@
 
         private void ItemView_LongClick(object sender, View.LongClickEventArgs e)
         {
-            OnItemLongClicked(LayoutPosition);
+            var statusBarNotification = CatcherHelper.StatusBarNotifications[LayoutPosition];
+            OnItemLongClicked(LayoutPosition, statusBarNotification);
         }
 
         private void ItemView_Click(object sender, EventArgs e)
@@ -71,23 +73,26 @@
             //Simply indicates which item was clicked and after that call NotifyDataSetChanged to changes take effect.
             NotificationAdapter.selectedItem = LayoutPosition;
             CatcherHelper.notificationAdapter.NotifyDataSetChanged();
-
-            OnItemClicked(LayoutPosition);
+            var statusBarNotification = CatcherHelper.StatusBarNotifications[LayoutPosition];
+            OnItemClicked(LayoutPosition, statusBarNotification);
         }
 
-        private void OnItemClicked(int position)
+        private void OnItemClicked(int position, StatusBarNotification sbn)
         {
             ItemClicked?.Invoke(this, new NotificationItemClickedEventArgs
             {
-                Position = position
+                Position = position,
+                StatusBarNotification= sbn
+
             });
         }
 
-        private void OnItemLongClicked(int posiion)
+        private void OnItemLongClicked(int position, StatusBarNotification sbn)
         {
             ItemLongClicked?.Invoke(this, new NotificationItemClickedEventArgs
             {
-                Position = posiion
+                Position = position,
+                StatusBarNotification= sbn
             }
             );
         }

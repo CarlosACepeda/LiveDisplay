@@ -12,7 +12,7 @@ namespace LiveDisplay.Servicios.Notificaciones
     internal class CatcherHelper : Java.Lang.Object
     {
         public static NotificationAdapter notificationAdapter;
-        public static List<StatusBarNotification> statusBarNotifications;
+        public static List<StatusBarNotification> StatusBarNotifications { get; internal set; }
 
         public static event EventHandler NotificationRemoved;
 
@@ -43,7 +43,7 @@ namespace LiveDisplay.Servicios.Notificaciones
         /// </param>
         public CatcherHelper(List<StatusBarNotification> statusBarNotifications)
         {
-            CatcherHelper.statusBarNotifications = statusBarNotifications;
+            StatusBarNotifications = statusBarNotifications;
             notificationAdapter = new NotificationAdapter(statusBarNotifications);
             if (statusBarNotifications.Count > 0)
             {
@@ -84,7 +84,7 @@ namespace LiveDisplay.Servicios.Notificaciones
 
             
 
-            if (statusBarNotifications.Count > 0)
+            if (StatusBarNotifications.Count > 0)
             {
                 OnNotificationListSizeChanged(new NotificationListSizeChangedEventArgs
                 {
@@ -102,10 +102,10 @@ namespace LiveDisplay.Servicios.Notificaciones
             {
                 if (!blockingstatus.HasFlag(LevelsOfAppBlocking.BlockInAppOnly))
                 {
-                    statusBarNotifications.Add(sbn);
+                    StatusBarNotifications.Add(sbn);
 
                     using (var h = new Handler(Looper.MainLooper))
-                        h.Post(() => { notificationAdapter.NotifyItemInserted(statusBarNotifications.Count); });
+                        h.Post(() => { notificationAdapter.NotifyItemInserted(StatusBarNotifications.Count); });
                     OnNotificationPosted(blockingstatus.HasFlag(LevelsOfAppBlocking.None));
                 }
             }
@@ -127,7 +127,9 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             NotificationUpdated?.Invoke(this, new NotificationItemClickedEventArgs
             {
-                Position = position
+                Position = position,
+                StatusBarNotification= StatusBarNotifications[position]
+
             }
             );
         }
@@ -137,8 +139,8 @@ namespace LiveDisplay.Servicios.Notificaciones
             int indice = GetNotificationPosition(sbn);
             if (indice >= 0)
             {
-                statusBarNotifications.RemoveAt(indice);
-                statusBarNotifications.Add(sbn);
+                StatusBarNotifications.RemoveAt(indice);
+                StatusBarNotifications.Add(sbn);
                 using (var h = new Handler(Looper.MainLooper))
                     h.Post(() => { notificationAdapter.NotifyItemChanged(indice); });
 
@@ -153,12 +155,12 @@ namespace LiveDisplay.Servicios.Notificaciones
             int position = GetNotificationPosition(sbn);
             if (position >= 0)
             {
-                statusBarNotifications.RemoveAt(position);
+                StatusBarNotifications.RemoveAt(position);
                 using (var h = new Handler(Looper.MainLooper))
                     h.Post(() => { notificationAdapter.NotifyItemRemoved(position); });
             }
 
-            if (statusBarNotifications.Count == 0)
+            if (StatusBarNotifications.Count == 0)
             {
                 OnNotificationListSizeChanged(new NotificationListSizeChangedEventArgs
                 {
@@ -175,7 +177,7 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         private int GetNotificationPosition(StatusBarNotification sbn)
         {
-            return statusBarNotifications.IndexOf(statusBarNotifications.FirstOrDefault(o => o.Id == sbn.Id && o.PackageName == sbn.PackageName));
+            return StatusBarNotifications.IndexOf(StatusBarNotifications.FirstOrDefault(o => o.Id == sbn.Id && o.PackageName == sbn.PackageName));
         }
 
         private void OnNotificationListSizeChanged(NotificationListSizeChangedEventArgs e)

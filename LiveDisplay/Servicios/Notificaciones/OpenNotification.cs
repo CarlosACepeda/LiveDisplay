@@ -16,15 +16,40 @@ namespace LiveDisplay.Servicios.Notificaciones
 {
     internal class OpenNotification : IDisposable
     {
-        private int position;
         private StatusBarNotification statusbarnotification;
-
-        public OpenNotification(int position)
+        public OpenNotification(StatusBarNotification sbn)
         {
-            this.position = position;
-            statusbarnotification = CatcherHelper.statusBarNotifications[position];
+            statusbarnotification = sbn;
         }
+        private string GetKey()
+        {
+            if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
+                return statusbarnotification.Key;
 
+            return string.Empty;
+        }
+        private int GetId()
+        {
+            return statusbarnotification.Id;
+        }
+        public void Cancel()
+        {
+            if(IsRemovable())
+            using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())
+            {
+
+                if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+                {
+                    slave.CancelNotification(GetPackageName(), GetTag(), GetId());
+                }
+                else
+                {
+                    slave.CancelNotification(GetKey());
+                }
+            }
+        }
+        private string GetTag() => statusbarnotification.Tag;
+        private string GetPackageName() => statusbarnotification.PackageName;
         public string Title()
         {
             try
@@ -207,9 +232,9 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
         }
 
-        public static bool IsAutoCancellable(int position)
+        public bool IsAutoCancellable()
         {
-            if (CatcherHelper.statusBarNotifications[position].Notification.Flags.HasFlag(NotificationFlags.AutoCancel) == true)
+            if (statusbarnotification.Notification.Flags.HasFlag(NotificationFlags.AutoCancel) == true)
             {
                 return true;
             }
@@ -248,8 +273,7 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         public void Dispose()
         {
-            position = -1;
-            statusbarnotification = null;
+            statusbarnotification.Dispose();
         }
     }
 

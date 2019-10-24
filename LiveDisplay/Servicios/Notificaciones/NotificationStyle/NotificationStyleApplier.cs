@@ -53,13 +53,13 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
             closenotificationbutton = notificationView.FindViewById<ImageButton>(Resource.Id.closenotificationbutton);            
             inlineNotificationContainer = notificationView.FindViewById<LinearLayout>(Resource.Id.inlineNotificationContainer);
 
-            closenotificationbutton.Click += Closenotificationbutton_Click;
 
 
         }
 
         public void ApplyStyle(OpenNotification notification)
         {
+            closenotificationbutton.Click += (o, eventargs) => { notification.Cancel(); notificationView.Visibility = ViewStates.Invisible; };
             List<Notification.Action> actions = new List<Notification.Action>();
             if (notification.HasActionButtons() == true)
             {
@@ -103,10 +103,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                             anActionButton.SetTypeface(Typeface.Create("sans-serif-condensed", TypefaceStyle.Normal), TypefaceStyle.Normal);
                             anActionButton.SetMaxLines(1);
                             anActionButton.SetTextColor(Color.White);
-                            anActionButton.Click += (o, eventargs) =>
-                            {
-                                openAction.ClickAction();
-                            };
+                            anActionButton.Click += (o, eventargs) => openAction.ClickAction();
                             anActionButton.Gravity = GravityFlags.CenterVertical;
                             TypedValue outValue = new TypedValue();
                             Application.Context.Theme.ResolveAttribute(Android.Resource.Attribute.SelectableItemBackgroundBorderless, outValue, true);
@@ -369,52 +366,6 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                 }
             }
         }
-
-        private void Closenotificationbutton_Click(object sender, EventArgs e)
-        {
-            
-            //if (notifi.IsRemovable())
-            //{
-            //    using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())
-            //    {
-            //        if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
-            //        {
-            //            int notiId = CatcherHelper.statusBarNotifications[position].Id;
-            //            string notiTag = CatcherHelper.statusBarNotifications[position].Tag;
-            //            string notiPack = CatcherHelper.statusBarNotifications[position].PackageName;
-            //            slave.CancelNotification(notiPack, notiTag, notiId);
-            //        }
-            //        else
-            //        {
-            //            slave.CancelNotification(CatcherHelper.statusBarNotifications[position].Key);
-            //        }
-            //    }
-            //    notificationView.Visibility = ViewStates.Invisible;
-            //    titulo.Text = null;
-            //    texto.Text = null;
-            //    notificationActions.RemoveAllViews();
-            //}                //if (notifi.IsRemovable())
-            //{
-            //    using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())
-            //    {
-            //        if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
-            //        {
-            //            int notiId = CatcherHelper.statusBarNotifications[position].Id;
-            //            string notiTag = CatcherHelper.statusBarNotifications[position].Tag;
-            //            string notiPack = CatcherHelper.statusBarNotifications[position].PackageName;
-            //            slave.CancelNotification(notiPack, notiTag, notiId);
-            //        }
-            //        else
-            //        {
-            //            slave.CancelNotification(CatcherHelper.statusBarNotifications[position].Key);
-            //        }
-            //    }
-            //    notificationView.Visibility = ViewStates.Invisible;
-            //    titulo.Text = null;
-            //    texto.Text = null;
-            //    notificationActions.RemoveAllViews();
-            //}
-        }        
 
         protected override void Dispose(bool disposing)
         {
