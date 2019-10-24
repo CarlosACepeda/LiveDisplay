@@ -14,7 +14,7 @@ using System.Linq;
 
 namespace LiveDisplay.Servicios.Notificaciones
 {
-    internal class OpenNotification : IDisposable
+    internal class OpenNotification:Java.Lang.Object
     {
         private StatusBarNotification statusbarnotification;
         public OpenNotification(StatusBarNotification sbn)
@@ -112,7 +112,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
             catch
             {
-                return "";
+                return string.Empty;
             }
 
         }
@@ -124,7 +124,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
             catch
             {
-                return null;
+                return string.Empty;
             }
         }
         public void ClickNotification()
@@ -270,16 +270,13 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             //Implement me.
         }
-
-        public void Dispose()
-        {
-            statusbarnotification.Dispose();
-        }
     }
 
-    internal class OpenAction : IDisposable
+    internal class OpenAction: Java.Lang.Object
     {
         private Notification.Action action;
+        private RemoteInput remoteInputDirectReply;
+        private RemoteInput[] remoteInputs;
 
         public OpenAction(Notification.Action action)
         {
@@ -311,14 +308,17 @@ namespace LiveDisplay.Servicios.Notificaciones
         }
         public bool ActionRepresentDirectReply()
         {
-            var remoteInputs = action.GetRemoteInputs();
+            remoteInputs = action.GetRemoteInputs();
             if (remoteInputs == null || remoteInputs?.Length == 0) return false;
 
             //In order to consider an action who represents a Direct Reply we check for the ResultKey of that remote input.
             foreach (var remoteInput in remoteInputs)
             {
                 if (remoteInput.ResultKey != null)
+                {
+                    remoteInputDirectReply = remoteInput;
                     return true;
+                }
             }
             return false;
         }
@@ -342,65 +342,33 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
         }
 
-        private void GetRemoteInput()
-        {
-            RemoteInput remoteInput;
-            foreach (var item in action.GetRemoteInputs())
-            {
-                if (item.ResultKey != null)
-                {
-                    remoteInput = item;
-                    break;
-                }
-            }
-        }
-        private void GetRemoteInput(StatusBarNotification sbn)
-        {
-            Intent intent = new Intent();
-            Bundle bundle = new Bundle();
-            RemoteInput remoteInput;
-            if (sbn.Notification.Actions != null)
-                foreach (var item in sbn.Notification.Actions)
-                {
-                    RemoteInput[] remoteInputs;
-                    if (item.GetRemoteInputs() != null)
-                    {
-                        remoteInputs = item.GetRemoteInputs();
-                        foreach (var remoteinput in remoteInputs)
-                        {
-                            if (remoteinput.ResultKey != null)
-                            {
-                                remoteInput = remoteinput;
-                                bundle.PutCharSequence(remoteinput.ResultKey, string.Empty);
-
-                                RemoteInput.AddResultsToIntent(remoteInputs, intent, bundle);
-
-                                //remoteInput.Extras.PutCharSequence(remoteinput.ResultKey, ":)");
-                                //item.Extras.PutCharSequence(remoteinput.ResultKey, ":)");
-                                item.ActionIntent.Send(Application.Context, Result.Ok, intent);
-                                var i = item.ActionIntent;
-
-                                break;
-                            }
-                        }
-                    }
-                }
-        }
-
-
         public string GetPlaceholderTextForInlineResponse()
         {
-            return action.GetRemoteInputs()[1].Label;
+            try
+            {
+                return remoteInputDirectReply.Label;
+            }
+            catch
+            {
+                return string.Empty;
+            }
         }
 
         public bool SendInlineResponse(string responseText)
         {
-            return true;
-        }
-
-        public void Dispose()
-        {
-            action.Dispose();
+            try
+            {
+                Bundle bundle = new Bundle();
+                Intent intent = new Intent();
+                bundle.PutCharSequence(remoteInputDirectReply.ResultKey, responseText);
+                RemoteInput.AddResultsToIntent(remoteInputs, intent, bundle);
+                action.ActionIntent.Send(Application.Context, Result.Ok, intent);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

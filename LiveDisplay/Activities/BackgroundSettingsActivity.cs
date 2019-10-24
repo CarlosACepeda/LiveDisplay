@@ -33,8 +33,9 @@
         private WallpaperManager wallpaperManager;
         private ConfigurationManager configurationManager;
         private CheckBox appliesToMusicWidget;
-        private const int WallpaperConfig = 0;
+        private const int DefaultWallpaperConfig = 0;
         private const int AlbumArtConfig = 1;
+        private const int CustomWallpaperConfig = 2;
         private int defaultBlurLevel, defaultOpacityLevel, albumArtBlurLevel, albumArtOpacityLevel;
 
         private int REQUEST_CODE_READ_STORAGE_PERMISSION = 1;
@@ -171,7 +172,7 @@
         {
             switch(e.Id)
             {
-                case WallpaperConfig:
+                case DefaultWallpaperConfig:
 
                     currentSpinnerOptionSelected = (int)e.Id;
 
@@ -338,7 +339,7 @@
         {
             wallpaperPreview.Background.Alpha = e.SeekBar.Progress;
 
-            if (currentSpinnerOptionSelected == WallpaperConfig)
+            if (currentSpinnerOptionSelected == DefaultWallpaperConfig)
             {
                 configurationManager.SaveAValue(ConfigurationParameters.OpacityLevel, e.SeekBar.Progress);
                 defaultOpacityLevel = e.SeekBar.Progress;
@@ -349,6 +350,12 @@
               albumArtOpacityLevel = e.SeekBar.Progress;
 
             }
+            else if (currentSpinnerOptionSelected == CustomWallpaperConfig)
+            {
+                configurationManager.SaveAValue(ConfigurationParameters.OpacityLevel, e.SeekBar.Progress);
+                defaultOpacityLevel = e.SeekBar.Progress;
+            }
+
         }
 
         private void Blur_StopTrackingTouch(object sender, SeekBar.StopTrackingTouchEventArgs e)
@@ -395,15 +402,21 @@
                     break;
             }
 
-            if (currentSpinnerOptionSelected == WallpaperConfig)
+            if (currentSpinnerOptionSelected == DefaultWallpaperConfig)
             {
                 configurationManager.SaveAValue(ConfigurationParameters.BlurLevel, e.SeekBar.Progress);
                 defaultBlurLevel = e.SeekBar.Progress;
             }
             else if (currentSpinnerOptionSelected == AlbumArtConfig)
             {
-               configurationManager.SaveAValue(ConfigurationParameters.AlbumArtBlurLevel, e.SeekBar.Progress);
-               albumArtBlurLevel = e.SeekBar.Progress;
+                configurationManager.SaveAValue(ConfigurationParameters.AlbumArtBlurLevel, e.SeekBar.Progress);
+                albumArtBlurLevel = e.SeekBar.Progress;
+            }
+            else if (currentSpinnerOptionSelected == CustomWallpaperConfig)
+            {
+                configurationManager.SaveAValue(ConfigurationParameters.BlurLevel, e.SeekBar.Progress);
+                defaultBlurLevel = e.SeekBar.Progress;
+
             }
             GC.Collect(0);
         }

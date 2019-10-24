@@ -98,17 +98,18 @@
 			>
 			<EditText
                 android:inputType="text"
-				android:hint="bash"
 				android:id="@+id/tvInlineText"
 				android:layout_width="0dp"
 				android:layout_weight="8"
 				android:layout_height="wrap_content"
 				/>
-			<Button
+			<ImageButton
 				android:id="@+id/sendInlineResponseButton"
 				android:layout_width="0dp"
 				android:layout_weight="2"
-				android:layout_height="wrap_content"
+				android:layout_height="match_parent"
+                android:background="?android:selectableItemBackground"
+                android:src="@drawable/baseline_send_white_24"
 			/>
 		</LinearLayout>
 	</FrameLayout>

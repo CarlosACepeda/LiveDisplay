@@ -25,6 +25,8 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
         private const string MessagingStyle = "android.app.Notification$MessagingStyle"; //Only available on API Level 24 and up.
         private const string BigTextStyle = "android.app.Notification$BigTextStyle";
 
+        private const int DefaultActionIdentificator = Resource.String.defaulttag; 
+
 
         private LinearLayout notificationActions;
         private TextView titulo;
@@ -35,7 +37,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
         private ImageButton closenotificationbutton;
         private LinearLayout inlineNotificationContainer;
         private EditText inlineresponse;
-        private Button sendinlineresponse;
+        private ImageButton sendinlineresponse;
 
 
         private Resources resources;
@@ -52,6 +54,8 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
             when = notificationView.FindViewById<TextView>(Resource.Id.tvWhen);
             closenotificationbutton = notificationView.FindViewById<ImageButton>(Resource.Id.closenotificationbutton);            
             inlineNotificationContainer = notificationView.FindViewById<LinearLayout>(Resource.Id.inlineNotificationContainer);
+            inlineresponse = notificationView.FindViewById<EditText>(Resource.Id.tvInlineText);
+            sendinlineresponse = notificationView.FindViewById<ImageButton>(Resource.Id.sendInlineResponseButton);
 
 
 
@@ -59,7 +63,6 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
 
         public void ApplyStyle(OpenNotification notification)
         {
-            closenotificationbutton.Click += (o, eventargs) => { notification.Cancel(); notificationView.Visibility = ViewStates.Invisible; };
             List<Notification.Action> actions = new List<Notification.Action>();
             if (notification.HasActionButtons() == true)
             {
@@ -74,6 +77,9 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                     appName.Text = notification.AppName();
                     subtext.Text = notification.SubText();
                     when.Text = notification.When();
+                    closenotificationbutton.SetTag(DefaultActionIdentificator, notification);
+                    closenotificationbutton.Click += Closenotificationbutton_Click;
+
                     closenotificationbutton.Visibility = notification.IsRemovable() ? ViewStates.Visible : ViewStates.Invisible;
 
                         var notificationBigPicture = new BitmapDrawable(notification.BigPicture());
@@ -86,6 +92,8 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                             WallpaperPoster= WallpaperPoster.Notification,
                         });
                     notificationActions.RemoveAllViews();
+                    notificationActions.Visibility = ViewStates.Visible;
+                    inlineNotificationContainer.Visibility = ViewStates.Invisible;
 
                     if (notification.HasActionButtons() == true)
                     {
@@ -103,7 +111,8 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                             anActionButton.SetTypeface(Typeface.Create("sans-serif-condensed", TypefaceStyle.Normal), TypefaceStyle.Normal);
                             anActionButton.SetMaxLines(1);
                             anActionButton.SetTextColor(Color.White);
-                            anActionButton.Click += (o, eventargs) => openAction.ClickAction();
+                            anActionButton.SetTag(DefaultActionIdentificator, openAction);
+                            anActionButton.Click += AnActionButton_Click;
                             anActionButton.Gravity = GravityFlags.CenterVertical;
                             TypedValue outValue = new TypedValue();
                             Application.Context.Theme.ResolveAttribute(Android.Resource.Attribute.SelectableItemBackgroundBorderless, outValue, true);
@@ -114,8 +123,6 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                                 anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction.GetActionIcon(), null, null, null);
                                 notificationActions.AddView(anActionButton);
                             });
-
-                            break;
                         }
                     }
                     break;
@@ -127,6 +134,9 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                     appName.Text = notification.AppName();
                     subtext.Text = notification.SubText();
                     when.Text = notification.When();
+                    closenotificationbutton.SetTag(DefaultActionIdentificator, notification);
+                    closenotificationbutton.Click += Closenotificationbutton_Click;
+
                     closenotificationbutton.Visibility = notification.IsRemovable() ? ViewStates.Visible : ViewStates.Invisible;
                     notificationActions.RemoveAllViews();
                     if (notification.HasActionButtons() == true)
@@ -145,11 +155,10 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                             anActionButton.SetTypeface(Typeface.Create("sans-serif-condensed", TypefaceStyle.Normal), TypefaceStyle.Normal);
                             anActionButton.SetMaxLines(1);
                             anActionButton.SetTextColor(Color.White);
-                            anActionButton.Click += (o, eventargs) =>
-                            {
-                                openAction.ClickAction();
-                            };
+                            anActionButton.SetTag(DefaultActionIdentificator, openAction);
+                            anActionButton.Click += AnActionButton_Click;
                             anActionButton.Gravity = GravityFlags.CenterVertical;
+                            
                             TypedValue outValue = new TypedValue();
                             Application.Context.Theme.ResolveAttribute(Android.Resource.Attribute.SelectableItemBackgroundBorderless, outValue, true);
                             anActionButton.SetBackgroundResource(outValue.ResourceId);
@@ -159,8 +168,6 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                                 anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction.GetActionIcon(), null, null, null);
                                 notificationActions.AddView(anActionButton);
                             });
-
-                            break;
                         }
                     }
                     break;
@@ -173,8 +180,14 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                     appName.Text = notification.AppName();
                     subtext.Text = notification.SubText();
                     when.Text = notification.When();
+                    closenotificationbutton.SetTag(DefaultActionIdentificator, notification);
+                    closenotificationbutton.Click += Closenotificationbutton_Click;
+
                     closenotificationbutton.Visibility = notification.IsRemovable() ? ViewStates.Visible : ViewStates.Invisible;
                     notificationActions.RemoveAllViews();
+                    notificationActions.Visibility = ViewStates.Visible;
+                    inlineNotificationContainer.Visibility = ViewStates.Invisible;
+
                     if (notification.HasActionButtons() == true)
                     {
                         foreach (var a in actions)
@@ -191,10 +204,8 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                             anActionButton.SetTypeface(Typeface.Create("sans-serif-condensed", TypefaceStyle.Normal), TypefaceStyle.Normal);
                             anActionButton.SetMaxLines(1);
                             anActionButton.SetTextColor(Color.White);
-                            anActionButton.Click += (o, eventargs) =>
-                            {
-                                openAction.ClickAction();
-                            };
+                            anActionButton.SetTag(DefaultActionIdentificator, openAction);
+                            anActionButton.Click += AnActionButton_Click;
                             anActionButton.Gravity = GravityFlags.CenterVertical;
                             TypedValue outValue = new TypedValue();
                             Application.Context.Theme.ResolveAttribute(Android.Resource.Attribute.SelectableItemBackgroundBorderless, outValue, true);
@@ -205,8 +216,6 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                                 anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction.GetActionIcon(), null, null, null);
                                 notificationActions.AddView(anActionButton);
                             });
-
-                            break;
                         }
                     }
                     break;
@@ -217,9 +226,15 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                     appName.Text = notification.AppName();
                     subtext.Text = notification.SubText();
                     when.Text = string.Empty; //The MediaStyle shouldn't show a timestamp.
+                    closenotificationbutton.SetTag(DefaultActionIdentificator, notification);
+                    closenotificationbutton.Click += Closenotificationbutton_Click;
+
                     closenotificationbutton.Visibility = notification.IsRemovable() ? ViewStates.Visible : ViewStates.Invisible;
 
                     notificationActions.RemoveAllViews();
+                    notificationActions.Visibility = ViewStates.Visible;
+                    inlineNotificationContainer.Visibility = ViewStates.Invisible;
+
 
                     //in the media style, grab the action buttons, remove the text and load images instead
                     if (notification.HasActionButtons() == true)
@@ -233,10 +248,8 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                             {
                                 LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MatchParent, weight),
                             };
-                            anActionButton.Click += (o, eventargs) =>
-                            {
-                                openAction.ClickAction();
-                            };
+                            anActionButton.SetTag(DefaultActionIdentificator, openAction);
+                            anActionButton.Click += AnActionButton_Click;
                             anActionButton.Gravity = GravityFlags.CenterVertical;
                             TypedValue outValue = new TypedValue();
                             Application.Context.Theme.ResolveAttribute(Android.Resource.Attribute.SelectableItemBackgroundBorderless, outValue, true);
@@ -266,8 +279,14 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                     appName.Text = notification.AppName();
                     subtext.Text = notification.SubText();
                     when.Text = notification.When();
+                    closenotificationbutton.SetTag(DefaultActionIdentificator, notification);
+                    closenotificationbutton.Click += Closenotificationbutton_Click;
+
                     closenotificationbutton.Visibility = notification.IsRemovable() ? ViewStates.Visible : ViewStates.Invisible;
                     notificationActions.RemoveAllViews();
+                    notificationActions.Visibility = ViewStates.Visible;
+                    inlineNotificationContainer.Visibility = ViewStates.Invisible;
+
 
                     if (notification.HasActionButtons() == true)
                     {
@@ -286,10 +305,8 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                             anActionButton.SetTypeface(Typeface.Create("sans-serif-condensed", TypefaceStyle.Normal), TypefaceStyle.Normal);
                             anActionButton.SetMaxLines(1);
                             anActionButton.SetTextColor(Color.White);
-                            anActionButton.Click += (o, eventargs) =>
-                            {
-                                openAction.ClickAction();
-                            };
+                            anActionButton.SetTag(DefaultActionIdentificator, openAction);
+                            anActionButton.Click += AnActionButton_Click;
                             anActionButton.Gravity = GravityFlags.CenterVertical;
                             TypedValue outValue = new TypedValue();
                             Application.Context.Theme.ResolveAttribute(Android.Resource.Attribute.SelectableItemBackgroundBorderless, outValue, true);
@@ -300,8 +317,6 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                                 anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction.GetActionIcon(), null, null, null);
                                 notificationActions.AddView(anActionButton);
                             });
-
-                            break;
                         }
                     }
 
@@ -313,9 +328,42 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
             }
         }
 
+        private void Closenotificationbutton_Click(object sender, EventArgs e)
+        {
+            ImageButton closenotificationbutton = sender as ImageButton;
+            OpenNotification openNotification = closenotificationbutton.GetTag(DefaultActionIdentificator) as OpenNotification;
+            openNotification.Cancel(); 
+            notificationView.Visibility = ViewStates.Invisible;
+        }
+
         private void AnActionButton_Click(object sender, System.EventArgs e)
         {
-            
+            Button actionButton = sender as Button;
+            OpenAction openAction = actionButton.GetTag(DefaultActionIdentificator) as OpenAction;
+
+            if (openAction.ActionRepresentDirectReply())
+            {
+                notificationActions.Visibility = ViewStates.Invisible;
+                inlineNotificationContainer.Visibility = ViewStates.Visible;
+                inlineresponse.Hint = openAction.GetPlaceholderTextForInlineResponse();
+                sendinlineresponse.SetTag(DefaultActionIdentificator, openAction);
+                sendinlineresponse.Click += Sendinlineresponse_Click;
+            }
+            else
+            {
+                openAction.ClickAction();
+            }
+
+        }
+
+        private void Sendinlineresponse_Click(object sender, EventArgs e)
+        {
+            ImageButton actionButton = sender as ImageButton;
+            OpenAction openAction = actionButton.GetTag(DefaultActionIdentificator) as OpenAction;
+            openAction.SendInlineResponse(inlineresponse.Text);
+            inlineresponse.Text = string.Empty;
+            notificationActions.Visibility = ViewStates.Visible;
+            inlineNotificationContainer.Visibility = ViewStates.Invisible;
         }
 
         private void ApplyDefault(OpenNotification notification)
@@ -325,12 +373,19 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
             appName.Text = notification.AppName();
             subtext.Text = notification.SubText();
             when.Text = notification.When();
+            closenotificationbutton.SetTag(DefaultActionIdentificator, notification);
+            closenotificationbutton.Click += Closenotificationbutton_Click;
+
+
             closenotificationbutton.Visibility = notification.IsRemovable() ? ViewStates.Visible : ViewStates.Invisible;
 
 
 
             var actionsViews = notificationView.FindViewById<LinearLayout>(Resource.Id.notificationActions);
             actionsViews.RemoveAllViews();
+            notificationActions.Visibility = ViewStates.Visible;
+            inlineNotificationContainer.Visibility = ViewStates.Invisible;
+
 
             if (notification.HasActionButtons() == true)
             {
@@ -349,10 +404,8 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                     anActionButton.SetTypeface(Typeface.Create("sans-serif-condensed", TypefaceStyle.Normal), TypefaceStyle.Normal);
                     anActionButton.SetMaxLines(1);
                     anActionButton.SetTextColor(Color.White);
-                    anActionButton.Click += (o, eventargs) =>
-                    {
-                        openAction.ClickAction();
-                    };
+                    anActionButton.SetTag(DefaultActionIdentificator, openAction);
+                    anActionButton.Click += AnActionButton_Click;
                     anActionButton.Gravity = GravityFlags.CenterVertical;
                     TypedValue outValue = new TypedValue();
                     Application.Context.Theme.ResolveAttribute(Android.Resource.Attribute.SelectableItemBackgroundBorderless, outValue, true);

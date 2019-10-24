@@ -564,13 +564,11 @@
                     {
                         ThreadPool.QueueUserWorkItem(m =>
                         {
-                            using (Bitmap bitmap = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.ImagePath, imagePath)))
-                            {
-                                BlurImage blurImage = new BlurImage(Application.Context);
-                                blurImage.Load(bitmap).Intensity(savedblurlevel).Async(true);
-                                Drawable drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
-                                WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = new BitmapDrawable(bitmap), OpacityLevel = (short)savedOpacitylevel, BlurLevel = (short)savedblurlevel, WallpaperPoster = WallpaperPoster.Lockscreen });
-                            }
+                            Bitmap bitmap = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.ImagePath, imagePath));                            
+                            BlurImage blurImage = new BlurImage(Application.Context);
+                            blurImage.Load(bitmap).Intensity(savedblurlevel).Async(true);
+                            Drawable drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
+                            WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = new BitmapDrawable(bitmap), OpacityLevel = (short)savedOpacitylevel, BlurLevel = (short)savedblurlevel, WallpaperPoster = WallpaperPoster.Lockscreen });                            
                         });
 
                     }                        

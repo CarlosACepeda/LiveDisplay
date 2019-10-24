@@ -16,7 +16,7 @@
   <string name="blacklist">Blacklist</string>
   <string name="blacklistdesc">Don\'t show notifications from the apps selected.</string>
   <string name="blacklisted">Blacklisted</string>
-  <string name="blacklistitemtag">idk</string>
+  <string name="defaulttag">idk</string>
   <string name="blackwallpaper">Black</string>
   <string name="changewallpaper">Change wallpaper</string>
   <string name="changewallpaperappearance">Wallpaper appearance</string>

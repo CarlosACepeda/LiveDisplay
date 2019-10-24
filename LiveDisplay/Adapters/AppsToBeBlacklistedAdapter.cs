@@ -38,13 +38,13 @@ namespace LiveDisplay.Adapters
             // Replace the contents of the view with that element
             var holder = viewHolder as AppsToBeBlacklistedAdapterViewHolder;
             holder.App.Text = PackageUtils.GetTheAppName(items[position].PackageName);
-            holder.App.SetTag(Resource.String.blacklistitemtag, items[position].PackageName);
+            holder.App.SetTag(Resource.String.defaulttag, items[position].PackageName);
         }
 
         private void App_Click(AppClickedEventArgs e)
         {
             var textView = e.View;
-            currentSelectedAppPackage = textView.GetTag(Resource.String.blacklistitemtag).ToString();
+            currentSelectedAppPackage = textView.GetTag(Resource.String.defaulttag).ToString();
             using (Android.Support.V7.App.AlertDialog.Builder builder = new Android.Support.V7.App.AlertDialog.Builder(textView.Context))
             {
                 builder.SetTitle(textView.Text);

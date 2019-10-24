@@ -64,7 +64,7 @@ namespace LiveDisplay.Fragments
             CatcherHelper.NotificationUpdated -= CatcherHelper_NotificationUpdated;
             CatcherHelper.NotificationRemoved -= CatcherHelper_NotificationRemoved;
             CatcherHelper.NotificationPosted -= CatcherHelper_NotificationPosted;
-            openNotification.Dispose();
+            openNotification?.Dispose();
             base.OnDestroy();
         }
 
