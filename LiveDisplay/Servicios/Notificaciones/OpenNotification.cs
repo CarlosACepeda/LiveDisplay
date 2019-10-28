@@ -355,6 +355,9 @@ namespace LiveDisplay.Servicios.Notificaciones
         }
         public bool ActionRepresentDirectReply()
         {
+            //Direct reply action is a new feature in Nougat, so when called on Marshmallow and backwards, so in those cases an Action will never represent a Direct Reply.
+            if (Build.VERSION.SdkInt < BuildVersionCodes.N) return false;
+            
             remoteInputs = action.GetRemoteInputs();
             if (remoteInputs == null || remoteInputs?.Length == 0) return false;
 
@@ -391,6 +394,9 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         public string GetPlaceholderTextForInlineResponse()
         {
+            //Direct reply action is a new feature in Nougat, so this method call is invalid in Marshmallow and backwards, let's return empty.
+            if (Build.VERSION.SdkInt < BuildVersionCodes.N) return string.Empty;
+
             try
             {
                 return remoteInputDirectReply.Label;
@@ -401,6 +407,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
         }
 
+        //Since API 24 Nougat.
         public bool SendInlineResponse(string responseText)
         {
             try
