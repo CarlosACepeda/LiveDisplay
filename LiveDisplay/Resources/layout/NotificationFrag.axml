@@ -98,6 +98,7 @@
 			>
 			<EditText
                 android:inputType="text"
+                android:fontFamily="sans-serif-condensed"
 				android:id="@+id/tvInlineText"
 				android:layout_width="0dp"
 				android:layout_weight="8"

@@ -228,7 +228,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                     when.Text = string.Empty; //The MediaStyle shouldn't show a timestamp.
                     closenotificationbutton.SetTag(DefaultActionIdentificator, notification);
                     closenotificationbutton.Click += Closenotificationbutton_Click;
-
+                    //notification.StartMediaCallback();
                     closenotificationbutton.Visibility = notification.IsRemovable() ? ViewStates.Visible : ViewStates.Invisible;
 
                     notificationActions.RemoveAllViews();

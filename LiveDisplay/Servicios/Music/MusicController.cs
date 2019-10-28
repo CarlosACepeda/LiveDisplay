@@ -23,8 +23,7 @@ namespace LiveDisplay.Servicios.Music
         public MediaController.TransportControls TransportControls { get; set; }
         public MediaMetadata MediaMetadata { get; set; }
         private static MusicController instance;
-        public static PendingIntent ActivityIntent { get; set; }
-
+        public PendingIntent ActivityIntent { get; set; }
         #region events
 
         public static event EventHandler<MediaPlaybackStateChangedEventArgs> MediaPlaybackChanged;
@@ -128,6 +127,7 @@ namespace LiveDisplay.Servicios.Music
 
             OnMediaMetadataChanged(new MediaMetadataChangedEventArgs
             {
+                ActivityIntent= ActivityIntent,
                 MediaMetadata = metadata
             });
             //Datos de la Media que se está reproduciendo.

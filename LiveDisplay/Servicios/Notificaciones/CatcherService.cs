@@ -75,7 +75,7 @@ namespace LiveDisplay.Servicios
 
             SubscribeToEvents();
             RegisterReceivers();
-            //This is for blocking Headsup notifications in Android Marshmallow and on.
+            //This is for blocking Headsup notifications in Android Marshmallow and on, it does not work though LOL, stupid Android.
             //NotificationManager notificationManager = GetSystemService(NotificationService) as NotificationManager;
             //notificationManager.NotificationPolicy = new NotificationManager.Policy(NotificationPriorityCategory.Alarms | NotificationPriorityCategory.Calls | NotificationPriorityCategory.Events | NotificationPriorityCategory.Media | NotificationPriorityCategory.Messages | NotificationPriorityCategory.Reminders | NotificationPriorityCategory.RepeatCallers | NotificationPriorityCategory.System | NotificationPriorityCategory.RepeatCallers, NotificationPrioritySenders.Starred, NotificationPrioritySenders.Starred);
             //notificationManager.SetInterruptionFilter(InterruptionFilter.None);

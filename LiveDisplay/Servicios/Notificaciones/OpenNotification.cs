@@ -2,12 +2,14 @@
 using Android.Content;
 using Android.Graphics;
 using Android.Graphics.Drawables;
+using Android.Media.Session;
 using Android.OS;
 using Android.Service.Notification;
 using Android.Util;
 using Java.Util;
 using LiveDisplay.Factories;
 using LiveDisplay.Misc;
+using LiveDisplay.Servicios.Music;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +19,7 @@ namespace LiveDisplay.Servicios.Notificaciones
     internal class OpenNotification:Java.Lang.Object
     {
         private StatusBarNotification statusbarnotification;
+        private MediaController mediaController; //A media controller to be used with the  Media Session token provided by a MediaStyle notification.
         public OpenNotification(StatusBarNotification sbn)
         {
             statusbarnotification = sbn;
@@ -34,19 +37,23 @@ namespace LiveDisplay.Servicios.Notificaciones
         }
         public void Cancel()
         {
-            if(IsRemovable())
-            using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())
-            {
-
-                if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+            if (IsRemovable())
+                using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())
                 {
-                    slave.CancelNotification(GetPackageName(), GetTag(), GetId());
+                    //If this notification has a mediacontroller callback registered we unregister it, to avoid leaks.
+                    if (mediaController != null)
+                    {
+                        mediaController.UnregisterCallback(MusicController.GetInstance());
+                    }
+                    if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+                    {
+                        slave.CancelNotification(GetPackageName(), GetTag(), GetId());
+                    }
+                    else
+                    {
+                        slave.CancelNotification(GetKey());
+                    }
                 }
-                else
-                {
-                    slave.CancelNotification(GetKey());
-                }
-            }
         }
         private string GetTag() => statusbarnotification.Tag;
         private string GetPackageName() => statusbarnotification.PackageName;
@@ -179,6 +186,46 @@ namespace LiveDisplay.Servicios.Notificaciones
                 return true;
             }
             return false;
+        }
+        private MediaSession.Token GetMediaSessionToken()
+        {
+            try
+            {
+                return statusbarnotification.Notification.Extras.Get(Notification.ExtraMediaSession) as MediaSession.Token;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+        public bool StartMediaCallback()
+        {
+            var mediaSessionToken = GetMediaSessionToken();
+            if (mediaSessionToken == null) return false;
+            else
+            {
+                try
+                {
+                    if (mediaController != null)
+                    {
+                        mediaController.UnregisterCallback(MusicController.GetInstance());
+                    }
+                    mediaController = new MediaController(Application.Context, GetMediaSessionToken());
+                    var musicController = MusicController.GetInstance();
+                    mediaController.RegisterCallback(MusicController.GetInstance());
+                    musicController.TransportControls = mediaController.GetTransportControls();
+                    musicController.MediaMetadata = mediaController.Metadata;
+                    musicController.PlaybackState = mediaController.PlaybackState;
+                    musicController.ActivityIntent = statusbarnotification.Notification.ContentIntent; //The current notification.
+                    Log.Info("LiveDisplay", "Callback registered Successfully");
+                    return true;
+                }
+                catch(Exception ex)
+                {
+                    Log.Info("LiveDisplay", "Callback failed Successfully: "+ex.Message);
+                    return false;
+                }
+            }
         }
 
         internal string When()
