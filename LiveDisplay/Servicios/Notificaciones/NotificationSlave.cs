@@ -102,8 +102,9 @@ namespace LiveDisplay.Servicios
             Notification.Builder builder;
             if (Build.VERSION.SdkInt < BuildVersionCodes.NMr1)
             {
-                builder = new Notification.Builder(Application.Context);
 #pragma warning disable CS0618 // 'Notification.Builder.SetPriority(int)' está obsoleto: 'deprecated'
+
+                builder = new Notification.Builder(Application.Context);
                 builder.SetPriority(Convert.ToInt32(NotificationPriority.Max));
 #pragma warning restore CS0618 // 'Notification.Builder.SetPriority(int)' está obsoleto: 'deprecated'
             }

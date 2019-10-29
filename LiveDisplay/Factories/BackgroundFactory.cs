@@ -13,34 +13,6 @@
     // TODO: Correct me, I can be optimized.
     internal class BackgroundFactory : Java.Lang.Object
     {
-        private static readonly short MaxRadius = 25;
-
-        // Retrieves a blurred image
-        public static Drawable Difuminar(Drawable papelTapiz, short blurRadius)
-        {
-            Bitmap originalBitmap = ((BitmapDrawable)papelTapiz).Bitmap;
-            Bitmap blurredBitmap = Bitmap.CreateScaledBitmap(originalBitmap, originalBitmap.Width, originalBitmap.Height, false);
-            RenderScript rs = RenderScript.Create(Application.Context);
-            Allocation input = Allocation.CreateFromBitmap(rs, originalBitmap, Allocation.MipmapControl.MipmapFull, AllocationUsage.Script);
-            Allocation output = Allocation.CreateTyped(rs, input.Type);
-            ScriptIntrinsicBlur script = ScriptIntrinsicBlur.Create(rs, Element.U8_4(rs));
-            script.SetInput(input);
-            if (blurRadius < MaxRadius)
-            {
-                script.SetRadius(blurRadius);
-            }
-            script.ForEach(output);
-            output.CopyTo(blurredBitmap);
-            Drawable papelTapizDifuminado = new BitmapDrawable(Android.Content.Res.Resources.System, blurredBitmap);
-            originalBitmap.Recycle();
-            originalBitmap.Dispose();
-            blurredBitmap.Recycle();
-            blurredBitmap.Dispose();
-            input.Dispose();
-            output.Dispose();
-            return papelTapizDifuminado;
-        }
-
         public string SaveImagePath(Android.Net.Uri uri)
         {
             ContextWrapper contextWrapper = new ContextWrapper(Application.Context);
