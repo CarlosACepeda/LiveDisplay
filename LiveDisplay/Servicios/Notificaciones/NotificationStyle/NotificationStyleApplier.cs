@@ -271,16 +271,14 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
             inlineNotificationContainer.Visibility = ViewStates.Invisible;
         }
         public void ApplyActionsStyle(OpenNotification notification)
-        {
-            OpenAction openAction;            
-            
+        {           
             notificationActions?.RemoveAllViews();
             if (notification.HasActions())
             {
                 var actions = notification.RetrieveActions();
                 foreach (Notification.Action action in actions)
                 {
-                    openAction = new OpenAction(action);
+                    OpenAction openAction = new OpenAction(action);
                     Button actionButton = new Button(Application.Context);
                     float weight= 1f / actions.Count;
                     actionButton.LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MatchParent, weight);
