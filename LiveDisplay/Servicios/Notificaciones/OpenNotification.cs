@@ -167,7 +167,7 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         public List<Notification.Action> RetrieveActions()
         {
-            return statusbarnotification.Notification.Actions.ToList();
+            return statusbarnotification.Notification.Actions?.ToList();
         }
 
         internal bool IsRemovable()
@@ -179,7 +179,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             return false;
         }
 
-        public bool HasActionButtons()
+        public bool HasActions()
         {
             if (statusbarnotification.Notification.Actions != null)
             {
@@ -267,6 +267,30 @@ namespace LiveDisplay.Servicios.Notificaciones
             return statusbarnotification.Notification.Extras.Get(Notification.ExtraLargeIcon) as Bitmap;
         }
 
+        internal NotificationPriority GetNotificationPriority()
+        {
+            if (Build.VERSION.SdkInt < BuildVersionCodes.O)
+                return (NotificationPriority)statusbarnotification.Notification.Priority;
+
+            return (NotificationPriority)(-1);
+        }
+
+        internal NotificationImportance GetNotificationImportance()
+        {
+            //TODO
+            if (Build.VERSION.SdkInt < BuildVersionCodes.O)
+                return (NotificationImportance)(-1);
+
+            return (NotificationImportance)(-1);
+
+        }
+        private NotificationChannel GetNotificationChannel()
+        {
+            if (Build.VERSION.SdkInt < BuildVersionCodes.O)
+                return null;
+
+            return null; //TODO.
+        }
         internal string Style()
         {
             try
@@ -312,11 +336,6 @@ namespace LiveDisplay.Servicios.Notificaciones
                 result = result + " Is not group";
             return result;
         }
-
-        public static void SendInlineText(string text)
-        {
-            //Implement me.
-        }
     }
 
     internal class OpenAction: Java.Lang.Object
@@ -330,7 +349,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             this.action = action;
         }
 
-        public string GetTitle()
+        public string Title()
         {
             try
             {

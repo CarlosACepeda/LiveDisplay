@@ -140,7 +140,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
             floatingNotificationText.Text = openNotification.Text();
             floatingNotificationActionsContainer.RemoveAllViews();
 
-            if (openNotification.HasActionButtons() == true)
+            if (openNotification.HasActions() == true)
             {
                 var actions = openNotification.RetrieveActions();
                 foreach (var a in actions)
@@ -151,7 +151,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
                     Button anActionButton = new Button(Application.Context)
                     {
                         LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MatchParent, weight),
-                        Text = openAction.GetTitle(),
+                        Text = openAction.Title(),
                     };
                     anActionButton.SetTypeface(Typeface.Create("sans-serif-condensed", TypefaceStyle.Normal), TypefaceStyle.Normal);
                     anActionButton.SetMaxLines(1);
@@ -188,7 +188,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
             floatingNotificationText.Text = openNotification.Text();
             floatingNotificationActionsContainer.RemoveAllViews();
 
-            if (openNotification.HasActionButtons() == true)
+            if (openNotification.HasActions() == true)
             {
                 var actions = openNotification.RetrieveActions();
                 foreach (var a in actions)
@@ -199,7 +199,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
                     Button anActionButton = new Button(Application.Context)
                     {
                         LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MatchParent, weight),
-                        Text = openAction.GetTitle(),
+                        Text = openAction.Title(),
                     };
                     anActionButton.SetTypeface(Typeface.Create("sans-serif-condensed", TypefaceStyle.Normal), TypefaceStyle.Normal);
                     anActionButton.SetMaxLines(1);

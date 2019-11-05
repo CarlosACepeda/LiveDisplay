@@ -45,7 +45,7 @@
         }
     }
 
-    //La siguiente clase simplemente guarda referencias a las vistas de la fila, para evitar hacer llamadas a FindViewById cada vez, no se hace nada más aquí
+    //The following class just simply saves the view's references to the row, in order to avoid making calls to 'FindViewById' each time, nothing more is done here.
     internal class NotificationAdapterViewHolder : RecyclerView.ViewHolder
     {
         public static event EventHandler<NotificationItemClickedEventArgs> ItemClicked;
