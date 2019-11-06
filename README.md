@@ -13,31 +13,12 @@ This Application shows the list of current notifications on a beautiful and cust
 |----------|---------|
 |[![Build status](https://build.appcenter.ms/v0.1/apps/35ff8c85-fde9-4e45-9e27-834a716fce2b/branches/master/badge)](https://appcenter.ms)|[![Build status](https://build.appcenter.ms/v0.1/apps/35ff8c85-fde9-4e45-9e27-834a716fce2b/branches/Laboratory/badge)](https://appcenter.ms)
 
-## Features
-
-* Change the wallpaper as well it's appearance, blur and opacity
-
-* Manage the Notifications directly from the LockScreen - *Functional*
-
-* Block the notifications from the apps you choose. *Functional*
-
-* Configure which apps should be allowed to wake up the device when a new notification from that app is posted. *Functional*
-
-* Control music currently playing directly from the Lockscreen, you can disable it or change some of its configurations - *Functional*
-
-* Automatic device turn-on screen when a new notification is posted or when the user picks the phone up, or when you pick your phone out of your pocket, you can change this behavior.  *Functional*
-
-* Turning on the Screen automatically is disabled at night, or at the time you want, it's configurable, it helps to save battery. -*Functional*
-
-* LockScreen shortcuts, by default, the camera is launched, you can change it. - *WIP*
-
-* See the weather.
 
 
 ### Screenshots
 
-<img src="https://i.imgur.com/Ym0G62d.png" width=50%><img src="https://i.imgur.com/9J0rl1e.png" width=50%>
-<img src="https://i.imgur.com/aRfs1Qc.png" width=50%><img src="https://i.imgur.com/gWkBOeA.png" width=50%>
+<img src="https://i.imgur.com/Ym0G62d.png" width=50%><img src="https://i.imgur.com/hq6zrBl.png" width=50%>
+<img src="https://i.imgur.com/PpihaAD.png" width=50%><img src="https://i.imgur.com/gWkBOeA.png" width=50%>
 
 ## Built With
 
