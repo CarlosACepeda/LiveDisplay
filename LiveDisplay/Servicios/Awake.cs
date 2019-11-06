@@ -23,6 +23,7 @@ namespace LiveDisplay.Servicios
         private bool isLaidDown = false;
         private static bool sleeping = false;
         private static bool isinPocket = false;
+        private static AwakeStatus CurrentAwakeStatus = AwakeStatus.NonActive; //Default value.
 
         public static void WakeUpScreen()
         {
@@ -114,6 +115,50 @@ namespace LiveDisplay.Servicios
                 }
             }
         }
+
+        public static AwakeStatus GetAwakeStatus()
+        {
+            int start = int.Parse(configurationManager.GetString(ConfigurationParameters.StartSleepTime, "0")); //12am
+            int end = int.Parse(configurationManager.GetString(ConfigurationParameters.FinishSleepTime, "500"));//5am
+            //Generates the hour as a 4 characters number in 24 hours for example: 2210 (10:10pm)
+            var now = int.Parse(string.Concat(DateTime.Now.Hour.ToString() + DateTime.Now.Minute.ToString()));
+
+            if (start <= end) //The times are in the same day.
+            {
+                if (now >= start && now <= end)
+                {
+                    Log.Info("HELLO", "Im Sleeping");
+                    sleeping = true;
+                    return AwakeStatus.NonActive;
+                }
+                else
+                {
+                    Log.Info("HELLO", "Im Active");
+                    sleeping = false;
+                    return AwakeStatus.Active;
+                }
+                
+            }
+            else //The times are in different days.
+            {
+                if (now >= start || now <= end)
+                {
+                    Log.Info("HELLO", "Im Sleeping");
+                    sleeping = true;
+                    return AwakeStatus.NonActive;
+
+                }
+                else
+                {
+                    Log.Info("HELLO", "Im Active");
+                    sleeping = false;
+                    return AwakeStatus.Active;
+
+                }
+            }
+
+        }
+
 
         public override IBinder OnBind(Intent intent)
         {
@@ -218,5 +263,12 @@ namespace LiveDisplay.Servicios
             sensorManager.Dispose();
             base.OnDestroy();
         }
+    }
+    public enum AwakeStatus
+    {
+        Active=1,
+        NonActive=2,
+        NotAvailable=4
+        
     }
 }

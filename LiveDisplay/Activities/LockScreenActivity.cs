@@ -39,6 +39,7 @@
         //private ImageView unlocker;
         private Button clearAll;
 
+        private TextView livedisplayinfo;
         private NotificationFragment notificationFragment;
         private MusicFragment musicFragment;
         private ClockFragment clockFragment;
@@ -85,7 +86,7 @@
             lockscreen = FindViewById<LinearLayout>(Resource.Id.contenedorPrincipal);
             viewPropertyAnimator = Window.DecorView.Animate();
             viewPropertyAnimator.SetListener(new LockScreenAnimationHelper(Window));
-            
+            livedisplayinfo = FindViewById<TextView>(Resource.Id.livedisplayinfo);
 
             fadeoutanimation = AnimationUtils.LoadAnimation(Application.Context, Resource.Animation.abc_fade_out);
             fadeoutanimation.AnimationEnd += Fadeoutanimation_AnimationEnd;
@@ -339,6 +340,22 @@
             {
                 CheckIfMusicIsStillPaused();
             }
+            //Check if Awake is enabled.
+
+            switch (Awake.GetAwakeStatus())
+            {
+                case AwakeStatus.Active:
+                    livedisplayinfo.Text = "Awake is Active";
+                    break;
+                case AwakeStatus.NonActive:
+                    livedisplayinfo.Text = "Awake is not Active (I'm sleeping)";
+                    break;
+                case AwakeStatus.NotAvailable:
+                    livedisplayinfo.Text = "Awake is not Available";
+                    break;
+                default:
+                    break;
+            }
             //LoadWallpaper(new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context)));
 
         }
@@ -406,6 +423,7 @@
             musicFragment.Dispose();
             clockFragment.Dispose();
             weatherFragment.Dispose();
+            livedisplayinfo?.Dispose();
         }
 
         public override void OnBackPressed()

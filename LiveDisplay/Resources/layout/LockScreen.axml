@@ -17,10 +17,15 @@
 			a:layout_width="match_parent"
 			a:layout_height="0dp"			
 			>
+        <ImageView 
+            a:id="@+id/livesidplayinfoicon"
+            tools:src="@drawable/baseline_nights_stay_white_18"
+            a:layout_width="wrap_content"               
+            a:layout_height="match_parent"/>
 		<TextView
+                a:id="@+id/livedisplayinfo"
 				a:layout_width="wrap_content"
-				a:layout_height="match_parent"
-				a:text=""
+				a:layout_height="match_parent"				
 				a:paddingLeft="15dp"
 				a:paddingTop="3dp"
 				a:fontFamily="sans-serif-condensed-light"
