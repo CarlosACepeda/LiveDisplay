@@ -53,7 +53,7 @@ namespace LiveDisplay.Servicios
         }
 
         public override void OnListenerConnected()
-        {
+        {            
             activeMediaSessionsListener = new ActiveMediaSessionsListener();
             //RemoteController Lollipop and Beyond Implementation
             mediaSessionManager = (MediaSessionManager)GetSystemService(MediaSessionService);
@@ -84,6 +84,18 @@ namespace LiveDisplay.Servicios
 
         public override void OnNotificationPosted(StatusBarNotification sbn)
         {
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+            {
+                //Let's attach the NotificationChannels that this package represents to this StatusbarNotification
+                try
+                {
+                    var channels= GetNotificationChannels(sbn.PackageName, sbn.User);
+                }
+                catch (Exception ex)
+                {
+                    Log.Info("LiveDisplay", "Oops!: " + ex.Message);
+                }
+            }
             catcherHelper.OnNotificationPosted(sbn);
 
             //var test6 = sbn.Notification.Extras.Get(Notification.ExtraMediaSession) as MediaSession.Token;
@@ -148,6 +160,8 @@ namespace LiveDisplay.Servicios
             return base.OnUnbind(intent);
         }
 
+        
+
         private void RetrieveNotificationFromStatusBar()
         {
             statusBarNotifications = new List<StatusBarNotification>();
@@ -175,40 +189,6 @@ namespace LiveDisplay.Servicios
             }
 
             catcherHelper = new CatcherHelper(statusBarNotifications);
-        }
-
-        //No se puede implementar. :/
-        private void GetRemoteInput(StatusBarNotification sbn)
-        {
-            Intent intent = new Intent();
-            Bundle bundle = new Bundle();
-            RemoteInput remoteInput;
-            if (sbn.Notification.Actions != null)
-                foreach (var item in sbn.Notification.Actions)
-                {
-                    RemoteInput[] remoteInputs;
-                    if (item.GetRemoteInputs() != null)
-                    {
-                        remoteInputs = item.GetRemoteInputs();
-                        foreach (var remoteinput in remoteInputs)
-                        {
-                            if (remoteinput.ResultKey != null)
-                            {
-                                remoteInput = remoteinput;
-                                bundle.PutCharSequence(remoteinput.ResultKey, string.Empty);
-
-                                RemoteInput.AddResultsToIntent(remoteInputs, intent, bundle) ;
-
-                                //remoteInput.Extras.PutCharSequence(remoteinput.ResultKey, ":)");
-                                //item.Extras.PutCharSequence(remoteinput.ResultKey, ":)");
-                                item.ActionIntent.Send(Application.Context, Result.Ok, intent);
-                                var i = item.ActionIntent;
-
-                                break;
-                            }
-                        }
-                    }
-                }
         }
 
         //Subscribe to events by Several publishers
