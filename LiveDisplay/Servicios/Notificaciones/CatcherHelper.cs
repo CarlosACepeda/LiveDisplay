@@ -136,9 +136,17 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         private bool UpdateNotification(StatusBarNotification sbn)
         {
+            //A WhatsApp Notification brokes this behavior:
+            //When a notification of New Message from WhatsApp is received in the Notification Drawer is shown only one notification.
+            //But behind the scenes in reality there are two notifications, One that's the Summary (it does not have actions)
+            //and the other one that has the actions of 'Answer' 'Mark as read' however in the following method it identifies that those two notifications are the same
+            //so the notification with actions gets replaced with the other that is summary and doesn't have Actions, so In the Lockscreen it'll show this one
+            //But in the practice the one that should be shown is the one that has Action buttons.
+            //This is a dumb behavior of WhatsApp, why is needed to show a Notification representing a Summary of just ONE notification?
+            //Wouldn't be easier to show that one notification directly? LOL.
             int indice = GetNotificationPosition(sbn);
             if (indice >= 0)
-            {
+            {                
                 StatusBarNotifications.RemoveAt(indice);
                 StatusBarNotifications.Add(sbn);
                 using (var h = new Handler(Looper.MainLooper))
@@ -168,6 +176,7 @@ namespace LiveDisplay.Servicios.Notificaciones
                 });
                 thereAreNotifications = false;
             }
+            OnNotificationRemoved();
         }
 
         public void CancelAllNotifications()
@@ -177,7 +186,8 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         private int GetNotificationPosition(StatusBarNotification sbn)
         {
-            return StatusBarNotifications.IndexOf(StatusBarNotifications.FirstOrDefault(o => o.Id == sbn.Id && o.PackageName == sbn.PackageName));
+            return StatusBarNotifications.IndexOf(StatusBarNotifications.FirstOrDefault(o => o.Id == sbn.Id && o.PackageName == sbn.PackageName &&
+            o.Notification.Flags.HasFlag(NotificationFlags.GroupSummary) == sbn.Notification.Flags.HasFlag(NotificationFlags.GroupSummary)));
         }
 
         private void OnNotificationListSizeChanged(NotificationListSizeChangedEventArgs e)

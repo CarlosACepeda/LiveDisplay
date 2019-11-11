@@ -5,6 +5,7 @@ using Android.Hardware;
 using Android.OS;
 using Android.Preferences;
 using Android.Runtime;
+using Android.Text;
 using Android.Util;
 using LiveDisplay.BroadcastReceivers;
 using LiveDisplay.Misc;
@@ -59,6 +60,11 @@ namespace LiveDisplay.Servicios
                     sleeping = false;
                 }
             }
+
+            //WARNING: TODO: In the last commit I introduced the method #GetAwakeStatus and that state is shown in the Lockscreen and
+            //I found a funny behavior and that is, if the hour is XX:00 (o' clock) then the Service says is sleeping (or not active) lol.
+            //After that it returns to normal. (Obviously this happens when the hour is within the Allowed hours of Awake to be active.
+            
 
             if (!sleeping)
                 if (configurationManager.GetBoolean(ConfigurationParameters.TurnOnNewNotification, false) == true || configurationManager.GetBoolean(ConfigurationParameters.TurnOnUserMovement, false) == true)
