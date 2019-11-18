@@ -119,7 +119,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
         {
             if (e.ShouldCauseWakeUp == true)
             {
-                Awake.WakeUpScreen();
+                Awake.WakeUpScreen(); //THis is wrong.
             }
             if(currentActivityState== ActivityStates.Resumed)
             floatingNotificationView.Visibility = ViewStates.Visible;
