@@ -94,7 +94,6 @@ namespace LiveDisplay.Servicios.FloatingNotification
             NotificationAdapterViewHolder.ItemClicked += NotificationAdapterViewHolder_ItemClicked;
             NotificationAdapterViewHolder.ItemLongClicked += NotificationAdapterViewHolder_ItemLongClicked;
             LockScreenActivity.OnActivityStateChanged += LockScreenActivity_OnActivityStateChanged;
-            floatingNotificationView.Click += FloatingNotificationView_Click;
             floatingNotificationView.SetOnTouchListener(this);            
         }        
         private void LockScreenActivity_OnActivityStateChanged(object sender, Activities.ActivitiesEventArgs.LockScreenLifecycleEventArgs e)
@@ -142,6 +141,15 @@ namespace LiveDisplay.Servicios.FloatingNotification
         private void CatcherHelper_NotificationUpdated(object sender, NotificationItemClickedEventArgs e)
         {
             openNotification = new OpenNotification(e.StatusBarNotification);
+
+            if (configurationManager.RetrieveAValue(ConfigurationParameters.TestEnabled))
+            {
+                Toast.MakeText(floatingNotificationView.Context, "Progress Indeterminate?: " + openNotification.IsProgressIndeterminate().ToString() + "\n"
+                    + "Current Progress: " + openNotification.GetProgress().ToString() + "\n"
+                    + "Max Progress: " + openNotification.GetProgressMax().ToString() + "\n"
+                    + openNotification.GetGroupInfo()
+                    , ToastLength.Short).Show();
+            }
 
             floatingNotificationAppName.Text = openNotification.AppName();
             floatingNotificationWhen.Text = openNotification.When();
@@ -280,6 +288,11 @@ namespace LiveDisplay.Servicios.FloatingNotification
             if (e.Action == MotionEventActions.Outside)
             {
                 floatingNotificationView.Visibility = ViewStates.Invisible;
+            }
+            else if (e.Action == MotionEventActions.Up)
+            {
+                openNotification.ClickNotification();
+                floatingNotificationView.Visibility = ViewStates.Gone;
             }
             return true;
         }
