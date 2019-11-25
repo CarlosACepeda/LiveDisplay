@@ -109,4 +109,5 @@
   <string name="weatherwidgetenabled">Activar el Widget del Clima</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">Diseño del icono de esta app!</string>
+  <string name="enabletestsetting">Activar opción de prueba</string>
 </resources>

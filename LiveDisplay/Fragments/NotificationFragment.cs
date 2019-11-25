@@ -1,9 +1,11 @@
 ﻿using Android.App;
 using Android.OS;
+using Android.Preferences;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
 using LiveDisplay.Adapters;
+using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
 using LiveDisplay.Servicios.Notificaciones;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
@@ -18,6 +20,8 @@ namespace LiveDisplay.Fragments
         private LinearLayout notification;
         private bool timeoutStarted = false;
         private NotificationStyleApplier styleApplier;
+        private ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context));
+
 
         #region Lifecycle events
 
@@ -112,7 +116,15 @@ namespace LiveDisplay.Fragments
         private void ItemClicked(object sender, NotificationItemClickedEventArgs e)
         {
             openNotification = new OpenNotification(e.StatusBarNotification);
-            Toast.MakeText(Activity, openNotification.GetGroupInfo(), ToastLength.Short).Show();
+            if (configurationManager.RetrieveAValue(ConfigurationParameters.TestEnabled))
+            {
+                Toast.MakeText(Activity, "Progress Indeterminate?: " + openNotification.IsProgressIndeterminate().ToString() + "\n"
+                    + "Current Progress: " + openNotification.GetProgress().ToString() + "\n"
+                    + "Max Progress: " + openNotification.GetProgressMax().ToString() + "\n"
+                    + openNotification.GetGroupInfo()
+                    , ToastLength.Short).Show();
+            }
+
             //Watch out for possible memory leaks here.
             styleApplier?.ApplyStyle(openNotification);
 

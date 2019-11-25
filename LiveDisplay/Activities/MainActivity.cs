@@ -25,8 +25,6 @@
     [Activity(Label = "@string/app_name", Theme = "@style/LiveDisplayThemeDark.NoActionBar", TaskAffinity = "livedisplay.main", MainLauncher = true)]
     internal class MainActivity : AppCompatActivity
     {
-        private static readonly ISharedPreferences configurationManager = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
-
         private Android.Support.V7.Widget.Toolbar toolbar;
         private TextView enableNotificationAccess, enableDeviceAdmin;
         private TextView enableDrawOverAccess;

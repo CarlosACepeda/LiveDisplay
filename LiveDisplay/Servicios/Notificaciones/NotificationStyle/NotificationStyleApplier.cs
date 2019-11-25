@@ -5,6 +5,7 @@ using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Util;
 using Android.Views;
+using Android.Views.Animations;
 using Android.Widget;
 using LiveDisplay.Servicios.Wallpaper;
 using System;
@@ -33,6 +34,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
         private bool shouldShowIcons;
         private string actionTextsTypeface;
         private int actiontextMaxLines;
+        private bool isCollapsed;
 
         private const int DefaultActionIdentificator = Resource.String.defaulttag; 
 
@@ -47,7 +49,8 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
         private LinearLayout inlineNotificationContainer;
         private EditText inlineresponse;
         private ImageButton sendinlineresponse;
-
+        private ImageButton togglenotificationcollapse;
+        private ProgressBar notificationProgress;
 
         private Resources resources;
         private View notificationView;
@@ -65,6 +68,8 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
             inlineNotificationContainer = notificationView.FindViewById<LinearLayout>(Resource.Id.inlineNotificationContainer);
             inlineresponse = notificationView.FindViewById<EditText>(Resource.Id.tvInlineText);
             sendinlineresponse = notificationView.FindViewById<ImageButton>(Resource.Id.sendInlineResponseButton);
+            togglenotificationcollapse = notificationView.FindViewById<ImageButton>(Resource.Id.toggleCollapse);
+            notificationProgress = notificationView.FindViewById<ProgressBar>(Resource.Id.notificationprogress);
 
             //This set's default options for actions and related.
             //Each notification Style can override these parameters.
@@ -105,7 +110,27 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
         }
 
         public void ApplyStyle(OpenNotification notification)
-        {            
+        {
+
+            //The progress thing does not require a Style to be applied.
+            if (notification.GetProgressMax() > 0)
+            {
+                notificationProgress.Visibility = ViewStates.Visible;
+                if (notification.IsProgressIndeterminate())
+                {
+                    notificationProgress.Indeterminate = true;
+                }
+                else
+                {
+                    notificationProgress.Max = notification.GetProgressMax();
+                    notificationProgress.Progress = notification.GetProgress();
+                }
+            }
+            else
+            {
+                notificationProgress.Visibility = ViewStates.Gone;
+            }
+
             switch (notification.Style())
             {
                 case BigPictureStyle:
@@ -117,9 +142,8 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                     when.Text = notification.When();
                     closenotificationbutton.SetTag(DefaultActionIdentificator, notification);
                     closenotificationbutton.Click += Closenotificationbutton_Click;
-
+                    togglenotificationcollapse.Click += Togglenotificationcollapse_Click;
                     closenotificationbutton.Visibility = notification.IsRemovable() ? ViewStates.Visible : ViewStates.Invisible;
-
                         var notificationBigPicture = new BitmapDrawable(notification.BigPicture());
                         WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
                         {
@@ -217,6 +241,11 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                     ApplyDefault(notification);
                     break;
             }
+        }
+
+        private void Togglenotificationcollapse_Click(object sender, EventArgs e)
+        {
+            //TODO
         }
 
         private void ApplyDefault(OpenNotification notification)

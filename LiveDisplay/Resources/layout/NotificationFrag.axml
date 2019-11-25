@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/llNotification"
     android:layout_gravity="center_vertical"
     android:animateLayoutChanges="true"
@@ -8,6 +9,7 @@
     android:layout_height="wrap_content"
     android:minHeight="70dp"
     android:background="?android:selectableItemBackground"
+    tools:visibility="visible"
     android:visibility="invisible">
 	
     <LinearLayout
@@ -50,6 +52,10 @@
 				android:textColor="@color/primary_text_default_material_dark"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
+            <ImageButton
+                android:id="@+id/toggleCollapse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
 		</LinearLayout>
 		<ImageButton
 			android:id="@+id/closenotificationbutton"
@@ -76,6 +82,12 @@
         android:id="@+id/tvTexto"
         android:maxLines="6"
         android:minLines="0" />
+    <ProgressBar        
+        android:visibility="gone"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:id="@+id/notificationprogress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 	<FrameLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"

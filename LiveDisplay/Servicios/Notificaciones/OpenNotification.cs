@@ -16,7 +16,7 @@ using System.Linq;
 
 namespace LiveDisplay.Servicios.Notificaciones
 {
-    internal class OpenNotification:Java.Lang.Object
+    internal class OpenNotification : Java.Lang.Object
     {
         private StatusBarNotification statusbarnotification;
         private MediaController mediaController; //A media controller to be used with the  Media Session token provided by a MediaStyle notification.
@@ -98,7 +98,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             try
             {
                 string textlinesformatted = string.Empty;
-                var textLines= statusbarnotification.Notification.Extras.GetCharSequenceArray(Notification.ExtraTextLines);
+                var textLines = statusbarnotification.Notification.Extras.GetCharSequenceArray(Notification.ExtraTextLines);
                 foreach (var line in textLines)
                 {
                     textlinesformatted = textlinesformatted + line + " \n"; //Add new line.
@@ -141,23 +141,7 @@ namespace LiveDisplay.Servicios.Notificaciones
                 statusbarnotification.Notification.ContentIntent.Send();
                 //Android Docs: For NotificationListeners: When implementing a custom click for notification
                 //Cancel the notification after it was clicked when this notification is autocancellable.
-                if (IsRemovable())
-                {
-                    using (NotificationSlave notificationSlave = NotificationSlave.NotificationSlaveInstance())
-                    {
-                        if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
-                        {
-                            int notiId = statusbarnotification.Id;
-                            string notiTag = statusbarnotification.Tag;
-                            string notiPack = statusbarnotification.PackageName;
-                            notificationSlave.CancelNotification(notiPack, notiTag, notiId);
-                        }
-                        else
-                        {
-                            notificationSlave.CancelNotification(statusbarnotification.Key);
-                        }
-                    }
-                }
+                Cancel();
             }
             catch
             {
@@ -220,9 +204,9 @@ namespace LiveDisplay.Servicios.Notificaciones
                     Log.Info("LiveDisplay", "Callback registered Successfully");
                     return true;
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    Log.Info("LiveDisplay", "Callback failed Successfully: "+ex.Message);
+                    Log.Info("LiveDisplay", "Callback failed Successfully: LOL" + ex.Message);
                     return false;
                 }
             }
@@ -317,24 +301,57 @@ namespace LiveDisplay.Servicios.Notificaciones
             string result = "";
             if (statusbarnotification.Notification.Flags.HasFlag(NotificationFlags.GroupSummary) == true)
             {
-                result = result + " This is summary!";
+                result += " This is summary!";
             }
             else
             {
-                result = result + " This is NOT summary!";
+                result += " This is NOT summary!";
 
             }
 
-            if (Style()!= null)
-                result= result+ "The Style is+ " + Style();
+            if (Style() != null)
+                result = result + "The Style is+ " + Style();
             else
-                result = result + " It does not have Style!";
+                result += " It does not have Style!";
 
             if (statusbarnotification.IsGroup)
-                result = result + " Is Group";
+                result += " Is Group";
             else
-                result = result + " Is not group";
+                result += " Is not group";
             return result;
+        }
+        internal int GetProgress()
+        {
+            try
+            {
+                return statusbarnotification.Notification.Extras.GetInt(Notification.ExtraProgress);
+            }
+            catch
+            {
+                return -2;
+            }
+        }
+        internal int GetProgressMax()
+        {
+            try
+            {
+                return statusbarnotification.Notification.Extras.GetInt(Notification.ExtraProgressMax);
+            }
+            catch
+            {
+                return -2;
+            }
+        }
+        internal bool IsProgressIndeterminate()
+        {
+            try
+            {
+                return statusbarnotification.Notification.Extras.GetBoolean(Notification.ExtraProgressIndeterminate);
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 

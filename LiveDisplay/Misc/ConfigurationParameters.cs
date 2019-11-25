@@ -35,7 +35,7 @@
         public const string WeatherCountryCode = "weathercountrycode";
         public const string WeatherTemperatureMeasureUnit = "weathertemperaturemeasureunit";
 
-        //For Notifications Settings: This setting is not ussed anymore by the app, but it might be useful someday...
+        //For Notifications Settings, not yet used.
         public const string EnableQuickReply = "enablequickreply?";
 
         //For Awake Settings: (Awake is fused with notification settings now, but here is separated to maintain
@@ -48,5 +48,9 @@
         public const string TurnOnUserMovement = "turnonusermovement?";
         public const string StartLockscreenDelayTime = "startlockscreendelaytime";
         public const string TurnOffScreenDelayTime = "turnoffscreendelaytime";
+
+        //Misc.
+        //It serves the purpose of enabling certain messages to be shown in a Toast Message useful for the developer.        
+        public const string TestEnabled = "testenabled?";
     }
 }

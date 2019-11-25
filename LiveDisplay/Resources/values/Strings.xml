@@ -16,7 +16,6 @@
   <string name="blacklist">Blacklist</string>
   <string name="blacklistdesc">Don\'t show notifications from the apps selected.</string>
   <string name="blacklisted">Blacklisted</string>
-  <string name="defaulttag">idk</string>
   <string name="blackwallpaper">Black</string>
   <string name="changewallpaper">Change wallpaper</string>
   <string name="changewallpaperappearance">Wallpaper appearance</string>
@@ -26,6 +25,7 @@
   <string name="contactme">Contact me</string>
   <string name="contributetoprojectdesc">LiveDisplay on Github</string>
   <string name="currentwallpaper">Current Wallpaper</string>
+  <string name="defaulttag">idk</string>
   <string name="defaultwallpaper">Default wallpaper</string>
   <string name="defaultwallpaperappearance">Default Wallpaper</string>
   <string name="dialogallowbutton">Allow</string>
@@ -113,4 +113,5 @@
   <string name="weatherwidgetenabled">Enable Weather Widget</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
+  <string name="enabletestsetting">Enable test setting</string>
 </resources>
