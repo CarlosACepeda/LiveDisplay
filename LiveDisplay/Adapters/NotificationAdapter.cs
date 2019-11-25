@@ -70,11 +70,18 @@
 
         private void ItemView_Click(object sender, EventArgs e)
         {
-            //Simply indicates which item was clicked and after that call NotifyDataSetChanged to changes take effect.
-            NotificationAdapter.selectedItem = LayoutPosition;
-            CatcherHelper.notificationAdapter.NotifyDataSetChanged();
-            var statusBarNotification = CatcherHelper.StatusBarNotifications[LayoutPosition];
-            OnItemClicked(LayoutPosition, statusBarNotification);
+            try
+            {
+                //Simply indicates which item was clicked and after that call NotifyDataSetChanged to changes take effect.
+                NotificationAdapter.selectedItem = LayoutPosition;
+                CatcherHelper.notificationAdapter.NotifyDataSetChanged();
+                var statusBarNotification = CatcherHelper.StatusBarNotifications[LayoutPosition];
+                OnItemClicked(LayoutPosition, statusBarNotification);
+            }
+            catch
+            { 
+                //TODO: Solve the IndexOutOfBoundsException that happens here! if possible.                
+            }
         }
 
         private void OnItemClicked(int position, StatusBarNotification sbn)

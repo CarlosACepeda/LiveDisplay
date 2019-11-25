@@ -318,6 +318,9 @@ namespace LiveDisplay.Servicios.Notificaciones
                 result += " Is Group";
             else
                 result += " Is not group";
+
+            result += "\n" + "Package: "+ GetPackageName()+ " Id: "+ GetId()+ " Tag :" + GetTag();
+
             return result;
         }
         internal int GetProgress()

@@ -2,12 +2,14 @@
 using Android.Content;
 using Android.Graphics;
 using Android.OS;
+using Android.Preferences;
 using Android.Runtime;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
 using LiveDisplay.Activities;
 using LiveDisplay.Adapters;
+using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Notificaciones;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
 using System;
@@ -33,6 +35,9 @@ namespace LiveDisplay.Servicios.FloatingNotification
         private LinearLayout floatingNotificationActionsContainer;
         private OpenNotification openNotification; //Represents the openNotification instance corresponding with this floating notification.
         private ActivityStates currentActivityState;
+
+        private ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context));
+
 
         public override IBinder OnBind(Intent intent)
         {
@@ -185,6 +190,16 @@ namespace LiveDisplay.Servicios.FloatingNotification
         private void NotificationAdapterViewHolder_ItemClicked(object sender, NotificationItemClickedEventArgs e)
         {
             openNotification = new OpenNotification(e.StatusBarNotification);
+
+            if (configurationManager.RetrieveAValue(ConfigurationParameters.TestEnabled))
+            {
+                Toast.MakeText(floatingNotificationView.Context, "Progress Indeterminate?: " + openNotification.IsProgressIndeterminate().ToString() + "\n"
+                    + "Current Progress: " + openNotification.GetProgress().ToString() + "\n"
+                    + "Max Progress: " + openNotification.GetProgressMax().ToString() + "\n"
+                    + openNotification.GetGroupInfo()
+                    , ToastLength.Short).Show();
+            }
+
 
             floatingNotificationAppName.Text = openNotification.AppName();
             floatingNotificationWhen.Text = openNotification.When();
