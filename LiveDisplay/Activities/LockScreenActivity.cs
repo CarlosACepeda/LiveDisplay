@@ -154,6 +154,8 @@
 
         private void WatchdogInterval_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
+
+            //it works correctly, but I want to refactor this. (Regression)
             if (currentActivityState== ActivityStates.Resumed)
             Awake.TurnOffScreen();
         }
@@ -326,17 +328,25 @@
             watchDog.Stop();
             watchDog.Start();
             OnActivityStateChanged?.Invoke(null, new LockScreenLifecycleEventArgs { State = ActivityStates.Resumed });
-            if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
+            if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetEnabled))
             {
-                MusicController.MusicPlaying += MusicController_MusicPlaying;
-                MusicController.MusicPaused += MusicController_MusicPaused;
+                if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
+                {
+                    MusicController.MusicPlaying += MusicController_MusicPlaying;
+                    MusicController.MusicPaused += MusicController_MusicPaused;
+                }
+                else
+                {
+                    MusicControllerKitkat.MusicPlaying += MusicControllerKitkat_MusicPlaying;
+                    MusicControllerKitkat.MusicPaused += MusicControllerKitkat_MusicPaused;
+                }
             }
             else
             {
-                MusicControllerKitkat.MusicPlaying += MusicControllerKitkat_MusicPlaying;
-                MusicControllerKitkat.MusicPaused += MusicControllerKitkat_MusicPaused;
+                StopMusicController();
+                StopFloatingNotificationService();
             }
-            if (isMusicWidgetPresent) //It'll always be true(?)
+            if (isMusicWidgetPresent) //It'll always be true(?) (What's this field for)? //Regression test!
             {
                 CheckIfMusicIsStillPaused();
             }

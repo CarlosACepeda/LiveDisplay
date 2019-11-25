@@ -48,6 +48,7 @@
                 android:fontFamily="sans-serif-condensed"
                 android:textSize="12dp"
                 android:id="@+id/tvnotifSubtext"
+                android:maxLines="1"
 				android:textAppearance="?android:attr/textAppearanceSmall"
 				android:textColor="@color/primary_text_default_material_dark"
                 android:layout_width="wrap_content"

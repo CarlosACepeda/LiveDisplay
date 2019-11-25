@@ -9,6 +9,7 @@ using Android.Text;
 using Android.Util;
 using LiveDisplay.BroadcastReceivers;
 using LiveDisplay.Misc;
+using LiveDisplay.Servicios.Notificaciones;
 using System;
 using System.Threading;
 
@@ -28,6 +29,8 @@ namespace LiveDisplay.Servicios
 
         public static void WakeUpScreen()
         {
+            //BUGGY: FIX ME. (It don't reacts despite being within the allowed hours, only happens if the hour is HH:<a number between 00-09>
+            //Eg. 11:02.
             //Check the current time and only react if the time this method is called is within the allowed hours.
             int start = int.Parse(configurationManager.GetString(ConfigurationParameters.StartSleepTime, "0")); //12am
             int end = int.Parse(configurationManager.GetString(ConfigurationParameters.FinishSleepTime, "500"));//5am
@@ -181,7 +184,16 @@ namespace LiveDisplay.Servicios
             sensorManager.RegisterListener(this, accelerometerSensor, SensorDelay.Normal);
             sensorManager.RegisterListener(this, proximitySensor, SensorDelay.Normal);
 
+            //Let's listen for CatcherHElper Events.
+            CatcherHelper.NotificationPosted += CatcherHelper_NotificationPosted;
+
             return StartCommandResult.Sticky;
+        }
+
+        private void CatcherHelper_NotificationPosted(object sender, Notificaciones.NotificationEventArgs.NotificationPostedEventArgs e)
+        {
+            if (e.ShouldCauseWakeUp)
+                WakeUpScreen();
         }
 
         public void OnAccuracyChanged(Sensor sensor, [GeneratedEnum] SensorStatus accuracy)
@@ -267,6 +279,7 @@ namespace LiveDisplay.Servicios
             sensorManager.UnregisterListener(this);
             accelerometerSensor.Dispose();
             sensorManager.Dispose();
+            CatcherHelper.NotificationPosted -= CatcherHelper_NotificationPosted;
             base.OnDestroy();
         }
     }
