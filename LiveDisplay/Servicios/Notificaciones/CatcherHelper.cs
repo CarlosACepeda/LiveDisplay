@@ -144,6 +144,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             //But in the practice the one that should be shown is the one that has Action buttons.
             //This is a dumb behavior of WhatsApp, why is needed to show a Notification representing a Summary of just ONE notification?
             //Wouldn't be easier to show that one notification directly? LOL.
+            ///It also happens with certain google notifications, I still don't get why do they need to do that.
             int indice = GetNotificationPosition(sbn);
             if (indice >= 0)
             {                

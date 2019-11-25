@@ -14,9 +14,15 @@ using System;
 
 namespace LiveDisplay.Servicios.FloatingNotification
 {
+    //Maybe the service should allow also showing the list of notifications?
+    //it'll be cool to detach the notifications' list from the lockscreen and show them while the user does not use the lockscreen, or even the music widget, a floating one.
+
+
+
+
     //Will spawn a View to show the clicked notification in the list, while the music is playing.
     [Service(Enabled = true)]
-    internal class FloatingNotification : Service
+    internal class FloatingNotification : Service, View.IOnTouchListener
     {
         private IWindowManager windowManager;
         private LinearLayout floatingNotificationView;
@@ -33,8 +39,6 @@ namespace LiveDisplay.Servicios.FloatingNotification
             return null;
         }
 
-        //TODO: Create a touchListener, and if the touch registered by this touchlistener is outside the bounds of the
-        //actual floating notification the same will be hidden, this change is more of UX.
         [return: GeneratedEnum]
         public override StartCommandResult OnStartCommand(Intent intent, [GeneratedEnum] StartCommandFlags flags, int startId)
         {
@@ -65,7 +69,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
                 Width = (int)floatingNotificationWidth,
                 Height = ViewGroup.LayoutParams.WrapContent,
                 Type = layoutType,
-                Flags = WindowManagerFlags.NotFocusable,
+                Flags = WindowManagerFlags.NotFocusable | WindowManagerFlags.WatchOutsideTouch,
                 Format = Format.Translucent,
                 Gravity = GravityFlags.CenterHorizontal | GravityFlags.CenterVertical
             };
@@ -86,8 +90,8 @@ namespace LiveDisplay.Servicios.FloatingNotification
             NotificationAdapterViewHolder.ItemLongClicked += NotificationAdapterViewHolder_ItemLongClicked;
             LockScreenActivity.OnActivityStateChanged += LockScreenActivity_OnActivityStateChanged;
             floatingNotificationView.Click += FloatingNotificationView_Click;
-        }
-
+            floatingNotificationView.SetOnTouchListener(this);            
+        }        
         private void LockScreenActivity_OnActivityStateChanged(object sender, Activities.ActivitiesEventArgs.LockScreenLifecycleEventArgs e)
         {
             switch (e.State)
@@ -254,6 +258,15 @@ namespace LiveDisplay.Servicios.FloatingNotification
                 windowManager.Dispose();
             }
             openNotification?.Dispose();
+        }
+
+        public bool OnTouch(View v, MotionEvent e)
+        {
+            if (e.Action == MotionEventActions.Outside)
+            {
+                floatingNotificationView.Visibility = ViewStates.Invisible;
+            }
+            return true;
         }
     }
 }
