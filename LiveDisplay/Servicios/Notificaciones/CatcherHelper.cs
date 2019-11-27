@@ -102,7 +102,12 @@ namespace LiveDisplay.Servicios.Notificaciones
             {
                 if (!blockingstatus.HasFlag(LevelsOfAppBlocking.BlockInAppOnly))
                 {
-                    StatusBarNotifications.Add(sbn);
+                    //This is the notification of 'LiveDisplay is showing above other apps'
+                    //Simply let's ignore it, because it's annoying. (Anyway, the user couldn't care less about this notification tbh)
+                    if (!(sbn.PackageName == "android" && sbn.Tag == "com.android.server.wm.AlertWindowNotification - com.underground.livedisplay"))
+                    {
+                        StatusBarNotifications.Add(sbn);
+                    }
 
                     using (var h = new Handler(Looper.MainLooper))
                         h.Post(() => { notificationAdapter.NotifyItemInserted(StatusBarNotifications.Count); });
