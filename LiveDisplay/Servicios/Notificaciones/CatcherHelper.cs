@@ -18,8 +18,6 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         public static event EventHandler<NotificationPostedEventArgs> NotificationPosted;
 
-        public static event EventHandler<NotificationItemClickedEventArgs> NotificationUpdated;
-
 #pragma warning disable CS0067 // El evento 'CatcherHelper.NotificationGrouped' nunca se usa
 
         public static event EventHandler NotificationGrouped; // TODO: Clueless (?) :'-( I don't know how to implement this in LockScreen
@@ -60,6 +58,11 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         public void OnNotificationPosted(StatusBarNotification sbn)
         {
+            //This is the notification of 'LiveDisplay is showing above other apps'
+            //Simply let's ignore it, because it's annoying. (Anyway, the user couldn't care less about this notification tbh)
+            if (sbn.PackageName == "android" && sbn.Tag == "com.android.server.wm.AlertWindowNotification - com.underground.livedisplay")            
+                return;
+            
             //Before inserting let's check if this notification represents the summary of a group of notifications.
             //If not then check if the notification is part of a group, if is then ignore it, because we already have the summary notification. (temporary, the objective
             //eventually is to make the lockscreen capable of showing a group of notifications, so we can show all the notifications that belong to a group instead of just showing
@@ -74,44 +77,43 @@ namespace LiveDisplay.Servicios.Notificaciones
             //    {
             //        if (statusBarNotifications.Where(no => no.GroupKey == sbn.GroupKey).FirstOrDefault() == null)
             //        {
-                        if (!UpdateNotification(sbn))
-                        {
-                            InsertNotification(sbn);
-                        }
-            //        }
-            //    }
-            //}
-
-            
-
-            if (StatusBarNotifications.Count > 0)
-            {
-                OnNotificationListSizeChanged(new NotificationListSizeChangedEventArgs
-                {
-                    ThereAreNotifications = true
-                });
-                thereAreNotifications = true;
-            }
-        }
-
-        private void InsertNotification(StatusBarNotification sbn)
-        {
             var blockingstatus = Blacklist.ReturnBlockLevel(sbn.PackageName);
 
             if (!blockingstatus.HasFlag(LevelsOfAppBlocking.Blacklisted))
             {
                 if (!blockingstatus.HasFlag(LevelsOfAppBlocking.BlockInAppOnly))
                 {
-                    //This is the notification of 'LiveDisplay is showing above other apps'
-                    //Simply let's ignore it, because it's annoying. (Anyway, the user couldn't care less about this notification tbh)
-                    if (!(sbn.PackageName == "android" && sbn.Tag == "com.android.server.wm.AlertWindowNotification - com.underground.livedisplay"))
+                    int index = GetNotificationPosition(sbn); //Tries to get the index of a possible already existing notification in the list of notif.
+                    if (index >= 0)
+                    {
+                        //It exists within the list.
+                        //SO it should be updated.
+
+                        //A WhatsApp Notification brokes this behavior:
+                        //When a notification of New Message from WhatsApp is received in the Notification Drawer is shown only one notification.
+                        //But behind the scenes in reality there are two notifications, One that's the Summary (it does not have actions)
+                        //and the other one that has the actions of 'Answer' 'Mark as read' however in the following method it identifies that those two notifications are the same
+                        //so the notification with actions gets replaced with the other that is summary and doesn't have Actions, so In the Lockscreen it'll show this one
+                        //But in the practice the one that should be shown is the one that has Action buttons.
+                        //This is a dumb behavior of WhatsApp, why is needed to show a Notification representing a Summary of just ONE notification?
+                        //Wouldn't be easier to show that one notification directly? LOL.
+                        ///It also happens with certain google notifications, I still don't get why do they need to do that.
+
+                        StatusBarNotifications.RemoveAt(index);
+                        StatusBarNotifications.Add(sbn);
+                        using (var h = new Handler(Looper.MainLooper))
+                            h.Post(() => { notificationAdapter.NotifyItemChanged(index); });
+                        OnNotificationPosted(blockingstatus.HasFlag(LevelsOfAppBlocking.None), sbn, true);
+                    }
+                    else
                     {
                         StatusBarNotifications.Add(sbn);
-                    }
 
-                    using (var h = new Handler(Looper.MainLooper))
-                        h.Post(() => { notificationAdapter.NotifyItemInserted(StatusBarNotifications.Count); });
-                    OnNotificationPosted(blockingstatus.HasFlag(LevelsOfAppBlocking.None));
+                        using (var h = new Handler(Looper.MainLooper))
+                            h.Post(() => { notificationAdapter.NotifyItemInserted(StatusBarNotifications.Count); });
+                        OnNotificationPosted(blockingstatus.HasFlag(LevelsOfAppBlocking.None), sbn, false);
+
+                    }
                 }
             }
             else
@@ -126,42 +128,20 @@ namespace LiveDisplay.Servicios.Notificaciones
                     notificationSlave.CancelNotification(sbn.PackageName, sbn.Tag, sbn.Id);
                 }
             }
-        }
+            //        }
+            //    }
+            //}
 
-        private void OnNotificationUpdated(int position)
-        {
-            NotificationUpdated?.Invoke(this, new NotificationItemClickedEventArgs
+
+
+            if (StatusBarNotifications.Count > 0)
             {
-                Position = position,
-                StatusBarNotification= StatusBarNotifications[position]
-
+                OnNotificationListSizeChanged(new NotificationListSizeChangedEventArgs
+                {
+                    ThereAreNotifications = true
+                });
+                thereAreNotifications = true;
             }
-            );
-        }
-
-        private bool UpdateNotification(StatusBarNotification sbn)
-        {
-            //A WhatsApp Notification brokes this behavior:
-            //When a notification of New Message from WhatsApp is received in the Notification Drawer is shown only one notification.
-            //But behind the scenes in reality there are two notifications, One that's the Summary (it does not have actions)
-            //and the other one that has the actions of 'Answer' 'Mark as read' however in the following method it identifies that those two notifications are the same
-            //so the notification with actions gets replaced with the other that is summary and doesn't have Actions, so In the Lockscreen it'll show this one
-            //But in the practice the one that should be shown is the one that has Action buttons.
-            //This is a dumb behavior of WhatsApp, why is needed to show a Notification representing a Summary of just ONE notification?
-            //Wouldn't be easier to show that one notification directly? LOL.
-            ///It also happens with certain google notifications, I still don't get why do they need to do that.
-            int indice = GetNotificationPosition(sbn);
-            if (indice >= 0)
-            {                
-                StatusBarNotifications.RemoveAt(indice);
-                StatusBarNotifications.Add(sbn);
-                using (var h = new Handler(Looper.MainLooper))
-                    h.Post(() => { notificationAdapter.NotifyItemChanged(indice); });
-
-                OnNotificationUpdated(indice);
-                return true;
-            }
-            return false;
         }
 
         public void OnNotificationRemoved(StatusBarNotification sbn)
@@ -199,13 +179,15 @@ namespace LiveDisplay.Servicios.Notificaciones
         private void OnNotificationListSizeChanged(NotificationListSizeChangedEventArgs e)
         {
             NotificationListSizeChanged?.Invoke(this, e);
-        }
+        }                                                                                        
 
-        private void OnNotificationPosted(bool shouldCauseWakeup)
+        private void OnNotificationPosted(bool shouldCauseWakeup, StatusBarNotification sbn, bool updatesPreviousNotification)
         {
             NotificationPosted?.Invoke(this, new NotificationPostedEventArgs()
             {
-                ShouldCauseWakeUp = shouldCauseWakeup
+                ShouldCauseWakeUp = shouldCauseWakeup,
+                StatusBarNotification= sbn,
+                UpdatesPreviousNotification= updatesPreviousNotification
             });
         }
 

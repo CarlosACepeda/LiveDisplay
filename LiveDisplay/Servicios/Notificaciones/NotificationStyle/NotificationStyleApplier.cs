@@ -55,6 +55,9 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
         private Resources resources;
         private View notificationView;
 
+        //TODO: It should allow apply style to multiple View types.
+        //For example, actually it only applies the style to the NotificationWidget
+        //But not the Floating Notification.
         public NotificationStyleApplier(ref LinearLayout notificationView)
         {
             this.notificationView = notificationView;
@@ -266,7 +269,8 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
         {
             ImageButton closenotificationbutton = sender as ImageButton;
             OpenNotification openNotification = closenotificationbutton.GetTag(DefaultActionIdentificator) as OpenNotification;
-            openNotification.Cancel(); 
+            openNotification.Cancel();
+            notificationView.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
             notificationView.Visibility = ViewStates.Invisible;
         }
 

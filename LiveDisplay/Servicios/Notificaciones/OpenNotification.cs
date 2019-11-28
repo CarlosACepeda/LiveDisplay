@@ -55,6 +55,9 @@ namespace LiveDisplay.Servicios.Notificaciones
                     }
                 }
         }
+        //I need to pinpoint this notification, this is the way.
+        //When-> Helps to really ensure is the same notification by checking also the time it was posted
+        public string GetCustomId() => GetPackageName() + GetTag() + GetId()+ When();
         private string GetTag() => statusbarnotification.Tag;
         private string GetPackageName() => statusbarnotification.PackageName;
         public string Title()
