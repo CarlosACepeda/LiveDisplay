@@ -1,4 +1,5 @@
 ﻿using Android.App;
+using Android.Content;
 using Android.Content.Res;
 using Android.Graphics;
 using Android.Graphics.Drawables;
@@ -6,6 +7,7 @@ using Android.OS;
 using Android.Util;
 using Android.Views;
 using Android.Views.Animations;
+using Android.Views.InputMethods;
 using Android.Widget;
 using LiveDisplay.Servicios.Wallpaper;
 using System;
@@ -53,14 +55,16 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
         private ProgressBar notificationProgress;
 
         private Resources resources;
+        //private Fragment notificationFragment; //Required to do operations such as hiding the keyboard.
         private View notificationView;
 
         //TODO: It should allow apply style to multiple View types.
         //For example, actually it only applies the style to the NotificationWidget
         //But not the Floating Notification.
-        public NotificationStyleApplier(ref LinearLayout notificationView)
+        public NotificationStyleApplier(ref LinearLayout notificationView /*, Fragment fragment*/)
         {
             this.notificationView = notificationView;
+            //notificationFragment = fragment;
             notificationActions= notificationView.FindViewById<LinearLayout>(Resource.Id.notificationActions);
             titulo = notificationView.FindViewById<TextView>(Resource.Id.tvTitulo);
             texto = notificationView.FindViewById<TextView>(Resource.Id.tvTexto);
@@ -302,6 +306,13 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
             inlineresponse.Text = string.Empty;
             notificationActions.Visibility = ViewStates.Visible;
             inlineNotificationContainer.Visibility = ViewStates.Invisible;
+            // Check if no view has focus:
+            //View view = notificationFragment.Activity.CurrentFocus;
+            //if (view != null)
+            //{
+            //    InputMethodManager imm = (InputMethodManager)notificationFragment.Activity.GetSystemService(Context.InputMethodService);
+            //    imm.HideSoftInputFromInputMethod(view.WindowToken, 0);
+            //}
         }
         public void ApplyActionsStyle(OpenNotification notification)
         {           

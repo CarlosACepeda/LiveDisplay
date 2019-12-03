@@ -45,12 +45,15 @@
   <string name="enablenotificationlistener">Acceder a las Notificaciones</string>
   <string name="enablequickreply">Activar la respuesta rápida</string>
   <string name="enablequickreplydesc">Contesta directamente a mensajes desde la notificación como se muestra en Nougat y versiones superiores</string>
+  <string name="enabletestsetting">Activar opción de prueba</string>
   <string name="eng">Inglés</string>
   <string name="entercityplaceholder">Introduce una ciudad aquí</string>
   <string name="esp">Español</string>
   <string name="fifteenseconds">15 segundos</string>
   <string name="fiveseconds">5 segundos</string>
   <string name="githubproject">Quieres ayudar?</string>
+  <string name="halfbottom">mitad inferior</string>
+  <string name="halftop">mitad superior</string>
   <string name="help">Ayuda</string>
   <string name="helptext">Para remover esta app dirígete a \'Administradores de Dispositivos\' en los ajustes de tu dispositivo, desactiva LiveDisplay y luego deinstala normalmente</string>
   <string name="hidden">Drsd mn dr dk rdbqdsn ptd drsár atrbzmcn</string>
@@ -109,5 +112,4 @@
   <string name="weatherwidgetenabled">Activar el Widget del Clima</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">Diseño del icono de esta app!</string>
-  <string name="enabletestsetting">Activar opción de prueba</string>
 </resources>

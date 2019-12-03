@@ -4,6 +4,7 @@
     using Android.App;
     using Android.Content;
     using Android.Content.PM;
+    using Android.Content.Res;
     using Android.Graphics;
     using Android.Graphics.Drawables;
     using Android.Media;
@@ -57,6 +58,7 @@
         private bool isMusicWidgetPresent;
         private ActivityStates currentActivityState;
         private ViewPropertyAnimator viewPropertyAnimator;
+        private TextView welcome;
         private ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context));
         public static event EventHandler<LockScreenLifecycleEventArgs> OnActivityStateChanged;
 
@@ -79,7 +81,7 @@
 
             //Views
             //wallpaperView = FindViewById<ImageView>(Resource.Id.wallpaper);
-            //unlocker = FindViewById<ImageView>(Resource.Id.unlocker);
+            //unlocker = FindViewById<ImageView>(Resource.Id.unlocker);           
             startCamera = FindViewById<Button>(Resource.Id.btnStartCamera);
             startDialer = FindViewById<Button>(Resource.Id.btnStartPhone);
             clearAll = FindViewById<Button>(Resource.Id.btnClearAllNotifications);
@@ -131,7 +133,7 @@
 
             CheckNotificationListSize();
             OnActivityStateChanged += LockScreenActivity_OnActivityStateChanged;
-            WallpaperPublisher.CurrentWallpaperCleared += WallpaperPublisher_CurrentWallpaperCleared;
+            WallpaperPublisher.CurrentWallpaperCleared += WallpaperPublisher_CurrentWallpaperCleared;            
         }
 
         private void WallpaperPublisher_CurrentWallpaperCleared(object sender, CurrentWallpaperClearedEventArgs e)
@@ -328,6 +330,13 @@
             watchDog.Stop();
             watchDog.Start();
             OnActivityStateChanged?.Invoke(null, new LockScreenLifecycleEventArgs { State = ActivityStates.Resumed });
+            if (configurationManager.RetrieveAValue(ConfigurationParameters.TutorialRead)==false)
+            {
+                welcome = FindViewById<TextView>(Resource.Id.welcomeoverlay);
+                welcome.Text = Resources.GetString(Resource.String.tutorialtext);
+                welcome.Visibility = ViewStates.Visible;
+                welcome.Touch += Welcome_Touch;
+            }
             if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetEnabled))
             {
                 if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
@@ -366,7 +375,16 @@
                 default:
                     break;
             }
-            //LoadWallpaper(new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context)));
+        }
+
+        private void Welcome_Touch(object sender, View.TouchEventArgs e)
+        {
+            configurationManager.SaveAValue(ConfigurationParameters.TutorialRead, true);
+            if (welcome != null)
+            {
+                welcome.Visibility = ViewStates.Gone;
+                welcome.Touch -= Welcome_Touch;
+            }
 
         }
 
@@ -681,22 +699,6 @@
                 //NotificationFragment.NotificationClicked-= NotificationFragment_NotificationClicked;
             }
         }
-
-        private void NotificationFragment_NotificationClicked(object sender, EventArgs e)
-        {
-            using (var surfaceView = FindViewById<LinearLayout>(Resource.Id.surfaceview))
-            {
-                if (surfaceView.Visibility != ViewStates.Gone)
-                {
-                    surfaceView.Visibility = ViewStates.Gone;
-                }
-                else
-                {
-                    surfaceView.Visibility = ViewStates.Visible;
-                }
-            }
-        }
-
         private void StopFloatingNotificationService()
         {
             using (Intent intent = new Intent(Application.Context, typeof(FloatingNotification)))

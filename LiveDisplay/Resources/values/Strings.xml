@@ -47,12 +47,15 @@
   <string name="enablenotificationlistener">Enable Notification Access</string>
   <string name="enablequickreply">Enable quick Notification Reply</string>
   <string name="enablequickreplydesc">Answer directly from Notification to messages, as seen in Nougat and beyond</string>
+  <string name="enabletestsetting">Enable test setting</string>
   <string name="eng">English</string>
   <string name="entercityplaceholder">Enter a city here</string>
   <string name="esp">Spanish</string>
   <string name="fifteenseconds">15 seconds</string>
   <string name="fiveseconds">5 seconds</string>
   <string name="githubproject">Want to help?</string>
+  <string name="halfbottom">half bottom</string>
+  <string name="halftop">half top</string>
   <string name="help">Help</string>
   <string name="helptext">To remove this app go to Settings&gt; Device Administrators, then Uncheck LiveDisplay, now you should be able to uninstall normally</string>
   <string name="hidden">Sghr hr mns sgd rdbqds xnt zqd knnjhmf enq</string>
@@ -99,6 +102,7 @@
   <string name="turnonnewnotification">Turn on screen</string>
   <string name="turnonnewnotification_desc">Turn on screen if a new notification is received</string>
   <string name="turnonusermovement">Turn on screen on device pick up</string>
+  <string name="tutorialtext">Hi there! \n Double tap in the half bottom to unlock!, tap the half top to turn off the device \n Press anywhere to continue</string>
   <string name="twelvehours">12 Hours</string>
   <string name="updateweathereach">Update weather each:</string>
   <string name="useimperialunits">Use Imperial units</string>
@@ -113,5 +117,4 @@
   <string name="weatherwidgetenabled">Enable Weather Widget</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
-  <string name="enabletestsetting">Enable test setting</string>
 </resources>

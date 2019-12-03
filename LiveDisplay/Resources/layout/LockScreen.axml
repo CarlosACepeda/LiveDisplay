@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
     a:layout_width="match_parent"
+    a:id="@+id/lockscreenroot"
     a:layout_height="match_parent">
     <LinearLayout 
         a:animateLayoutChanges="true"
@@ -11,6 +12,7 @@
         a:layout_width="match_parent"
         a:layout_height="match_parent"
         a:weightSum="100"
+        tools:visibility="visible"
         a:gravity="bottom">
 	<RelativeLayout
 			a:layout_weight="4"
@@ -108,17 +110,9 @@
                 a:id="@+id/btnStartPhone" />
         </FrameLayout>
     </LinearLayout>
-	<LinearLayout
-        a:id="@+id/surfaceview"
-		a:background="@android:color/black"
-		a:alpha="0.7"
-	    a:visibility="gone"
-        a:gravity="center_vertical"
-		a:layout_width="match_parent"
-		a:layout_height="match_parent" >
-         <FrameLayout
-                a:layout_width="200dp"
-                a:layout_height="wrap_content"
-                a:id="@+id/FloatingNotificationPlaceholder" />
-	</LinearLayout>
+	<include
+        a:id="@+id/welcomeoverlay"
+        layout="@layout/welcome"
+        a:layout_width="match_parent"
+        a:layout_height="match_parent"/>
 </FrameLayout>
