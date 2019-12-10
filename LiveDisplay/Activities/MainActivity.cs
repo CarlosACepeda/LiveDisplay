@@ -43,10 +43,7 @@
         {
             CheckNotificationAccess();
             CheckDeviceAdminAccess();
-            if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1)
-            {
-                CheckDrawOverOtherAppsAccess();
-            }
+            CheckDrawOverOtherAppsAccess();
             IsApplicationHealthy();
             base.OnResume();
         }
@@ -95,11 +92,9 @@
 
         private void CheckDrawOverOtherAppsAccess()
         {
-            ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context));
-
             using (var drawOverOtherAppsImageView = FindViewById<ImageView>(Resource.Id.drawOverOtherAppsAccessCheckbox))
             {
-                if (Settings.CanDrawOverlays(Application.Context))
+                if (Checkers.ThisAppCanDrawOverlays())
                 {
                     drawOverOtherAppsImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
                 }

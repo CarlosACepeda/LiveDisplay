@@ -55,7 +55,7 @@
         private void Searchboxapp_TextChanged(object sender, Android.Text.TextChangedEventArgs e)
         {
             bool searching = false;
-            if (!searching) //Is this valid? It does not seem to do nothing.
+            if (!searching) //Is this valid? It does not seem to do anything.
             {
                 searching = true;
                 loadingblacklistitemsprogressbar.Visibility = Android.Views.ViewStates.Visible;

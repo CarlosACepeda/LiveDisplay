@@ -403,7 +403,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             remoteInputs = action.GetRemoteInputs();
             if (remoteInputs == null || remoteInputs?.Length == 0) return false;
 
-            //In order to consider an action who represents a Direct Reply we check for the ResultKey of that remote input.
+            //In order to consider an action representing a Direct Reply we check for the ResultKey of that remote input.
             foreach (var remoteInput in remoteInputs)
             {
                 if (remoteInput.ResultKey != null)

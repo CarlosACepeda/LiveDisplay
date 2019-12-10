@@ -121,91 +121,10 @@ namespace LiveDisplay.Fragments
         {
             base.OnDestroy();
         }
-
-        public override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
-        {
-            base.OnActivityResult(requestCode, resultCode, data);
-
-            switch (requestCode)
-            {
-                case 2:
-                    if (resultCode == Result.Ok && data != null)
-                    {
-                        Android.Net.Uri uri = data.Data;
-                        try
-                        {
-                            BackgroundFactory background = new BackgroundFactory();
-                            background.SaveImagePath(uri);
-                            background = null;
-                            Log.Info("tag", "Path sent to BackgroundFactory");
-                        }
-                        catch
-                        {
-                        }
-                    }
-                    else
-                    {
-                        Log.Info("LiveDisplay", "Data was null");
-                        using (ConfigurationManager configurationManager = new ConfigurationManager(sharedPreferences))
-                        {
-                            configurationManager.SaveAValue(ConfigurationParameters.ChangeWallpaper, "0");
-                        }
-                    }
-
-                    break;
-            }
-        }
-
-        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
-        {
-            base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
-
-            if (requestCode == 1 && grantResults[0] == Permission.Granted)
-            {
-                //Nothing.
-            }
-            else
-            {
-                Log.Info("LiveDisplay", "User did not allow the read storage permision, reverting back to Black wallpaper");
-                using (ConfigurationManager configurationManager = new ConfigurationManager(sharedPreferences))
-                {
-                    configurationManager.SaveAValue(ConfigurationParameters.ChangeWallpaper, "0");
-                }
-            }
-        }
-
         public void OnSharedPreferenceChanged(ISharedPreferences sharedPreferences, string key)
         {
             switch (key)
             {
-                case ConfigurationParameters.ChangeWallpaper:
-                    switch (sharedPreferences.GetString(ConfigurationParameters.ChangeWallpaper, "0"))
-                    {
-                        case "1":
-
-                            if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1)
-                            {
-                                if (Application.Context.CheckSelfPermission("android.permission.READ_EXTERNAL_STORAGE") != Permission.Granted)
-                                {
-                                    RequestPermissions(new string[1] { "android.permission.READ_EXTERNAL_STORAGE" }, 1);
-                                }
-                            }
-
-                            break;
-
-                        case "2":
-
-                            using (Intent intent = new Intent())
-                            {
-                                intent.SetType("image/*");
-                                intent.SetAction(Intent.ActionGetContent);
-                                //here 1 means the request code.
-                                StartActivityForResult(Intent.CreateChooser(intent, "Pick image"), 2);
-                            }
-                            break;
-                    }
-                    break;
-
                 case ConfigurationParameters.DoubleTapOnTopActionBehavior:
                     Preference doubletaptopbehavior = FindPreference("doubletapontoppactionbehavior");
                     switch (sharedPreferences.GetString(ConfigurationParameters.DoubleTapOnTopActionBehavior, "0"))

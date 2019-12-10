@@ -160,12 +160,7 @@
             //it works correctly, but I want to refactor this. (Regression)
             if (currentActivityState== ActivityStates.Resumed)
             Awake.TurnOffScreen();
-        }
-
-        private void MusicController_MusicStopped(object sender, EventArgs e)
-        {
-            StopMusicController();
-        }
+        }       
 
         private void MusicController_MusicPaused(object sender, EventArgs e)
         {
