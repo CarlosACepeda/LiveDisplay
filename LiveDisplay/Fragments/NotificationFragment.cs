@@ -74,40 +74,46 @@ namespace LiveDisplay.Fragments
 
             if (e.UpdatesPreviousNotification)
             {
-                //if updates a previous notification, let's see if first of all the notification
-                //to be updated is the same that's currently being displayed in the Notification Widget.
-                if ((string)notification.GetTag(Resource.String.defaulttag) == openNotification.GetCustomId())
+                Activity.RunOnUiThread(() =>
                 {
-                    
-                    //Watch out for possible memory leaks here.
+                    //if updates a previous notification, let's see if first of all the notification
+                    //to be updated is the same that's currently being displayed in the Notification Widget.
+                    if ((string)notification.GetTag(Resource.String.defaulttag) == openNotification.GetCustomId())
+                    {
+
+                        //Watch out for possible memory leaks here.
+                        styleApplier?.ApplyStyle(openNotification);
+
+                        //let's attach a tag to the fragment in order to know which notification is this fragment showing.
+                        notification.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
+
+                        if (notification.Visibility != ViewStates.Visible)
+                        {
+                            notification.Visibility = ViewStates.Visible;
+                            StartTimeout();
+                        }
+
+                    }
+                    else
+                    {
+                        //they are not the same so, the notification widget won't get updated(because that'll cause the 
+                        //notification the user is viewing to be replaced)
+                    }
+                });
+
+            }
+            else
+            {
+                Activity.RunOnUiThread(() =>
+                {
                     styleApplier?.ApplyStyle(openNotification);
-
-                    //let's attach a tag to the fragment in order to know which notification is this fragment showing.
                     notification.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
-
                     if (notification.Visibility != ViewStates.Visible)
                     {
                         notification.Visibility = ViewStates.Visible;
                         StartTimeout();
                     }
-
-                }
-                else
-                {
-                    //they are not the same so, the notification widget won't get updated(because that'll cause the 
-                    //notification the user is viewing to be replaced)
-                }
-
-            }
-            else
-            {
-                styleApplier?.ApplyStyle(openNotification);
-                notification.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
-                if (notification.Visibility != ViewStates.Visible)
-                {
-                    notification.Visibility = ViewStates.Visible;
-                    StartTimeout();
-                }
+                });
             }
         }
 

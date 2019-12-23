@@ -7,6 +7,7 @@ using Android.Preferences;
 using Android.Runtime;
 using Android.Text;
 using Android.Util;
+using Java.Util;
 using LiveDisplay.BroadcastReceivers;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Notificaciones;
@@ -28,14 +29,13 @@ namespace LiveDisplay.Servicios
         private static AwakeStatus CurrentAwakeStatus = AwakeStatus.NonActive; //Default value.
 
         public static void WakeUpScreen()
-        {
-            //BUGGY: FIX ME. (It don't reacts despite being within the allowed hours, only happens if the hour is HH:<a number between 00-09>
-            //Eg. 11:02.
+        {            
             //Check the current time and only react if the time this method is called is within the allowed hours.
             int start = int.Parse(configurationManager.GetString(ConfigurationParameters.StartSleepTime, "0")); //12am
             int end = int.Parse(configurationManager.GetString(ConfigurationParameters.FinishSleepTime, "500"));//5am
             //Generates the hour as a 4 characters number in 24 hours for example: 2210 (10:10pm)
-            var now = int.Parse(string.Concat(DateTime.Now.Hour.ToString() + DateTime.Now.Minute.ToString()));
+            var now = int.Parse(string.Concat(DateTime.Now.Hour.ToString("00"), DateTime.Now.Minute.ToString("00")));
+            Log.Info("LiveDisplay",now.ToString());
 
             if (start <= end) //The times are in the same day.
             {
@@ -63,11 +63,6 @@ namespace LiveDisplay.Servicios
                     sleeping = false;
                 }
             }
-
-            //WARNING: TODO: In the last commit I introduced the method #GetAwakeStatus and that state is shown in the Lockscreen and
-            //I found a funny behavior and that is, if the hour is XX:00 (o' clock) then the Service says is sleeping (or not active) lol.
-            //After that it returns to normal. (Obviously this happens when the hour is within the Allowed hours of Awake to be active.
-            
 
             if (!sleeping)
                 if (configurationManager.GetBoolean(ConfigurationParameters.TurnOnNewNotification, false) == true || configurationManager.GetBoolean(ConfigurationParameters.TurnOnUserMovement, false) == true)
@@ -130,7 +125,8 @@ namespace LiveDisplay.Servicios
             int start = int.Parse(configurationManager.GetString(ConfigurationParameters.StartSleepTime, "0")); //12am
             int end = int.Parse(configurationManager.GetString(ConfigurationParameters.FinishSleepTime, "500"));//5am
             //Generates the hour as a 4 characters number in 24 hours for example: 2210 (10:10pm)
-            var now = int.Parse(string.Concat(DateTime.Now.Hour.ToString() + DateTime.Now.Minute.ToString()));
+            var now = int.Parse(string.Concat(DateTime.Now.Hour.ToString("00"), DateTime.Now.Minute.ToString("00")));
+            Log.Info("LiveDisplay", now.ToString());
 
             if (start <= end) //The times are in the same day.
             {
