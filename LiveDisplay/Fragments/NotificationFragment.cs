@@ -127,27 +127,34 @@ namespace LiveDisplay.Fragments
 
         private void CatcherHelper_NotificationRemoved(object sender, EventArgs e)
         {
-            notification.Visibility = ViewStates.Gone;
-            //Remove tag, notification removed
-            openNotification = null;
-            notification?.SetTag(Resource.String.defaulttag, null);
+            Activity?.RunOnUiThread(() =>
+            {
+                notification.Visibility = ViewStates.Gone;
+                //Remove tag, notification removed
+                openNotification = null;
+                notification?.SetTag(Resource.String.defaulttag, null);
+            });
         }
         private void LlNotification_Click(object sender, EventArgs e)
         {
-            notification.Visibility = ViewStates.Visible;
-            try
+            Activity?.RunOnUiThread(() =>
             {
-                Activity.RunOnUiThread(() => openNotification.ClickNotification());
-                if (openNotification.IsAutoCancellable())
-                {
-                    notification.Visibility = ViewStates.Invisible;
-                }
 
-            }
-            catch
-            {
-                Log.Wtf("OnNotificationClicked", "Metodo falla porque no existe una notificacion con esta acción");
-            }
+                notification.Visibility = ViewStates.Visible;
+                try
+                {
+                    Activity.RunOnUiThread(() => openNotification.ClickNotification());
+                    if (openNotification.IsAutoCancellable())
+                    {
+                        notification.Visibility = ViewStates.Invisible;
+                    }
+
+                }
+                catch
+                {
+                    Log.Wtf("OnNotificationClicked", "Metodo falla porque no existe una notificacion con esta acción");
+                }
+            });
         }
 
         private void ItemLongClicked(object sender, NotificationItemClickedEventArgs e)

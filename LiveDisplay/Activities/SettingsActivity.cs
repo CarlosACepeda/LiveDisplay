@@ -22,12 +22,15 @@
                 SetSupportActionBar(toolbar);
                 SupportActionBar.SetDefaultDisplayHomeAsUpEnabled(true);
             }
-            Bundle remoteInput = RemoteInput.GetResultsFromIntent(Intent);
-            if (remoteInput != null)
+            if (Build.VERSION.SdkInt > BuildVersionCodes.Kitkat)
             {
-                string response = remoteInput.GetCharSequence("test1");
+                Bundle remoteInput = RemoteInput.GetResultsFromIntent(Intent);
+                if (remoteInput != null)
+                {
+                    string response = remoteInput.GetCharSequence("test1");
 
-                Toast.MakeText(this, "The response is: " + response, ToastLength.Long).Show();
+                    Toast.MakeText(this, "The response is: " + response, ToastLength.Long).Show();
+                }
             }
         }
         
