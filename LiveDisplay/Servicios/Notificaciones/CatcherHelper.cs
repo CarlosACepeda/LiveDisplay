@@ -1,6 +1,7 @@
 ﻿using Android.App;
 using Android.OS;
 using Android.Service.Notification;
+using Android.Util;
 using LiveDisplay.Adapters;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
 using System;
@@ -146,23 +147,29 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         public void OnNotificationRemoved(StatusBarNotification sbn)
         {
-            int position = GetNotificationPosition(sbn);
-            if (position >= 0)
-            {
-                StatusBarNotifications.RemoveAt(position);
-                using (var h = new Handler(Looper.MainLooper))
-                    h.Post(() => { notificationAdapter.NotifyItemRemoved(position); });
-            }
-
-            if (StatusBarNotifications.Count == 0)
-            {
-                OnNotificationListSizeChanged(new NotificationListSizeChangedEventArgs
+                int position = GetNotificationPosition(sbn);
+                if (position >= 0)
                 {
-                    ThereAreNotifications = false
-                });
-                thereAreNotifications = false;
-            }
-            OnNotificationRemoved();
+                    StatusBarNotifications.RemoveAt(position);
+                    using (var h = new Handler(Looper.MainLooper))
+                        h.Post(() =>
+                        {
+                            //When removing a summary notification it causes a IndexOutOfBoundsException...
+                            //notificationAdapter.NotifyItemRemoved(position);
+                            //This has to be fixed, anyway, because this change makes the adapter to lose  the animations when removing a item
+                            notificationAdapter.NotifyDataSetChanged();
+                        });
+                }
+
+                if (StatusBarNotifications.Count == 0)
+                {
+                    OnNotificationListSizeChanged(new NotificationListSizeChangedEventArgs
+                    {
+                        ThereAreNotifications = false
+                    });
+                    thereAreNotifications = false;
+                }
+            OnNotificationRemoved();            
         }
 
         public void CancelAllNotifications()

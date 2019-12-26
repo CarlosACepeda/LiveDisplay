@@ -2,6 +2,7 @@
 {
     using Android.Service.Notification;
     using Android.Support.V7.Widget;
+    using Android.Util;
     using Android.Views;
     using Android.Widget;
     using LiveDisplay.Factories;
@@ -24,16 +25,23 @@
 
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
-            //Cast
-            NotificationAdapterViewHolder viewHolder = holder as NotificationAdapterViewHolder;
-            viewHolder.Icono.Background = IconFactory.ReturnIconDrawable(notificaciones[position].Notification.Icon, notificaciones[position].PackageName);
-            if (selectedItem == position)
+            if (position != RecyclerView.NoPosition)
             {
-                viewHolder.Icono.Alpha = 0.5f;
+                //Cast
+                NotificationAdapterViewHolder viewHolder = holder as NotificationAdapterViewHolder;
+                viewHolder.Icono.Background = IconFactory.ReturnIconDrawable(notificaciones[position].Notification.Icon, notificaciones[position].PackageName);
+                if (selectedItem == position)
+                {
+                    viewHolder.Icono.Alpha = 0.5f;
+                }
+                else
+                {
+                    viewHolder.Icono.Alpha = 1;
+                }
             }
             else
             {
-                viewHolder.Icono.Alpha = 1;
+                Log.Info("LiveDisplay", "WTF Position: "+ position);
             }
         }
 
@@ -66,22 +74,16 @@
         {
             var statusBarNotification = CatcherHelper.StatusBarNotifications[LayoutPosition];
             OnItemLongClicked(LayoutPosition, statusBarNotification);
-        }
+        }        
 
         private void ItemView_Click(object sender, EventArgs e)
         {
-            try
-            {
-                //Simply indicates which item was clicked and after that call NotifyDataSetChanged to changes take effect.
-                NotificationAdapter.selectedItem = LayoutPosition;
-                CatcherHelper.notificationAdapter.NotifyDataSetChanged();
-                var statusBarNotification = CatcherHelper.StatusBarNotifications[LayoutPosition];
-                OnItemClicked(LayoutPosition, statusBarNotification);
-            }
-            catch
-            { 
-                //TODO: Solve the IndexOutOfBoundsException that happens here! if possible.                
-            }
+            //Simply indicates which item was clicked and after that call NotifyDataSetChanged to changes take effect.
+            NotificationAdapter.selectedItem = LayoutPosition;
+            CatcherHelper.notificationAdapter.NotifyDataSetChanged();
+            var statusBarNotification = CatcherHelper.StatusBarNotifications[LayoutPosition];
+            OnItemClicked(LayoutPosition, statusBarNotification);            
+
         }
 
         private void OnItemClicked(int position, StatusBarNotification sbn)
