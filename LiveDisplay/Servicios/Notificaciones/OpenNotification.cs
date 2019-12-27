@@ -326,6 +326,18 @@ namespace LiveDisplay.Servicios.Notificaciones
 
             return result;
         }
+
+        public bool BelongsToGroup()
+        {
+            if (Build.VERSION.SdkInt <= BuildVersionCodes.N) return false;
+            else return statusbarnotification.IsGroup;
+
+        }
+        public bool IsSummary()
+        {
+            if (Build.VERSION.SdkInt <= BuildVersionCodes.Kitkat) return false;
+            else return statusbarnotification.Notification.Flags.HasFlag(NotificationFlags.GroupSummary);
+        }
         internal int GetProgress()
         {
             try
