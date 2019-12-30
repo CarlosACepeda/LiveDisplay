@@ -131,7 +131,6 @@
 
             LoadConfiguration();
 
-            CheckNotificationListSize();
             OnActivityStateChanged += LockScreenActivity_OnActivityStateChanged;
             WallpaperPublisher.CurrentWallpaperCleared += WallpaperPublisher_CurrentWallpaperCleared;            
         }
@@ -303,18 +302,6 @@
                         finalTouchTime = -1;
                     }
                 }
-        }
-
-        private void CheckNotificationListSize()
-        {
-            if (CatcherHelper.thereAreNotifications == true)
-            {
-                clearAll.Visibility = ViewStates.Visible;
-            }
-            else
-            {
-                clearAll.Visibility = ViewStates.Invisible;
-            }
         }
 
         protected override void OnResume()

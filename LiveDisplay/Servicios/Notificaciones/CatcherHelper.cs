@@ -19,26 +19,13 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         public static event EventHandler<NotificationPostedEventArgs> NotificationPosted;
 
-#pragma warning disable CS0067 // El evento 'CatcherHelper.NotificationGrouped' nunca se usa
-
-        public static event EventHandler NotificationGrouped; // TODO: Clueless (?) :'-( I don't know how to implement this in LockScreen
-
-#pragma warning restore CS0067 // El evento 'CatcherHelper.NotificationGrouped' nunca se usa
-#pragma warning disable CS0067 // El evento 'CatcherHelper.NotificationUngrouped' nunca se usa
-
-        public static event EventHandler NotificationUngrouped; //TODO
-
-#pragma warning restore CS0067 // El evento 'CatcherHelper.NotificationUngrouped' nunca se usa
-
         public static event EventHandler<NotificationListSizeChangedEventArgs> NotificationListSizeChanged;
-
-        public static bool thereAreNotifications = false;
 
         /// <summary>
         /// Constructor of the Class
         /// </summary>
         /// <param name="statusBarNotifications">This list is sent by Catcher, and is used to fill the Adapter
-        /// that the RecyclerView will use.
+        /// that the RecyclerView will use, it is tighly coupled with that adapter.
         /// </param>
         public CatcherHelper(List<StatusBarNotification> statusBarNotifications)
         {
@@ -46,7 +33,10 @@ namespace LiveDisplay.Servicios.Notificaciones
             notificationAdapter = new NotificationAdapter(statusBarNotifications);
             if (statusBarNotifications.Count > 0)
             {
-                thereAreNotifications = true;
+                OnNotificationListSizeChanged(new NotificationListSizeChangedEventArgs
+                {
+                    ThereAreNotifications = true
+                });
             }
         }
 
@@ -64,20 +54,6 @@ namespace LiveDisplay.Servicios.Notificaciones
             if (sbn.PackageName == "android" && sbn.Tag == "com.android.server.wm.AlertWindowNotification - com.underground.livedisplay")            
                 return;
             
-            //Before inserting let's check if this notification represents the summary of a group of notifications.
-            //If not then check if the notification is part of a group, if is then ignore it, because we already have the summary notification. (temporary, the objective
-            //eventually is to make the lockscreen capable of showing a group of notifications, so we can show all the notifications that belong to a group instead of just showing
-            //the notification that represents the summary of all the notifications that belong to that group.
-
-            //only valid since Lollipop, let's see how will i do this for Kitkat.
-            //Other apps are capable of doing it why I not. 
-
-            //if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
-            //{
-            //    if (!sbn.Notification.Flags.HasFlag(NotificationFlags.GroupSummary))
-            //    {
-            //        if (statusBarNotifications.Where(no => no.GroupKey == sbn.GroupKey).FirstOrDefault() == null)
-            //        {
             var blockingstatus = Blacklist.ReturnBlockLevel(sbn.PackageName);
 
             if (!blockingstatus.HasFlag(LevelsOfAppBlocking.Blacklisted))
@@ -129,11 +105,6 @@ namespace LiveDisplay.Servicios.Notificaciones
                     notificationSlave.CancelNotification(sbn.PackageName, sbn.Tag, sbn.Id);
                 }
             }
-            //        }
-            //    }
-            //}
-
-
 
             if (StatusBarNotifications.Count > 0)
             {
@@ -141,7 +112,6 @@ namespace LiveDisplay.Servicios.Notificaciones
                 {
                     ThereAreNotifications = true
                 });
-                thereAreNotifications = true;
             }
         }
 
@@ -167,7 +137,6 @@ namespace LiveDisplay.Servicios.Notificaciones
                     {
                         ThereAreNotifications = false
                     });
-                    thereAreNotifications = false;
                 }
             OnNotificationRemoved();            
         }
