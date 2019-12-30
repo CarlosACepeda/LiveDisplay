@@ -54,17 +54,19 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
         private ImageButton togglenotificationcollapse;
         private ProgressBar notificationProgress;
 
+        public static event EventHandler<bool> SendInlineResponseAvailabityChanged;
+
         private Resources resources;
-        //private Fragment notificationFragment; //Required to do operations such as hiding the keyboard.
+        private Fragment notificationFragment; //Required to do operations such as hiding the keyboard.
         private View notificationView;
 
         //TODO: It should allow apply style to multiple View types.
         //For example, actually it only applies the style to the NotificationWidget
         //But not the Floating Notification.
-        public NotificationStyleApplier(ref LinearLayout notificationView /*, Fragment fragment*/)
+        public NotificationStyleApplier(ref LinearLayout notificationView , Fragment fragment)
         {
             this.notificationView = notificationView;
-            //notificationFragment = fragment;
+            notificationFragment = fragment;
             notificationActions= notificationView.FindViewById<LinearLayout>(Resource.Id.notificationActions);
             titulo = notificationView.FindViewById<TextView>(Resource.Id.tvTitulo);
             texto = notificationView.FindViewById<TextView>(Resource.Id.tvTexto);
@@ -253,6 +255,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
         private void Togglenotificationcollapse_Click(object sender, EventArgs e)
         {
             //TODO
+            
         }
 
         private void ApplyDefault(OpenNotification notification)
@@ -290,10 +293,13 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                 inlineresponse.Hint = openAction.GetPlaceholderTextForInlineResponse();
                 sendinlineresponse.SetTag(DefaultActionIdentificator, openAction);
                 sendinlineresponse.Click += Sendinlineresponse_Click;
+
+                SendInlineResponseAvailabityChanged?.Invoke(null, true); //Is currently showing.
             }
             else
             {
                 openAction.ClickAction();
+                SendInlineResponseAvailabityChanged?.Invoke(null, false); //Here I assume the send inline textbox is not present, because the action simply does not represent a direct reply.
             }
 
         }
@@ -307,12 +313,14 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
             notificationActions.Visibility = ViewStates.Visible;
             inlineNotificationContainer.Visibility = ViewStates.Invisible;
             // Check if no view has focus:
-            //View view = notificationFragment.Activity.CurrentFocus;
-            //if (view != null)
-            //{
-            //    InputMethodManager imm = (InputMethodManager)notificationFragment.Activity.GetSystemService(Context.InputMethodService);
-            //    imm.HideSoftInputFromInputMethod(view.WindowToken, 0);
-            //}
+            View view = notificationFragment.Activity.CurrentFocus;
+            if (view != null)
+            {
+                InputMethodManager imm = (InputMethodManager)notificationFragment.Activity.GetSystemService(Context.InputMethodService);
+                imm.HideSoftInputFromInputMethod(view.WindowToken, 0);
+            }
+            SendInlineResponseAvailabityChanged?.Invoke(null, false); //Operation finished, inline response text is not available.
+
         }
         public void ApplyActionsStyle(OpenNotification notification)
         {           

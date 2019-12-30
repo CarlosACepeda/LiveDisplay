@@ -20,8 +20,7 @@ namespace LiveDisplay.Fragments
         private LinearLayout notification;
         private bool timeoutStarted = false;
         private NotificationStyleApplier styleApplier;
-        private ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context));
-
+        private ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context));       
 
         #region Lifecycle events
 
@@ -35,7 +34,7 @@ namespace LiveDisplay.Fragments
         {
             View v = inflater.Inflate(Resource.Layout.NotificationFrag, container, false);
             notification = v.FindViewById<LinearLayout>(Resource.Id.llNotification); 
-            styleApplier = new NotificationStyleApplier(ref notification);
+            styleApplier = new NotificationStyleApplier(ref notification, this);
             
             notification.Drag += Notification_Drag;
             notification.Click += LlNotification_Click;
@@ -43,13 +42,21 @@ namespace LiveDisplay.Fragments
             NotificationAdapterViewHolder.ItemLongClicked += ItemLongClicked;
             CatcherHelper.NotificationPosted += CatcherHelper_NotificationPosted;
             CatcherHelper.NotificationRemoved += CatcherHelper_NotificationRemoved;
+            NotificationStyleApplier.SendInlineResponseAvailabityChanged += NotificationStyleApplier_SendInlineResponseAvailabityChanged;
             return v;
         }
 
+        private void NotificationStyleApplier_SendInlineResponseAvailabityChanged(object sender, bool e)
+        {
+            if (e == true)
+            {
+                StartTimeout(true); //Tell the Timeout counter to stop because the SendInlineResponse is currently being showed.
+            }
+        }
 
         private void Notification_Drag(object sender, View.DragEventArgs e)
         {
-            StartTimeout(); //To keep the notification visible while the user touches the notification fragment
+            StartTimeout(false); //To keep the notification visible while the user touches the notification fragment
         }
 
         private void CatcherHelper_NotificationPosted(object sender, NotificationPostedEventArgs e)
@@ -90,7 +97,7 @@ namespace LiveDisplay.Fragments
                         if (notification.Visibility != ViewStates.Visible)
                         {
                             notification.Visibility = ViewStates.Visible;
-                            StartTimeout();
+                            StartTimeout(false);
                         }
 
                     }
@@ -111,7 +118,7 @@ namespace LiveDisplay.Fragments
                     if (notification.Visibility != ViewStates.Visible)
                     {
                         notification.Visibility = ViewStates.Visible;
-                        StartTimeout();
+                        StartTimeout(false);
                     }
                 });
             }
@@ -201,16 +208,15 @@ namespace LiveDisplay.Fragments
                 notification.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
                 if (notification.Visibility != ViewStates.Visible)
                 {
-                    notification.Visibility = ViewStates.Visible;
-                    StartTimeout();
+                    notification.Visibility = ViewStates.Visible;                    
                 }
             }
             else if(notification.Visibility!= ViewStates.Visible)
             {
                 styleApplier?.ApplyStyle(openNotification);
-                notification.Visibility = ViewStates.Visible;
-                StartTimeout();
+                notification.Visibility = ViewStates.Visible;                
             }
+            StartTimeout(false);
 
         }
 
@@ -218,23 +224,33 @@ namespace LiveDisplay.Fragments
         #endregion Events Implementation:
 
         //THis works like a charm :)
-        private void StartTimeout()
-        {
+        private void StartTimeout(bool stop)
+        {            
             //This action is: 'Hide the notification, and set the timeoutStarted as finished(false)
             //because this action will be invoked only when the timeout has finished.
             void hideNotification() { if (notification != null) notification.Visibility = ViewStates.Gone; timeoutStarted = false; }
             //If the timeout has started, then cancel the action, and start again.
-            if (timeoutStarted == true)
+
+            if (stop)
             {
-                notification?.RemoveCallbacks(hideNotification);
-                notification?.PostDelayed(hideNotification, 5000);
+                notification?.RemoveCallbacks(hideNotification); //Stop counting.
+                return;
             }
-            //If not, simply wait 5 seconds then hide the notification, in that span of time, the timeout is
-            //marked as Started(true)
             else
             {
-                timeoutStarted = true;
-                notification?.PostDelayed(hideNotification, 5000);
+
+                if (timeoutStarted == true)
+                {
+                    notification?.RemoveCallbacks(hideNotification);
+                    notification?.PostDelayed(hideNotification, 5000);
+                }
+                //If not, simply wait 5 seconds then hide the notification, in that span of time, the timeout is
+                //marked as Started(true)
+                else
+                {
+                    timeoutStarted = true;
+                    notification?.PostDelayed(hideNotification, 5000);
+                }
             }
         }
     }
