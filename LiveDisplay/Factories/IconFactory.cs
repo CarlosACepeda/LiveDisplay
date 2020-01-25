@@ -1,10 +1,10 @@
-﻿using Android.App;
-using Android.Content;
-using Android.Graphics.Drawables;
-using Android.Support.V4.Content;
-
-namespace LiveDisplay.Factories
+﻿namespace LiveDisplay.Factories
 {
+    using Android.App;
+    using Android.Content;
+    using Android.Graphics.Drawables;
+    using Android.Support.V4.Content;
+
     internal class IconFactory
     {
         public static Drawable ReturnIconDrawable(int iconInt, string paquete)
@@ -20,16 +20,15 @@ namespace LiveDisplay.Factories
         {
             Context remotePackageContext = null;
             remotePackageContext = Application.Context.CreatePackageContext(paquete, 0);
-
             return icon.LoadDrawable(remotePackageContext);
         }
 
-        //Overload for Retrieving Action Buttons on Lollipop an less.
+        //Overload for Retrieving Action Buttons in Lollipop and less.
         public static Drawable ReturnActionIconDrawable(int icon, string paquete)
         {
             Context remotePackageContext = null;
             remotePackageContext = Application.Context.CreatePackageContext(paquete, 0);
-            return remotePackageContext.GetDrawable(icon);
+            return remotePackageContext.Resources.GetDrawable(icon);
         }
     }
 }

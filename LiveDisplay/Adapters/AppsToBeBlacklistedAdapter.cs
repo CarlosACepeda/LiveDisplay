@@ -38,13 +38,13 @@ namespace LiveDisplay.Adapters
             // Replace the contents of the view with that element
             var holder = viewHolder as AppsToBeBlacklistedAdapterViewHolder;
             holder.App.Text = PackageUtils.GetTheAppName(items[position].PackageName);
-            holder.App.SetTag(Resource.String.blacklistitemtag, items[position].PackageName);
+            holder.App.SetTag(Resource.String.defaulttag, items[position].PackageName);
         }
 
         private void App_Click(AppClickedEventArgs e)
         {
             var textView = e.View;
-            currentSelectedAppPackage = textView.GetTag(Resource.String.blacklistitemtag).ToString();
+            currentSelectedAppPackage = textView.GetTag(Resource.String.defaulttag).ToString();
             using (Android.Support.V7.App.AlertDialog.Builder builder = new Android.Support.V7.App.AlertDialog.Builder(textView.Context))
             {
                 builder.SetTitle(textView.Text);
@@ -78,6 +78,7 @@ namespace LiveDisplay.Adapters
                         levels &= ~LevelsOfAppBlocking.BlockInAppOnly;
                     }
                     break;
+
                 case 2: //2 is Totally Blocked
                     if (e.IsChecked)
                         levels |= LevelsOfAppBlocking.NonAllowedToTurnScreenOn;
@@ -86,7 +87,6 @@ namespace LiveDisplay.Adapters
                         levels &= ~LevelsOfAppBlocking.NonAllowedToTurnScreenOn;
                     }
                     break;
-
             }
         }
 
@@ -94,8 +94,8 @@ namespace LiveDisplay.Adapters
         {
             bool blacklisted = false;
             bool nonallowedtoturnscreenon = false;
-            bool onlyremovesystem= false;
-            using (ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context)))
+            bool onlyremovesystem = false;
+            using (ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default))
             {
                 var flag = configurationManager.RetrieveAValue(forWhichApp, 0);
 
@@ -112,6 +112,7 @@ namespace LiveDisplay.Adapters
                     case LevelsOfAppBlocking.NonAllowedToTurnScreenOn:
                         nonallowedtoturnscreenon = true;
                         break;
+
                     case LevelsOfAppBlocking.BlockInAppOnly:
                         onlyremovesystem = true;
                         break;
@@ -131,7 +132,7 @@ namespace LiveDisplay.Adapters
 
         private void OnDialogPositiveButtonEventArgs(object sender, DialogClickEventArgs e)
         {
-            using (ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context)))
+            using (ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default))
             {
                 configurationManager.SaveAValue(currentSelectedAppPackage, (int)levels);
             }
@@ -154,6 +155,7 @@ namespace LiveDisplay.Adapters
     public class AppClickedEventArgs : EventArgs
     {
         public AppCompatTextView View { get; set; }
+
         public int LayoutPosition { get; set; }
     }
 }

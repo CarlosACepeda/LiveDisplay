@@ -1,50 +1,21 @@
-﻿using Android.App;
-using Android.Content;
-using Android.Graphics;
-using Android.Graphics.Drawables;
-using Android.Preferences;
-using Android.Renderscripts;
-using LiveDisplay.Misc;
-using LiveDisplay.Servicios;
-
-namespace LiveDisplay.Factories
+﻿namespace LiveDisplay.Factories
 {
-    //TODO: Correct me, I can be optimized.
+
+    using Android.App;
+    using Android.Content;
+    using Android.Graphics;
+    using Android.Graphics.Drawables;
+    using Android.Preferences;
+    using Android.Renderscripts;
+    using LiveDisplay.Misc;
+    using LiveDisplay.Servicios;
+
+    // TODO: Correct me, I can be optimized.
     internal class BackgroundFactory : Java.Lang.Object
     {
-        private static readonly short maxRadius = 25;
-
-        //Retrieves a blurred image
-        public static Drawable Difuminar(Drawable papelTapiz, short blurRadius)
-        {
-            Bitmap originalBitmap = ((BitmapDrawable)papelTapiz).Bitmap;
-            Bitmap blurredBitmap = Bitmap.CreateScaledBitmap(originalBitmap, originalBitmap.Width, originalBitmap.Height, false);
-            RenderScript rs = RenderScript.Create(Application.Context);
-            Allocation input = Allocation.CreateFromBitmap(rs, originalBitmap, Allocation.MipmapControl.MipmapFull, AllocationUsage.Script);
-            Allocation output = Allocation.CreateTyped(rs, input.Type);
-            ScriptIntrinsicBlur script = ScriptIntrinsicBlur.Create(rs, Element.U8_4(rs));
-            script.SetInput(input);
-            if (blurRadius < maxRadius)
-            {
-                script.SetRadius(blurRadius);
-            }
-            script.ForEach(output);
-            output.CopyTo(blurredBitmap);
-            Drawable papelTapizDifuminado = new BitmapDrawable(Android.Content.Res.Resources.System, blurredBitmap);
-            originalBitmap.Recycle();
-            originalBitmap.Dispose();
-            blurredBitmap.Recycle();
-            blurredBitmap.Dispose();
-            input.Dispose();
-            output.Dispose();
-            return papelTapizDifuminado;
-        }
-
         public string SaveImagePath(Android.Net.Uri uri)
         {
-            ContextWrapper contextWrapper = new ContextWrapper(Application.Context);
-            ISharedPreferences sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(contextWrapper);
-            ConfigurationManager configurationManager = new ConfigurationManager(sharedPreferences);
+            ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
             string doc_id = "";
             using (var c1 = Application.Context.ContentResolver.Query(uri, null, null, null, null))
             {

@@ -1,39 +1,46 @@
-﻿using Android.Service.Notification;
-using Android.Support.V7.Widget;
-using Android.Views;
-using Android.Widget;
-using LiveDisplay.Factories;
-using LiveDisplay.Servicios.Notificaciones;
-using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
-using System;
-using System.Collections.Generic;
-
-namespace LiveDisplay.Adapters
+﻿namespace LiveDisplay.Adapters
 {
+    using Android.Service.Notification;
+    using Android.Support.V7.Widget;
+    using Android.Util;
+    using Android.Views;
+    using Android.Widget;
+    using LiveDisplay.Factories;
+    using LiveDisplay.Servicios.Notificaciones;
+    using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
+    using System;
+    using System.Collections.Generic;
+
     public class NotificationAdapter : RecyclerView.Adapter
     {
         public static int selectedItem = -1;
-        public List<StatusBarNotification> notificaciones = new List<StatusBarNotification>();
-
-        public override int ItemCount => notificaciones.Count;
-
+        public List<StatusBarNotification> notifications = new List<StatusBarNotification>();
+        public override int ItemCount => notifications.Count;
+        
         public NotificationAdapter(List<StatusBarNotification> notificaciones)
         {
-            this.notificaciones = notificaciones;
+            this.notifications = notificaciones;
         }
 
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
-            //Cast
-            NotificationAdapterViewHolder viewHolder = holder as NotificationAdapterViewHolder;
-            viewHolder.Icono.Background = IconFactory.ReturnIconDrawable(notificaciones[position].Notification.Icon, notificaciones[position].PackageName);
-            if (selectedItem == position)
+            if (position != RecyclerView.NoPosition)
             {
-                viewHolder.Icono.Alpha = 0.5f;
+                //Cast
+                NotificationAdapterViewHolder viewHolder = holder as NotificationAdapterViewHolder;
+                viewHolder.Icono.Background = IconFactory.ReturnIconDrawable(notifications[position].Notification.Icon, notifications[position].PackageName);
+                if (selectedItem == position)
+                {
+                    viewHolder.Icono.Alpha = 0.5f;
+                }
+                else
+                {
+                    viewHolder.Icono.Alpha = 1;
+                }
             }
             else
             {
-                viewHolder.Icono.Alpha = 1;
+                Log.Info("LiveDisplay", "WTF Position: "+ position);
             }
         }
 
@@ -45,7 +52,7 @@ namespace LiveDisplay.Adapters
         }
     }
 
-    //La siguiente clase simplemente guarda referencias a las vistas de la fila, para evitar hacer llamadas a FindViewById cada vez, no se hace nada más aquí
+    //The following class just simply saves the view's references to the row, in order to avoid making calls to 'FindViewById' each time, nothing more is done here.
     internal class NotificationAdapterViewHolder : RecyclerView.ViewHolder
     {
         public static event EventHandler<NotificationItemClickedEventArgs> ItemClicked;
@@ -53,6 +60,7 @@ namespace LiveDisplay.Adapters
         public static event EventHandler<NotificationItemClickedEventArgs> ItemLongClicked;
 
         public ImageView Icono { get; set; }
+        public OpenNotification OpenNotification { get; set; }
 
         public NotificationAdapterViewHolder(View itemView) : base(itemView)
         {
@@ -63,7 +71,8 @@ namespace LiveDisplay.Adapters
 
         private void ItemView_LongClick(object sender, View.LongClickEventArgs e)
         {
-            OnItemLongClicked(LayoutPosition);
+            var statusBarNotification = CatcherHelper.StatusBarNotifications[LayoutPosition];
+            OnItemLongClicked(LayoutPosition, statusBarNotification);
         }
 
         private void ItemView_Click(object sender, EventArgs e)
@@ -71,23 +80,36 @@ namespace LiveDisplay.Adapters
             //Simply indicates which item was clicked and after that call NotifyDataSetChanged to changes take effect.
             NotificationAdapter.selectedItem = LayoutPosition;
             CatcherHelper.notificationAdapter.NotifyDataSetChanged();
+            var statusBarNotification = CatcherHelper.StatusBarNotifications[LayoutPosition];
+            OnItemClicked(LayoutPosition, statusBarNotification);
+            //try 
+            //{
+            //    var view = sender as View;
+            //    view.Visibility = ViewStates.Gone;
+            //}
+            //catch (Exception ex)
+            //{
+            //    Log.Info("LiveDisplay", "Exception hiding notification" + ex.Message);
+            //}
 
-            OnItemClicked(LayoutPosition);
         }
 
-        private void OnItemClicked(int position)
+        private void OnItemClicked(int position, StatusBarNotification sbn)
         {
             ItemClicked?.Invoke(this, new NotificationItemClickedEventArgs
             {
-                Position = position
+                Position = position,
+                StatusBarNotification= sbn
+
             });
         }
 
-        private void OnItemLongClicked(int posiion)
+        private void OnItemLongClicked(int position, StatusBarNotification sbn)
         {
             ItemLongClicked?.Invoke(this, new NotificationItemClickedEventArgs
             {
-                Position = posiion
+                Position = position,
+                StatusBarNotification= sbn
             }
             );
         }

@@ -2,17 +2,101 @@
 <RelativeLayout xmlns:a="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
     a:layout_width="match_parent"
-    a:layout_height="match_parent"
+    a:layout_height="wrap_content"
+	a:id="@+id/weatherclockcontainer"
     a:gravity="bottom">
+	<!--<LinearLayout
+		a:id="@+id/weatherinfo"
+		tools:visibility="visible"
+		a:visibility="invisible"
+		a:layout_height="wrap_content"
+		a:layout_width="match_parent"
+		a:orientation="vertical">
+	<LinearLayout
+		a:layout_width="match_parent"
+		a:layout_height="wrap_content"
+		a:orientation="horizontal"
+		a:id="@+id/maintemperatureinfo"
+		>
+	
+	<TextView
+		tools:text="Bogotá"
+		a:fontFamily="sans-serif-condensed-light"
+		a:textAppearance="?android:attr/textAppearanceMedium"
+		a:layout_width="wrap_content"
+		a:layout_height="wrap_content"
+		a:minWidth="25px"
+		a:minHeight="25px"
+		a:id="@+id/city" />
+	<TextView
+			a:text="|"
+            a:layout_width="10dp"
+            a:layout_height="wrap_content" />
+	<TextView
+		tools:text="Scattered Clouds"
+		a:fontFamily="sans-serif-condensed-light"
+		a:textAppearance="?android:attr/textAppearanceMedium"
+		a:layout_width="match_parent"
+		a:layout_height="wrap_content"
+		a:minWidth="25px"
+		a:minHeight="25px"
+		a:id="@+id/weatherdescription" />	
+	</LinearLayout>
+	<LinearLayout
+		a:layout_below="@id/maintemperatureinfo"
+		a:orientation="horizontal"
+		a:layout_width="match_parent"
+		a:layout_height="wrap_content">
+		<TextView
+			a:fontFamily="sans-serif-condensed-light"
+			tools:text="17°"
+			tools:visibility="visible"
+			a:textAppearance="?android:attr/textAppearanceMedium"
+			a:layout_width="wrap_content"
+			a:layout_height="wrap_content"
+			a:id="@+id/minimumtemperature" />
+		<TextView
+			a:text="|"
+            a:layout_width="5dp"
+            a:layout_height="wrap_content" />
+		<TextView
+			a:fontFamily="sans-serif-condensed-light"
+			a:text="25°"
+			a:textAppearance="?android:attr/textAppearanceMedium"
+			a:layout_width="wrap_content"
+			a:layout_height="wrap_content"
+			a:id="@+id/maximumtemperature" />
+		<TextView
+			a:text="|"
+            a:layout_width="10dp"
+            a:layout_height="wrap_content" />
+		<TextView
+			a:text="Humidity: 100psi"
+			a:id="@+id/humidity"
+			a:fontFamily="sans-serif-condensed-light"
+			a:layout_width="wrap_content"
+            a:layout_height="wrap_content" />
+	</LinearLayout>
+	<TextView
+			a:text="Fri 1:45am"
+			a:id="@+id/lastupdated"
+			a:fontFamily="sans-serif-condensed"
+			a:layout_width="wrap_content"
+            a:layout_height="wrap_content" />
+
+	</LinearLayout>-->
     <TextClock
         a:id="@+id/clockLock"
         a:background="?android:selectableItemBackground"
         a:layout_width="wrap_content"
         a:layout_height="wrap_content"
         a:textSize="45dp"
+		tools:text="1:45pm"
         a:fontFamily="sans-serif-condensed-light"
 		tools:visibility="visible"
-        a:gravity="bottom" />
+        />
+	
+	
     <ImageView
         a:id="@+id/batteryIcon"
         a:layout_toRightOf="@id/clockLock"
@@ -20,13 +104,40 @@
         a:layout_width="wrap_content"
         a:layout_height="wrap_content" />
     <TextView
+		tools:text="75%"
         a:id="@+id/batteryLevel"
         a:layout_alignBottom="@id/batteryIcon"
         a:layout_toRightOf="@id/batteryIcon"
 		a:fontFamily="sans-serif-condensed-light"
         a:layout_width="wrap_content"
         a:layout_height="wrap_content" />
+
+	<TextView
+		tools:text="19c°"
+		a:fontFamily="sans-serif-condensed-light"
+		a:textAppearance="?android:attr/textAppearanceLarge"
+		a:layout_toRightOf="@id/batteryLevel" 
+		a:layout_alignBottom="@id/batteryIcon"
+		a:layout_width="wrap_content"
+		a:layout_height="wrap_content"
+		a:paddingLeft="10dp"
+		a:minWidth="25px"
+		a:minHeight="25px"
+		a:id="@+id/temperature" />
+	<TextView
+		tools:text="Scattered Clouds"
+		a:fontFamily="sans-serif-condensed-light"
+		a:textAppearance="?android:attr/textAppearanceMedium"
+	    a:layout_toRightOf="@id/temperature" 
+	    a:layout_alignBottom="@id/batteryIcon"
+		a:layout_width="match_parent"
+		a:layout_height="wrap_content"
+		a:paddingLeft="10dp"
+		a:minWidth="25px"
+		a:minHeight="25px"
+		a:id="@+id/weatherdescription" />	
     <TextView
+		tools:text="3 de Septiembre"
         a:layout_width="match_parent"
         a:layout_below="@id/clockLock"
         a:layout_height="wrap_content"

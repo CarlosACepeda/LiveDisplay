@@ -25,8 +25,7 @@ namespace LiveDisplay.Fragments
         {
             base.OnCreate(savedInstanceState);
 
-            ISharedPreferences sharedPreferences = Application.Context.GetSharedPreferences("weatherpreferences", FileCreationMode.Private);
-            configurationManager = new ConfigurationManager(sharedPreferences);
+            configurationManager = new ConfigurationManager(AppPreferences.Weather);
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -40,18 +39,18 @@ namespace LiveDisplay.Fragments
             TelephonyManager tm = (TelephonyManager)Activity.GetSystemService(Context.TelephonyService);
             string countryCode = tm.NetworkCountryIso;
 
-            string thecity = configurationManager.RetrieveAValue(ConfigurationParameters.City, "");
-            UnitsFlags unitsFlags = UnitsFlags.Metric;
+            string thecity = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherCity, "");
+            string units = "metric";
             string temperatureSuffix = "°C";
-            if (configurationManager.RetrieveAValue(ConfigurationParameters.UseImperialSystem) == true)
+            if (configurationManager.RetrieveAValue(ConfigurationParameters.WeatherUseImperialSystem) == true)
             {
-                unitsFlags = UnitsFlags.Imperial;
+                units = "imperial";
                 temperatureSuffix = "°F";
             }
 
             ThreadPool.QueueUserWorkItem(async m =>
             {
-                var weather = await Weather.GetWeather(thecity, countryCode, unitsFlags);
+                var weather = await Weather.GetWeather(thecity, countryCode, units);
                 Activity.RunOnUiThread(() =>
                 {
                     temperature.Text = weather?.MainWeather.Temperature.ToString() + temperatureSuffix;

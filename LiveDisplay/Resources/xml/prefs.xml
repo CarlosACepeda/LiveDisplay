@@ -6,27 +6,26 @@
     <SwitchPreference
    android:key="hiddenclock?"
    android:title="@string/showclock" />
-    <!--<SwitchPreference
-      android:key="hiddensystemicons?"
-      android:title="@string/hidesystemicons" />-->
+    <SwitchPreference
+      android:key="testenabled?"
+      android:summary="@string/idk"
+      android:title="@string/enabletestsetting" />
     <SwitchPreference
       android:defaultValue="true"
       android:key="lockonboot?"
       android:title="@string/lockonboot">
     </SwitchPreference>
-    <ListPreference
-      android:defaultValue="0"
-      android:key="changewallpaper"
-      android:title="@string/changewallpaper"
-      android:text="@string/changewallpaperdesc"
-      android:entries="@array/listentrieschangewallpaper"
-      android:entryValues="@array/listvalueschangewallpaper">
-    </ListPreference>
     <Preference
       android:key="wallpapersettings"
       android:title="@string/changewallpaperappearance"
       android:selectable="true">
     </Preference>
+  <SwitchPreference
+      android:defaultValue="false"
+      android:key="disablewallpaperchangeanim?"
+      android:title="@string/disablewallpapertransitionanim"
+      android:summary="@string/disablewallpapertransitionanimdesc">
+    </SwitchPreference>
   </PreferenceCategory>
     <PreferenceCategory
       android:title="@string/musicwidget">
@@ -43,11 +42,6 @@
     </PreferenceCategory>
     <PreferenceCategory
       android:title="@string/weatherwidget">
-      <SwitchPreference
-        android:defaultValue="false"
-        android:key="weatherwidgetenabled?"
-        android:title="@string/weatherwidgetenabled">
-      </SwitchPreference>
       <Preference
         android:key="weathersettings"
         android:title="@string/changeweatherpreferences"
@@ -91,15 +85,17 @@
       android:summary="@string/turnonnewnotification_desc">
       </SwitchPreference>
       <SwitchPreference
-        android:defaultValue="true"
-        android:key="doubletaptosleep?"
-        android:title="@string/doubletaptosleep"
-        android:summary="@string/doubletaptosleepdesc">
-      </SwitchPreference>
-      <SwitchPreference
         android:key="turnonusermovement?"
         android:title="@string/turnonusermovement">
       </SwitchPreference>
+      <ListPreference
+        android:defaultValue="0"
+        android:key="doubletapontoppactionbehavior"
+        android:title="@string/doubletaptopaction"
+        android:summary="@string/doubletaptopactiondesc"
+        android:entries="@array/listentrieschangedoubletapbehavior"
+        android:entryValues="@array/listvalueschangedoubletapbehavior">
+      </ListPreference>
       <ListPreference
         android:defaultValue="0"
         android:key="startlockscreendelaytime"

@@ -5,13 +5,12 @@ namespace LiveDisplay.Misc
 {
     internal class PackageUtils
     {
+        private static PackageManager packageManager = Application.Context.PackageManager;
+
         public static string GetTheAppName(string package)
         {
-            using (PackageManager packageManager = Application.Context.PackageManager)
-            {
-                ApplicationInfo applicationInfo = packageManager.GetApplicationInfo(package, 0); //Zero means: No specific PackageInfoFlags specified.
-                package = packageManager.GetApplicationLabel(applicationInfo);
-            }
+            ApplicationInfo applicationInfo = packageManager.GetApplicationInfo(package, 0); //Zero means: No specific PackageInfoFlags specified.
+            package = packageManager.GetApplicationLabel(applicationInfo);
             return package;
         }
     }

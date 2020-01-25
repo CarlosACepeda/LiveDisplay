@@ -4,5 +4,10 @@
   <string name="aboutinfotitle">Об этом приложении:</string>
   <string name="app_name">LiveDisplay</string>
   <string name="dialogcancelbutton">Отмена</string>
-  <string name="idk">¯\_(ツ)_/¯</string>
+  <string name="idk">¯\\_(ツ)_/¯</string>
+  <string name="onehour">1 час</string>
+  <string name="sixhours">6 часов</string>
+  <string name="tenminutes">10 минут</string>
+  <string name="thirtyminutes">30 минут</string>
+  <string name="twelvehours">12 часов</string>
 </resources>

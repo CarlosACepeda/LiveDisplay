@@ -4,6 +4,7 @@ using Android.Media;
 using Android.Media.Session;
 using Android.OS;
 using Android.Preferences;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
 using LiveDisplay.Misc;
@@ -12,7 +13,10 @@ using LiveDisplay.Servicios.Music;
 using LiveDisplay.Servicios.Music.MediaEventArgs;
 using LiveDisplay.Servicios.Wallpaper;
 using System;
+using System.Threading;
 using System.Timers;
+using Fragment = Android.App.Fragment;
+using Timer = System.Timers.Timer;
 
 namespace LiveDisplay.Fragments
 {
@@ -23,14 +27,17 @@ namespace LiveDisplay.Fragments
         private LinearLayout musicPlayerContainer;
         private SeekBar skbSeekSongTime;
         private PlaybackStateCode playbackState;
+        private PendingIntent activityIntent; //A Pending intent if available to start the activity associated with this music fragent.
+        BitmapDrawable CurrentAlbumArt; 
+
+
         private Timer timer;
-        private ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context));
+        private ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
 
         #region Fragment Lifecycle
 
         public override void OnCreate(Bundle savedInstanceState)
         {
-            // Create your fragment here
             BindMusicControllerEvents();
 
             timer = new Timer
@@ -40,7 +47,30 @@ namespace LiveDisplay.Fragments
             timer.Elapsed += Timer_Elapsed;
             timer.Enabled = true;
 
+
+            WallpaperPublisher.CurrentWallpaperCleared += WallpaperPublisher_CurrentWallpaperHasBeenCleared;
+
             base.OnCreate(savedInstanceState);
+        }
+
+        private void WallpaperPublisher_CurrentWallpaperHasBeenCleared(object sender, CurrentWallpaperClearedEventArgs e)
+        {
+            if (e.PreviousWallpaperPoster == WallpaperPoster.MusicPlayer)
+            {
+                int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtOpacityLevel, 255);
+                int blurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtBlurLevel, 1); //Never used (for now)
+
+                if (configurationManager.RetrieveAValue(ConfigurationParameters.ShowAlbumArt))
+                    WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
+                    {
+                        Wallpaper = CurrentAlbumArt,
+                        OpacityLevel = (short)opacitylevel,
+                        BlurLevel = 0, //Causes a crash That currently I cant debug, damn, thats why is 0. (No blur) and ignoring the value the used have setted.
+                        WallpaperPoster = WallpaperPoster.MusicPlayer //We must nutify WallpaperPublisher who is posting the wallpaper, otherwise the wallpaper will be ignored.
+
+                    });
+
+            }
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -62,6 +92,10 @@ namespace LiveDisplay.Fragments
             skbSeekSongTime = null;
             MusicController.MediaPlaybackChanged -= MusicController_MediaPlaybackChanged;
             MusicController.MediaMetadataChanged -= MusicController_MediaMetadataChanged;
+            MusicControllerKitkat.MediaMetadataChanged -= MusicControllerKitkat_MediaMetadataChanged;
+            MusicControllerKitkat.MediaPlaybackChanged -= MusicControllerKitkat_MediaPlaybackChanged;
+            WallpaperPublisher.CurrentWallpaperCleared -= WallpaperPublisher_CurrentWallpaperHasBeenCleared;
+            WallpaperPublisher.ReleaseWallpaper();
             timer.Elapsed -= Timer_Elapsed;
             timer.Dispose();
             base.OnDestroy();
@@ -81,16 +115,39 @@ namespace LiveDisplay.Fragments
             skbSeekSongTime.ProgressChanged += SkbSeekSongTime_ProgressChanged;
             skbSeekSongTime.StopTrackingTouch += SkbSeekSongTime_StopTrackingTouch;
             musicPlayerContainer.LongClick += MusicPlayerContainer_LongClick;
+            musicPlayerContainer.Click += MusicPlayerContainer_Click;
+        }
+
+        private void MusicPlayerContainer_Click(object sender, EventArgs e)
+        {
+            try { activityIntent.Send(); }
+            catch { Log.Info("LiveDisplay", "Failed to send the Music pending intent"); }
         }
 
         private void BtnSkipNext_LongClick(object sender, View.LongClickEventArgs e)
         {
-            Jukebox.FastFoward();
+            bool isNotKitkat = Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch;
+            if (isNotKitkat)
+            {
+                Jukebox.FastFoward();
+            }
+            else
+            {
+                JukeboxKitkat.FastFoward();
+            }
         }
 
         private void BtnSkipPrevious_LongClick(object sender, View.LongClickEventArgs e)
         {
-            Jukebox.Rewind();
+            bool isNotKitkat = Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch;
+            if (isNotKitkat)
+            {
+                Jukebox.Rewind();
+            }
+            else
+            {
+                JukeboxKitkat.Rewind();
+            }
         }
 
         private void MusicPlayerContainer_LongClick(object sender, View.LongClickEventArgs e)
@@ -107,45 +164,106 @@ namespace LiveDisplay.Fragments
 
         private void SkbSeekSongTime_StopTrackingTouch(object sender, SeekBar.StopTrackingTouchEventArgs e)
         {
-            //When user stop dragging then seek to the position previously saved in ProgressChangedEvent
-            Jukebox.SeekTo(e.SeekBar.Progress);
-            skbSeekSongTime.SetProgress(e.SeekBar.Progress, true);
+            if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
+            {
+                //When user stop dragging then seek to the position previously saved in ProgressChangedEvent
+                Jukebox.SeekTo(e.SeekBar.Progress);
+                if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1)
+                {
+                    skbSeekSongTime.SetProgress(e.SeekBar.Progress, true);
+                }
+                else
+                {
+                    skbSeekSongTime.Progress = e.SeekBar.Progress;
+                }
+            }
+            else
+            {
+                JukeboxKitkat.SeekTo(e.SeekBar.Progress);
+                skbSeekSongTime.Progress = e.SeekBar.Progress;
+            }
         }
 
         private void SkbSeekSongTime_ProgressChanged(object sender, SeekBar.ProgressChangedEventArgs e)
         {
             //This will save the current song time.
-            skbSeekSongTime.SetProgress(e.Progress, true);
+            bool isNotMarshmallow = Build.VERSION.SdkInt > BuildVersionCodes.M;
+            if (isNotMarshmallow)
+            {
+                skbSeekSongTime.SetProgress(e.Progress, true);
+            }
+            else
+            {
+                skbSeekSongTime.Progress = e.Progress;
+            }
         }
 
         private void BtnSkipNext_Click(object sender, EventArgs e)
         {
-            Jukebox.SkipToNext();
+            bool isNotKitkat = Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch;
+            if (isNotKitkat)
+            {
+                Jukebox.SkipToNext();
+            }
+            else
+            {
+                JukeboxKitkat.SkipToNext();
+            }
         }
 
         private void BtnPlayPause_Click(object sender, EventArgs e)
         {
+            bool isNotKitkat = Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch;
             switch (playbackState)
             {
                 //If the media is paused, then Play.
                 case PlaybackStateCode.Paused:
-                    Jukebox.Play();
+                    if (isNotKitkat)
+                    {
+                        Jukebox.Play();
+                    }
+                    else
+                    {
+                        JukeboxKitkat.Play();
+                    }
                     break;
                 //If the media is playing, then pause.
                 case PlaybackStateCode.Playing:
-                    Jukebox.Pause();
+                    if (isNotKitkat)
+                    {
+                        Jukebox.Pause();
+                    }
+                    else
+                    {
+                        JukeboxKitkat.Pause();
+                    }
 
                     break;
 
                 default:
-                    Jukebox.Stop();
+                    if (isNotKitkat)
+                    {
+                        Jukebox.Stop();
+                    }
+                    else
+                    {
+                        JukeboxKitkat.Stop();
+                    }
                     break;
             }
         }
 
         private void BtnSkipPrevious_Click(object sender, EventArgs e)
         {
-            Jukebox.SkipToPrevious();
+            bool isNotKitkat = Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch;
+            if (isNotKitkat)
+            {
+                Jukebox.SkipToPrevious();
+            }
+            else
+            {
+                JukeboxKitkat.SkipToPrevious();
+            }
         }
 
         #endregion Fragment Views events
@@ -168,95 +286,121 @@ namespace LiveDisplay.Fragments
 
         private void MusicControllerKitkat_MediaPlaybackChanged(object sender, MediaPlaybackStateChangedKitkatEventArgs e)
         {
-            switch (e.PlaybackState)
+            Activity?.RunOnUiThread(() =>
             {
-                case RemoteControlPlayState.Paused:
-                    btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
-                    playbackState = PlaybackStateCode.Paused;
-                    MoveSeekbar(false);
+                switch (e.PlaybackState)
+                {
+                    case RemoteControlPlayState.Paused:
+                        btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
+                        playbackState = PlaybackStateCode.Paused;
+                        MoveSeekbar(false);
 
-                    break;
+                        break;
 
-                case RemoteControlPlayState.Playing:
-                    btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_pause_white_24dp, 0, 0);
-                    playbackState = PlaybackStateCode.Playing;
-                    MoveSeekbar(true);
+                    case RemoteControlPlayState.Playing:
+                        btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_pause_white_24dp, 0, 0);
+                        playbackState = PlaybackStateCode.Playing;
+                        MoveSeekbar(true);
 
-                    break;
+                        break;
 
-                case RemoteControlPlayState.Stopped:
-                    btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
-                    playbackState = PlaybackStateCode.Stopped;
-                    MoveSeekbar(false);
-                    break;
+                    case RemoteControlPlayState.Stopped:
+                        btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
+                        playbackState = PlaybackStateCode.Stopped;
+                        MoveSeekbar(false);
+                        break;
 
-                default:
-                    break;
-            }
+                    default:
+                        break;
+                }
+            });
         }
 
         private void MusicControllerKitkat_MediaMetadataChanged(object sender, MediaMetadataChangedKitkatEventArgs e)
         {
-            tvTitle.Text = e.Title;
-            tvAlbum.Text = e.Album;
-            tvArtist.Text = e.Artist;
-            skbSeekSongTime.Max = (int)e.Duration;
-            WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
+            Activity?.RunOnUiThread(() =>
             {
-                Wallpaper = new BitmapDrawable(Resources, e.AlbumArt)
+                tvTitle.Text = e.Title;
+                tvAlbum.Text = e.Album;
+                tvArtist.Text = e.Artist;
+                skbSeekSongTime.Max = (int)e.Duration;
+                int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtOpacityLevel, 255);
+                int blurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtBlurLevel, 1); //Never used (for now)
+                CurrentAlbumArt = new BitmapDrawable(Resources, e.AlbumArt);
+
+                if (configurationManager.RetrieveAValue(ConfigurationParameters.ShowAlbumArt))
+                    WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
+                    {
+                        Wallpaper = new BitmapDrawable(Resources, e.AlbumArt),
+                        OpacityLevel = (short)opacitylevel,
+                        BlurLevel = 0, //Causes a crash That currently I cant debug, damn, thats why is 0. (No blur) and ignoring the value the used have setted.
+                        WallpaperPoster = WallpaperPoster.MusicPlayer //We must nutify WallpaperPublisher who is posting the wallpaper, otherwise it'll be ignored.
+
+                    });
+                GC.Collect(0);
             });
-            GC.Collect(0);
         }
 
         private void MusicController_MediaMetadataChanged(object sender, MediaMetadataChangedEventArgs e)
         {
-            tvTitle.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyTitle);
-            tvAlbum.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyAlbum);
-            tvArtist.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyArtist);
-            skbSeekSongTime.Max = (int)e.MediaMetadata.GetLong(MediaMetadata.MetadataKeyDuration);
-            using (var albumart = e.MediaMetadata.GetBitmap(MediaMetadata.MetadataKeyAlbumArt))
+            Activity?.RunOnUiThread(() =>
             {
-                using (var wallpaper = new BitmapDrawable(Resources, albumart))
+                activityIntent = e.ActivityIntent;
+                tvTitle.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyTitle);
+                tvAlbum.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyAlbum);
+                tvArtist.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyArtist);
+                skbSeekSongTime.Max = (int)e.MediaMetadata.GetLong(MediaMetadata.MetadataKeyDuration);
+                ThreadPool.QueueUserWorkItem(m =>
                 {
-                    int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, 255);
-                    WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
-                    {
-                        Wallpaper = wallpaper,
-                        OpacityLevel = (short)opacitylevel
-                    });
-                }
-            }
-            GC.Collect();
+                    var albumart = e.MediaMetadata.GetBitmap(MediaMetadata.MetadataKeyAlbumArt);
+                    var wallpaper = new BitmapDrawable(Activity.Resources, albumart);
+                    int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtOpacityLevel, 255);
+                    int blurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtBlurLevel, 1); //Never used (for now)
+                    CurrentAlbumArt = wallpaper;
+
+                    if (configurationManager.RetrieveAValue(ConfigurationParameters.ShowAlbumArt))
+                        WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
+                        {
+                            Wallpaper= wallpaper,
+                            OpacityLevel = (short)opacitylevel,
+                            BlurLevel = 0, //Causes a crash That currently I cant debug, damn, thats why is 0. (No blur) and ignoring the value the used have setted.
+                            WallpaperPoster= WallpaperPoster.MusicPlayer //We must nutify WallpaperPublisher who is posting the wallpaper, otherwise it'll be ignored.
+                        });
+                });
+            });
         }
 
         private void MusicController_MediaPlaybackChanged(object sender, MediaPlaybackStateChangedEventArgs e)
         {
-            switch (e.PlaybackState)
+            Activity?.RunOnUiThread(() =>
             {
-                case PlaybackStateCode.Paused:
-                    btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
-                    playbackState = PlaybackStateCode.Paused;
-                    MoveSeekbar(false);
+                switch (e.PlaybackState)
+                {
+                    case PlaybackStateCode.Paused:
+                        btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
+                        playbackState = PlaybackStateCode.Paused;
+                        MoveSeekbar(false);
 
-                    break;
+                        break;
 
-                case PlaybackStateCode.Playing:
-                    btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_pause_white_24dp, 0, 0);
-                    playbackState = PlaybackStateCode.Playing;
-                    MoveSeekbar(true);
+                    case PlaybackStateCode.Playing:
+                        btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_pause_white_24dp, 0, 0);
+                        playbackState = PlaybackStateCode.Playing;
+                        MoveSeekbar(true);
 
-                    break;
+                        break;
 
-                case PlaybackStateCode.Stopped:
-                    btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
-                    playbackState = PlaybackStateCode.Stopped;
-                    MoveSeekbar(false);
-                    break;
+                    case PlaybackStateCode.Stopped:
+                        btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
+                        playbackState = PlaybackStateCode.Stopped;
+                        MoveSeekbar(false);
+                        break;
 
-                default:
-                    break;
-            }
-            skbSeekSongTime.SetProgress((int)e.CurrentTime, true);
+                    default:
+                        break;
+                }
+                skbSeekSongTime.SetProgress((int)e.CurrentTime, true);
+            });
         }
 
         #endregion Subscribing and Reacting to events
@@ -279,7 +423,15 @@ namespace LiveDisplay.Fragments
         {
             //Syntactic sugar, cause a MediaMetadata and a Mediaplayback event to be fired in the Publisher class.
             //(MusicController class)
-            Jukebox.RetrieveMediaInformation();
+            //Or in Catcher class, if its Kitkat.
+            if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
+            {
+                Jukebox.RetrieveMediaInformation();
+            }
+            else
+            {
+                JukeboxKitkat.RetrieveMediaInformation();
+            }
         }
 
         private void MoveSeekbar(bool move)
@@ -296,7 +448,14 @@ namespace LiveDisplay.Fragments
 
         private void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            skbSeekSongTime.SetProgress(skbSeekSongTime.Progress + 1000, true);
+            if (Build.VERSION.SdkInt > BuildVersionCodes.M)
+            {
+                skbSeekSongTime.SetProgress(skbSeekSongTime.Progress + 1000, true);
+            }
+            else
+            {
+                skbSeekSongTime.Progress = skbSeekSongTime.Progress + 1000;
+            }
         }
     }
 }

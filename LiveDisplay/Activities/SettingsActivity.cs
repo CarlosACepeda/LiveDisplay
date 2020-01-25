@@ -1,10 +1,11 @@
-﻿using Android.App;
-using Android.OS;
-using Android.Support.V7.App;
-using LiveDisplay.Fragments;
-
-namespace LiveDisplay.Activities
+﻿namespace LiveDisplay.Activities
 {
+    using Android.App;
+    using Android.OS;
+    using Android.Support.V7.App;
+    using Android.Widget;
+    using LiveDisplay.Fragments;
+
     [Activity(Label = "@string/settings", Theme = "@style/LiveDisplayThemeDark.NoActionBar")]
     public class SettingsActivity : AppCompatActivity
     {
@@ -21,7 +22,18 @@ namespace LiveDisplay.Activities
                 SetSupportActionBar(toolbar);
                 SupportActionBar.SetDefaultDisplayHomeAsUpEnabled(true);
             }
+            if (Build.VERSION.SdkInt > BuildVersionCodes.Kitkat)
+            {
+                Bundle remoteInput = RemoteInput.GetResultsFromIntent(Intent);
+                if (remoteInput != null)
+                {
+                    string response = remoteInput.GetCharSequence("test1");
+
+                    Toast.MakeText(this, "The response is: " + response, ToastLength.Long).Show();
+                }
+            }
         }
+        
 
         protected override void OnPostCreate(Bundle savedInstanceState)
         {

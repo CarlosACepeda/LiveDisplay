@@ -1,6 +1,4 @@
 ﻿using Android.Media.Session;
-using Android.Util;
-using System;
 using System.Collections.Generic;
 
 namespace LiveDisplay.Servicios.Music
@@ -16,40 +14,32 @@ namespace LiveDisplay.Servicios.Music
 
         private MusicController musicController;
 
-        //Al parecer hay varios controladores de Multimedia y toca recuperarlos.
         public void OnActiveSessionsChanged(IList<MediaController> controllers)
         {
+            //Pick the best mediacontroller.
             if (controllers.Count > 0)
-            {
-                musicController = MusicController.GetInstance();
-                mediaController = controllers[0];
-                try
+                foreach (var mediacontroller in controllers)
                 {
-                    mediaController.RegisterCallback(musicController);
-                    //Retrieve the controls to control the media, duh.
-                    musicController.TransportControls = mediaController.GetTransportControls();
-                    musicController.MediaMetadata = mediaController.Metadata;
-                    musicController.PlaybackState = mediaController.PlaybackState;
+                    if (mediacontroller?.GetTransportControls() != null)//Ensure that this session has transport controls we can control
+                    {
+                        mediaController = mediacontroller;
+                        try
+                        {
+                            musicController = MusicController.GetInstance();
+                            mediaController.RegisterCallback(musicController);
+                            //Retrieve the controls to control the media, duh.
+                            musicController.TransportControls = mediaController.GetTransportControls();
+                            musicController.MediaMetadata = mediaController.Metadata;
+                            musicController.PlaybackState = mediaController.PlaybackState;
+                        }
+                        catch
+                        {
+                            mediaController?.UnregisterCallback(musicController);
+                            musicController.Dispose();
+                        }
+                        break;
+                    }
                 }
-                catch
-                {
-                    musicController.Dispose();
-                    Log.Info("LiveDisplay", "Couldn't register a mediacallback");
-                }
-            }
-            else if (mediaController != null && controllers.Count == 0)
-            {
-                Log.Info("LiveDisplay", "mediacontroller null or no controllers.");
-                try
-                {
-                    mediaController.UnregisterCallback(musicController);
-                    musicController.Dispose();
-                }
-                catch (Exception e)
-                {
-                    Log.Info("LiveDisplay", "Unregistering MediaController callback failed" + e.Message);
-                }
-            }
         }
     }
 }

@@ -3,12 +3,10 @@ using Android.Content;
 using Android.Media;
 using Android.Media.Session;
 using Android.OS;
-using Android.Preferences;
 using Android.Runtime;
 using Android.Service.Notification;
 using Android.Util;
 using LiveDisplay.BroadcastReceivers;
-using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Music;
 using LiveDisplay.Servicios.Notificaciones;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
@@ -34,7 +32,6 @@ namespace LiveDisplay.Servicios
 
         public override IBinder OnBind(Intent intent)
         {
-            
             //Workaround for Kitkat to Retrieve Notifications.
             if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
             {
@@ -47,16 +44,16 @@ namespace LiveDisplay.Servicios
                 SubscribeToEvents();
                 RegisterReceivers();
                 remoteController = new RemoteController(Application.Context, this);
-                remoteController.SetArtworkConfiguration(450, 450);
+                remoteController.SetArtworkConfiguration(Resources.DisplayMetrics.WidthPixels, Resources.DisplayMetrics.HeightPixels);
                 audioManager = (AudioManager)Application.Context.GetSystemService(AudioService);
                 audioManager.RegisterRemoteController(remoteController);
-                musicControllerKitkat = MusicControllerKitkat.GetInstance();
+                musicControllerKitkat = MusicControllerKitkat.GetInstance(remoteController);
             }
             return base.OnBind(intent);
         }
 
         public override void OnListenerConnected()
-        {
+        {            
             activeMediaSessionsListener = new ActiveMediaSessionsListener();
             //RemoteController Lollipop and Beyond Implementation
             mediaSessionManager = (MediaSessionManager)GetSystemService(MediaSessionService);
@@ -65,18 +62,66 @@ namespace LiveDisplay.Servicios
             using (var h = new Handler(Looper.MainLooper)) //Using UI Thread because seems to crash in some devices.
                 h.Post(() =>
                 {
-                    mediaSessionManager.AddOnActiveSessionsChangedListener(activeMediaSessionsListener, new ComponentName(this, Java.Lang.Class.FromType(typeof(Catcher))));
-                    Log.Info("LiveDisplay", "Added Media Sess. Changed Listener");
+                    try
+                    {
+                        mediaSessionManager.AddOnActiveSessionsChangedListener(activeMediaSessionsListener, new ComponentName(this, Java.Lang.Class.FromType(typeof(Catcher))));
+                        Log.Info("LiveDisplay", "Added Media Sess. Changed Listener");
+                    }
+                    catch
+                    {
+                        Log.Info("LiveDisplay", "Failed to register Media Session Callback");
+                    }
                 });
 
             SubscribeToEvents();
             RegisterReceivers();
+            //This is for blocking Headsup notifications in Android Marshmallow and on, it does not work though LOL, stupid Android.
+            //NotificationManager notificationManager = GetSystemService(NotificationService) as NotificationManager;
+            //notificationManager.NotificationPolicy = new NotificationManager.Policy(NotificationPriorityCategory.Alarms | NotificationPriorityCategory.Calls | NotificationPriorityCategory.Events | NotificationPriorityCategory.Media | NotificationPriorityCategory.Messages | NotificationPriorityCategory.Reminders | NotificationPriorityCategory.RepeatCallers | NotificationPriorityCategory.System | NotificationPriorityCategory.RepeatCallers, NotificationPrioritySenders.Starred, NotificationPrioritySenders.Starred);
+            //notificationManager.SetInterruptionFilter(InterruptionFilter.None);
             RetrieveNotificationFromStatusBar();
         }
 
         public override void OnNotificationPosted(StatusBarNotification sbn)
         {
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+            {
+                //Let's attach the NotificationChannels that this package represents to this StatusbarNotification
+                try
+                {
+                    var channels= GetNotificationChannels(sbn.PackageName, sbn.User);
+                }
+                catch (Exception ex)
+                {
+                    Log.Info("LiveDisplay", "Oops!: " + ex.Message);
+                }
+            }
             catcherHelper.OnNotificationPosted(sbn);
+
+            //var test6 = sbn.Notification.Extras.Get(Notification.ExtraMediaSession) as MediaSession.Token;
+
+            //if (test6 != null)
+            //{
+            //    try
+            //    {
+            //        MediaController mediaController = new MediaController(this, test6);
+
+            //        var musicController = MusicController.GetInstance();
+            //        mediaController.RegisterCallback(musicController);
+            //        //Retrieve the controls to control the media, duh.
+            //        musicController.TransportControls = mediaController.GetTransportControls();
+            //        musicController.MediaMetadata = mediaController.Metadata;
+            //        musicController.PlaybackState = mediaController.PlaybackState;
+            //    }
+            //    catch
+            //    {
+            //        //mediaController?.UnregisterCallback(musicController);
+            //        //musicController.Dispose();
+            //    }
+
+
+            //    //mediaController.RegisterCallback(MusicController.GetInstance());
+            //}
         }
 
         public override void OnNotificationRemoved(StatusBarNotification sbn)
@@ -94,60 +139,56 @@ namespace LiveDisplay.Servicios
 
         public override bool OnUnbind(Intent intent)
         {
-            if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+            if (Build.VERSION.SdkInt <= BuildVersionCodes.N)
             {
-                catcherHelper.Dispose();
-                UnregisterReceiver(screenOnOffReceiver);
+                if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+                {
+                    catcherHelper.Dispose();
+                    UnregisterReceiver(screenOnOffReceiver);
 #pragma warning disable CS0618 // El tipo o el miembro están obsoletos
-                audioManager.UnregisterRemoteController(remoteController);
+                    audioManager.UnregisterRemoteController(remoteController);
 #pragma warning restore CS0618 // El tipo o el miembro están obsoletos
+                }
+                else
+                {
+                    catcherHelper.Dispose();
+                    mediaSessionManager.RemoveOnActiveSessionsChangedListener(activeMediaSessionsListener);
+                    UnregisterReceiver(screenOnOffReceiver);
+                }
             }
 
             return base.OnUnbind(intent);
         }
 
+        
+
         private void RetrieveNotificationFromStatusBar()
         {
             statusBarNotifications = new List<StatusBarNotification>();
-            foreach (var notification in GetActiveNotifications().ToList())
+            foreach (var notification in GetActiveNotifications()?.ToList())
             {
+                //var test6 = notification.Notification.Extras.Get(Notification.ExtraMediaSession) as MediaSession.Token;
+
+                //if (test6 != null)
+                //{
+                //    MediaController mediaController = new MediaController(this, test6);
+
+                //    mediaController.RegisterCallback(MusicController.GetInstance());
+                //}
+
                 if ((notification.IsOngoing == false || notification.Notification.Flags.HasFlag(NotificationFlags.NoClear)) && notification.IsClearable == true)
                 {
                     statusBarNotifications.Add(notification);
-
+                    //var test1 = notification.Notification.Extras.GetString(Notification.ExtraTemplate);
+                    //var test2 = notification.Notification.Extras;
+                    //var test3 = notification.Notification.Flags;
+                    //var test4 = notification.Notification.Extras.GetCharSequence(Notification.ExtraSummaryText);
+                    //var test5 = notification.Notification.Extras.GetCharSequenceArray(Notification.ExtraTextLines);
                     //GetRemoteInput(notification);
                 }
             }
 
             catcherHelper = new CatcherHelper(statusBarNotifications);
-        }
-
-        //No se puede implementar. :/
-        private void GetRemoteInput(StatusBarNotification sbn)
-        {
-            RemoteInput remoteInput;
-            if (sbn.Notification.Actions != null)
-                foreach (var item in sbn.Notification.Actions)
-                {
-                    List<RemoteInput> remoteInputs;
-                    if (item.GetRemoteInputs() != null)
-                    {
-                        remoteInputs = item.GetRemoteInputs().ToList();
-                        foreach (var remoteinput in remoteInputs)
-                        {
-                            if (remoteinput.ResultKey != null)
-                            {
-                                remoteInput = remoteinput;
-                                remoteInput.Extras.PutCharSequence(remoteinput.ResultKey, ":)");
-                                item.Extras.PutCharSequence(remoteinput.ResultKey, ":)");
-                                item.ActionIntent.Send();
-                                var i = item.ActionIntent;
-
-                                break;
-                            }
-                        }
-                    }
-                }
         }
 
         //Subscribe to events by Several publishers
@@ -173,26 +214,47 @@ namespace LiveDisplay.Servicios
         //Events:
         private void NotificationSlave_NotificationCancelledLollipop(object sender, NotificationCancelledEventArgsLollipop e)
         {
-            CancelNotification(e.Key);
+            try
+            {
+                CancelNotification(e.Key);
+            }
+            catch (Java.Lang.SecurityException)
+            {
+                Log.Info("LiveDisplay", "Fail to dismiss the notification, listener was not ready");
+            }
         }
 
         private void NotificationSlave_NotificationCancelled(object sender, NotificationCancelledEventArgsKitkat e)
         {
+            try
+            {
 #pragma warning disable CS0618 // El tipo o el miembro están obsoletos
-            CancelNotification(e.NotificationPackage, e.NotificationTag, e.NotificationId);
+                CancelNotification(e.NotificationPackage, e.NotificationTag, e.NotificationId);
 #pragma warning restore CS0618 // El tipo o el miembro están obsoletos
+            }
+            catch (Java.Lang.SecurityException)
+            {
+                Log.Info("LiveDisplay", "Fail to dismiss the notification, listener was not ready");
+            }
         }
 
         private void NotificationSlave_AllNotificationsCancelled(object sender, EventArgs e)
         {
-            CancelAllNotifications();
-            catcherHelper.CancelAllNotifications();
+            try
+            {
+                CancelAllNotifications();
+                catcherHelper.CancelAllNotifications();
+            }
+            catch (Java.Lang.SecurityException)
+            {
+                Log.Info("LiveDisplay", "Fail to dismiss the notification, listener was not ready");
+            }
         }
 
         public void OnClientChange(bool clearing)
         {
             Log.Info("LiveDisplay", "clearing: " + clearing);
-            musicControllerKitkat = MusicControllerKitkat.GetInstance();
+            musicControllerKitkat = MusicControllerKitkat.GetInstance(remoteController);
         }
 
         public void OnClientMetadataUpdate(RemoteController.MetadataEditor metadataEditor)
@@ -214,7 +276,5 @@ namespace LiveDisplay.Servicios
         {
             Log.Info("Livedisplay", "TransportControl update" + transportControlFlags);
         }
-
-
     }
 }

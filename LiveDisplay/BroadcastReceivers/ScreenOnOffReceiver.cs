@@ -13,7 +13,7 @@ namespace LiveDisplay.BroadcastReceivers
     public class ScreenOnOffReceiver : BroadcastReceiver
     {
         public static bool IsScreenOn { get; set; } = true;
-        private ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context));
+        private ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
 
         public override void OnReceive(Context context, Intent intent)
         {

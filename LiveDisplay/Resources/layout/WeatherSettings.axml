@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:a="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -12,7 +13,7 @@
         android:theme="@style/AppToolbar"
         a:popupTheme="@style/popupTheme" />
 	<android.support.design.widget.TextInputEditText
-		android:hint="Enter a city here"
+		android:hint="@string/entercityplaceholder"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:minWidth="25px"
@@ -20,17 +21,29 @@
 		android:id="@+id/cityedit" />
 	<Switch
 		android:padding="10dp"
-		android:text="Use Imperial Units"
+		android:text="@string/useimperialunits"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:id="@+id/useimperialsystem" />
 	<Button
 		android:id="@+id/trytogetweather"
-		android:text="bash(Test me)"
+		android:text="@string/testweathersettingsbutton"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content" />
 <include
 		layout="@layout/weather"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content" />
+	<TextView
+		tools:text="Update weather each:"
+		android:text="@string/updateweathereach"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+		android:layout_height="wrap_content"
+		android:layout_width="match_parent"/>
+	<Spinner
+		android:id="@+id/weatherupdatefrequency"		
+		android:layout_height="wrap_content"
+		android:layout_width="match_parent"
+	/>
+
 </LinearLayout>

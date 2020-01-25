@@ -1,26 +1,27 @@
-﻿using Android.App;
-using Android.App.Admin;
-using Android.Content;
-using Android.OS;
-using Android.Preferences;
-using Android.Provider;
-using Android.Runtime;
-using Android.Support.V7.App;
-using Android.Views;
-using Android.Widget;
-using LiveDisplay.BroadcastReceivers;
-using LiveDisplay.Misc;
-using LiveDisplay.Servicios;
-
-//for CI.
-using Microsoft.AppCenter;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
-using System;
-using System.Threading;
-
-namespace LiveDisplay.Activities
+﻿namespace LiveDisplay.Activities
 {
+    using Android.App;
+    using Android.App.Admin;
+    using Android.Content;
+    using Android.OS;
+    using Android.Preferences;
+    using Android.Provider;
+    using Android.Runtime;
+    using Android.Support.V7.App;
+    using Android.Views;
+    using Android.Widget;
+    using LiveDisplay.BroadcastReceivers;
+    using LiveDisplay.Misc;
+    using LiveDisplay.Servicios;
+
+    //for CI.
+    using Microsoft.AppCenter;
+    using Microsoft.AppCenter.Analytics;
+    using Microsoft.AppCenter.Crashes;
+    using System;
+    using System.Threading;
+
+
     [Activity(Label = "@string/app_name", Theme = "@style/LiveDisplayThemeDark.NoActionBar", TaskAffinity = "livedisplay.main", MainLauncher = true)]
     internal class MainActivity : AppCompatActivity
     {
@@ -42,10 +43,7 @@ namespace LiveDisplay.Activities
         {
             CheckNotificationAccess();
             CheckDeviceAdminAccess();
-            if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1)
-            {
-                CheckDrawOverOtherAppsAccess();
-            }
+            CheckDrawOverOtherAppsAccess();
             IsApplicationHealthy();
             base.OnResume();
         }
@@ -94,11 +92,9 @@ namespace LiveDisplay.Activities
 
         private void CheckDrawOverOtherAppsAccess()
         {
-            ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context));
-
             using (var drawOverOtherAppsImageView = FindViewById<ImageView>(Resource.Id.drawOverOtherAppsAccessCheckbox))
             {
-                if (Settings.CanDrawOverlays(Application.Context))
+                if (Checkers.ThisAppCanDrawOverlays())
                 {
                     drawOverOtherAppsImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
                 }
@@ -111,15 +107,9 @@ namespace LiveDisplay.Activities
 
         private void IsApplicationHealthy()
         {
-            bool canDrawOverlays = true;
-            if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1) //In Lollipop and less this permission is granted at Install time.
-            {
-                canDrawOverlays = Checkers.ThisAppCanDrawOverlays();
-            }
-
             using (var accessestext = FindViewById<TextView>(Resource.Id.health))
             {
-                if (Checkers.IsNotificationListenerEnabled() == true && Checkers.IsThisAppADeviceAdministrator() && canDrawOverlays == true)
+                if (Checkers.IsNotificationListenerEnabled() == true && Checkers.IsThisAppADeviceAdministrator() && Checkers.ThisAppCanDrawOverlays())
                 {
                     accessestext.SetText(Resource.String.accessesstatusenabled);
                     accessestext.SetTextColor(Android.Graphics.Color.Green);
@@ -178,7 +168,7 @@ namespace LiveDisplay.Activities
                     return true;
 
                 case Resource.Id.action_sendtestnotification:
-                   
+
                     if (isApplicationHealthy)
                     {
                         using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())
@@ -203,6 +193,16 @@ namespace LiveDisplay.Activities
                     {
                         Toast.MakeText(Application.Context, "You dont have the required permissions yet", ToastLength.Long).Show();
                     }
+                    break;
+
+                case Resource.Id.action_help:
+                    using (Android.Support.V7.App.AlertDialog.Builder builder = new Android.Support.V7.App.AlertDialog.Builder(this))
+                    {
+                        builder.SetMessage(Resource.String.helptext);
+                        builder.SetPositiveButton("ok, cool", null as EventHandler<DialogClickEventArgs>);
+                        builder.Show();
+                    }
+
                     break;
 
                 default:
@@ -278,7 +278,7 @@ namespace LiveDisplay.Activities
         {
             ThreadPool.QueueUserWorkItem(m =>
             {
-                AppCenter.Start("0ec5320c-34b4-498b-a9c2-dae7614997fa", typeof(Analytics), typeof(Crashes));
+                AppCenter.Start("0ec5320c-34b4-498b-a9c2-dae7614997fa", typeof(Analytics), typeof(Crashes), typeof(ErrorReport));
             });
         }
     }

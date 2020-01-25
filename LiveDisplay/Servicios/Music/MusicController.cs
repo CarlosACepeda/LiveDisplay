@@ -1,9 +1,11 @@
-﻿using Android.Media;
+﻿using Android.App;
+using Android.Media;
 using Android.Media.Session;
 using Android.Util;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Music.MediaEventArgs;
 using System;
+using System.Threading;
 
 namespace LiveDisplay.Servicios.Music
 {
@@ -21,12 +23,16 @@ namespace LiveDisplay.Servicios.Music
         public MediaController.TransportControls TransportControls { get; set; }
         public MediaMetadata MediaMetadata { get; set; }
         private static MusicController instance;
-
+        public PendingIntent ActivityIntent { get; set; }
         #region events
 
         public static event EventHandler<MediaPlaybackStateChangedEventArgs> MediaPlaybackChanged;
 
         public static event EventHandler<MediaMetadataChangedEventArgs> MediaMetadataChanged;
+
+        public static event EventHandler MusicPlaying;
+
+        public static event EventHandler MusicPaused;
 
         #endregion events
 
@@ -78,15 +84,16 @@ namespace LiveDisplay.Servicios.Music
                     TransportControls.Rewind();
                     break;
 
-                case Misc.MediaActionFlags.Stop:
+                case MediaActionFlags.Stop:
                     TransportControls.Stop();
                     break;
 
-                case Misc.MediaActionFlags.RetrieveMediaInformation:
+                case MediaActionFlags.RetrieveMediaInformation:
                     //Send media information.
                     OnMediaMetadataChanged(new MediaMetadataChangedEventArgs
                     {
-                        MediaMetadata = MediaMetadata
+                        MediaMetadata = MediaMetadata,
+                        ActivityIntent = ActivityIntent
                     });
                     //Send Playbackstate of the media.
                     OnMediaPlaybackChanged(new MediaPlaybackStateChangedEventArgs
@@ -116,21 +123,13 @@ namespace LiveDisplay.Servicios.Music
 
         public override void OnMetadataChanged(MediaMetadata metadata)
         {
-            try
-            {
-                MediaMetadata = metadata;
+            MediaMetadata = metadata;
 
-                OnMediaMetadataChanged(new MediaMetadataChangedEventArgs
-                {
-                    MediaMetadata = metadata
-                });
-            }
-            catch
+            OnMediaMetadataChanged(new MediaMetadataChangedEventArgs
             {
-                Log.Info("LiveDisplay", "Failed getting metadata MusicController.");
-                //Don't do anything.
-            }
-
+                ActivityIntent= ActivityIntent,
+                MediaMetadata = metadata
+            });
             //Datos de la Media que se está reproduciendo.
 
             base.OnMetadataChanged(metadata);
@@ -142,12 +141,28 @@ namespace LiveDisplay.Servicios.Music
 
         protected virtual void OnMediaPlaybackChanged(MediaPlaybackStateChangedEventArgs e)
         {
-            MediaPlaybackChanged?.Invoke(this, e);
+            ThreadPool.QueueUserWorkItem(m =>
+            {
+                switch (e.PlaybackState)
+                {
+                    case PlaybackStateCode.Playing:
+                        MusicPlaying?.Invoke(this, EventArgs.Empty);
+                        break;
+
+                    case PlaybackStateCode.Paused:
+                        MusicPaused?.Invoke(this, EventArgs.Empty);
+                        break;
+                }
+                MediaPlaybackChanged?.Invoke(this, e);
+            });
         }
 
         protected virtual void OnMediaMetadataChanged(MediaMetadataChangedEventArgs e)
         {
-            MediaMetadataChanged?.Invoke(this, e);
+            ThreadPool.QueueUserWorkItem(m =>
+            {
+                MediaMetadataChanged?.Invoke(this, e);
+            });
         }
 
         #endregion Raising events.
@@ -157,12 +172,17 @@ namespace LiveDisplay.Servicios.Music
             //release resources.
 
             base.Dispose(disposing);
+        }
+
+        public override void OnSessionDestroyed()
+        {
             Jukebox.MediaEvent -= Jukebox_MediaEvent;
             PlaybackState?.Dispose();
             TransportControls?.Dispose();
             MediaMetadata?.Dispose();
             instance = null;
             Log.Info("LiveDisplay", "MusicController dispose method");
+            base.OnSessionDestroyed();
         }
     }
 }

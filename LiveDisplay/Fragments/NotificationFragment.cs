@@ -1,34 +1,26 @@
 ﻿using Android.App;
-using Android.Graphics;
-using Android.Graphics.Drawables;
 using Android.OS;
+using Android.Preferences;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
 using LiveDisplay.Adapters;
+using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
 using LiveDisplay.Servicios.Notificaciones;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
 using LiveDisplay.Servicios.Notificaciones.NotificationStyle;
-using LiveDisplay.Servicios.Wallpaper;
 using System;
-using System.Threading;
 
 namespace LiveDisplay.Fragments
 {
     public class NotificationFragment : Fragment
     {
-        public static event EventHandler NotificationClicked;
-
-        private int position;
-        private LinearLayout notificationActions;
-        private TextView titulo;
-        private TextView texto;
-        private TextView appName;
-        private TextView when;
+        private OpenNotification openNotification; //the current OpenNotification instance active.
         private LinearLayout notification;
-        private ImageButton closenotificationbutton;
         private bool timeoutStarted = false;
+        private NotificationStyleApplier styleApplier;
+        private ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
 
         #region Lifecycle events
 
@@ -41,65 +33,94 @@ namespace LiveDisplay.Fragments
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             View v = inflater.Inflate(Resource.Layout.NotificationFrag, container, false);
-
-            notificationActions = v.FindViewById<LinearLayout>(Resource.Id.notificationActions);
-            texto = v.FindViewById<TextView>(Resource.Id.tvTexto);
-            titulo = v.FindViewById<TextView>(Resource.Id.tvTitulo);
-            when = v.FindViewById<TextView>(Resource.Id.tvWhen);
-            appName = v.FindViewById<TextView>(Resource.Id.tvAppName);
-            notification = v.FindViewById<LinearLayout>(Resource.Id.llNotification);
-            closenotificationbutton = v.FindViewById<ImageButton>(Resource.Id.closenotificationbutton);
-            //Subscribe to events raised by several types.
+            notification = v.FindViewById<LinearLayout>(Resource.Id.llNotification); 
+            styleApplier = new NotificationStyleApplier(ref notification, this);
+            
             notification.Drag += Notification_Drag;
             notification.Click += LlNotification_Click;
-            closenotificationbutton.Click += Closenotificationbutton_Click;
             NotificationAdapterViewHolder.ItemClicked += ItemClicked;
             NotificationAdapterViewHolder.ItemLongClicked += ItemLongClicked;
             CatcherHelper.NotificationPosted += CatcherHelper_NotificationPosted;
-            CatcherHelper.NotificationUpdated += CatcherHelper_NotificationUpdated;
             CatcherHelper.NotificationRemoved += CatcherHelper_NotificationRemoved;
+            NotificationStyleApplier.SendInlineResponseAvailabityChanged += NotificationStyleApplier_SendInlineResponseAvailabityChanged;
             return v;
         }
 
-        private void Closenotificationbutton_Click(object sender, EventArgs e)
+        private void NotificationStyleApplier_SendInlineResponseAvailabityChanged(object sender, bool e)
         {
-            using (OpenNotification openNotification = new OpenNotification(position))
+            if (e == true)
             {
-                if (openNotification.IsRemovable())
-                {
-                    using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())
-                    {
-                        if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
-                        {
-                            int notiId = CatcherHelper.statusBarNotifications[position].Id;
-                            string notiTag = CatcherHelper.statusBarNotifications[position].Tag;
-                            string notiPack = CatcherHelper.statusBarNotifications[position].PackageName;
-                            slave.CancelNotification(notiPack, notiTag, notiId);
-                        }
-                        else
-                        {
-                            slave.CancelNotification(CatcherHelper.statusBarNotifications[position].Key);
-                        }
-                    }
-                    notification.Visibility = ViewStates.Invisible;
-                    titulo.Text = null;
-                    texto.Text = null;
-                    notificationActions.RemoveAllViews();
-                }
+                StartTimeout(true); //Tell the Timeout counter to stop because the SendInlineResponse is currently being showed.
             }
-
         }
 
         private void Notification_Drag(object sender, View.DragEventArgs e)
         {
-            StartTimeout(); //To keep the notification visible while the user touches the notification fragment
+            StartTimeout(false); //To keep the notification visible while the user touches the notification fragment
         }
 
         private void CatcherHelper_NotificationPosted(object sender, NotificationPostedEventArgs e)
         {
-            if (e.ShouldCauseWakeUp == true)
+            openNotification = new OpenNotification(e.StatusBarNotification);
+
+            //if the current notification widget does not have a tag, let's set it.
+
+            if (notification.GetTag(Resource.String.defaulttag) == null)
             {
-                Awake.WakeUpScreen();
+                notification.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
+            }
+
+            if (configurationManager.RetrieveAValue(ConfigurationParameters.TestEnabled))
+            {
+                Toast.MakeText(Activity, "Progress Indeterminate?: " + openNotification.IsProgressIndeterminate().ToString() + "\n"
+                    + "Current Progress: " + openNotification.GetProgress().ToString() + "\n"
+                    + "Max Progress: " + openNotification.GetProgressMax().ToString() + "\n"
+                    + openNotification.GetGroupInfo()
+                    , ToastLength.Short).Show();
+            }
+
+            if (e.UpdatesPreviousNotification)
+            {
+                Activity.RunOnUiThread(() =>
+                {
+                    //if updates a previous notification, let's see if first of all the notification
+                    //to be updated is the same that's currently being displayed in the Notification Widget.
+                    if ((string)notification.GetTag(Resource.String.defaulttag) == openNotification.GetCustomId())
+                    {
+
+                        //Watch out for possible memory leaks here.
+                        styleApplier?.ApplyStyle(openNotification);
+
+                        //let's attach a tag to the fragment in order to know which notification is this fragment showing.
+                        notification.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
+
+                        if (notification.Visibility != ViewStates.Visible)
+                        {
+                            notification.Visibility = ViewStates.Visible;
+                            StartTimeout(false);
+                        }
+
+                    }
+                    else
+                    {
+                        //they are not the same so, the notification widget won't get updated(because that'll cause the 
+                        //notification the user is viewing to be replaced)
+                    }
+                });
+
+            }
+            else
+            {
+                Activity.RunOnUiThread(() =>
+                {
+                    styleApplier?.ApplyStyle(openNotification);
+                    notification.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
+                    if (notification.Visibility != ViewStates.Visible)
+                    {
+                        notification.Visibility = ViewStates.Visible;
+                        StartTimeout(false);
+                    }
+                });
             }
         }
 
@@ -107,15 +128,9 @@ namespace LiveDisplay.Fragments
         {
             NotificationAdapterViewHolder.ItemClicked -= ItemClicked;
             NotificationAdapterViewHolder.ItemLongClicked -= ItemLongClicked;
-            CatcherHelper.NotificationUpdated -= CatcherHelper_NotificationUpdated;
             CatcherHelper.NotificationRemoved -= CatcherHelper_NotificationRemoved;
             CatcherHelper.NotificationPosted -= CatcherHelper_NotificationPosted;
-            notificationActions.Dispose();
-            texto.Dispose();
-            titulo.Dispose();
-            when.Dispose();
-            appName.Dispose();
-            closenotificationbutton.Dispose();
+            openNotification?.Dispose();
             base.OnDestroy();
         }
 
@@ -125,153 +140,118 @@ namespace LiveDisplay.Fragments
 
         private void CatcherHelper_NotificationRemoved(object sender, EventArgs e)
         {
-            notification.Visibility = ViewStates.Gone;
+            Activity?.RunOnUiThread(() =>
+            {
+                notification.Visibility = ViewStates.Gone;
+                //Remove tag, notification removed
+                openNotification = null;
+                notification?.SetTag(Resource.String.defaulttag, null);
+            });
         }
-
-        private void CatcherHelper_NotificationUpdated(object sender, NotificationItemClickedEventArgs e)
-        {
-            ItemClicked(this, e);
-        }
-
         private void LlNotification_Click(object sender, EventArgs e)
         {
-            notification.Visibility = ViewStates.Visible;
-            try
+            Activity?.RunOnUiThread(() =>
             {
-                using (OpenNotification openNotification = new OpenNotification(position))
+
+                notification.Visibility = ViewStates.Visible;
+                try
                 {
-                    Activity.RunOnUiThread(() =>
-                    openNotification.ClickNotification()
-                    );
-                    if (OpenNotification.IsAutoCancellable(position) == true)
+                    Activity.RunOnUiThread(() => openNotification.ClickNotification());
+                    if (openNotification.IsAutoCancellable())
                     {
                         notification.Visibility = ViewStates.Invisible;
-                        titulo.Text = null;
-                        texto.Text = null;
-                        when.Text = null;
-                        notificationActions.RemoveAllViews();
                     }
+
                 }
-            }
-            catch
-            {
-                Log.Wtf("OnNotificationClicked", "Metodo falla porque no existe una notificacion con esta acción");
-            }
+                catch
+                {
+                    Log.Wtf("OnNotificationClicked", "Metodo falla porque no existe una notificacion con esta acción");
+                }
+            });
         }
 
         private void ItemLongClicked(object sender, NotificationItemClickedEventArgs e)
         {
-            position = e.Position;
             notification.Visibility = ViewStates.Visible;
-            using (OpenNotification openNotification = new OpenNotification(e.Position))
-            {
-                //If the notification is removable...
-                if (openNotification.IsRemovable())
-                {
-                    //Then remove the notification
-                    using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())
-                    {
-                        if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
-                        {
-                            int notiId = CatcherHelper.statusBarNotifications[position].Id;
-                            string notiTag = CatcherHelper.statusBarNotifications[position].Tag;
-                            string notiPack = CatcherHelper.statusBarNotifications[position].PackageName;
-                            slave.CancelNotification(notiPack, notiTag, notiId);
-                        }
-                        else
-                        {
-                            slave.CancelNotification(CatcherHelper.statusBarNotifications[position].Key);
-                        }
-                    }
-                    notification.Visibility = ViewStates.Invisible;
-                    titulo.Text = null;
-                    texto.Text = null;
-                    notificationActions.RemoveAllViews();
-                }
-            }
+            openNotification = new OpenNotification(e.StatusBarNotification);
+            openNotification.Cancel();
+             notification.Visibility = ViewStates.Invisible;
+            
         }
 
         private void ItemClicked(object sender, NotificationItemClickedEventArgs e)
         {
-            position = e.Position;
-            using (OpenNotification openNotification = new OpenNotification(e.Position))
-            {
-                titulo.Text = openNotification.Title();
-                texto.Text = openNotification.Text();
-                appName.Text = openNotification.AppName();
-                when.Text = openNotification.When();
-                notificationActions.RemoveAllViews();
-                //using (NotificationStyleApplier styleApplier = new NotificationStyleApplier(null, openNotification))
-                //    styleApplier.ApplyStyle(openNotification.Style());
-                if (openNotification.HasActionButtons() == true)
-                {
-                    var actions = openNotification.RetrieveActions();
-                    foreach (var a in actions)
-                    {
-                        OpenAction openAction = new OpenAction(a);
-                        float weight = (float)1 / actions.Count;
+            openNotification = new OpenNotification(e.StatusBarNotification);
 
-                        Button anActionButton = new Button(Application.Context)
-                        {
-                            LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MatchParent, weight),
-                            Text = openAction.GetTitle()
-                        };
-                        anActionButton.TransformationMethod = null;
-                        anActionButton.SetTypeface(Typeface.Create("sans-serif-condensed", TypefaceStyle.Normal), TypefaceStyle.Normal);
-                        anActionButton.SetMaxLines(1);
-                        anActionButton.SetTextColor(Color.White);
-                        anActionButton.Click += (o, eventargs) =>
-                         {
-                             openAction.ClickAction();
-                         };
-                        anActionButton.Gravity = GravityFlags.CenterVertical;
-                        TypedValue outValue = new TypedValue();
-                        Application.Context.Theme.ResolveAttribute(Android.Resource.Attribute.SelectableItemBackgroundBorderless, outValue, true);
-                        anActionButton.SetBackgroundResource(outValue.ResourceId);
-                        anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction.GetActionIcon(), null, null, null);
-                        notificationActions.AddView(anActionButton);
-                    };
-                }
-                if (openNotification.IsRemovable())
-                {
-                    closenotificationbutton.Visibility = ViewStates.Visible;
-                }
-                else
-                {
-                    closenotificationbutton.Visibility = ViewStates.Invisible;
-                }
-            }
-            if (notification.Visibility != ViewStates.Visible)
+            //if the current notification widget does not have a tag, let's set it.
+
+            if (notification.GetTag(Resource.String.defaulttag) == null)
             {
-                notification.Visibility = ViewStates.Visible;
-                StartTimeout();
+                notification.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
             }
 
-            NotificationClicked?.Invoke(null, EventArgs.Empty);
+            if (configurationManager.RetrieveAValue(ConfigurationParameters.TestEnabled))
+            {
+                Toast.MakeText(Activity, "Progress Indeterminate?: " + openNotification.IsProgressIndeterminate().ToString() + "\n"
+                    + "Current Progress: " + openNotification.GetProgress().ToString() + "\n"
+                    + "Max Progress: " + openNotification.GetProgressMax().ToString() + "\n"
+                    + openNotification.GetGroupInfo()
+                    , ToastLength.Short).Show();
+            }
+
+            //Only do this process if the notification that I want to show is different than the one that 
+            //the Notification Widget has.
+            //If it's the same then simply show it.
+            if ((string)notification.GetTag(Resource.String.defaulttag) != openNotification.GetCustomId())
+            {
+                styleApplier?.ApplyStyle(openNotification);
+                notification.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
+                if (notification.Visibility != ViewStates.Visible)
+                {
+                    notification.Visibility = ViewStates.Visible;                    
+                }
+            }
+            else if(notification.Visibility!= ViewStates.Visible)
+            {
+                styleApplier?.ApplyStyle(openNotification);
+                notification.Visibility = ViewStates.Visible;                
+            }
+            StartTimeout(false);
+
         }
+
 
         #endregion Events Implementation:
 
         //THis works like a charm :)
-        private void StartTimeout()
-        {
+        private void StartTimeout(bool stop)
+        {            
             //This action is: 'Hide the notification, and set the timeoutStarted as finished(false)
             //because this action will be invoked only when the timeout has finished.
-            Action hideNotification = () => { if (notification != null) notification.Visibility = ViewStates.Gone; timeoutStarted = false; };
+            void hideNotification() { if (notification != null) notification.Visibility = ViewStates.Gone; timeoutStarted = false; }
             //If the timeout has started, then cancel the action, and start again.
-            if (timeoutStarted == true)
+
+            if (stop)
             {
-                notification?.RemoveCallbacks(hideNotification);
-                notification?.PostDelayed(hideNotification, 5000);
+                notification?.RemoveCallbacks(hideNotification); //Stop counting.
+                return;
             }
-            //If not, simply wait 5 seconds then hide the notification, in that span of time, the timeout is
-            //marked as Started(true)
             else
             {
-                timeoutStarted = true;
-                notification?.PostDelayed(hideNotification, 5000);
+
+                if (timeoutStarted == true)
+                {
+                    notification?.RemoveCallbacks(hideNotification);
+                    notification?.PostDelayed(hideNotification, 5000);
+                }
+                //If not, simply wait 5 seconds then hide the notification, in that span of time, the timeout is
+                //marked as Started(true)
+                else
+                {
+                    timeoutStarted = true;
+                    notification?.PostDelayed(hideNotification, 5000);
+                }
             }
         }
     }
-
 }

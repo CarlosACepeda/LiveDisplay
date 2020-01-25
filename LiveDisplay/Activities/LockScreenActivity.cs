@@ -1,40 +1,47 @@
-﻿using Android.App;
-using Android.Content;
-using Android.Graphics;
-using Android.Graphics.Drawables;
-using Android.Media;
-using Android.Media.Session;
-using Android.OS;
-using Android.Preferences;
-using Android.Provider;
-using Android.Support.V7.Widget;
-using Android.Util;
-using Android.Views;
-using Android.Views.Animations;
-using Android.Widget;
-using Com.JackAndPhantom;
-using LiveDisplay.Fragments;
-using LiveDisplay.Misc;
-using LiveDisplay.Servicios;
-using LiveDisplay.Servicios.FloatingNotification;
-using LiveDisplay.Servicios.Music;
-using LiveDisplay.Servicios.Notificaciones;
-using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
-using LiveDisplay.Servicios.Wallpaper;
-using System;
-using System.Threading;
-
-namespace LiveDisplay
+﻿namespace LiveDisplay
 {
-    [Activity(Label = "LockScreen", Theme = "@style/LiveDisplayThemeDark", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, TaskAffinity = "livedisplay.lockscreen", LaunchMode = Android.Content.PM.LaunchMode.SingleInstance, ExcludeFromRecents = true)]
+    using Android.Animation;
+    using Android.App;
+    using Android.Content;
+    using Android.Content.PM;
+    using Android.Content.Res;
+    using Android.Graphics;
+    using Android.Graphics.Drawables;
+    using Android.Media;
+    using Android.Media.Session;
+    using Android.OS;
+    using Android.Preferences;
+    using Android.Provider;
+    using Android.Support.V7.Widget;
+    using Android.Util;
+    using Android.Views;
+    using Android.Views.Animations;
+    using Android.Widget;
+    using Com.JackAndPhantom;
+    using LiveDisplay.Activities;
+    using LiveDisplay.Activities.ActivitiesEventArgs;
+    using LiveDisplay.Fragments;
+    using LiveDisplay.Misc;
+    using LiveDisplay.Servicios;
+    using LiveDisplay.Servicios.Awake;
+    using LiveDisplay.Servicios.FloatingNotification;
+    using LiveDisplay.Servicios.Music;
+    using LiveDisplay.Servicios.Notificaciones;
+    using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
+    using LiveDisplay.Servicios.Wallpaper;
+    using System;
+    using System.Threading;
+
+    [Activity(Label = "LockScreen", Theme = "@style/LiveDisplayThemeDark", ScreenOrientation = ScreenOrientation.Portrait, MainLauncher = false, TaskAffinity = "livedisplay.lockscreen", LaunchMode = LaunchMode.SingleInstance, ExcludeFromRecents = true)]
     public class LockScreenActivity : Activity
     {
         private RecyclerView recycler;
         private RecyclerView.LayoutManager layoutManager;
-        private ImageView wallpaperView;
-        private ImageView unlocker;
+
+        //private ImageView unlocker;
         private Button clearAll;
-        private FrameLayout weatherandclockcontainer;
+
+        private TextView livedisplayinfo;
         private NotificationFragment notificationFragment;
         private MusicFragment musicFragment;
         private ClockFragment clockFragment;
@@ -45,38 +52,44 @@ namespace LiveDisplay
         private float firstTouchTime = -1;
         private float finalTouchTime;
         private readonly float threshold = 1000; //1 second of threshold.(used to implement the double tap.)
+        private int halfscreenheight; //To decide the behavior of the double tap.
         private System.Timers.Timer watchDog; //the watchdog simply will start counting down until it gets resetted by OnUserInteraction() override.
         private Animation fadeoutanimation;
+        private string doubletapbehavior;
+        private bool isMusicWidgetPresent;
+        private ActivityStates currentActivityState;
+        private ViewPropertyAnimator viewPropertyAnimator;
+        private TextView welcome;
+        private ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
+        public static event EventHandler<LockScreenLifecycleEventArgs> OnActivityStateChanged;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.LockScreen);
-            Window.DecorView.SetBackgroundColor(Color.Black);
             ThreadPool.QueueUserWorkItem(isApphealthy =>
             {
-                bool canDrawOverlays = true;
-                if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1) //In Lollipop and less this permission is granted at Install time.
-                {
-                    canDrawOverlays = Checkers.ThisAppCanDrawOverlays();
-                }
-
-                if (Checkers.IsNotificationListenerEnabled() == false || canDrawOverlays == false || Checkers.IsThisAppADeviceAdministrator() == false)
+                if (Checkers.IsNotificationListenerEnabled() == false || Checkers.ThisAppCanDrawOverlays() == false || Checkers.IsThisAppADeviceAdministrator() == false)
                 {
                     RunOnUiThread(() =>
-                    Toast.MakeText(Application.Context, "You dont have the required permissions", ToastLength.Long).Show()
+                    {
+                        Toast.MakeText(Application.Context, "You dont have the required permissions", ToastLength.Long).Show();
+                        Finish();
+                    }
                     );
-                    Finish();
                 }
             });
 
             //Views
-            wallpaperView = FindViewById<ImageView>(Resource.Id.wallpaper);
-            unlocker = FindViewById<ImageView>(Resource.Id.unlocker);
+            //wallpaperView = FindViewById<ImageView>(Resource.Id.wallpaper);
+            //unlocker = FindViewById<ImageView>(Resource.Id.unlocker);           
             startCamera = FindViewById<Button>(Resource.Id.btnStartCamera);
             startDialer = FindViewById<Button>(Resource.Id.btnStartPhone);
             clearAll = FindViewById<Button>(Resource.Id.btnClearAllNotifications);
             lockscreen = FindViewById<LinearLayout>(Resource.Id.contenedorPrincipal);
-            weatherandclockcontainer = FindViewById<FrameLayout>(Resource.Id.weatherandcLockplaceholder);
+            viewPropertyAnimator = Window.DecorView.Animate();
+            viewPropertyAnimator.SetListener(new LockScreenAnimationHelper(Window));
+            livedisplayinfo = FindViewById<TextView>(Resource.Id.livedisplayinfo);
 
             fadeoutanimation = AnimationUtils.LoadAnimation(Application.Context, Resource.Animation.abc_fade_out);
             fadeoutanimation.AnimationEnd += Fadeoutanimation_AnimationEnd;
@@ -86,21 +99,23 @@ namespace LiveDisplay
             clockFragment = new ClockFragment();
             weatherFragment = new WeatherFragment();
             clearAll.Click += BtnClearAll_Click;
-            unlocker.Touch += Unlocker_Touch;
+            //unlocker.Touch += Unlocker_Touch;
             startCamera.Click += StartCamera_Click;
             startDialer.Click += StartDialer_Click;
             lockscreen.Touch += Lockscreen_Touch;
-            weatherandclockcontainer.LongClick += Weatherandclockcontainer_LongClick;
 
-            watchDog = new System.Timers.Timer();
-            watchDog.AutoReset = false;
+            watchDog = new System.Timers.Timer
+            {
+                AutoReset = false
+            };
             watchDog.Elapsed += WatchdogInterval_Elapsed;
+
+            halfscreenheight = Resources.DisplayMetrics.HeightPixels / 2;
 
             WallpaperPublisher.NewWallpaperIssued += Wallpaper_NewWallpaperIssued;
 
             //CatcherHelper events
             CatcherHelper.NotificationListSizeChanged += CatcherHelper_NotificationListSizeChanged;
-
 
             using (recycler = FindViewById<RecyclerView>(Resource.Id.NotificationListRecyclerView))
             {
@@ -117,169 +132,284 @@ namespace LiveDisplay
 
             LoadConfiguration();
 
-            CheckNotificationListSize();
+            OnActivityStateChanged += LockScreenActivity_OnActivityStateChanged;
+            WallpaperPublisher.CurrentWallpaperCleared += WallpaperPublisher_CurrentWallpaperCleared;            
+        }
+
+        private void WallpaperPublisher_CurrentWallpaperCleared(object sender, CurrentWallpaperClearedEventArgs e)
+        {
+            //<document me>
+            if(e.PreviousWallpaperPoster== WallpaperPoster.Lockscreen) 
+                LoadWallpaper(new ConfigurationManager(AppPreferences.Default));
+        }
+
+        private void LockScreenActivity_OnActivityStateChanged(object sender, LockScreenLifecycleEventArgs e)
+        {
+            currentActivityState = e.State;
         }
 
         private void Fadeoutanimation_AnimationEnd(object sender, Animation.AnimationEndEventArgs e)
         {
             var fadeinanimation = AnimationUtils.LoadAnimation(Application.Context, Resource.Animation.abc_fade_in);
-            wallpaperView.StartAnimation(fadeinanimation);
+            Window.DecorView.StartAnimation(fadeinanimation);
         }
 
         private void WatchdogInterval_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            Awake.TurnOffScreen();
-        }
 
-        private void MusicController_MusicStopped(object sender, EventArgs e)
-        {
-            StopMusicController();
-        }
+            //it works correctly, but I want to refactor this. (Regression)
+            if (currentActivityState== ActivityStates.Resumed)
+            AwakeHelper.TurnOffScreen();
+        }       
 
         private void MusicController_MusicPaused(object sender, EventArgs e)
         {
-            ThreadPool.QueueUserWorkItem(m => CheckIfMusicIsStillPaused());
+            CheckIfMusicIsStillPaused();
         }
 
         private void CheckIfMusicIsStillPaused()
         {
-            Thread.Sleep(5000); //Wait 5 seconds.
+            bool notplaying = false;
 
-            if (MusicController.MusicStatus != PlaybackStateCode.Playing)
+            ThreadPool.QueueUserWorkItem(method =>
             {
-                StopMusicController();
-                Log.Info("LiveDisplay", "Musicfragment stopped");
-            }
+                Thread.Sleep(5000); //Wait 5 seconds.
+                if (currentActivityState == ActivityStates.Resumed)
+                {
+                    if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
+                    {
+                        if (MusicController.MusicStatus != PlaybackStateCode.Playing)
+                        {
+                            notplaying = true;
+                        }
+                    }
+                    else if (MusicControllerKitkat.MusicStatus != RemoteControlPlayState.Playing)
+                    {
+                        notplaying = true;
+                    }
+
+                    if (notplaying)
+                    {
+                        RunOnUiThread(() =>
+                        {
+                            StopMusicController();
+                            StopFloatingNotificationService();
+                        });
+
+                    }
+                }
+            });
         }
 
         private void MusicController_MusicPlaying(object sender, EventArgs e)
         {
-            StartMusicController();
-        }
-
-        private void Weatherandclockcontainer_LongClick(object sender, View.LongClickEventArgs e)
-        {
-            using (var fragmentTransaction = FragmentManager.BeginTransaction())
-            {
-                fragmentTransaction.Replace(Resource.Id.weatherandcLockplaceholder, weatherFragment);
-                fragmentTransaction.Commit();
-            }
+            if (isMusicWidgetPresent == false) //Avoid unnecessary calls
+                RunOnUiThread(() =>
+                {
+                    StartMusicController();
+                });
         }
 
         private void Wallpaper_NewWallpaperIssued(object sender, WallpaperChangedEventArgs e)
         {
-            bool defaultwallpaperchanged = false;
-            Drawable userwallpaper = null;
-            if (!defaultwallpaperchanged)
-            {
-                userwallpaper = wallpaperView.Background;
-            }
-            if (e.SecondsOfAttention != 0)
-            {
-                ThreadPool.QueueUserWorkItem(method =>
-                {
-                    RunOnUiThread(() =>
-                    {
-                        wallpaperView.StartAnimation(fadeoutanimation);
-                        wallpaperView.Background = e.Wallpaper;
-                        wallpaperView.Background.Alpha = e.OpacityLevel;
-                        defaultwallpaperchanged = true;
-                    });
-                    Thread.Sleep(e.SecondsOfAttention * 1000);
-                    if (wallpaperView != null)
-                    {
-                        if (defaultwallpaperchanged)
-                            RunOnUiThread(() => { wallpaperView.Background = userwallpaper; defaultwallpaperchanged = false; });
 
-                    }
-                    else
+            RunOnUiThread(() =>
+            {
+                if (e.BlurLevel > 0)
+                {
+                    if (e.Wallpaper?.Bitmap!=null)
                     {
-                        wallpaperView.Background= userwallpaper;
+                        BlurImage blurImage = new BlurImage(Application.Context);
+                        blurImage.Load(e.Wallpaper.Bitmap).Intensity(e.BlurLevel);
+                        e.Wallpaper = new BitmapDrawable(Resources, blurImage.GetImageBlur());
                     }
                 }
-                );
-            }
-            else
-            {
-                RunOnUiThread(() =>
+                if (configurationManager.RetrieveAValue(ConfigurationParameters.DisableWallpaperChangeAnim) == false) //If the animation is not disabled.
                 {
-                    wallpaperView.StartAnimation(fadeoutanimation);
+                    Window.DecorView.Animate().SetDuration(100).Alpha(0.5f);
+                }
 
-                    if (e.Wallpaper == null)
-                    {
-                        wallpaperView.SetBackgroundColor(Color.Black);
-                    }
-                    else
-                    {
-                        wallpaperView.Background = e.Wallpaper;
-                        wallpaperView.Background.Alpha = e.OpacityLevel;
-                    }
-                });
-            }
+                if (e.Wallpaper == null)
+                {
+                    Window.DecorView.SetBackgroundColor(Color.Black);
+                }
+                else
+                {
+                    e.Wallpaper.Alpha= e.OpacityLevel;
+                    Window.SetBackgroundDrawable(null); //Clear wallpaper first(?)
+                    Window.SetBackgroundDrawable(e.Wallpaper);
+                }
+            });
             GC.Collect();
         }
 
         private void Lockscreen_Touch(object sender, View.TouchEventArgs e)
         {
-            using (ConfigurationManager configuration = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context)))
-            {
-                if (configuration.RetrieveAValue(ConfigurationParameters.DoubleTapToSleep) == true)
+                if (e.Event.Action == MotionEventActions.Down)
                 {
-                    if (e.Event.Action == MotionEventActions.Up)
+                    if (firstTouchTime == -1)
                     {
-                        if (firstTouchTime == -1)
+                        firstTouchTime = e.Event.DownTime;
+                    }
+                    else if (firstTouchTime != -1)
+                    {
+                        finalTouchTime = e.Event.DownTime;
+                        if (firstTouchTime + threshold < finalTouchTime)
                         {
-                            firstTouchTime = e.Event.DownTime;
+                            firstTouchTime = finalTouchTime; //Let's set the last tap as the first, so the user doesnt have to press twice again
+                            return;
                         }
-                        else if (firstTouchTime != -1)
+                        else if(firstTouchTime + threshold > finalTouchTime)
                         {
-                            finalTouchTime = e.Event.DownTime;
-                            if (firstTouchTime + threshold > finalTouchTime)
+                            //0 Equals: Normal Behavior
+                            if (doubletapbehavior == "0")
+                        {
+                            if (e.Event.RawY < halfscreenheight)
                             {
-                                Awake.TurnOffScreen();
+                                AwakeHelper.TurnOffScreen();
                             }
-                            //Reset the values of touch
-                            firstTouchTime = -1;
-                            finalTouchTime = -1;
+                            else
+                            {
+                                //Finish();
+                                //using (Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(TransparentActivity))))
+                                //{
+                                //    intent.AddFlags(ActivityFlags.NewTask | ActivityFlags.);
+                                //    StartActivity(intent);
+                                //}
+                                MoveTaskToBack(true);
+                            }
                         }
+                            //The other value is "1" which means Inverted.
+                            else
+                        {
+                            if (e.Event.RawY < halfscreenheight)
+                            {
+                                //Finish();
+                                //using (Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(TransparentActivity))))
+                                //{
+                                //    intent.AddFlags(ActivityFlags.NewTask | ActivityFlags.MultipleTask);
+                                //    StartActivity(intent);
+                                //}
+                                MoveTaskToBack(true);
+                            }
+                            else
+                            {
+                                AwakeHelper.TurnOffScreen();
+                            }
+                        }
+                        }
+                        //Reset the values of touch
+                        firstTouchTime = -1;
+                        finalTouchTime = -1;
                     }
                 }
-            }
-        }
-
-        private void CheckNotificationListSize()
-        {
-            if (CatcherHelper.thereAreNotifications == true)
-            {
-                clearAll.Visibility = ViewStates.Visible;
-            }
-            else
-            {
-                clearAll.Visibility = ViewStates.Invisible;
-            }
         }
 
         protected override void OnResume()
         {
             base.OnResume();
             AddFlags();
+            watchDog.Elapsed += WatchdogInterval_Elapsed;
             watchDog.Stop();
             watchDog.Start();
+            OnActivityStateChanged?.Invoke(null, new LockScreenLifecycleEventArgs { State = ActivityStates.Resumed });
+            if (configurationManager.RetrieveAValue(ConfigurationParameters.TutorialRead)==false)
+            {
+                welcome = FindViewById<TextView>(Resource.Id.welcomeoverlay);
+                welcome.Text = Resources.GetString(Resource.String.tutorialtext);
+                welcome.Visibility = ViewStates.Visible;
+                welcome.Touch += Welcome_Touch;
+            }
+            if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetEnabled))
+            {
+                if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
+                {
+                    MusicController.MusicPlaying += MusicController_MusicPlaying;
+                    MusicController.MusicPaused += MusicController_MusicPaused;
+                }
+                else
+                {
+                    MusicControllerKitkat.MusicPlaying += MusicControllerKitkat_MusicPlaying;
+                    MusicControllerKitkat.MusicPaused += MusicControllerKitkat_MusicPaused;
+                }
+            }
+            else
+            {
+                StopMusicController();
+                StopFloatingNotificationService();
+            }
+            if (isMusicWidgetPresent) //It'll always be true(?) (What's this field for)? //Regression test!
+            {
+                CheckIfMusicIsStillPaused();
+            }
+            //Check if Awake is enabled.
+
+            switch (AwakeService.GetAwakeStatus())
+            {
+                case AwakeStatus.Up:
+                    livedisplayinfo.Text = "Awake is Active";
+                    break;
+                case AwakeStatus.Sleeping:
+                    livedisplayinfo.Text = "Awake is not Active (I'm sleeping)";
+                    break;
+                case AwakeStatus.UpWithDeviceMotionDisabled:
+                    livedisplayinfo.Text = "Awake is more or less Active";
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void Welcome_Touch(object sender, View.TouchEventArgs e)
+        {
+            configurationManager.SaveAValue(ConfigurationParameters.TutorialRead, true);
+            if (welcome != null)
+            {
+                welcome.Visibility = ViewStates.Gone;
+                welcome.Touch -= Welcome_Touch;
+            }
+
+        }
+
+        private void MusicControllerKitkat_MusicPaused(object sender, EventArgs e) => CheckIfMusicIsStillPaused();
+
+        private void MusicControllerKitkat_MusicPlaying(object sender, EventArgs e)
+        {
+            if (isMusicWidgetPresent == false) //Avoid unnecessary calls
+                RunOnUiThread(() =>
+                {
+                    StartMusicController();
+                });
         }
 
         protected override void OnPause()
         {
-            watchDog.Stop();
-            GC.Collect();
             base.OnPause();
+            watchDog.Stop();
+            watchDog.Elapsed -= WatchdogInterval_Elapsed;
+            OnActivityStateChanged?.Invoke(null, new LockScreenLifecycleEventArgs { State = ActivityStates.Paused });
+            if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
+            {
+
+                MusicController.MusicPlaying -= MusicController_MusicPlaying;
+                MusicController.MusicPaused -= MusicController_MusicPaused;
+            }
+            else
+            {
+                MusicControllerKitkat.MusicPlaying -= MusicControllerKitkat_MusicPlaying;
+                MusicControllerKitkat.MusicPaused -= MusicControllerKitkat_MusicPaused;
+            }
+            GC.Collect();
         }
 
         protected override void OnDestroy()
         {
             base.OnDestroy();
-
+            OnActivityStateChanged?.Invoke(null, new LockScreenLifecycleEventArgs { State = ActivityStates.Destroyed });
             //Unbind events
-            unlocker.Touch -= Unlocker_Touch;
+
+            OnActivityStateChanged -= LockScreenActivity_OnActivityStateChanged;
+            //unlocker.Touch -= Unlocker_Touch;
             clearAll.Click -= BtnClearAll_Click;
             WallpaperPublisher.NewWallpaperIssued -= Wallpaper_NewWallpaperIssued;
             CatcherHelper.NotificationListSizeChanged -= CatcherHelper_NotificationListSizeChanged;
@@ -291,19 +421,20 @@ namespace LiveDisplay
             //Dispose Views
             //Views
             recycler.Dispose();
-            unlocker.Dispose();
+            //unlocker.Dispose();
             clearAll.Dispose();
             lockscreen.Dispose();
-            wallpaperView.Background.Dispose();
-            wallpaperView = null;
+            //wallpaperView.Background?.Dispose();
+            //wallpaperView = null;
+
+            viewPropertyAnimator.Dispose();
 
             //Dispose Fragments
             notificationFragment.Dispose();
             musicFragment.Dispose();
             clockFragment.Dispose();
             weatherFragment.Dispose();
-
-            //StopFloatingNotificationService();
+            livedisplayinfo?.Dispose();
         }
 
         public override void OnBackPressed()
@@ -337,16 +468,19 @@ namespace LiveDisplay
 
         private void CatcherHelper_NotificationListSizeChanged(object sender, NotificationListSizeChangedEventArgs e)
         {
-            if (e.ThereAreNotifications)
+            RunOnUiThread(() =>
             {
-                if (clearAll != null)
-                    clearAll.Visibility = ViewStates.Visible;
-            }
-            else
-            {
-                if (clearAll != null)
-                    clearAll.Visibility = ViewStates.Invisible;
-            }
+                if (e.ThereAreNotifications)
+                {
+                    if (clearAll != null)
+                        clearAll.Visibility = ViewStates.Visible;
+                }
+                else
+                {
+                    if (clearAll != null)
+                        clearAll.Visibility = ViewStates.Invisible;
+                }
+            });
         }
 
         private void BtnClearAll_Click(object sender, EventArgs e)
@@ -408,61 +542,72 @@ namespace LiveDisplay
 
         private void LoadConfiguration()
         {
-            //Load configurations based on User configs.
-            using (ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context)))
+            //Load configurations based on User configurations.
+            LoadWallpaper(configurationManager);
+            if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetEnabled) == true)
             {
-                switch (configurationManager.RetrieveAValue(ConfigurationParameters.ChangeWallpaper, "0"))
-                {
-                    case "0":
-
-                        WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = null });
-                        break;
-
-                    case "1":
-                        using (var wallpaper = (BitmapDrawable)WallpaperManager.GetInstance(Application.Context).Drawable)
-                        {
-                            int savedblurlevel = configurationManager.RetrieveAValue(ConfigurationParameters.BlurLevel, 1);
-                            int savedOpacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, 255);
-                            BlurImage blurImage = new BlurImage(Application.Context);
-                            blurImage.Load(wallpaper.Bitmap).Intensity(savedblurlevel).Async(true);
-                            var blurredwallpaper = new BitmapDrawable(Resources, blurImage.GetImageBlur());
-                            WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = blurredwallpaper, OpacityLevel = (short)savedOpacitylevel });
-                            blurImage = null;
-                        }
-
-                        break;
-
-                    case "2":
-                        //using (Bitmap bm = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.imagePath, "")))
-                        //{
-                        //    using (var backgroundFactory = new BackgroundFactory())
-                        //    {
-                        //        using (BackgroundFactory blurImage = new BackgroundFactory())
-                        //        {
-                        //            var drawable = blurImage.Difuminar(bm, sa);
-                        //            RunOnUiThread(() =>
-                        //            Window.DecorView.Background = drawable);
-                        //            drawable.Dispose();
-                        //        }
-                        //    }
-                        //}
-                        break;
-
-                    default:
-                        Window.DecorView.SetBackgroundColor(Color.Black);
-                        break;
-                }
-                if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetEnabled) == true)
-                {
-                    CheckIfMusicIsPlaying(); //This method is the main entry for the music widget and the floating notification.
-                }
-                int interval = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.TurnOffScreenDelayTime, "5000"));
-                watchDog.Interval = interval;
-                if (configurationManager.RetrieveAValue(ConfigurationParameters.EnableAwakeService) == true)
-                {
-                    StartAwakeService();
-                }
+                CheckIfMusicIsPlaying(); //This method is the main entry for the music widget and the floating notification.
             }
+
+            int interval = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.TurnOffScreenDelayTime, "5000"));
+            watchDog.Interval = interval;
+            if (configurationManager.RetrieveAValue(ConfigurationParameters.EnableAwakeService) == true)
+            {
+                StartAwakeService();
+            }
+            doubletapbehavior = configurationManager.RetrieveAValue(ConfigurationParameters.DoubleTapOnTopActionBehavior, "0");
+            
+        }
+
+        private void LoadWallpaper(ConfigurationManager configurationManager)
+        {
+
+            int savedblurlevel = configurationManager.RetrieveAValue(ConfigurationParameters.BlurLevel, 1);
+            int savedOpacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, 255);
+
+            switch (configurationManager.RetrieveAValue(ConfigurationParameters.ChangeWallpaper, "0"))
+            {
+
+                case "0":
+
+                    WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = null, WallpaperPoster= WallpaperPoster.Lockscreen });
+                    break;
+
+                case "1":
+                    if (Checkers.ThisAppHasReadStoragePermission())
+                    {
+                        WallpaperManager.GetInstance(Application.Context).ForgetLoadedWallpaper();
+                        var wallpaper = WallpaperManager.GetInstance(Application.Context).Drawable;
+                        WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = (BitmapDrawable)wallpaper, OpacityLevel = (short)savedOpacitylevel, BlurLevel = (short)savedblurlevel, WallpaperPoster = WallpaperPoster.Lockscreen });
+                    }
+                    else
+                    {
+                        RunOnUiThread(() => Toast.MakeText(Application.Context, "You have set the system wallpaper, but the app can't read it, try to change the Wallpaper option again", ToastLength.Long).Show());
+                    }
+                    break;
+
+                case "2":
+
+                    var imagePath = configurationManager.RetrieveAValue(ConfigurationParameters.ImagePath, "");
+                    if (imagePath != "")
+                    {
+                        ThreadPool.QueueUserWorkItem(m =>
+                        {
+                            Bitmap bitmap = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.ImagePath, imagePath));                            
+                            BlurImage blurImage = new BlurImage(Application.Context);
+                            blurImage.Load(bitmap).Intensity(savedblurlevel).Async(true);
+                            Drawable drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
+                            WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = new BitmapDrawable(bitmap), OpacityLevel = (short)savedOpacitylevel, BlurLevel = (short)savedblurlevel, WallpaperPoster = WallpaperPoster.Lockscreen });                            
+                        });
+
+                    }                        
+                    break;
+
+                default:
+                    Window.DecorView.SetBackgroundColor(Color.Black);
+                    break;
+            }
+
         }
 
         private void LoadNotificationFragment()
@@ -490,6 +635,9 @@ namespace LiveDisplay
         {
             using (var view = Window.DecorView)
             {
+                if (Build.VERSION.SdkInt > BuildVersionCodes.OMr1)
+                    Window.Attributes.LayoutInDisplayCutoutMode = LayoutInDisplayCutoutMode.ShortEdges;
+
                 var uiOptions = (int)view.SystemUiVisibility;
                 var newUiOptions = uiOptions;
 
@@ -534,22 +682,6 @@ namespace LiveDisplay
                 //NotificationFragment.NotificationClicked-= NotificationFragment_NotificationClicked;
             }
         }
-
-        private void NotificationFragment_NotificationClicked(object sender, EventArgs e)
-        {
-            using (var surfaceView = FindViewById<LinearLayout>(Resource.Id.surfaceview))
-            {
-                if (surfaceView.Visibility != ViewStates.Gone)
-                {
-                    surfaceView.Visibility = ViewStates.Gone;
-                }
-                else
-                {
-                    surfaceView.Visibility = ViewStates.Visible;
-                }
-            }
-        }
-
         private void StopFloatingNotificationService()
         {
             using (Intent intent = new Intent(Application.Context, typeof(FloatingNotification)))
@@ -568,7 +700,7 @@ namespace LiveDisplay
 
         private void StartAwakeService()
         {
-            using (Intent intent = new Intent(Application.Context, typeof(Awake)))
+            using (Intent intent = new Intent(Application.Context, typeof(AwakeService)))
             {
                 StartService(intent);
             }
@@ -576,7 +708,7 @@ namespace LiveDisplay
 
         private void StopAwakeService()
         {
-            using (Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(Awake))))
+            using (Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(AwakeService))))
             {
                 StopService(intent);
             }
@@ -584,6 +716,7 @@ namespace LiveDisplay
 
         private void StartMusicController()
         {
+            // я голоден... ; хД
             using (FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction())
             {
                 fragmentTransaction.Replace(Resource.Id.MusicNotificationPlaceholder, musicFragment);
@@ -591,11 +724,42 @@ namespace LiveDisplay
                 fragmentTransaction.DisallowAddToBackStack();
                 fragmentTransaction.Commit();
             }
+            isMusicWidgetPresent = true;
+            StartFloatingNotificationService();
         }
 
         private void StopMusicController()
         {
-            LoadNotificationFragment();
+            if (currentActivityState == ActivityStates.Resumed)
+            {
+                LoadNotificationFragment();
+                isMusicWidgetPresent = false;
+            }
+        }
+
+    }
+    public class LockScreenAnimationHelper : Java.Lang.Object, Animator.IAnimatorListener
+    {
+        private Window lockScreenWindow;
+        public LockScreenAnimationHelper(Window window)
+        {
+            lockScreenWindow = window; 
+        }
+        public void OnAnimationCancel(Animator animation)
+        {
+        }
+
+        public void OnAnimationEnd(Animator animation)
+        {
+            lockScreenWindow.DecorView.Animate().SetDuration(100).Alpha(1f);
+        }
+
+        public void OnAnimationRepeat(Animator animation)
+        {
+        }
+
+        public void OnAnimationStart(Animator animation)
+        {
         }
     }
 }

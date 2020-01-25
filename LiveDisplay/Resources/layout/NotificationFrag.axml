@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/llNotification"
     android:layout_gravity="center_vertical"
     android:animateLayoutChanges="true"
@@ -8,6 +9,7 @@
     android:layout_height="wrap_content"
     android:minHeight="70dp"
     android:background="?android:selectableItemBackground"
+    tools:visibility="visible"
     android:visibility="invisible">
 	
     <LinearLayout
@@ -39,6 +41,22 @@
 				android:layout_height="wrap_content"
 				android:textSize="12dp"
 				android:id="@+id/tvWhen" />
+            <Space
+                android:layout_width="3dp"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:fontFamily="sans-serif-condensed"
+                android:textSize="12dp"
+                android:id="@+id/tvnotifSubtext"
+                android:maxLines="1"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:textColor="@color/primary_text_default_material_dark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <ImageButton
+                android:id="@+id/toggleCollapse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
 		</LinearLayout>
 		<ImageButton
 			android:id="@+id/closenotificationbutton"
@@ -63,8 +81,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/tvTexto"
-        android:maxLines="4"
+        android:maxLines="6"
         android:minLines="0" />
+    <ProgressBar        
+        android:visibility="gone"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:id="@+id/notificationprogress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 	<FrameLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
@@ -86,17 +110,20 @@
 			android:visibility="gone"
 			>
 			<EditText
-				android:hint="bash"
+                android:inputType="text"
+                android:fontFamily="sans-serif-condensed"
 				android:id="@+id/tvInlineText"
 				android:layout_width="0dp"
 				android:layout_weight="8"
 				android:layout_height="wrap_content"
 				/>
-			<Button
+			<ImageButton
 				android:id="@+id/sendInlineResponseButton"
 				android:layout_width="0dp"
 				android:layout_weight="2"
-				android:layout_height="wrap_content"
+				android:layout_height="match_parent"
+                android:background="?android:selectableItemBackground"
+                android:src="@drawable/baseline_send_white_24"
 			/>
 		</LinearLayout>
 	</FrameLayout>
