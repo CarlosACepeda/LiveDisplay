@@ -252,7 +252,8 @@
     <Compile Include="Misc\UnitsFlags.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
-    <Compile Include="Servicios\Awake.cs" />
+    <Compile Include="Servicios\AwakeService.cs" />
+    <Compile Include="Servicios\Awake\AwakeHelper.cs" />
     <Compile Include="Servicios\Battery\BatteryEventArgs\BatteryChangedEventArgs.cs" />
     <Compile Include="Servicios\Blacklist\Blacklist.cs" />
     <Compile Include="Servicios\ConfigurationManager.cs" />

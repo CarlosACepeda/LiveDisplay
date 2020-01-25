@@ -32,7 +32,7 @@ namespace LiveDisplay.Fragments
 
 
         private Timer timer;
-        private ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context));
+        private ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
 
         #region Fragment Lifecycle
 

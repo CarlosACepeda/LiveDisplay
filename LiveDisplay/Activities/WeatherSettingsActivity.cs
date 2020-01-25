@@ -19,7 +19,6 @@
     public class WeatherSettingsActivity : AppCompatActivity
     {
         private ConfigurationManager configurationManager;
-        private ISharedPreferences sharedPreferences;
         private EditText city;
         private Switch useimperialsystem;
         private TextView citytext;
@@ -36,8 +35,6 @@
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
-            sharedPreferences = Application.Context.GetSharedPreferences("weatherpreferences", FileCreationMode.Private);
-
             base.OnCreate(savedInstanceState);
 
             // Create your application here
@@ -165,7 +162,7 @@
 
         private void LoadConfiguration()
         {
-            using (configurationManager = new ConfigurationManager(sharedPreferences))
+            using (configurationManager = new ConfigurationManager(AppPreferences.Weather))
             {
                 currentcity = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherCity, "");
                 city.Text = currentcity;

@@ -23,6 +23,7 @@
     using LiveDisplay.Fragments;
     using LiveDisplay.Misc;
     using LiveDisplay.Servicios;
+    using LiveDisplay.Servicios.Awake;
     using LiveDisplay.Servicios.FloatingNotification;
     using LiveDisplay.Servicios.Music;
     using LiveDisplay.Servicios.Notificaciones;
@@ -59,7 +60,7 @@
         private ActivityStates currentActivityState;
         private ViewPropertyAnimator viewPropertyAnimator;
         private TextView welcome;
-        private ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context));
+        private ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
         public static event EventHandler<LockScreenLifecycleEventArgs> OnActivityStateChanged;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -139,7 +140,7 @@
         {
             //<document me>
             if(e.PreviousWallpaperPoster== WallpaperPoster.Lockscreen) 
-                LoadWallpaper(new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context)));
+                LoadWallpaper(new ConfigurationManager(AppPreferences.Default));
         }
 
         private void LockScreenActivity_OnActivityStateChanged(object sender, LockScreenLifecycleEventArgs e)
@@ -158,7 +159,7 @@
 
             //it works correctly, but I want to refactor this. (Regression)
             if (currentActivityState== ActivityStates.Resumed)
-            Awake.TurnOffScreen();
+            AwakeHelper.TurnOffScreen();
         }       
 
         private void MusicController_MusicPaused(object sender, EventArgs e)
@@ -265,7 +266,7 @@
                         {
                             if (e.Event.RawY < halfscreenheight)
                             {
-                                Awake.TurnOffScreen();
+                                AwakeHelper.TurnOffScreen();
                             }
                             else
                             {
@@ -293,7 +294,7 @@
                             }
                             else
                             {
-                                Awake.TurnOffScreen();
+                                AwakeHelper.TurnOffScreen();
                             }
                         }
                         }
@@ -343,16 +344,16 @@
             }
             //Check if Awake is enabled.
 
-            switch (Awake.GetAwakeStatus())
+            switch (AwakeService.GetAwakeStatus())
             {
-                case AwakeStatus.Active:
+                case AwakeStatus.Up:
                     livedisplayinfo.Text = "Awake is Active";
                     break;
-                case AwakeStatus.NonActive:
+                case AwakeStatus.Sleeping:
                     livedisplayinfo.Text = "Awake is not Active (I'm sleeping)";
                     break;
-                case AwakeStatus.NotAvailable:
-                    livedisplayinfo.Text = "Awake is not Available";
+                case AwakeStatus.UpWithDeviceMotionDisabled:
+                    livedisplayinfo.Text = "Awake is more or less Active";
                     break;
                 default:
                     break;
@@ -699,7 +700,7 @@
 
         private void StartAwakeService()
         {
-            using (Intent intent = new Intent(Application.Context, typeof(Awake)))
+            using (Intent intent = new Intent(Application.Context, typeof(AwakeService)))
             {
                 StartService(intent);
             }
@@ -707,7 +708,7 @@
 
         private void StopAwakeService()
         {
-            using (Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(Awake))))
+            using (Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(AwakeService))))
             {
                 StopService(intent);
             }

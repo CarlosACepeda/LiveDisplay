@@ -25,8 +25,7 @@ namespace LiveDisplay.Fragments
         {
             base.OnCreate(savedInstanceState);
 
-            ISharedPreferences sharedPreferences = Application.Context.GetSharedPreferences("weatherpreferences", FileCreationMode.Private);
-            configurationManager = new ConfigurationManager(sharedPreferences);
+            configurationManager = new ConfigurationManager(AppPreferences.Weather);
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)

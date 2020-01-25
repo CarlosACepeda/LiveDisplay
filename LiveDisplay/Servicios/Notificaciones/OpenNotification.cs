@@ -80,7 +80,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
             catch
             {
-                return "";
+                return string.Empty;
             }
         }
 
@@ -92,7 +92,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
             catch
             {
-                return "";
+                return string.Empty;
             }
 
         }
@@ -241,7 +241,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
             catch
             {
-                return "";
+                return string.Empty;
             }
         }
 
@@ -392,7 +392,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
             catch
             {
-                return "";
+                return string.Empty;
             }
         }
 

@@ -19,15 +19,13 @@ namespace LiveDisplay.Servicios
 
         public static void ToggleAppBlacklistState(string whichApp, bool isBlacklisted)
         {
-            ISharedPreferences sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
-            ConfigurationManager configurationManager = new ConfigurationManager(sharedPreferences);
+            ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
             configurationManager.SaveAValue(whichApp, isBlacklisted);
         }
 
         public static LevelsOfAppBlocking ReturnBlockLevel(string whichApp)
         {
-            ISharedPreferences sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
-            ConfigurationManager configurationManager = new ConfigurationManager(sharedPreferences);
+            ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
             return (LevelsOfAppBlocking)configurationManager.RetrieveAValue(whichApp, 0);
         }
     }

@@ -20,7 +20,7 @@ namespace LiveDisplay.Fragments
         private LinearLayout notification;
         private bool timeoutStarted = false;
         private NotificationStyleApplier styleApplier;
-        private ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context));       
+        private ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
 
         #region Lifecycle events
 

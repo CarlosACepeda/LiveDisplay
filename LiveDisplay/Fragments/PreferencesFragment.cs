@@ -41,7 +41,7 @@ namespace LiveDisplay.Fragments
         {
             //Simple trick to save two different values using the same timepicker.
 
-            ConfigurationManager configurationManager = new ConfigurationManager(sharedPreferences);
+            ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
             if (isSleepstarttimesetted)
             {
                 configurationManager.SaveAValue(ConfigurationParameters.FinishSleepTime, string.Concat(e.HourOfDay.ToString() + e.Minute.ToString()));

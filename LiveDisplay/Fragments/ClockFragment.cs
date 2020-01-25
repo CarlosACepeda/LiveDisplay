@@ -16,7 +16,7 @@
 
     public class ClockFragment : Fragment
     {
-        private readonly ConfigurationManager configurationManager = new ConfigurationManager(Application.Context.GetSharedPreferences("weatherpreferences", FileCreationMode.Private));
+        private readonly ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Weather);
         private TextView date;
         private TextClock clock;
         //private RelativeLayout weatherclockcontainer;
@@ -70,7 +70,7 @@
             clock.Click += Clock_Click;
             //weatherclockcontainer.Click += Weatherclockcontainer_Click;
             BatteryReceiver.BatteryInfoChanged += BatteryReceiver_BatteryInfoChanged;
-            ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context));
+            ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
 
             if (configurationManager.RetrieveAValue(ConfigurationParameters.HiddenClock) == true)
             {

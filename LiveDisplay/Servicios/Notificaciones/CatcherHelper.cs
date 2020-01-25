@@ -3,6 +3,7 @@ using Android.OS;
 using Android.Service.Notification;
 using Android.Util;
 using LiveDisplay.Adapters;
+using LiveDisplay.Servicios.Awake;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
 using System;
 using System.Collections.Generic;
@@ -38,6 +39,7 @@ namespace LiveDisplay.Servicios.Notificaciones
                     ThereAreNotifications = true
                 });
             }
+            AwakeHelper awakeHelper = new AwakeHelper(); //Will help us to make certain operations as waking up the screen and such.
         }
 
         //If Catcher call this, it means that the notification is part of a Group of notifications and should be Grouped.
@@ -51,9 +53,9 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             //This is the notification of 'LiveDisplay is showing above other apps'
             //Simply let's ignore it, because it's annoying. (Anyway, the user couldn't care less about this notification tbh)
-            if (sbn.PackageName == "android" && sbn.Tag == "com.android.server.wm.AlertWindowNotification - com.underground.livedisplay")            
+            if (sbn.PackageName == "android" && sbn.Tag == "com.android.server.wm.AlertWindowNotification - com.underground.livedisplay")
                 return;
-            
+
             var blockingstatus = Blacklist.ReturnBlockLevel(sbn.PackageName);
 
             if (!blockingstatus.HasFlag(LevelsOfAppBlocking.Blacklisted))
@@ -65,16 +67,6 @@ namespace LiveDisplay.Servicios.Notificaciones
                     {
                         //It exists within the list.
                         //SO it should be updated.
-
-                        //A WhatsApp Notification brokes this behavior:
-                        //When a notification of New Message from WhatsApp is received in the Notification Drawer is shown only one notification.
-                        //But behind the scenes in reality there are two notifications, One that's the Summary (it does not have actions)
-                        //and the other one that has the actions of 'Answer' 'Mark as read' however in the following method it identifies that those two notifications are the same
-                        //so the notification with actions gets replaced with the other that is summary and doesn't have Actions, so In the Lockscreen it'll show this one
-                        //But in the practice the one that should be shown is the one that has Action buttons.
-                        //This is a dumb behavior of WhatsApp, why is needed to show a Notification representing a Summary of just ONE notification?
-                        //Wouldn't be easier to show that one notification directly? LOL.
-                        ///It also happens with certain google notifications, I still don't get why do they need to do that.
 
                         StatusBarNotifications.RemoveAt(index);
                         StatusBarNotifications.Add(sbn);
@@ -155,7 +147,7 @@ namespace LiveDisplay.Servicios.Notificaciones
         private void OnNotificationListSizeChanged(NotificationListSizeChangedEventArgs e)
         {
             NotificationListSizeChanged?.Invoke(this, e);
-        }                                                                                        
+        }
 
         private void OnNotificationPosted(bool shouldCauseWakeup, StatusBarNotification sbn, bool updatesPreviousNotification)
         {

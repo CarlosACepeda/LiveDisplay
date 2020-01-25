@@ -95,7 +95,7 @@ namespace LiveDisplay.Adapters
             bool blacklisted = false;
             bool nonallowedtoturnscreenon = false;
             bool onlyremovesystem = false;
-            using (ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context)))
+            using (ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default))
             {
                 var flag = configurationManager.RetrieveAValue(forWhichApp, 0);
 
@@ -132,7 +132,7 @@ namespace LiveDisplay.Adapters
 
         private void OnDialogPositiveButtonEventArgs(object sender, DialogClickEventArgs e)
         {
-            using (ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context)))
+            using (ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default))
             {
                 configurationManager.SaveAValue(currentSelectedAppPackage, (int)levels);
             }

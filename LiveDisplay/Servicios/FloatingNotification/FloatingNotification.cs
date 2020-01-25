@@ -36,7 +36,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
         private OpenNotification openNotification; //Represents the openNotification instance corresponding with this floating notification.
         private ActivityStates currentActivityState;
 
-        private ConfigurationManager configurationManager = new ConfigurationManager(PreferenceManager.GetDefaultSharedPreferences(Application.Context));
+        private ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
 
 
         public override IBinder OnBind(Intent intent)

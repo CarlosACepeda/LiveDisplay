@@ -13,7 +13,7 @@ namespace LiveDisplay.Servicios.Weather
     {
         public override bool OnStartJob(JobParameters @params)
         {
-            ConfigurationManager configurationManager = new ConfigurationManager(Application.Context.GetSharedPreferences("weatherpreferences", FileCreationMode.Private));
+            ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Weather);
 
             string city = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherCity, "New York");
             string country = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherCountryCode, "us");

@@ -15,9 +15,7 @@
     {
         public string SaveImagePath(Android.Net.Uri uri)
         {
-            ContextWrapper contextWrapper = new ContextWrapper(Application.Context);
-            ISharedPreferences sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(contextWrapper);
-            ConfigurationManager configurationManager = new ConfigurationManager(sharedPreferences);
+            ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
             string doc_id = "";
             using (var c1 = Application.Context.ContentResolver.Query(uri, null, null, null, null))
             {

@@ -11,7 +11,7 @@ namespace LiveDisplay.Servicios.Weather
 {
     internal class Weather
     {
-        private readonly static ConfigurationManager configurationManager = new ConfigurationManager(Application.Context.GetSharedPreferences("weatherpreferences", FileCreationMode.Private));
+        private readonly static ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Weather);
 
         //This class will be the one that connects to the api and provide Lockscreen with Weather information.
         public static async Task<WeatherRoot> GetWeather(string city, string country, string measurementunit)

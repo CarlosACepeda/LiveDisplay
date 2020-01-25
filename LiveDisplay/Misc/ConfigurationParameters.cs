@@ -18,7 +18,6 @@
 
         //For Music Widget settings
         public const string MusicWidgetEnabled = "musicwidgetenabled?";
-
         public const string ShowAlbumArt = "showalbumart?";
 
         //For Weather Widget settings
@@ -34,6 +33,7 @@
         public const string WeatherTemperatureUnit = "weathertemperatureunit";
         public const string WeatherCountryCode = "weathercountrycode";
         public const string WeatherTemperatureMeasureUnit = "weathertemperaturemeasureunit";
+        public const string WeatherUpdateRequiresUnlimitedNetwork = "weatherupdaterequiresunlimitednetwork?";
 
         //For Notifications Settings, not yet used.
         public const string EnableQuickReply = "enablequickreply?";
@@ -48,6 +48,7 @@
         public const string TurnOnUserMovement = "turnonusermovement?";
         public const string StartLockscreenDelayTime = "startlockscreendelaytime";
         public const string TurnOffScreenDelayTime = "turnoffscreendelaytime";
+        public const string TurnOffScreenAfterLastNotificationCleared = "turnoffscreenafterlastnotificationcleared?";
 
         //Misc.
         //It serves the purpose of enabling certain messages to be shown in a Toast Message useful for the developer.        

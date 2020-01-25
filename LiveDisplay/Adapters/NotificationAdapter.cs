@@ -14,13 +14,12 @@
     public class NotificationAdapter : RecyclerView.Adapter
     {
         public static int selectedItem = -1;
-        public List<StatusBarNotification> notificaciones = new List<StatusBarNotification>();
-
-        public override int ItemCount => notificaciones.Count;
-
+        public List<StatusBarNotification> notifications = new List<StatusBarNotification>();
+        public override int ItemCount => notifications.Count;
+        
         public NotificationAdapter(List<StatusBarNotification> notificaciones)
         {
-            this.notificaciones = notificaciones;
+            this.notifications = notificaciones;
         }
 
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
@@ -29,7 +28,7 @@
             {
                 //Cast
                 NotificationAdapterViewHolder viewHolder = holder as NotificationAdapterViewHolder;
-                viewHolder.Icono.Background = IconFactory.ReturnIconDrawable(notificaciones[position].Notification.Icon, notificaciones[position].PackageName);
+                viewHolder.Icono.Background = IconFactory.ReturnIconDrawable(notifications[position].Notification.Icon, notifications[position].PackageName);
                 if (selectedItem == position)
                 {
                     viewHolder.Icono.Alpha = 0.5f;
@@ -74,7 +73,7 @@
         {
             var statusBarNotification = CatcherHelper.StatusBarNotifications[LayoutPosition];
             OnItemLongClicked(LayoutPosition, statusBarNotification);
-        }        
+        }
 
         private void ItemView_Click(object sender, EventArgs e)
         {
@@ -82,7 +81,16 @@
             NotificationAdapter.selectedItem = LayoutPosition;
             CatcherHelper.notificationAdapter.NotifyDataSetChanged();
             var statusBarNotification = CatcherHelper.StatusBarNotifications[LayoutPosition];
-            OnItemClicked(LayoutPosition, statusBarNotification);            
+            OnItemClicked(LayoutPosition, statusBarNotification);
+            //try 
+            //{
+            //    var view = sender as View;
+            //    view.Visibility = ViewStates.Gone;
+            //}
+            //catch (Exception ex)
+            //{
+            //    Log.Info("LiveDisplay", "Exception hiding notification" + ex.Message);
+            //}
 
         }
 

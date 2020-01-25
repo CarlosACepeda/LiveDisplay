@@ -7,17 +7,19 @@ using Android.Preferences;
 using Android.Runtime;
 using Android.Text;
 using Android.Util;
+using Java.Sql;
 using Java.Util;
 using LiveDisplay.BroadcastReceivers;
 using LiveDisplay.Misc;
+using LiveDisplay.Servicios.Awake;
 using LiveDisplay.Servicios.Notificaciones;
 using System;
 using System.Threading;
 
 namespace LiveDisplay.Servicios
 {
-    [Service(Label = "Awake")]
-    internal class Awake : Service, ISensorEventListener
+    [Service(Label = "MotionListener")]
+    internal class AwakeService : Service, ISensorEventListener
     {
         private static ISharedPreferences configurationManager = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
         private SensorManager sensorManager;
@@ -25,100 +27,9 @@ namespace LiveDisplay.Servicios
         private Sensor proximitySensor;
         private bool isLaidDown = false;
         private static bool sleeping = false;
-        private static bool isinPocket = false;
-        private static AwakeStatus CurrentAwakeStatus = AwakeStatus.NonActive; //Default value.
-
-        public static void WakeUpScreen()
-        {            
-            //Check the current time and only react if the time this method is called is within the allowed hours.
-            int start = int.Parse(configurationManager.GetString(ConfigurationParameters.StartSleepTime, "0")); //12am
-            int end = int.Parse(configurationManager.GetString(ConfigurationParameters.FinishSleepTime, "500"));//5am
-            //Generates the hour as a 4 characters number in 24 hours for example: 2210 (10:10pm)
-            var now = int.Parse(string.Concat(DateTime.Now.Hour.ToString("00"), DateTime.Now.Minute.ToString("00")));
-            Log.Info("LiveDisplay",now.ToString());
-
-            if (start <= end) //The times are in the same day.
-            {
-                if (now >= start && now <= end)
-                {
-                    Log.Info("HELLO", "Im Sleeping");
-                    sleeping = true;
-                }
-                else
-                {
-                    Log.Info("HELLO", "Im Active");
-                    sleeping = false;
-                }
-            }
-            else //The times are in different days.
-            {
-                if (now >= start || now <= end)
-                {
-                    Log.Info("HELLO", "Im Sleeping");
-                    sleeping = true;
-                }
-                else
-                {
-                    Log.Info("HELLO", "Im Active");
-                    sleeping = false;
-                }
-            }
-
-            if (!sleeping)
-                if (configurationManager.GetBoolean(ConfigurationParameters.TurnOnNewNotification, false) == true || configurationManager.GetBoolean(ConfigurationParameters.TurnOnUserMovement, false) == true)
-                {
-                    PowerManager pm = ((PowerManager)Application.Context.GetSystemService(PowerService));
-                    var screenLock = pm.NewWakeLock(WakeLockFlags.ScreenDim | WakeLockFlags.AcquireCausesWakeup, "Turn On Screen");
-                    if (isinPocket == false) //Dont wake up is the phone is inside a pocket.
-                        screenLock.Acquire();
-                    ThreadPool.QueueUserWorkItem(o =>
-                    {
-                        Thread.Sleep(500);
-                        if (screenLock.IsHeld == true)
-                        {
-                            screenLock.Release();
-                        }
-                    });
-                }
-        }
-
-        public static void TurnOffScreen()
-        {
-            PowerManager pm = ((PowerManager)Application.Context.GetSystemService(PowerService));
-            DevicePolicyManager policy;
-            if (Build.VERSION.SdkInt < BuildVersionCodes.KitkatWatch)
-            {
-#pragma warning disable CS0618 // El tipo o el miembro están obsoletos
-                if (pm.IsScreenOn == true)
-#pragma warning restore CS0618 // El tipo o el miembro están obsoletos
-                {
-                    policy = (DevicePolicyManager)Application.Context.GetSystemService(DevicePolicyService);
-                    try
-                    {
-                        policy.LockNow();
-                    }
-                    catch (Exception)
-                    {
-                        Log.Warn("LiveDisplay", "Lock device failed, check Device Admin permission");
-                    }
-                }
-            }
-            else
-            {
-                if (pm.IsInteractive == true)
-                {
-                    policy = (DevicePolicyManager)Application.Context.GetSystemService(DevicePolicyService);
-                    try
-                    {
-                        policy.LockNow();
-                    }
-                    catch (Exception)
-                    {
-                        Log.Warn("LiveDisplay", "Lock device failed, check Device Admin permission");
-                    }
-                }
-            }
-        }
+        public static bool isInPocket;
+        public static bool isRunning;
+        public static event EventHandler<EventArgs> DeviceIsActive;
 
         public static AwakeStatus GetAwakeStatus()
         {
@@ -134,13 +45,13 @@ namespace LiveDisplay.Servicios
                 {
                     Log.Info("HELLO", "Im Sleeping");
                     sleeping = true;
-                    return AwakeStatus.NonActive;
+                    return AwakeStatus.Sleeping;
                 }
                 else
                 {
                     Log.Info("HELLO", "Im Active");
                     sleeping = false;
-                    return AwakeStatus.Active;
+                    return AwakeStatus.Up;
                 }
                 
             }
@@ -150,14 +61,14 @@ namespace LiveDisplay.Servicios
                 {
                     Log.Info("HELLO", "Im Sleeping");
                     sleeping = true;
-                    return AwakeStatus.NonActive;
+                    return AwakeStatus.Sleeping;
 
                 }
                 else
                 {
                     Log.Info("HELLO", "Im Active");
                     sleeping = false;
-                    return AwakeStatus.Active;
+                    return AwakeStatus.Up;
 
                 }
             }
@@ -179,17 +90,7 @@ namespace LiveDisplay.Servicios
             proximitySensor = sensorManager.GetDefaultSensor(SensorType.Proximity);
             sensorManager.RegisterListener(this, accelerometerSensor, SensorDelay.Normal);
             sensorManager.RegisterListener(this, proximitySensor, SensorDelay.Normal);
-
-            //Let's listen for CatcherHElper Events.
-            CatcherHelper.NotificationPosted += CatcherHelper_NotificationPosted;
-
             return StartCommandResult.Sticky;
-        }
-
-        private void CatcherHelper_NotificationPosted(object sender, Notificaciones.NotificationEventArgs.NotificationPostedEventArgs e)
-        {
-            if (e.ShouldCauseWakeUp)
-                WakeUpScreen();
         }
 
         public void OnAccuracyChanged(Sensor sensor, [GeneratedEnum] SensorStatus accuracy)
@@ -228,7 +129,7 @@ namespace LiveDisplay.Servicios
                         if (e.Values[2] < 9.6f && e.Values[1] > 3)
                         {
                             //Awake the phone
-                            WakeUpScreen();
+                            DeviceIsActive?.Invoke(null, null);
                             isLaidDown = false;
                         }
                         else
@@ -251,16 +152,16 @@ namespace LiveDisplay.Servicios
                         //Phone is in front of something or something is blocking the sensor.
                         if (isLaidDown == false) //We need to check if the phone is vertical enough and the proximity sensor covered
                                                  //To assume is in a pocket.
-                            isinPocket = true;
+                            isInPocket = true;
                         else
                         {
-                            isinPocket = false; //Nothing is blocking the sensor, and I bet there arent ghost pockets without tangible
+                            isInPocket = false; //Nothing is blocking the sensor, and I bet there arent ghost pockets without tangible
                             //boundaries so the Proximity sensor does not detect anything. xD
                         }
                     }
                     else //The sensor is a different value but I will just assume the phone prox. Sensor is not being blocked.
                     {
-                        isinPocket = false;
+                        isInPocket = false;
                     }
 
                     break;
@@ -275,15 +176,8 @@ namespace LiveDisplay.Servicios
             sensorManager.UnregisterListener(this);
             accelerometerSensor.Dispose();
             sensorManager.Dispose();
-            CatcherHelper.NotificationPosted -= CatcherHelper_NotificationPosted;
             base.OnDestroy();
         }
     }
-    public enum AwakeStatus
-    {
-        Active=1,
-        NonActive=2,
-        NotAvailable=4
-        
-    }
+    
 }
