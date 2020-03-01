@@ -57,7 +57,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
 
             if (Build.VERSION.SdkInt > BuildVersionCodes.NMr1) //Nougat 7.1
             {
-                layoutType = WindowManagerTypes.ApplicationOverlay; //Android Oreo does not allow to add windows of WindowManagerTypes.Phone
+                    layoutType = WindowManagerTypes.ApplicationOverlay; //Android Oreo does not allow to add windows of WindowManagerTypes.Phone
             }
 
             windowManager = GetSystemService(WindowService).JavaCast<IWindowManager>();
@@ -74,7 +74,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
                 Width = (int)floatingNotificationWidth,
                 Height = ViewGroup.LayoutParams.WrapContent,
                 Type = layoutType,
-                Flags = WindowManagerFlags.NotFocusable | WindowManagerFlags.WatchOutsideTouch,
+                Flags = WindowManagerFlags.NotFocusable | WindowManagerFlags.WatchOutsideTouch | WindowManagerFlags.ShowWhenLocked,
                 Format = Format.Translucent,
                 Gravity = GravityFlags.CenterHorizontal | GravityFlags.CenterVertical
             };
