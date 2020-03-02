@@ -98,20 +98,20 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                     actiontextMaxLines = 1;
                     break;
 
-                case BuildVersionCodes.N:                    
-                case BuildVersionCodes.NMr1:                    
+                case BuildVersionCodes.N:
+                case BuildVersionCodes.NMr1:
                 case BuildVersionCodes.O:
                 case BuildVersionCodes.OMr1:
-                case BuildVersionCodes.P:                    
+                case BuildVersionCodes.P:
+                case (BuildVersionCodes)29: //API 29, Android Q (Early support) TODO
                     actionButtonsGravity = GravityFlags.Left | GravityFlags.CenterVertical;
                     actionButtonsContainerGravity = GravityFlags.Left;
                     actionTextsAreinCapitalLetters = true;
                     shouldShowIcons = false;
-                    actionTextsTypeface= "sans-serif-condensed";
+                    actionTextsTypeface = "sans-serif-condensed";
                     shouldShowIcons = false; //MediaStyle overrides this.
                     actiontextMaxLines = 1;
                     break;
-
                 default:
                     break;
             }
@@ -344,6 +344,8 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                     actionButton.SetBackgroundResource(outValue.ResourceId); 
                     actionButton.SetTypeface(Typeface.Create(actionTextsTypeface, TypefaceStyle.Normal), TypefaceStyle.Normal);
                     //notificationActions.SetGravity(actionButtonsContainerGravity);
+
+                    Log.Info("LiveDisplay", openAction.Title());
 
                     if (notification.Style() != MediaStyle)
                         actionButton.Text = openAction.Title();

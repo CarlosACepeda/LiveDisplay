@@ -26,8 +26,12 @@ namespace LiveDisplay.Misc
             DevicePolicyManager devicePolicyManager = Application.Context.GetSystemService(Context.DevicePolicyService) as DevicePolicyManager;
 
             ComponentName componentName = new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(AdminReceiver)));
-
+#if DEBUG
+            return true;
+#else
             return devicePolicyManager.IsAdminActive(componentName);
+#endif
+            
         }
 
         public static bool ThisAppCanDrawOverlays()

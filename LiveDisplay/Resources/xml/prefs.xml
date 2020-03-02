@@ -4,9 +4,6 @@
                     android:icon="@drawable/ic_lockscreen_24dp">
   <PreferenceCategory android:title="@string/opciones">
     <SwitchPreference
-   android:key="hiddenclock?"
-   android:title="@string/showclock" />
-    <SwitchPreference
       android:key="testenabled?"
       android:summary="@string/idk"
       android:title="@string/enabletestsetting" />

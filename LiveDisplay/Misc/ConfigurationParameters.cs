@@ -5,7 +5,6 @@
         //For LockScreenSettings:
         public const string ImagePath = "imagePath";
 
-        public const string HiddenClock = "hiddenclock?";
         public const string ChangeWallpaper = "changewallpaper";
         public const string BlurLevel = "blurlevel";
         public const string OpacityLevel = "opacitylevel";

@@ -71,12 +71,6 @@
             //weatherclockcontainer.Click += Weatherclockcontainer_Click;
             BatteryReceiver.BatteryInfoChanged += BatteryReceiver_BatteryInfoChanged;
             ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
-
-            if (configurationManager.RetrieveAValue(ConfigurationParameters.HiddenClock) == true)
-            {
-                //Hide the clock
-                Activity.RunOnUiThread(() => clock.Visibility = ViewStates.Invisible);
-            }
             return v;
         }
         public override void OnResume()

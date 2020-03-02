@@ -5036,100 +5036,97 @@ namespace LiveDisplay
 			public const int showalbumart = 2131689614;
 			
 			// aapt resource value: 0x7F0F008F
-			public const int showclock = 2131689615;
+			public const int sixhours = 2131689615;
 			
 			// aapt resource value: 0x7F0F0090
-			public const int sixhours = 2131689616;
+			public const int status_bar_notification_info_overflow = 2131689616;
 			
 			// aapt resource value: 0x7F0F0091
-			public const int status_bar_notification_info_overflow = 2131689617;
+			public const int summary_collapsed_preference_list = 2131689617;
 			
 			// aapt resource value: 0x7F0F0092
-			public const int summary_collapsed_preference_list = 2131689618;
+			public const int tenminutes = 2131689618;
 			
 			// aapt resource value: 0x7F0F0093
-			public const int tenminutes = 2131689619;
+			public const int tenseconds = 2131689619;
 			
 			// aapt resource value: 0x7F0F0094
-			public const int tenseconds = 2131689620;
+			public const int testnotificationtext = 2131689620;
 			
 			// aapt resource value: 0x7F0F0095
-			public const int testnotificationtext = 2131689621;
+			public const int testweathersettingsbutton = 2131689621;
 			
 			// aapt resource value: 0x7F0F0096
-			public const int testweathersettingsbutton = 2131689622;
+			public const int thirtyminutes = 2131689622;
 			
 			// aapt resource value: 0x7F0F0097
-			public const int thirtyminutes = 2131689623;
+			public const int translations = 2131689623;
 			
 			// aapt resource value: 0x7F0F0098
-			public const int translations = 2131689624;
+			public const int turnoffdelay = 2131689624;
 			
 			// aapt resource value: 0x7F0F0099
-			public const int turnoffdelay = 2131689625;
+			public const int turnoffdelay_desc = 2131689625;
 			
 			// aapt resource value: 0x7F0F009A
-			public const int turnoffdelay_desc = 2131689626;
+			public const int turnonnewnotification = 2131689626;
 			
 			// aapt resource value: 0x7F0F009B
-			public const int turnonnewnotification = 2131689627;
+			public const int turnonnewnotification_desc = 2131689627;
 			
 			// aapt resource value: 0x7F0F009C
-			public const int turnonnewnotification_desc = 2131689628;
+			public const int turnonusermovement = 2131689628;
 			
 			// aapt resource value: 0x7F0F009D
-			public const int turnonusermovement = 2131689629;
+			public const int tutorialtext = 2131689629;
 			
 			// aapt resource value: 0x7F0F009E
-			public const int tutorialtext = 2131689630;
+			public const int twelvehours = 2131689630;
 			
 			// aapt resource value: 0x7F0F009F
-			public const int twelvehours = 2131689631;
+			public const int updateweathereach = 2131689631;
 			
 			// aapt resource value: 0x7F0F00A0
-			public const int updateweathereach = 2131689632;
+			public const int useimperialunits = 2131689632;
 			
 			// aapt resource value: 0x7F0F00A1
-			public const int useimperialunits = 2131689633;
+			public const int v7_preference_off = 2131689633;
 			
 			// aapt resource value: 0x7F0F00A2
-			public const int v7_preference_off = 2131689634;
+			public const int v7_preference_on = 2131689634;
 			
 			// aapt resource value: 0x7F0F00A3
-			public const int v7_preference_on = 2131689635;
+			public const int version = 2131689635;
 			
 			// aapt resource value: 0x7F0F00A4
-			public const int version = 2131689636;
+			public const int versionnumber = 2131689636;
 			
 			// aapt resource value: 0x7F0F00A5
-			public const int versionnumber = 2131689637;
+			public const int wallpaperblur = 2131689637;
 			
 			// aapt resource value: 0x7F0F00A6
-			public const int wallpaperblur = 2131689638;
+			public const int wallpaperopacity = 2131689638;
 			
 			// aapt resource value: 0x7F0F00A7
-			public const int wallpaperopacity = 2131689639;
+			public const int wallpapersettingappliestoalbumart = 2131689639;
 			
 			// aapt resource value: 0x7F0F00A8
-			public const int wallpapersettingappliestoalbumart = 2131689640;
+			public const int wallpapersettings = 2131689640;
 			
 			// aapt resource value: 0x7F0F00A9
-			public const int wallpapersettings = 2131689641;
+			public const int weather = 2131689641;
 			
 			// aapt resource value: 0x7F0F00AA
-			public const int weather = 2131689642;
+			public const int weatherwidget = 2131689642;
 			
 			// aapt resource value: 0x7F0F00AB
-			public const int weatherwidget = 2131689643;
+			public const int weatherwidgetenabled = 2131689643;
 			
 			// aapt resource value: 0x7F0F00AC
-			public const int weatherwidgetenabled = 2131689644;
+			public const int yasujizr = 2131689644;
 			
 			// aapt resource value: 0x7F0F00AD
-			public const int yasujizr = 2131689645;
-			
-			// aapt resource value: 0x7F0F00AE
-			public const int yasujizr_ty = 2131689646;
+			public const int yasujizr_ty = 2131689645;
 			
 			static String()
 			{

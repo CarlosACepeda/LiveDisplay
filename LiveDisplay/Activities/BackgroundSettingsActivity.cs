@@ -343,6 +343,7 @@
 
         private void Opacity_StopTrackingTouch(object sender, SeekBar.StopTrackingTouchEventArgs e)
         {
+            if(wallpaperPreview.Background!= null)
             wallpaperPreview.Background.Alpha = e.SeekBar.Progress;
 
             if (currentSpinnerOptionSelected == DefaultWallpaperConfig)
