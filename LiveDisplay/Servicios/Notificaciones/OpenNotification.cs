@@ -256,10 +256,14 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         internal NotificationPriority GetNotificationPriority()
         {
-            if (Build.VERSION.SdkInt < BuildVersionCodes.O)
+            try
+            {
                 return (NotificationPriority)statusbarnotification.Notification.Priority;
-
-            return (NotificationPriority)(-1);
+            }
+            catch
+            {
+                return (NotificationPriority)(-155);
+            }
         }
 
         internal NotificationImportance GetNotificationImportance()
@@ -268,7 +272,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
                 return (NotificationImportance)(-1);
 
-            return (NotificationImportance)(-1);
+            return (NotificationImportance)(-1); //<-- try to return an appropiate value
 
         }
         private NotificationChannel GetNotificationChannel()
@@ -322,8 +326,8 @@ namespace LiveDisplay.Servicios.Notificaciones
             else
                 result += " Is not group";
 
-            result += "\n" + "Package: "+ GetPackageName()+ " Id: "+ GetId()+ " Tag :" + GetTag();
-
+            result += "\n" + "Package: " + GetPackageName() + " Id: " + GetId() + " Tag :" + GetTag() 
+                + " Importance: " + GetNotificationImportance() + " Priority: " + GetNotificationPriority();
             return result;
         }
 

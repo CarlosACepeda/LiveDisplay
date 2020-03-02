@@ -50,77 +50,62 @@
 
         private void CheckDeviceAdminAccess()
         {
-            using (var adminGivenImageView = FindViewById<ImageView>(Resource.Id.deviceAccessCheckbox))
+            using var adminGivenImageView = FindViewById<ImageView>(Resource.Id.deviceAccessCheckbox);
+            switch (Checkers.IsThisAppADeviceAdministrator())
             {
-                switch (Checkers.IsThisAppADeviceAdministrator())
-                {
-                    case true:
-                        adminGivenImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
-                        break;
+                case true:
+                    adminGivenImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
+                    break;
 
-                    case false:
-                        adminGivenImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
-
-                        break;
-
-                    default:
-                        break;
-                }
+                case false:
+                    adminGivenImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
+                    break;
             }
         }
 
         private void CheckNotificationAccess()
         {
-            using (var notificationAccessGivenImageView = FindViewById<ImageView>(Resource.Id.notificationAccessCheckbox))
+            using var notificationAccessGivenImageView = FindViewById<ImageView>(Resource.Id.notificationAccessCheckbox);
+            switch (Checkers.IsNotificationListenerEnabled())
             {
-                switch (Checkers.IsNotificationListenerEnabled())
-                {
-                    case true:
-                        notificationAccessGivenImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
+                case true:
+                    notificationAccessGivenImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
 
-                        break;
+                    break;
 
-                    case false:
-                        notificationAccessGivenImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
-                        break;
-
-                    default:
-                        break;
-                }
+                case false:
+                    notificationAccessGivenImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
+                    break;
             }
         }
 
         private void CheckDrawOverOtherAppsAccess()
         {
-            using (var drawOverOtherAppsImageView = FindViewById<ImageView>(Resource.Id.drawOverOtherAppsAccessCheckbox))
+            using var drawOverOtherAppsImageView = FindViewById<ImageView>(Resource.Id.drawOverOtherAppsAccessCheckbox);
+            if (Checkers.ThisAppCanDrawOverlays())
             {
-                if (Checkers.ThisAppCanDrawOverlays())
-                {
-                    drawOverOtherAppsImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
-                }
-                else
-                {
-                    drawOverOtherAppsImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
-                }
+                drawOverOtherAppsImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
+            }
+            else
+            {
+                drawOverOtherAppsImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
             }
         }
 
         private void IsApplicationHealthy()
         {
-            using (var accessestext = FindViewById<TextView>(Resource.Id.health))
+            using var accessestext = FindViewById<TextView>(Resource.Id.health);
+            if (Checkers.IsNotificationListenerEnabled()  && Checkers.IsThisAppADeviceAdministrator() && Checkers.ThisAppCanDrawOverlays())
             {
-                if (Checkers.IsNotificationListenerEnabled() == true && Checkers.IsThisAppADeviceAdministrator() && Checkers.ThisAppCanDrawOverlays())
-                {
-                    accessestext.SetText(Resource.String.accessesstatusenabled);
-                    accessestext.SetTextColor(Android.Graphics.Color.Green);
-                    isApplicationHealthy = true;
-                }
-                else
-                {
-                    accessestext.SetText(Resource.String.accessesstatusdisabled);
-                    accessestext.SetTextColor(Android.Graphics.Color.Red);
-                    isApplicationHealthy = false;
-                }
+                accessestext.SetText(Resource.String.accessesstatusenabled);
+                accessestext.SetTextColor(Android.Graphics.Color.Green);
+                isApplicationHealthy = true;
+            }
+            else
+            {
+                accessestext.SetText(Resource.String.accessesstatusdisabled);
+                accessestext.SetTextColor(Android.Graphics.Color.Red);
+                isApplicationHealthy = false;
             }
         }
 
@@ -176,11 +161,11 @@
                             var notificationtext = Resources.GetString(Resource.String.testnotificationtext);
                             if (Build.VERSION.SdkInt > BuildVersionCodes.NMr1)
                             {
-                                slave.PostNotification("LiveDisplay", notificationtext, true, NotificationImportance.Low);
+                                slave.PostNotification("LiveDisplay", notificationtext, true, NotificationImportance.Max);
                             }
                             else
                             {
-                                slave.PostNotification("LiveDisplay", notificationtext, true, NotificationPriority.Low);
+                                slave.PostNotification("LiveDisplay", notificationtext, true, NotificationPriority.Max);
                             }
                         }
                         using (Intent intent = new Intent(Application.Context, typeof(LockScreenActivity)))
