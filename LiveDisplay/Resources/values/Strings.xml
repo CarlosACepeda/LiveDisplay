@@ -116,4 +116,9 @@
   <string name="weatherwidgetenabled">Enable Weather Widget</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
+  <string name="musicwidgetcontrolmethod">Music Control Method</string>
+  <string name="advanced">Advanced</string>
+  <string name="musiccontrolledfrommediasession">Pick the best Media Session</string>
+  <string name="musiccontrolledfromnotification">Use the most recent Notification that represents current media playing</string>
+  <string name="notavailableyet">Not available... yet.</string>
 </resources>

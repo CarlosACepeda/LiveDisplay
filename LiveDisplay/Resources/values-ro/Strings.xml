@@ -30,4 +30,9 @@
   <string name="wallpaperopacity">Opacitate</string>
   <string name="weatherwidget">Widget de Climă</string>
   <string name="weatherwidgetenabled">Activează Widget de Climă</string>
+  <string name="musicwidgetcontrolmethod">Metoda de control a Muzicii</string>
+  <string name="advanced">Avansat</string>
+  <string name="musiccontrolledfrommediasession">Alegeți cea mai bună sesiune multimedia</string>
+  <string name="musiccontrolledfromnotification">Folosiți cea mai recentă notificare care reprezintă redarea multimedia</string>
+  <string name="notavailableyet">Nu este disponibil încă ...</string>
 </resources>

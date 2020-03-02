@@ -10,4 +10,9 @@
   <string name="tenminutes">10 минут</string>
   <string name="thirtyminutes">30 минут</string>
   <string name="twelvehours">12 часов</string>
+  <string name="musicwidgetcontrolmethod">Метод управления Музыкой</string>
+  <string name="advanced">Передовой</string>
+  <string name="musiccontrolledfrommediasession">Выберите лучшую мультимедийную сессию</string>
+  <string name="musiccontrolledfromnotification">Используйте самое последнее уведомление, которое представляет воспроизведение мультимедиа</string>
+  <string name="notavailableyet">Не доступно ... пока.</string>
 </resources>

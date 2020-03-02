@@ -2,41 +2,29 @@
   <!--This is the first preference screen-->
   <PreferenceScreen android:title="@string/lockscreensettings"
                     android:icon="@drawable/ic_lockscreen_24dp">
-  <PreferenceCategory android:title="@string/opciones">
-    <SwitchPreference
-      android:key="testenabled?"
-      android:summary="@string/idk"
-      android:title="@string/enabletestsetting" />
-    <SwitchPreference
-      android:defaultValue="true"
-      android:key="lockonboot?"
-      android:title="@string/lockonboot">
-    </SwitchPreference>
-    <Preference
-      android:key="wallpapersettings"
-      android:title="@string/changewallpaperappearance"
-      android:selectable="true">
-    </Preference>
-  <SwitchPreference
-      android:defaultValue="false"
-      android:key="disablewallpaperchangeanim?"
-      android:title="@string/disablewallpapertransitionanim"
-      android:summary="@string/disablewallpapertransitionanimdesc">
-    </SwitchPreference>
-  </PreferenceCategory>
-    <PreferenceCategory
-      android:title="@string/musicwidget">
+    <PreferenceCategory android:title="@string/opciones">
+      <SwitchPreference
+        android:key="testenabled?"
+        android:summary="@string/idk"
+        android:title="@string/enabletestsetting" />
       <SwitchPreference
         android:defaultValue="true"
-        android:key="musicwidgetenabled?"
-        android:title="@string/musicwidgetenabled">
+        android:key="lockonboot?"
+        android:title="@string/lockonboot">
       </SwitchPreference>
+      <Preference
+        android:key="wallpapersettings"
+        android:title="@string/changewallpaperappearance"
+        android:selectable="true">
+      </Preference>
       <SwitchPreference
-        android:defaultValue="true"
-        android:key="showalbumart?"
-        android:title="@string/showalbumart">
+          android:defaultValue="false"
+          android:key="disablewallpaperchangeanim?"
+          android:title="@string/disablewallpapertransitionanim"
+          android:summary="@string/disablewallpapertransitionanimdesc">
       </SwitchPreference>
     </PreferenceCategory>
+
     <PreferenceCategory
       android:title="@string/weatherwidget">
       <Preference
@@ -45,7 +33,7 @@
         android:selectable="true"
       ></Preference>
     </PreferenceCategory>
-</PreferenceScreen>
+  </PreferenceScreen>
   <!--This is the Second preference screen-->
   <PreferenceScreen
     android:title="@string/notificationsettings"
@@ -112,6 +100,32 @@
     </PreferenceCategory>
   </PreferenceScreen>
   <!--This is the third preference screen-->
+  <PreferenceScreen android:title="@string/musicwidget"
+                  android:icon="@drawable/ic_music_widget_24dp">
+    <PreferenceCategory
+        android:title="@string/musicwidget">
+      <SwitchPreference
+        android:defaultValue="true"
+        android:key="musicwidgetenabled?"
+        android:title="@string/musicwidgetenabled" />
+      <SwitchPreference
+        android:defaultValue="true"
+        android:key="showalbumart?"
+        android:title="@string/showalbumart" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/advanced">
+      <ListPreference
+            android:selectable="false"
+            android:defaultValue="0"
+            android:key="musicwidgetcontrolmethod"
+            android:title="@string/musicwidgetcontrolmethod"
+            android:summary="@string/notavailableyet"
+            android:entries="@array/listentriesmusicwidgetcontrolmethod"
+            android:entryValues="@array/listvaluesmusicwidgetcontrolmethod" />
+    </PreferenceCategory>
+  </PreferenceScreen>
+  <!--This is the fourth preference screen-->
   <PreferenceScreen android:title="@string/about"
                     android:icon="@drawable/ic_info_white_24dp">
     <PreferenceCategory android:title="@string/about">
@@ -121,12 +135,12 @@
         android:persistent="false"
         android:selectable="false">
       </Preference>
-     <Preference
-      android:title="@string/version"
-      android:summary="@string/versionnumber"
-      android:selectable="false"
-      android:persistent="false">
-    </Preference>
+      <Preference
+       android:title="@string/version"
+       android:summary="@string/versionnumber"
+       android:selectable="false"
+       android:persistent="false">
+      </Preference>
       <Preference
         android:key="contributetoproject"
         android:title="@string/githubproject"
@@ -134,7 +148,7 @@
         android:selectable="true"
         android:persistent="false">
       </Preference>
-  </PreferenceCategory>
+    </PreferenceCategory>
     <PreferenceCategory android:title="@string/translations">
       <Preference
         android:title="@string/eng"

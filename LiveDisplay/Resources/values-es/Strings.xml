@@ -111,4 +111,9 @@
   <string name="weatherwidgetenabled">Activar el Widget del Clima</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">Diseño del icono de esta app!</string>
+  <string name="musicwidgetcontrolmethod">Método de control de Música</string>
+  <string name="advanced">Avanzado</string>
+  <string name="musiccontrolledfrommediasession">Elegir la mejor Sesión de Multimedia</string>
+  <string name="musiccontrolledfromnotification">Usar la notification más reciente que represente la reproducción de multimedia</string>
+  <string name="notavailableyet">No disponible...aún.</string>
 </resources>

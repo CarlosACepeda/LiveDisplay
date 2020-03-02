@@ -63,4 +63,13 @@
     <item>10000</item>
     <item>15000</item>
   </string-array>
+
+  <string-array name="listentriesmusicwidgetcontrolmethod">
+    <item>@string/musiccontrolledfrommediasession</item>
+    <item>@string/musiccontrolledfromnotification</item>
+  </string-array>
+  <string-array name="listvaluesmusicwidgetcontrolmethod">
+    <item>0</item>
+    <item>1</item>
+  </string-array>
 </resources>
