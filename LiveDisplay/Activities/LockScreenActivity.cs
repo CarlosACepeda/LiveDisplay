@@ -212,6 +212,7 @@
 
         private void Wallpaper_NewWallpaperIssued(object sender, WallpaperChangedEventArgs e)
         {
+            Window.DecorView.SetBackgroundColor(Color.Black);
 
             RunOnUiThread(() =>
             {
