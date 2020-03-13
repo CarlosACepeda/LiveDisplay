@@ -212,10 +212,9 @@
 
         private void Wallpaper_NewWallpaperIssued(object sender, WallpaperChangedEventArgs e)
         {
-            Window.DecorView.SetBackgroundColor(Color.Black);
-
             RunOnUiThread(() =>
             {
+                Window.DecorView.SetBackgroundColor(Color.Black);
                 if (e.BlurLevel > 0)
                 {
                     if (e.Wallpaper?.Bitmap!=null)
@@ -237,7 +236,7 @@
                 else
                 {
                     e.Wallpaper.Alpha= e.OpacityLevel;
-                    Window.SetBackgroundDrawable(null); //Clear wallpaper first(?)
+                    //Window.SetBackgroundDrawable(null); //Clear wallpaper first(?)
                     Window.SetBackgroundDrawable(e.Wallpaper);
                 }
             });

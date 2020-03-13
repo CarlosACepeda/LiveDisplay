@@ -86,14 +86,12 @@
         private void Pickwallpaper_Click(object sender, EventArgs e)
         {
             var button = sender as Button;
-            using (Android.Support.V7.App.AlertDialog.Builder builder = new Android.Support.V7.App.AlertDialog.Builder(button.Context))
-            {
-                int currentwallpapersetted = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.ChangeWallpaper, "0"));
-                builder.SetTitle(Resources.GetString(Resource.String.changewallpaper));
-                builder.SetSingleChoiceItems(new string[] { button.Context.GetString(Resource.String.blackwallpaper), button.Context.GetString(Resource.String.defaultwallpaper), button.Context.GetString(Resource.String.pickwallpaper) }, currentwallpapersetted,  OnDialogClickEventArgs);
-                builder.Create();
-                builder.Show();
-            }
+            using Android.Support.V7.App.AlertDialog.Builder builder = new Android.Support.V7.App.AlertDialog.Builder(button.Context);
+            int currentwallpapersetted = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.ChangeWallpaper, "0"));
+            builder.SetTitle(Resources.GetString(Resource.String.changewallpaper));
+            builder.SetSingleChoiceItems(new string[] { button.Context.GetString(Resource.String.blackwallpaper), button.Context.GetString(Resource.String.defaultwallpaper), button.Context.GetString(Resource.String.pickwallpaper) }, currentwallpapersetted, OnDialogClickEventArgs);
+            builder.Create();
+            builder.Show();
         }
 
         private void OnDialogClickEventArgs(object sender, DialogClickEventArgs e)
@@ -321,17 +319,15 @@
                     ThreadPool.QueueUserWorkItem(m =>
                     {
                         var imagePath = configurationManager.RetrieveAValue(ConfigurationParameters.ImagePath, "");
-                        using (var backgroundcopy = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.ImagePath, imagePath)))
+                        using var backgroundcopy = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.ImagePath, imagePath));
+                        BlurImage blurImage = new BlurImage(Application.Context);
+                        blurImage.Load(backgroundcopy).Intensity(defaultBlurLevel).Async(true);
+                        var drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
+                        RunOnUiThread(() =>
                         {
-                            BlurImage blurImage = new BlurImage(Application.Context);
-                            blurImage.Load(backgroundcopy).Intensity(defaultBlurLevel).Async(true);
-                            var drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
-                            RunOnUiThread(() =>
-                            {
-                                wallpaperPreview.Background = drawable;
-                                wallpaperPreview.Background.Alpha = defaultOpacityLevel;
-                            });
-                        }
+                            wallpaperPreview.Background = drawable;
+                            wallpaperPreview.Background.Alpha = defaultOpacityLevel;
+                        });
                     });
 
                     break;
@@ -393,18 +389,16 @@
                     ThreadPool.QueueUserWorkItem(m =>
                     {
                         var imagePath = configurationManager.RetrieveAValue(ConfigurationParameters.ImagePath, "");
-                        using (var backgroundcopy = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.ImagePath, imagePath)))
+                        using var backgroundcopy = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.ImagePath, imagePath));
+                        BlurImage blurImage = new BlurImage(Application.Context);
+                        blurImage.Load(backgroundcopy).Intensity(e.SeekBar.Progress).Async(true);
+                        drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
+                        RunOnUiThread(() =>
                         {
-                            BlurImage blurImage = new BlurImage(Application.Context);
-                            blurImage.Load(backgroundcopy).Intensity(e.SeekBar.Progress).Async(true);
-                            drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
-                            RunOnUiThread(() =>
-                            {
-                                var previousAlpha = wallpaperPreview.Background.Alpha;
-                                wallpaperPreview.Background = drawable;
-                                wallpaperPreview.Background.Alpha = previousAlpha;
-                            });
-                        }
+                            var previousAlpha = wallpaperPreview.Background.Alpha;
+                            wallpaperPreview.Background = drawable;
+                            wallpaperPreview.Background.Alpha = previousAlpha;
+                        });
                     });
                     break;
             }

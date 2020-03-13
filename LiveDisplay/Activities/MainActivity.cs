@@ -219,10 +219,8 @@
 
         private void EnableDrawOverAccess_Click(object sender, EventArgs e)
         {
-            using (var intent = new Intent(Settings.ActionManageOverlayPermission))
-            {
-                StartActivityForResult(intent, 25);
-            }
+            using var intent = new Intent(Settings.ActionManageOverlayPermission);
+            StartActivityForResult(intent, 25);
         }
 
         private void EnableDeviceAdmin_Click(object sender, EventArgs e)

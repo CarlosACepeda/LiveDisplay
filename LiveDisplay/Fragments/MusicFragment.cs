@@ -454,7 +454,7 @@ namespace LiveDisplay.Fragments
             }
             else
             {
-                skbSeekSongTime.Progress = skbSeekSongTime.Progress + 1000;
+                skbSeekSongTime.Progress += 1000;
             }
         }
     }
