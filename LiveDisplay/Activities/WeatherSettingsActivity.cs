@@ -147,7 +147,6 @@
                     break;
 
                 default:
-                    break;
             }
         }
 
