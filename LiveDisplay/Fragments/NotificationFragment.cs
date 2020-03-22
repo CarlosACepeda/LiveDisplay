@@ -12,6 +12,8 @@ using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
 using LiveDisplay.Servicios.Notificaciones.NotificationStyle;
 using System;
 
+using Fragment = AndroidX.Fragment.App.Fragment;
+
 namespace LiveDisplay.Fragments
 {
     public class NotificationFragment : Fragment

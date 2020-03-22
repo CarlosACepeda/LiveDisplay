@@ -13,28 +13,19 @@ using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
 using System;
 
+using Preference = AndroidX.Preference.Preference;
+
 namespace LiveDisplay.Fragments
 {
-    public class PreferencesFragmentCompat : PreferenceFragment, ISharedPreferencesOnSharedPreferenceChangeListener
+    public class PreferencesFragment : AndroidX.Preference.PreferenceFragmentCompat, ISharedPreferencesOnSharedPreferenceChangeListener
     {
-        private ISharedPreferences sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
+        private ISharedPreferences sharedPreferences = AndroidX.Preference.PreferenceManager.GetDefaultSharedPreferences(Application.Context);
         private bool isSleepstarttimesetted = false;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            AddPreferencesFromResource(Resource.Xml.prefs);
-            PreferenceManager.SetDefaultValues(Application.Context, Resource.Xml.prefs, false);
-            Preference wallpapersettingspreference = FindPreference("wallpapersettings");
-            Preference githubprojectpreference = FindPreference("contributetoproject");
-            Preference blacklistpreference = FindPreference("blacklist");
-            Preference weathersettingspreference = FindPreference("weathersettings");
-            Preference inactivehourssettingspreference = FindPreference("inactivetimesettings");
-            wallpapersettingspreference.PreferenceClick += WallpaperSettingsPreference_PreferenceClick;
-            blacklistpreference.PreferenceClick += Blacklistpreference_PreferenceClick;
-            githubprojectpreference.PreferenceClick += Githubprojectpreference_PreferenceClick;
-            weathersettingspreference.PreferenceClick += Weathersettingspreference_PreferenceClick;
-            inactivehourssettingspreference.PreferenceClick += Inactivehourssettingspreference_PreferenceClick;
+            
         }
 
         private void PreferencesFragmentCompat_timepicked(object sender, TimePickerDialog.TimeSetEventArgs e)
@@ -139,6 +130,22 @@ namespace LiveDisplay.Fragments
                     }
                     break;
             }
+        }
+
+        public override void OnCreatePreferences(Bundle savedInstanceState, string rootKey)
+        {
+            AddPreferencesFromResource(Resource.Xml.prefs);
+            AndroidX.Preference.PreferenceManager.SetDefaultValues(Application.Context, Resource.Xml.prefs, false);
+            Preference wallpapersettingspreference = FindPreference("wallpapersettings");
+            Preference githubprojectpreference = FindPreference("contributetoproject");
+            Preference blacklistpreference = FindPreference("blacklist");
+            Preference weathersettingspreference = FindPreference("weathersettings");
+            Preference inactivehourssettingspreference = FindPreference("inactivetimesettings");
+            wallpapersettingspreference.PreferenceClick += WallpaperSettingsPreference_PreferenceClick;
+            blacklistpreference.PreferenceClick += Blacklistpreference_PreferenceClick;
+            githubprojectpreference.PreferenceClick += Githubprojectpreference_PreferenceClick;
+            weathersettingspreference.PreferenceClick += Weathersettingspreference_PreferenceClick;
+            inactivehourssettingspreference.PreferenceClick += Inactivehourssettingspreference_PreferenceClick;
         }
     }
 }

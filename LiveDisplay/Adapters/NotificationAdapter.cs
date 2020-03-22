@@ -1,10 +1,10 @@
 ﻿namespace LiveDisplay.Adapters
 {
     using Android.Service.Notification;
-    using Android.Support.V7.Widget;
     using Android.Util;
     using Android.Views;
     using Android.Widget;
+    using AndroidX.RecyclerView.Widget;
     using LiveDisplay.Factories;
     using LiveDisplay.Servicios.Notificaciones;
     using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;

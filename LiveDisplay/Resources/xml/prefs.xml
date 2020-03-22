@@ -1,4 +1,5 @@
 ﻿<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+  <!--This is NO Longer Supported-->
   <!--This is the first preference screen-->
   <PreferenceScreen android:title="@string/lockscreensettings"
                     android:icon="@drawable/ic_lockscreen_24dp">

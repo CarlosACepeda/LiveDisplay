@@ -1,10 +1,9 @@
-﻿using Android.App;
-using Android.Content;
+﻿using Android.Content;
 using Android.Content.PM;
-using Android.Support.V7.Preferences;
-using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
+using AndroidX.AppCompat.Widget;
+using AndroidX.RecyclerView.Widget;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
 using System;
@@ -45,7 +44,7 @@ namespace LiveDisplay.Adapters
         {
             var textView = e.View;
             currentSelectedAppPackage = textView.GetTag(Resource.String.defaulttag).ToString();
-            using (Android.Support.V7.App.AlertDialog.Builder builder = new Android.Support.V7.App.AlertDialog.Builder(textView.Context))
+            using (AndroidX.AppCompat.App.AlertDialog.Builder builder = new AndroidX.AppCompat.App.AlertDialog.Builder(textView.Context))
             {
                 builder.SetTitle(textView.Text);
                 builder.SetMultiChoiceItems(new string[] { textView.Context.GetString(Resource.String.blacklisted), textView.Context.GetString(Resource.String.partiallyblocked), textView.Context.GetString(Resource.String.nonallowedtoturnonscreen) }, GetLevelOfBlocking(currentSelectedAppPackage), DialogMultichoiceClick);

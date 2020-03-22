@@ -6,13 +6,10 @@ using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Util;
 using Android.Views;
-using Android.Views.Animations;
 using Android.Views.InputMethods;
 using Android.Widget;
 using LiveDisplay.Servicios.Wallpaper;
 using System;
-using System.Collections.Generic;
-using System.Threading;
 
 namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
 {
@@ -42,9 +39,9 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
 
 
         private LinearLayout notificationActions;
-        private TextView titulo;
-        private TextView texto;
-        private TextView appName;
+        private TextView title;
+        private TextView text;
+        private TextView applicationName;
         private TextView subtext;
         private TextView when;
         private ImageButton closenotificationbutton;
@@ -57,20 +54,20 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
         public static event EventHandler<bool> SendInlineResponseAvailabityChanged;
 
         private Resources resources;
-        private Fragment notificationFragment; //Required to do operations such as hiding the keyboard.
+        private AndroidX.Fragment.App.Fragment notificationFragment; //Required to do operations such as hiding the keyboard.
         private View notificationView;
 
         //TODO: It should allow apply style to multiple View types.
         //For example, actually it only applies the style to the NotificationWidget
         //But not the Floating Notification.
-        public NotificationStyleApplier(ref LinearLayout notificationView , Fragment fragment)
+        public NotificationStyleApplier(ref LinearLayout notificationView, AndroidX.Fragment.App.Fragment notificationFragment)
         {
             this.notificationView = notificationView;
-            notificationFragment = fragment;
+            this.notificationFragment = notificationFragment;
             notificationActions= notificationView.FindViewById<LinearLayout>(Resource.Id.notificationActions);
-            titulo = notificationView.FindViewById<TextView>(Resource.Id.tvTitulo);
-            texto = notificationView.FindViewById<TextView>(Resource.Id.tvTexto);
-            appName = notificationView.FindViewById<TextView>(Resource.Id.tvAppName);
+            title = notificationView.FindViewById<TextView>(Resource.Id.tvTitulo);
+            text = notificationView.FindViewById<TextView>(Resource.Id.tvTexto);
+            applicationName = notificationView.FindViewById<TextView>(Resource.Id.tvAppName);
             subtext = notificationView.FindViewById<TextView>(Resource.Id.tvnotifSubtext);
             when = notificationView.FindViewById<TextView>(Resource.Id.tvWhen);
             closenotificationbutton = notificationView.FindViewById<ImageButton>(Resource.Id.closenotificationbutton);            
@@ -84,10 +81,10 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
             //Each notification Style can override these parameters.
             switch (currentAndroidVersion)
             {
-                case BuildVersionCodes.Kitkat:                    
-                case BuildVersionCodes.KitkatWatch:                    
-                case BuildVersionCodes.Lollipop:                    
-                case BuildVersionCodes.LollipopMr1:                    
+                case BuildVersionCodes.Kitkat:
+                case BuildVersionCodes.KitkatWatch:
+                case BuildVersionCodes.Lollipop:
+                case BuildVersionCodes.LollipopMr1:
                 case BuildVersionCodes.M:
                     actionButtonsGravity = GravityFlags.Left | GravityFlags.CenterVertical;
                     actionButtonsContainerGravity = GravityFlags.Left;
@@ -116,11 +113,18 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                     break;
             }
 
+
+            closenotificationbutton.Click += Closenotificationbutton_Click;
+            togglenotificationcollapse.Click += Togglenotificationcollapse_Click;
+
+
+        }
+        public NotificationStyleApplier(bool isFloating)
+        { 
         }
 
         public void ApplyStyle(OpenNotification notification)
         {
-
             //The progress thing does not require a Style to be applied.
             if (notification.GetProgressMax() > 0)
             {
@@ -140,19 +144,20 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                 notificationProgress.Visibility = ViewStates.Gone;
             }
 
+            title.Text = notification.Title();
+            text.Text = notification.Text();
+            applicationName.Text = notification.AppName();
+            subtext.Text = notification.SubText();
+            when.Text = notification.When();
+            closenotificationbutton.SetTag(DefaultActionIdentificator, notification);
+            closenotificationbutton.Visibility = notification.IsRemovable() ? ViewStates.Visible : ViewStates.Invisible;
+            notificationActions.Visibility = notification.HasActions() ? ViewStates.Visible : ViewStates.Gone;
+            inlineNotificationContainer.Visibility = ViewStates.Invisible;
+
             switch (notification.Style())
             {
                 case BigPictureStyle:
 
-                    titulo.Text = notification.Title();
-                    texto.Text = notification.Text();
-                    appName.Text = notification.AppName();
-                    subtext.Text = notification.SubText();
-                    when.Text = notification.When();
-                    closenotificationbutton.SetTag(DefaultActionIdentificator, notification);
-                    closenotificationbutton.Click += Closenotificationbutton_Click;
-                    togglenotificationcollapse.Click += Togglenotificationcollapse_Click;
-                    closenotificationbutton.Visibility = notification.IsRemovable() ? ViewStates.Visible : ViewStates.Invisible;
                         var notificationBigPicture = new BitmapDrawable(notification.BigPicture());
                         WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
                         {
@@ -162,57 +167,20 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                             Wallpaper= notificationBigPicture,
                             WallpaperPoster= WallpaperPoster.Notification,
                         });
-                    notificationActions.Visibility = ViewStates.Visible;
-                    inlineNotificationContainer.Visibility = ViewStates.Invisible;
-                    ApplyActionsStyle(notification);
                     break;
                 case InboxStyle:
-                    titulo.Text = notification.Title();
-                    texto.SetMaxLines(6);
-                    texto.Text = notification.GetTextLines();
-                    appName.Text = notification.AppName();
-                    subtext.Text = notification.SubText();
-                    when.Text = notification.When();
-                    closenotificationbutton.SetTag(DefaultActionIdentificator, notification);
-                    closenotificationbutton.Click += Closenotificationbutton_Click;
-
-                    closenotificationbutton.Visibility = notification.IsRemovable() ? ViewStates.Visible : ViewStates.Invisible;
-                    ApplyActionsStyle(notification);
+                    text.SetMaxLines(6); //Should be configurable(?)
                     break;
 
                 case BigTextStyle:
 
-                    titulo.Text = notification.Title();
-                    texto.SetMaxLines(9);
-                    texto.Text = notification.GetBigText();
-                    appName.Text = notification.AppName();
-                    subtext.Text = notification.SubText();
-                    when.Text = notification.When();
-                    closenotificationbutton.SetTag(DefaultActionIdentificator, notification);
-                    closenotificationbutton.Click += Closenotificationbutton_Click;
-
-                    closenotificationbutton.Visibility = notification.IsRemovable() ? ViewStates.Visible : ViewStates.Invisible;
-                    notificationActions.Visibility = ViewStates.Visible;
-                    inlineNotificationContainer.Visibility = ViewStates.Invisible;
-
-                    ApplyActionsStyle(notification); break;
+                    text.SetMaxLines(9); //Shoud be configurable(?)
+                    text.Text = notification.GetBigText();
+                    ApplyActionsStyle(notification); 
+                    break;
                 case MediaStyle:
-
-                    titulo.Text = notification.Title();
-                    texto.Text = notification.Text();
-                    appName.Text = notification.AppName();
-                    subtext.Text = notification.SubText();
                     when.Text = string.Empty; //The MediaStyle shouldn't show a timestamp.
-                    closenotificationbutton.SetTag(DefaultActionIdentificator, notification);
-                    closenotificationbutton.Click += Closenotificationbutton_Click;
                     //notification.StartMediaCallback();
-                    closenotificationbutton.Visibility = notification.IsRemovable() ? ViewStates.Visible : ViewStates.Invisible;
-
-                    notificationActions.Visibility = ViewStates.Visible;
-                    inlineNotificationContainer.Visibility = ViewStates.Invisible;
-
-
-                    ApplyActionsStyle(notification);
                     var notificationMediaArtwork = new BitmapDrawable(notification.MediaArtwork());
                     WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
                     {
@@ -226,30 +194,17 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                     break;
 
                 case MessagingStyle:
-                    //Only available in API Level 24 and Up.
-                    
-
-                    titulo.Text = notification.Title();
-                    texto.Text = notification.Text();
-                    appName.Text = notification.AppName();
-                    subtext.Text = notification.SubText();
-                    when.Text = notification.When();
-                    closenotificationbutton.SetTag(DefaultActionIdentificator, notification);
-                    closenotificationbutton.Click += Closenotificationbutton_Click;
-
-                    closenotificationbutton.Visibility = notification.IsRemovable() ? ViewStates.Visible : ViewStates.Invisible;
-                    notificationActions.Visibility = ViewStates.Visible;
-                    inlineNotificationContainer.Visibility = ViewStates.Invisible;
-                    ApplyActionsStyle(notification);
+                    //Theres still things to do, this style has several stuff in Pie and Q versions.
+                    //TODO
                     break;
                 case DecoratedCustomViewStyle:
-                    //TODO.
-                    ApplyDefault(notification);
+                    //todo
                     break;
-                default: //No Style.
-                    ApplyDefault(notification);
+                default:
+                    //Do nothing, yet.
                     break;
             }
+            ApplyActionsStyle(notification);
         }
 
         private void Togglenotificationcollapse_Click(object sender, EventArgs e)
@@ -260,9 +215,9 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
 
         private void ApplyDefault(OpenNotification notification)
         {
-            titulo.Text = notification.Title();
-            texto.Text = notification.Text();
-            appName.Text = notification.AppName();
+            title.Text = notification.Title();
+            text.Text = notification.Text();
+            applicationName.Text = notification.AppName();
             subtext.Text = notification.SubText();
             when.Text = notification.When();
             closenotificationbutton.SetTag(DefaultActionIdentificator, notification);
@@ -368,6 +323,11 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                 }
             }
 
+        }
+
+        public void ToggleExtendedActions(bool extended)
+        {
+            
         }
 
         protected override void Dispose(bool disposing)
