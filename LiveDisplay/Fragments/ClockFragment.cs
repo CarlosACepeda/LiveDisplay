@@ -13,6 +13,7 @@
     using LiveDisplay.Servicios;
     using System;
 
+    using Fragment = AndroidX.Fragment.App.Fragment;
 
     public class ClockFragment : Fragment
     {

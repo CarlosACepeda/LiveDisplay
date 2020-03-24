@@ -60,7 +60,7 @@
                 a:layout_width="25dp"
                 a:layout_height="wrap_content"
                 a:id="@+id/MusicNotificationPlaceholder" />
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 a:layout_weight="1"
                 a:id="@+id/NotificationListRecyclerView"
                 a:overScrollMode="never"

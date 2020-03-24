@@ -6,25 +6,22 @@
     using Android.Graphics;
     using Android.Graphics.Drawables;
     using Android.OS;
-    using Android.Preferences;
     using Android.Runtime;
-    using Android.Support.V7.App;
     using Android.Util;
     using Android.Views;
     using Android.Widget;
+    using AndroidX.AppCompat.App;
     using LiveDisplay.Factories;
     using LiveDisplay.Misc;
     using LiveDisplay.Servicios;
+    using LiveDisplay.Servicios.Wallpaper;
     using System;
     using System.Threading;
-
-    using BlurImage = Com.JackAndPhantom.BlurImage;
-
     [Activity(Label = "@string/wallpapersettings", Theme = "@style/LiveDisplayThemeDark.NoActionBar")]
     public class BackgroundSettingsActivity : AppCompatActivity
     {
         private Button pickwallpaper;
-        private Android.Support.V7.Widget.Toolbar toolbar;
+        private AndroidX.AppCompat.Widget.Toolbar toolbar;
         private ImageView wallpaperPreview;
         private SeekBar blur;
         private SeekBar opacity;
@@ -51,7 +48,7 @@
             // Create your application here
             SetContentView(Resource.Layout.BackgroundSettings);
 
-            using (toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar))
+            using (toolbar = FindViewById<AndroidX.AppCompat.Widget.Toolbar>(Resource.Id.toolbar))
             {
                 SetSupportActionBar(toolbar);
             }
@@ -86,7 +83,7 @@
         private void Pickwallpaper_Click(object sender, EventArgs e)
         {
             var button = sender as Button;
-            using Android.Support.V7.App.AlertDialog.Builder builder = new Android.Support.V7.App.AlertDialog.Builder(button.Context);
+            using AndroidX.AppCompat.App.AlertDialog.Builder builder = new AndroidX.AppCompat.App.AlertDialog.Builder(button.Context);
             int currentwallpapersetted = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.ChangeWallpaper, "0"));
             builder.SetTitle(Resources.GetString(Resource.String.changewallpaper));
             builder.SetSingleChoiceItems(new string[] { button.Context.GetString(Resource.String.blackwallpaper), button.Context.GetString(Resource.String.defaultwallpaper), button.Context.GetString(Resource.String.pickwallpaper) }, currentwallpapersetted, OnDialogClickEventArgs);

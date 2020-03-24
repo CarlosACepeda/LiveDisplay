@@ -176,15 +176,18 @@ namespace LiveDisplay.Servicios
                 //    mediaController.RegisterCallback(MusicController.GetInstance());
                 //}
 
+                //var test1 = notification.Notification.Extras.GetString(Notification.ExtraTemplate);
+                //var test2 = notification.Notification.Extras;
+                //var test3 = notification.Notification.Flags;
+                //var test4 = notification.Notification.Extras.GetCharSequence(Notification.ExtraSummaryText);
+                //var test5 = notification.Notification.Extras.GetCharSequenceArray(Notification.ExtraTextLines);
+                //var test6 = notification.Notification.Extras.Get("android.wearable.EXTENSIONS");
+                //var test7 = notification.Notification.Extras.KeySet();
+
                 if ((notification.IsOngoing == false || notification.Notification.Flags.HasFlag(NotificationFlags.NoClear)) && notification.IsClearable == true)
                 {
                     statusBarNotifications.Add(notification);
-                    //var test1 = notification.Notification.Extras.GetString(Notification.ExtraTemplate);
-                    //var test2 = notification.Notification.Extras;
-                    //var test3 = notification.Notification.Flags;
-                    //var test4 = notification.Notification.Extras.GetCharSequence(Notification.ExtraSummaryText);
-                    //var test5 = notification.Notification.Extras.GetCharSequenceArray(Notification.ExtraTextLines);
-                    //GetRemoteInput(notification);
+                   
                 }
             }
 

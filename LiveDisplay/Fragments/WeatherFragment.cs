@@ -8,6 +8,7 @@ using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
 using LiveDisplay.Servicios.Weather;
 using System.Threading;
+using Fragment = AndroidX.Fragment.App.Fragment;
 
 namespace LiveDisplay.Fragments
 {

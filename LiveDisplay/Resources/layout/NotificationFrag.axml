@@ -18,6 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 		<LinearLayout
+			android:orientation="horizontal"
 			android:layout_width="0dp"
 			android:layout_weight="8"
 			android:layout_height="wrap_content">
@@ -29,7 +30,7 @@
 				android:layout_height="wrap_content"
 				android:id="@+id/tvAppName"
 				android:textSize="12dp" />
-			<Space			
+			<Space
 				android:layout_width="3dp"
 				android:layout_height="wrap_content" />
 			<TextView
@@ -100,7 +101,40 @@
         android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:visibility="visible"
-		/>
+		>
+<!--			<ImageButton
+				android:id="action1"
+				android:background="@android:color/transparent"
+                android:layout_width="0dp"
+				android:layout_weight="0.2"
+                android:layout_height="match_parent"/>
+			<ImageButton
+				android:id="action2"
+				android:background="@android:color/transparent"
+                android:layout_width="0dp"
+				android:layout_weight="0.2"
+                android:layout_height="match_parent"/>
+			<ImageButton
+				android:id="action3"
+				android:background="@android:color/transparent"
+                android:layout_width="0dp"
+				android:layout_weight="0.2"
+                android:layout_height="match_parent"/>
+			<ImageButton
+				android:id="action4"
+				android:background="@android:color/transparent"
+				android:visibility="invisible"
+                android:layout_width="0dp"
+				android:layout_weight="0.2"
+                android:layout_height="match_parent"/>
+			<ImageButton
+				android:id="action5"
+				android:background="@android:color/transparent"
+				android:visibility="invisible"
+                android:layout_width="0dp"
+				android:layout_weight="0.2"
+                android:layout_height="match_parent"/>-->
+		</LinearLayout>
 		<LinearLayout
 			android:id="@+id/inlineNotificationContainer"
 			android:orientation="horizontal"
