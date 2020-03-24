@@ -17,7 +17,6 @@
     using Android.Views;
     using Android.Views.Animations;
     using Android.Widget;
-    using Com.JackAndPhantom;
     using LiveDisplay.Activities;
     using LiveDisplay.Activities.ActivitiesEventArgs;
     using LiveDisplay.Fragments;
