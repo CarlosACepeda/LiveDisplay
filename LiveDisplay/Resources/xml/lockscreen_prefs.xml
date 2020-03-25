@@ -7,7 +7,7 @@
       android:key="testenabled?"
       android:summary="@string/idk"
       android:title="@string/enabletestsetting"
-      app:iconSpaceReserved="false"/>
+      app:iconSpaceReserved="false" />
     <SwitchPreference
       android:defaultValue="true"
       android:key="lockonboot?"
@@ -40,4 +40,3 @@
       ></Preference>
   </PreferenceCategory>
 </PreferenceScreen>
-

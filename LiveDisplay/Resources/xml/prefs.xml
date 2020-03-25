@@ -2,21 +2,17 @@
   <Preference
         android:fragment="LockScreenSettingsFragment"
           android:title="@string/lockscreensettings"
-          android:icon="@drawable/ic_lockscreen_24dp"
-        />
+          android:icon="@drawable/ic_lockscreen_24dp" />
   <Preference
         android:fragment="NotificationSettingsFragment"
           android:title="@string/notificationsettings"
-          android:icon="@drawable/ic_notifications_white_24dp"
-        />
+          android:icon="@drawable/ic_notifications_white_24dp" />
   <Preference
         android:fragment="MusicWidgetSettingsFragment"
           android:title="@string/musicwidget"
-          android:icon="@drawable/ic_music_widget_24dp"
-        />
+          android:icon="@drawable/ic_music_widget_24dp" />
   <Preference
         android:fragment="AboutFragment"
           android:title="@string/about"
-          android:icon="@drawable/ic_info_white_24dp"
-        />
+          android:icon="@drawable/ic_info_white_24dp" />
 </PreferenceScreen>

@@ -2,10 +2,10 @@
 {
     using Android.App;
     using Android.OS;
-    using AndroidX.AppCompat.App;
     using Android.Widget;
-    using LiveDisplay.Fragments;
+    using AndroidX.AppCompat.App;
     using AndroidX.Preference;
+    using LiveDisplay.Fragments;
     using LiveDisplay.Fragments.Preferences;
 
     [Activity(Label = "@string/settings", Theme = "@style/LiveDisplayThemeDark.NoActionBar")]
@@ -36,12 +36,12 @@
             }
         }
 
-
         protected override void OnPostCreate(Bundle savedInstanceState)
         {
             base.OnPostCreate(savedInstanceState);
             SupportFragmentManager.BeginTransaction().Replace(Resource.Id.content, new PreferencesFragment()).Commit();
         }
+
         public bool OnPreferenceStartFragment(PreferenceFragmentCompat caller, Preference pref)
         {
             string fragmentQualifiedName = string.Empty;
@@ -52,15 +52,19 @@
                 case "LockScreenSettingsFragment":
                     fragmentQualifiedName = Java.Lang.Class.FromType(typeof(LockScreenSettingsFragment)).Name;
                     break;
+
                 case "NotificationSettingsFragment":
                     fragmentQualifiedName = Java.Lang.Class.FromType(typeof(NotificationSettingsFragment)).Name;
                     break;
+
                 case "MusicWidgetSettingsFragment":
                     fragmentQualifiedName = Java.Lang.Class.FromType(typeof(MusicWidgetSettingsFragment)).Name;
                     break;
+
                 case "AboutFragment":
                     fragmentQualifiedName = Java.Lang.Class.FromType(typeof(AboutFragment)).Name;
                     break;
+
                 default:
                     break;
             }
@@ -76,7 +80,7 @@
                     .Replace(Resource.Id.content, fragment)
                     .AddToBackStack(null)
                     .Commit();
-        return true;
+            return true;
         }
     }
 }

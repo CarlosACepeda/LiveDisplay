@@ -31,7 +31,6 @@ namespace LiveDisplay.Misc
 #else
             return devicePolicyManager.IsAdminActive(componentName);
 #endif
-            
         }
 
         public static bool ThisAppCanDrawOverlays()

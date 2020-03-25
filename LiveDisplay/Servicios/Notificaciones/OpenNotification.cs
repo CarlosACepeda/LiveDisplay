@@ -20,10 +20,12 @@ namespace LiveDisplay.Servicios.Notificaciones
     {
         private StatusBarNotification statusbarnotification;
         private MediaController mediaController; //A media controller to be used with the  Media Session token provided by a MediaStyle notification.
+
         public OpenNotification(StatusBarNotification sbn)
         {
             statusbarnotification = sbn;
         }
+
         private string GetKey()
         {
             if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
@@ -31,10 +33,12 @@ namespace LiveDisplay.Servicios.Notificaciones
 
             return string.Empty;
         }
+
         private int GetId()
         {
             return statusbarnotification.Id;
         }
+
         public void Cancel()
         {
             if (IsRemovable())
@@ -55,11 +59,15 @@ namespace LiveDisplay.Servicios.Notificaciones
                     }
                 }
         }
+
         //I need to pinpoint this notification, this is the way.
         //When-> Helps to really ensure is the same notification by checking also the time it was posted
-        public string GetCustomId() => GetPackageName() + GetTag() + GetId()+ When();
+        public string GetCustomId() => GetPackageName() + GetTag() + GetId() + When();
+
         private string GetTag() => statusbarnotification.Tag;
+
         private string GetPackageName() => statusbarnotification.PackageName;
+
         public string Title()
         {
             try
@@ -94,8 +102,8 @@ namespace LiveDisplay.Servicios.Notificaciones
             {
                 return string.Empty;
             }
-
         }
+
         public string GetTextLines()
         {
             try
@@ -112,8 +120,8 @@ namespace LiveDisplay.Servicios.Notificaciones
             {
                 return null;
             }
-
         }
+
         public string GetBigText()
         {
             try
@@ -124,8 +132,8 @@ namespace LiveDisplay.Servicios.Notificaciones
             {
                 return string.Empty;
             }
-
         }
+
         public string SubText()
         {
             try
@@ -137,6 +145,7 @@ namespace LiveDisplay.Servicios.Notificaciones
                 return string.Empty;
             }
         }
+
         public void ClickNotification()
         {
             try
@@ -174,6 +183,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
             return false;
         }
+
         private MediaSession.Token GetMediaSessionToken()
         {
             try
@@ -185,6 +195,7 @@ namespace LiveDisplay.Servicios.Notificaciones
                 return null;
             }
         }
+
         public bool StartMediaCallback()
         {
             var mediaSessionToken = GetMediaSessionToken();
@@ -249,6 +260,7 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             return statusbarnotification.Notification.Extras.Get(Notification.ExtraPicture) as Bitmap;
         }
+
         internal Bitmap MediaArtwork()
         {
             return statusbarnotification.Notification.Extras.Get(Notification.ExtraLargeIcon) as Bitmap;
@@ -273,8 +285,8 @@ namespace LiveDisplay.Servicios.Notificaciones
                 return (NotificationImportance)(-1);
 
             return (NotificationImportance)(-1); //<-- try to return an appropiate value
-
         }
+
         private NotificationChannel GetNotificationChannel()
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
@@ -282,6 +294,7 @@ namespace LiveDisplay.Servicios.Notificaciones
 
             return null; //TODO.
         }
+
         internal string Style()
         {
             try
@@ -302,6 +315,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
             return false;
         }
+
         //<test only, check if this notification is part of a group or is a group summary or any info related with group notifications.>
         internal string GetGroupInfo()
         {
@@ -313,7 +327,6 @@ namespace LiveDisplay.Servicios.Notificaciones
             else
             {
                 result += " This is NOT summary!";
-
             }
 
             if (Style() != null)
@@ -326,7 +339,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             else
                 result += " Is not group";
 
-            result += "\n" + "Package: " + GetPackageName() + " Id: " + GetId() + " Tag :" + GetTag() 
+            result += "\n" + "Package: " + GetPackageName() + " Id: " + GetId() + " Tag :" + GetTag()
                 + " Importance: " + GetNotificationImportance() + " Priority: " + GetNotificationPriority();
             return result;
         }
@@ -335,13 +348,14 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             if (Build.VERSION.SdkInt <= BuildVersionCodes.N) return false;
             else return statusbarnotification.IsGroup;
-
         }
+
         public bool IsSummary()
         {
             if (Build.VERSION.SdkInt <= BuildVersionCodes.Kitkat) return false;
             else return statusbarnotification.Notification.Flags.HasFlag(NotificationFlags.GroupSummary);
         }
+
         internal int GetProgress()
         {
             try
@@ -353,6 +367,7 @@ namespace LiveDisplay.Servicios.Notificaciones
                 return -2;
             }
         }
+
         internal int GetProgressMax()
         {
             try
@@ -364,6 +379,7 @@ namespace LiveDisplay.Servicios.Notificaciones
                 return -2;
             }
         }
+
         internal bool IsProgressIndeterminate()
         {
             try
@@ -375,13 +391,14 @@ namespace LiveDisplay.Servicios.Notificaciones
                 return false;
             }
         }
+
         internal int[] CompactViewActionsIndices()
         {
             return statusbarnotification.Notification.Extras.GetIntArray(Notification.ExtraCompactActions);
         }
     }
 
-    internal class OpenAction: Java.Lang.Object
+    internal class OpenAction : Java.Lang.Object
     {
         private Notification.Action action;
         private RemoteInput remoteInputDirectReply;
@@ -391,7 +408,7 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             this.action = action;
             var test1 = action.Extras;
-            var test2= action.Extras.KeySet();
+            var test2 = action.Extras.KeySet();
         }
 
         public string Title()
@@ -417,11 +434,12 @@ namespace LiveDisplay.Servicios.Notificaciones
                 Log.Info("LiveDisplay", "Click notification action failed");
             }
         }
+
         public bool ActionRepresentDirectReply()
         {
             //Direct reply action is a new feature in Nougat, so when called on Marshmallow and backwards, so in those cases an Action will never represent a Direct Reply.
             if (Build.VERSION.SdkInt < BuildVersionCodes.N) return false;
-            
+
             remoteInputs = action.GetRemoteInputs();
             if (remoteInputs == null || remoteInputs?.Length == 0) return false;
 

@@ -8,7 +8,6 @@
     using Android.OS;
     using Android.Runtime;
     using Android.Util;
-    using Android.Views;
     using Android.Widget;
     using AndroidX.AppCompat.App;
     using AndroidX.AppCompat.Widget;
@@ -18,6 +17,7 @@
     using LiveDisplay.Servicios.Wallpaper;
     using System;
     using System.Threading;
+
     [Activity(Label = "@string/wallpapersettings", Theme = "@style/LiveDisplayThemeDark.NoActionBar")]
     public class BackgroundSettingsActivity : AppCompatActivity
     {
@@ -71,14 +71,14 @@
             blur.Max = 25;
             blur.StopTrackingTouch += Blur_StopTrackingTouch;
             opacity.StopTrackingTouch += Opacity_StopTrackingTouch;
-             if (Checkers.ThisAppHasReadStoragePermission()==false)
-             {
-                 RequestPermissions(new string[1] { "android.permission.READ_EXTERNAL_STORAGE" }, REQUEST_CODE_READ_STORAGE_PERMISSION);
-             }
-             else
-             {
-                 LoadConfiguration();
-             }
+            if (Checkers.ThisAppHasReadStoragePermission() == false)
+            {
+                RequestPermissions(new string[1] { "android.permission.READ_EXTERNAL_STORAGE" }, REQUEST_CODE_READ_STORAGE_PERMISSION);
+            }
+            else
+            {
+                LoadConfiguration();
+            }
         }
 
         private void Pickwallpaper_Click(object sender, EventArgs e)
@@ -97,13 +97,14 @@
             switch (e.Which)
             {
                 case 0: //0 is 'Black wallpaper'
-                    //Picking black wallpaper will avoid the user to control the Blur and opacity. (why does the user need to anyway);) 
+                    //Picking black wallpaper will avoid the user to control the Blur and opacity. (why does the user need to anyway);)
                     wallpaperPreview.SetBackgroundColor(Color.Black);
                     blur.Enabled = false;
                     opacity.Enabled = false;
                     configurationManager.SaveAValue(ConfigurationParameters.ChangeWallpaper, "0");
 
                     break;
+
                 case 1: //1 is 'Default wallpaper.'
                     blur.Enabled = true;
                     opacity.Enabled = true;
@@ -123,16 +124,14 @@
                                 wallpaperPreview.Background.Alpha = defaultBlurLevel;
                             }
                             );
-
                         });
                     configurationManager.SaveAValue(ConfigurationParameters.ChangeWallpaper, "1");
 
-
-
                     break;
+
                 case 2: //2 is 'Pick one wallpaper'
                     configurationManager.SaveAValue(ConfigurationParameters.ChangeWallpaper, "2");
-                    
+
                     using (Intent intent = new Intent())
                     {
                         intent.SetType("image/*");
@@ -140,7 +139,6 @@
                         StartActivityForResult(Intent.CreateChooser(intent, "Pick image"), REQUEST_CODE_PICKWALLPAPER);
                         //In the result we'll save the correct value if the user has picked a image also we'll use the image that
                         //is coming from the result as the background of this activity
-
                     }
 
                     break;
@@ -154,13 +152,10 @@
                 configurationManager.SaveAValue(ConfigurationParameters.AlbumArtBlurLevel, defaultBlurLevel);
                 configurationManager.SaveAValue(ConfigurationParameters.AlbumArtOpacityLevel, defaultOpacityLevel);
                 configurationManager.SaveAValue(ConfigurationParameters.DefaultWallpaperSettingsAppliesToAlbumArt, true);
-
-
             }
             else
             {
                 configurationManager.SaveAValue(ConfigurationParameters.DefaultWallpaperSettingsAppliesToAlbumArt, false);
-
             }
         }
 
@@ -170,7 +165,7 @@
             //Like if the user had clicked a item. why? idk.
             //if this method is called before the user has the ReadStorage permission the app will crash.
             //in that case simply do nothing.
-            if (Checkers.ThisAppHasReadStoragePermission()) 
+            if (Checkers.ThisAppHasReadStoragePermission())
             {
                 switch (e.Id)
                 {
@@ -205,9 +200,9 @@
                                         wallpaperPreview.Background.Alpha = defaultOpacityLevel;
                                     }
                                     );
-
                                 });
                                 break;
+
                             case "2":
                                 ThreadPool.QueueUserWorkItem(m =>
                                 {
@@ -231,9 +226,8 @@
                         blur.Progress = defaultBlurLevel;
                         opacity.Progress = defaultOpacityLevel;
 
-
-
                         break;
+
                     case AlbumArtConfig:
                         blur.Enabled = false; //we are disabling it forever, because after several tests It does not work to blur the
                                               //Albumart cause causes a crash I cant debug, lost so many hours here.
@@ -262,11 +256,10 @@
                             Drawable drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
                             RunOnUiThread(() =>
                         {
-                                    wallpaperPreview.Background = drawable;
-                                    wallpaperPreview.Background.Alpha = albumArtOpacityLevel;
-                                }
+                            wallpaperPreview.Background = drawable;
+                            wallpaperPreview.Background.Alpha = albumArtOpacityLevel;
+                        }
                         );
-
                         }
                         );
 
@@ -282,9 +275,9 @@
         {
             defaultBlurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.BlurLevel, 1);
             defaultOpacityLevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, 255);
-            albumArtBlurLevel= configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtBlurLevel, 1);
-            albumArtOpacityLevel= configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtOpacityLevel, 255);
-            appliesToMusicWidget.Checked= configurationManager.RetrieveAValue(ConfigurationParameters.DefaultWallpaperSettingsAppliesToAlbumArt);
+            albumArtBlurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtBlurLevel, 1);
+            albumArtOpacityLevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtOpacityLevel, 255);
+            appliesToMusicWidget.Checked = configurationManager.RetrieveAValue(ConfigurationParameters.DefaultWallpaperSettingsAppliesToAlbumArt);
             blur.Progress = defaultBlurLevel;
             opacity.Progress = defaultBlurLevel;
 
@@ -295,6 +288,7 @@
                     blur.Enabled = false;
                     opacity.Enabled = false;
                     break;
+
                 case "1":
                     ThreadPool.QueueUserWorkItem(m =>
                     {
@@ -310,9 +304,9 @@
                             wallpaperPreview.Background.Alpha = defaultOpacityLevel;
                         }
                         );
-
                     });
                     break;
+
                 case "2":
                     ThreadPool.QueueUserWorkItem(m =>
                     {
@@ -331,14 +325,13 @@
                     break;
             }
 
-            
             GC.Collect(0); //Helping the gc, We are manipulating bitmaps.
         }
 
         private void Opacity_StopTrackingTouch(object sender, SeekBar.StopTrackingTouchEventArgs e)
         {
-            if(wallpaperPreview.Background!= null)
-            wallpaperPreview.Background.Alpha = e.SeekBar.Progress;
+            if (wallpaperPreview.Background != null)
+                wallpaperPreview.Background.Alpha = e.SeekBar.Progress;
 
             if (currentSpinnerOptionSelected == DefaultWallpaperConfig)
             {
@@ -347,16 +340,14 @@
             }
             else if (currentSpinnerOptionSelected == AlbumArtConfig)
             {
-              configurationManager.SaveAValue(ConfigurationParameters.AlbumArtOpacityLevel, e.SeekBar.Progress);
-              albumArtOpacityLevel = e.SeekBar.Progress;
-
+                configurationManager.SaveAValue(ConfigurationParameters.AlbumArtOpacityLevel, e.SeekBar.Progress);
+                albumArtOpacityLevel = e.SeekBar.Progress;
             }
             else if (currentSpinnerOptionSelected == CustomWallpaperConfig)
             {
                 configurationManager.SaveAValue(ConfigurationParameters.OpacityLevel, e.SeekBar.Progress);
                 defaultOpacityLevel = e.SeekBar.Progress;
             }
-
         }
 
         private void Blur_StopTrackingTouch(object sender, SeekBar.StopTrackingTouchEventArgs e)
@@ -383,6 +374,7 @@
                         }
                     });
                     break;
+
                 case "2":
                     ThreadPool.QueueUserWorkItem(m =>
                     {
@@ -415,7 +407,6 @@
             {
                 configurationManager.SaveAValue(ConfigurationParameters.BlurLevel, e.SeekBar.Progress);
                 defaultBlurLevel = e.SeekBar.Progress;
-
             }
             GC.Collect(0);
         }
@@ -426,10 +417,11 @@
 
             if (requestCode == REQUEST_CODE_READ_STORAGE_PERMISSION && grantResults[0] == Permission.Denied)
             {
-                Toast.MakeText(this,"You must allow LiveDisplay to read storage to retrieve images", ToastLength.Long).Show();
+                Toast.MakeText(this, "You must allow LiveDisplay to read storage to retrieve images", ToastLength.Long).Show();
                 Finish();
             }
         }
+
         protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
         {
             if (resultCode == Result.Ok && data != null)
@@ -459,25 +451,21 @@
                                 wallpaperPreview.Background.Alpha = defaultBlurLevel;
                             }
                             );
-
-
                         });
                     }
                 }
                 catch
                 {
-                    
                     configurationManager.SaveAValue(ConfigurationParameters.ChangeWallpaper, "0"); //Black wallpaper.
                 }
             }
             else
             {
                 Log.Info("LiveDisplay", "Data was null");
-                    configurationManager.SaveAValue(ConfigurationParameters.ChangeWallpaper, "0"); //Black wallpaper.
+                configurationManager.SaveAValue(ConfigurationParameters.ChangeWallpaper, "0"); //Black wallpaper.
             }
 
             base.OnActivityResult(requestCode, resultCode, data);
         }
-
     }
 }

@@ -1,25 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using Android.App;
+﻿using Android.App;
 using Android.App.Admin;
 using Android.Content;
 using Android.OS;
-using Android.Runtime;
 using Android.Util;
-using Android.Views;
-using Android.Widget;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Notificaciones;
-using Microsoft.AppCenter.Crashes;
+using System;
+using System.Threading;
 
 namespace LiveDisplay.Servicios.Awake
 {
-    public class AwakeHelper: Java.Lang.Object
+    public class AwakeHelper : Java.Lang.Object
     {
-        static ConfigurationManager configurationManager;
+        private static ConfigurationManager configurationManager;
+
         public AwakeHelper()
         {
             CatcherHelper.NotificationPosted += CatcherHelper_NotificationPosted;
@@ -53,6 +47,7 @@ namespace LiveDisplay.Servicios.Awake
                 }
             }
         }
+
         public static void TurnOffScreen()
         {
             PowerManager pm = (PowerManager)Application.Context.GetSystemService(Context.PowerService);
@@ -90,9 +85,10 @@ namespace LiveDisplay.Servicios.Awake
             }
 #pragma warning restore CS0618 // El tipo o el miembro están obsoletos
         }
+
         public bool IsAwakeListeningForDeviceOrientation()
         {
-            if(AwakeService.GetAwakeStatus()== AwakeStatus.Up)
+            if (AwakeService.GetAwakeStatus() == AwakeStatus.Up)
                 return true;
             return false;
         }
@@ -132,8 +128,8 @@ namespace LiveDisplay.Servicios.Awake
                     return true;
                 }
             }
-
         }
+
         public bool IsSystemLockScreenActive()
         {
             //uses a combination of several methods to implicitly identify
@@ -160,7 +156,6 @@ namespace LiveDisplay.Servicios.Awake
                 TurnOnScreen();
         }
 
-
         protected override void Dispose(bool disposing)
         {
             CatcherHelper.NotificationPosted -= CatcherHelper_NotificationPosted;
@@ -169,12 +164,12 @@ namespace LiveDisplay.Servicios.Awake
             base.Dispose(disposing);
         }
     }
+
     public enum AwakeStatus
     {
         Up = 1,
         Sleeping = 2,
         UpWithDeviceMotionDisabled = 4 //It can turn on the screen but not when grabbing the phone from a flat surface.
-            //Maybe because the Service that listens for the device motion is not running.
-
+                                       //Maybe because the Service that listens for the device motion is not running.
     }
 }

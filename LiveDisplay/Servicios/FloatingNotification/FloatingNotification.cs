@@ -2,7 +2,6 @@
 using Android.Content;
 using Android.Graphics;
 using Android.OS;
-using Android.Preferences;
 using Android.Runtime;
 using Android.Util;
 using Android.Views;
@@ -19,9 +18,6 @@ namespace LiveDisplay.Servicios.FloatingNotification
     //Maybe the service should allow also showing the list of notifications?
     //it'll be cool to detach the notifications' list from the lockscreen and show them while the user does not use the lockscreen, or even the music widget, a floating one.
 
-
-
-
     //Will spawn a View to show the clicked notification in the list, while the music is playing.
     [Service(Enabled = true)]
     internal class FloatingNotification : Service, View.IOnTouchListener
@@ -37,7 +33,6 @@ namespace LiveDisplay.Servicios.FloatingNotification
         private ActivityStates currentActivityState;
 
         private ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
-
 
         public override IBinder OnBind(Intent intent)
         {
@@ -57,7 +52,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
 
             if (Build.VERSION.SdkInt > BuildVersionCodes.NMr1) //Nougat 7.1
             {
-                    layoutType = WindowManagerTypes.ApplicationOverlay; //Android Oreo does not allow to add windows of WindowManagerTypes.Phone
+                layoutType = WindowManagerTypes.ApplicationOverlay; //Android Oreo does not allow to add windows of WindowManagerTypes.Phone
             }
 
             windowManager = GetSystemService(WindowService).JavaCast<IWindowManager>();
@@ -93,8 +88,9 @@ namespace LiveDisplay.Servicios.FloatingNotification
             NotificationAdapterViewHolder.ItemClicked += NotificationAdapterViewHolder_ItemClicked;
             NotificationAdapterViewHolder.ItemLongClicked += NotificationAdapterViewHolder_ItemLongClicked;
             LockScreenActivity.OnActivityStateChanged += LockScreenActivity_OnActivityStateChanged;
-            floatingNotificationView.SetOnTouchListener(this);            
-        }        
+            floatingNotificationView.SetOnTouchListener(this);
+        }
+
         private void LockScreenActivity_OnActivityStateChanged(object sender, Activities.ActivitiesEventArgs.LockScreenLifecycleEventArgs e)
         {
             switch (e.State)
@@ -119,7 +115,6 @@ namespace LiveDisplay.Servicios.FloatingNotification
                     break;
             }
             currentActivityState = e.State;
-
         }
 
         private void CatcherHelper_NotificationPosted(object sender, NotificationPostedEventArgs e)
@@ -132,7 +127,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
             {
                 floatingNotificationView.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
             }
-           
+
             if (configurationManager.RetrieveAValue(ConfigurationParameters.TestEnabled))
             {
                 Toast.MakeText(floatingNotificationView.Context, "Progress Indeterminate?: " + openNotification.IsProgressIndeterminate().ToString() + "\n"
@@ -179,9 +174,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
                             //anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction.GetActionIcon(), null, null, null);
                             floatingNotificationActionsContainer.AddView(anActionButton);
                         };
-
                     }
-
                 }
             }
             else
@@ -222,15 +215,14 @@ namespace LiveDisplay.Servicios.FloatingNotification
                         //anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction.GetActionIcon(), null, null, null);
                         floatingNotificationActionsContainer.AddView(anActionButton);
                     };
-
                 }
 
                 if (floatingNotificationView.Visibility != ViewStates.Visible)
                 {
                     if (currentActivityState == ActivityStates.Resumed)
                         floatingNotificationView.Visibility = ViewStates.Visible;
-                }                
-            }            
+                }
+            }
         }
 
         private void CatcherHelper_NotificationRemoved(object sender, EventArgs e)
@@ -239,8 +231,8 @@ namespace LiveDisplay.Servicios.FloatingNotification
             //Remove tag, notification removed
             openNotification = null;
             floatingNotificationView?.SetTag(Resource.String.defaulttag, null);
-
         }
+
         private void NotificationAdapterViewHolder_ItemLongClicked(object sender, NotificationItemClickedEventArgs e)
         {
             openNotification = new OpenNotification(e.StatusBarNotification);
@@ -260,7 +252,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
                     + openNotification.GetGroupInfo()
                     , ToastLength.Short).Show();
             }
-            //Only do this process if the notification that I want to show is different than the one that 
+            //Only do this process if the notification that I want to show is different than the one that
             //the Floating Notification Widget has.
             //If it's the same then simply show it.
             if ((string)floatingNotificationView.GetTag(Resource.String.defaulttag) != openNotification.GetCustomId())
@@ -298,8 +290,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
                         //anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction.GetActionIcon(), null, null, null);
                         floatingNotificationActionsContainer.AddView(anActionButton);
                     };
-
-                }                
+                }
             }
             else
             {
@@ -336,9 +327,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
                         //anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction.GetActionIcon(), null, null, null);
                         floatingNotificationActionsContainer.AddView(anActionButton);
                     };
-
                 }
-
             }
             if (floatingNotificationView.Visibility != ViewStates.Visible)
             {
@@ -348,7 +337,6 @@ namespace LiveDisplay.Servicios.FloatingNotification
             {
                 floatingNotificationView.Visibility = ViewStates.Invisible;
             }
-
         }
 
         private void FloatingNotificationView_Click(object sender, EventArgs e)

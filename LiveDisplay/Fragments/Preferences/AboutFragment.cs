@@ -1,17 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
+﻿using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Runtime;
-using Android.Util;
 using Android.Views;
-using Android.Widget;
 using AndroidX.Preference;
-using LiveDisplay.Activities;
 
 namespace LiveDisplay.Fragments.Preferences
 {
@@ -28,8 +19,8 @@ namespace LiveDisplay.Fragments.Preferences
             PreferenceManager.SetDefaultValues(Application.Context, Resource.Xml.about, false);
             Preference githubprojectpreference = FindPreference("contributetoproject");
             githubprojectpreference.PreferenceClick += Githubprojectpreference_PreferenceClick;
-
         }
+
         private void Githubprojectpreference_PreferenceClick(object sender, Preference.PreferenceClickEventArgs e)
         {
             string url = "https://github.com/CarlosACepeda/LiveDisplay/";
@@ -37,6 +28,7 @@ namespace LiveDisplay.Fragments.Preferences
             intent.SetData(Android.Net.Uri.Parse(url));
             StartActivity(intent);
         }
+
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             return base.OnCreateView(inflater, container, savedInstanceState);

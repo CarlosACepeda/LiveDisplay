@@ -1,8 +1,6 @@
 ﻿using Android.App;
 using Android.App.Job;
-using Android.Content;
 using LiveDisplay.Misc;
-using System;
 using System.Threading.Tasks;
 
 namespace LiveDisplay.Servicios.Weather

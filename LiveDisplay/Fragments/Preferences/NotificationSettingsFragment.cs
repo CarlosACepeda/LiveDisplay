@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
+﻿using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Runtime;
-using Android.Util;
 using Android.Views;
 using Android.Widget;
 using AndroidX.Preference;
 using LiveDisplay.Activities;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
+using System;
 
 namespace LiveDisplay.Fragments.Preferences
 {
@@ -26,16 +20,19 @@ namespace LiveDisplay.Fragments.Preferences
         {
             base.OnCreate(savedInstanceState);
         }
+
         public override void OnResume()
         {
             sharedPreferences.RegisterOnSharedPreferenceChangeListener(this);
             base.OnResume();
         }
+
         public override void OnPause()
         {
             sharedPreferences.UnregisterOnSharedPreferenceChangeListener(this);
             base.OnPause();
         }
+
         public override void OnCreatePreferences(Bundle savedInstanceState, string rootKey)
         {
             AddPreferencesFromResource(Resource.Xml.notification_prefs);
@@ -44,11 +41,8 @@ namespace LiveDisplay.Fragments.Preferences
             Preference blacklistpreference = FindPreference("blacklist");
             Preference inactivehourssettingspreference = FindPreference("inactivetimesettings");
 
-
             blacklistpreference.PreferenceClick += Blacklistpreference_PreferenceClick;
             inactivehourssettingspreference.PreferenceClick += Inactivehourssettingspreference_PreferenceClick;
-
-
         }
 
         private void Blacklistpreference_PreferenceClick(object sender, Preference.PreferenceClickEventArgs e)
@@ -56,6 +50,7 @@ namespace LiveDisplay.Fragments.Preferences
             Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(BlacklistActivity)));
             StartActivity(intent);
         }
+
         private void Inactivehourssettingspreference_PreferenceClick(object sender, Preference.PreferenceClickEventArgs e)
         {
             using (TimePickerDialog datePickerDialog = new TimePickerDialog(Activity, PreferencesFragmentCompat_timepicked, DateTime.Now.Hour, DateTime.Now.Minute, false))
@@ -72,6 +67,7 @@ namespace LiveDisplay.Fragments.Preferences
                 datePickerDialog.Show();
             }
         }
+
         private void PreferencesFragmentCompat_timepicked(object sender, TimePickerDialog.TimeSetEventArgs e)
         {
             //Simple trick to save two different values using the same timepicker.
@@ -107,6 +103,7 @@ namespace LiveDisplay.Fragments.Preferences
                     break;
             }
         }
+
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             return base.OnCreateView(inflater, container, savedInstanceState);

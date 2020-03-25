@@ -53,7 +53,7 @@ namespace LiveDisplay.Servicios
         }
 
         public override void OnListenerConnected()
-        {            
+        {
             activeMediaSessionsListener = new ActiveMediaSessionsListener();
             //RemoteController Lollipop and Beyond Implementation
             mediaSessionManager = (MediaSessionManager)GetSystemService(MediaSessionService);
@@ -89,7 +89,7 @@ namespace LiveDisplay.Servicios
                 //Let's attach the NotificationChannels that this package represents to this StatusbarNotification
                 try
                 {
-                    var channels= GetNotificationChannels(sbn.PackageName, sbn.User);
+                    var channels = GetNotificationChannels(sbn.PackageName, sbn.User);
                 }
                 catch (Exception ex)
                 {
@@ -118,7 +118,6 @@ namespace LiveDisplay.Servicios
             //        //mediaController?.UnregisterCallback(musicController);
             //        //musicController.Dispose();
             //    }
-
 
             //    //mediaController.RegisterCallback(MusicController.GetInstance());
             //}
@@ -160,8 +159,6 @@ namespace LiveDisplay.Servicios
             return base.OnUnbind(intent);
         }
 
-        
-
         private void RetrieveNotificationFromStatusBar()
         {
             statusBarNotifications = new List<StatusBarNotification>();
@@ -187,7 +184,6 @@ namespace LiveDisplay.Servicios
                 if ((notification.IsOngoing == false || notification.Notification.Flags.HasFlag(NotificationFlags.NoClear)) && notification.IsClearable == true)
                 {
                     statusBarNotifications.Add(notification);
-                   
                 }
             }
 

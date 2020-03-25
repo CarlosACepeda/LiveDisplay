@@ -17,6 +17,7 @@
 
         //For Music Widget settings
         public const string MusicWidgetEnabled = "musicwidgetenabled?";
+
         public const string ShowAlbumArt = "showalbumart?";
 
         //For Weather Widget settings
@@ -50,8 +51,9 @@
         public const string TurnOffScreenAfterLastNotificationCleared = "turnoffscreenafterlastnotificationcleared?";
 
         //Misc.
-        //It serves the purpose of enabling certain messages to be shown in a Toast Message useful for the developer.        
+        //It serves the purpose of enabling certain messages to be shown in a Toast Message useful for the developer.
         public const string TestEnabled = "testenabled?";
+
         //toggles where to show a minitutorial to the user when it launches the lockscreen for the first time.
         public const string TutorialRead = "tutorialread?";
     }

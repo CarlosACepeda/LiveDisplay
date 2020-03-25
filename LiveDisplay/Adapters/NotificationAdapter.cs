@@ -16,7 +16,7 @@
         public static int selectedItem = -1;
         public List<StatusBarNotification> notifications = new List<StatusBarNotification>();
         public override int ItemCount => notifications.Count;
-        
+
         public NotificationAdapter(List<StatusBarNotification> notificaciones)
         {
             this.notifications = notificaciones;
@@ -40,7 +40,7 @@
             }
             else
             {
-                Log.Info("LiveDisplay", "WTF Position: "+ position);
+                Log.Info("LiveDisplay", "WTF Position: " + position);
             }
         }
 
@@ -82,7 +82,7 @@
             CatcherHelper.notificationAdapter.NotifyDataSetChanged();
             var statusBarNotification = CatcherHelper.StatusBarNotifications[LayoutPosition];
             OnItemClicked(LayoutPosition, statusBarNotification);
-            //try 
+            //try
             //{
             //    var view = sender as View;
             //    view.Visibility = ViewStates.Gone;
@@ -91,7 +91,6 @@
             //{
             //    Log.Info("LiveDisplay", "Exception hiding notification" + ex.Message);
             //}
-
         }
 
         private void OnItemClicked(int position, StatusBarNotification sbn)
@@ -99,8 +98,7 @@
             ItemClicked?.Invoke(this, new NotificationItemClickedEventArgs
             {
                 Position = position,
-                StatusBarNotification= sbn
-
+                StatusBarNotification = sbn
             });
         }
 
@@ -109,7 +107,7 @@
             ItemLongClicked?.Invoke(this, new NotificationItemClickedEventArgs
             {
                 Position = position,
-                StatusBarNotification= sbn
+                StatusBarNotification = sbn
             }
             );
         }

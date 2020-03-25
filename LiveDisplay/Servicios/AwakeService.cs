@@ -1,20 +1,14 @@
 ﻿using Android.App;
-using Android.App.Admin;
 using Android.Content;
 using Android.Hardware;
 using Android.OS;
 using Android.Preferences;
 using Android.Runtime;
-using Android.Text;
 using Android.Util;
-using Java.Sql;
-using Java.Util;
 using LiveDisplay.BroadcastReceivers;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Awake;
-using LiveDisplay.Servicios.Notificaciones;
 using System;
-using System.Threading;
 
 namespace LiveDisplay.Servicios
 {
@@ -29,6 +23,7 @@ namespace LiveDisplay.Servicios
         private static bool sleeping = false;
         public static bool isInPocket;
         public static bool isRunning;
+
         public static event EventHandler<EventArgs> DeviceIsActive;
 
         public static AwakeStatus GetAwakeStatus()
@@ -53,7 +48,6 @@ namespace LiveDisplay.Servicios
                     sleeping = false;
                     return AwakeStatus.Up;
                 }
-                
             }
             else //The times are in different days.
             {
@@ -62,19 +56,15 @@ namespace LiveDisplay.Servicios
                     Log.Info("HELLO", "Im Sleeping");
                     sleeping = true;
                     return AwakeStatus.Sleeping;
-
                 }
                 else
                 {
                     Log.Info("HELLO", "Im Active");
                     sleeping = false;
                     return AwakeStatus.Up;
-
                 }
             }
-
         }
-
 
         public override IBinder OnBind(Intent intent)
         {
@@ -179,5 +169,4 @@ namespace LiveDisplay.Servicios
             base.OnDestroy();
         }
     }
-    
 }

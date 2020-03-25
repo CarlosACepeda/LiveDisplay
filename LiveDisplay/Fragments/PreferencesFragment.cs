@@ -1,17 +1,8 @@
 ﻿using Android.App;
 using Android.Content;
-using Android.Content.PM;
 using Android.OS;
-using Android.Preferences;
-using Android.Runtime;
-using Android.Util;
 using Android.Views;
-using Android.Widget;
 using LiveDisplay.Activities;
-using LiveDisplay.Factories;
-using LiveDisplay.Misc;
-using LiveDisplay.Servicios;
-using System;
 
 using Preference = AndroidX.Preference.Preference;
 
@@ -22,7 +13,6 @@ namespace LiveDisplay.Fragments
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            
         }
 
         private void WallpaperSettingsPreference_PreferenceClick(object sender, Preference.PreferenceClickEventArgs e)

@@ -1,6 +1,4 @@
-﻿using Android.App;
-using Android.Content;
-using LiveDisplay.DataRepository;
+﻿using LiveDisplay.DataRepository;
 using LiveDisplay.Misc;
 using System;
 using System.Net.Http;

@@ -1,7 +1,6 @@
 ﻿using Android.App;
 using Android.OS;
 using Android.Service.Notification;
-using Android.Util;
 using LiveDisplay.Adapters;
 using LiveDisplay.Servicios.Awake;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
@@ -81,7 +80,6 @@ namespace LiveDisplay.Servicios.Notificaciones
                         using (var h = new Handler(Looper.MainLooper))
                             h.Post(() => { notificationAdapter.NotifyItemInserted(StatusBarNotifications.Count); });
                         OnNotificationPosted(blockingstatus.HasFlag(LevelsOfAppBlocking.None), sbn, false);
-
                     }
                 }
             }
@@ -109,28 +107,28 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         public void OnNotificationRemoved(StatusBarNotification sbn)
         {
-                int position = GetNotificationPosition(sbn);
-                if (position >= 0)
-                {
-                    StatusBarNotifications.RemoveAt(position);
-                    using (var h = new Handler(Looper.MainLooper))
-                        h.Post(() =>
-                        {
+            int position = GetNotificationPosition(sbn);
+            if (position >= 0)
+            {
+                StatusBarNotifications.RemoveAt(position);
+                using (var h = new Handler(Looper.MainLooper))
+                    h.Post(() =>
+                    {
                             //When removing a summary notification it causes a IndexOutOfBoundsException...
                             //notificationAdapter.NotifyItemRemoved(position);
                             //This has to be fixed, anyway, because this change makes the adapter to lose  the animations when removing a item
                             notificationAdapter.NotifyDataSetChanged();
-                        });
-                }
-
-                if (StatusBarNotifications.Count == 0)
-                {
-                    OnNotificationListSizeChanged(new NotificationListSizeChangedEventArgs
-                    {
-                        ThereAreNotifications = false
                     });
-                }
-            OnNotificationRemoved();            
+            }
+
+            if (StatusBarNotifications.Count == 0)
+            {
+                OnNotificationListSizeChanged(new NotificationListSizeChangedEventArgs
+                {
+                    ThereAreNotifications = false
+                });
+            }
+            OnNotificationRemoved();
         }
 
         public void CancelAllNotifications()
@@ -154,8 +152,8 @@ namespace LiveDisplay.Servicios.Notificaciones
             NotificationPosted?.Invoke(this, new NotificationPostedEventArgs()
             {
                 ShouldCauseWakeUp = shouldCauseWakeup,
-                StatusBarNotification= sbn,
-                UpdatesPreviousNotification= updatesPreviousNotification
+                StatusBarNotification = sbn,
+                UpdatesPreviousNotification = updatesPreviousNotification
             });
         }
 

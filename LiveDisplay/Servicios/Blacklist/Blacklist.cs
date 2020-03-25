@@ -1,7 +1,5 @@
 ﻿using Android.App;
-using Android.Content;
 using Android.Content.PM;
-using Android.Preferences;
 using System;
 using System.Collections.Generic;
 using System.Linq;

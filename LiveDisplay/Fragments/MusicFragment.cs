@@ -3,11 +3,9 @@ using Android.Graphics.Drawables;
 using Android.Media;
 using Android.Media.Session;
 using Android.OS;
-using Android.Preferences;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
-using AndroidX.Fragment.App;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
 using LiveDisplay.Servicios.Music;
@@ -29,8 +27,7 @@ namespace LiveDisplay.Fragments
         private SeekBar skbSeekSongTime;
         private PlaybackStateCode playbackState;
         private PendingIntent activityIntent; //A Pending intent if available to start the activity associated with this music fragent.
-        BitmapDrawable CurrentAlbumArt; 
-
+        private BitmapDrawable CurrentAlbumArt;
 
         private Timer timer;
         private ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
@@ -47,7 +44,6 @@ namespace LiveDisplay.Fragments
             };
             timer.Elapsed += Timer_Elapsed;
             timer.Enabled = true;
-
 
             WallpaperPublisher.CurrentWallpaperCleared += WallpaperPublisher_CurrentWallpaperHasBeenCleared;
 
@@ -68,9 +64,7 @@ namespace LiveDisplay.Fragments
                         OpacityLevel = (short)opacitylevel,
                         BlurLevel = 0, //Causes a crash That currently I cant debug, damn, thats why is 0. (No blur) and ignoring the value the used have setted.
                         WallpaperPoster = WallpaperPoster.MusicPlayer //We must nutify WallpaperPublisher who is posting the wallpaper, otherwise the wallpaper will be ignored.
-
                     });
-
             }
         }
 
@@ -336,7 +330,6 @@ namespace LiveDisplay.Fragments
                         OpacityLevel = (short)opacitylevel,
                         BlurLevel = 0, //Causes a crash That currently I cant debug, damn, thats why is 0. (No blur) and ignoring the value the used have setted.
                         WallpaperPoster = WallpaperPoster.MusicPlayer //We must nutify WallpaperPublisher who is posting the wallpaper, otherwise it'll be ignored.
-
                     });
                 GC.Collect(0);
             });
@@ -362,10 +355,10 @@ namespace LiveDisplay.Fragments
                     if (configurationManager.RetrieveAValue(ConfigurationParameters.ShowAlbumArt))
                         WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
                         {
-                            Wallpaper= wallpaper,
+                            Wallpaper = wallpaper,
                             OpacityLevel = (short)opacitylevel,
                             BlurLevel = 0, //Causes a crash That currently I cant debug, damn, thats why is 0. (No blur) and ignoring the value the used have setted.
-                            WallpaperPoster= WallpaperPoster.MusicPlayer //We must nutify WallpaperPublisher who is posting the wallpaper, otherwise it'll be ignored.
+                            WallpaperPoster = WallpaperPoster.MusicPlayer //We must nutify WallpaperPublisher who is posting the wallpaper, otherwise it'll be ignored.
                         });
                 });
             });

@@ -1,6 +1,4 @@
-﻿using Android.App;
-using Android.OS;
-using Android.Preferences;
+﻿using Android.OS;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
@@ -35,9 +33,9 @@ namespace LiveDisplay.Fragments
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             View v = inflater.Inflate(Resource.Layout.NotificationFrag, container, false);
-            notification = v.FindViewById<LinearLayout>(Resource.Id.llNotification); 
+            notification = v.FindViewById<LinearLayout>(Resource.Id.llNotification);
             styleApplier = new NotificationStyleApplier(ref notification, this);
-            
+
             notification.Drag += Notification_Drag;
             notification.Click += LlNotification_Click;
             NotificationAdapterViewHolder.ItemClicked += ItemClicked;
@@ -89,7 +87,6 @@ namespace LiveDisplay.Fragments
                     //to be updated is the same that's currently being displayed in the Notification Widget.
                     if ((string)notification.GetTag(Resource.String.defaulttag) == openNotification.GetCustomId())
                     {
-
                         //Watch out for possible memory leaks here.
                         styleApplier?.ApplyStyle(openNotification);
 
@@ -101,15 +98,13 @@ namespace LiveDisplay.Fragments
                             notification.Visibility = ViewStates.Visible;
                             StartTimeout(false);
                         }
-
                     }
                     else
                     {
-                        //they are not the same so, the notification widget won't get updated(because that'll cause the 
+                        //they are not the same so, the notification widget won't get updated(because that'll cause the
                         //notification the user is viewing to be replaced)
                     }
                 });
-
             }
             else
             {
@@ -150,11 +145,11 @@ namespace LiveDisplay.Fragments
                 notification?.SetTag(Resource.String.defaulttag, null);
             });
         }
+
         private void LlNotification_Click(object sender, EventArgs e)
         {
             Activity?.RunOnUiThread(() =>
             {
-
                 notification.Visibility = ViewStates.Visible;
                 try
                 {
@@ -163,7 +158,6 @@ namespace LiveDisplay.Fragments
                     {
                         notification.Visibility = ViewStates.Invisible;
                     }
-
                 }
                 catch
                 {
@@ -177,8 +171,7 @@ namespace LiveDisplay.Fragments
             notification.Visibility = ViewStates.Visible;
             openNotification = new OpenNotification(e.StatusBarNotification);
             openNotification.Cancel();
-             notification.Visibility = ViewStates.Invisible;
-            
+            notification.Visibility = ViewStates.Invisible;
         }
 
         private void ItemClicked(object sender, NotificationItemClickedEventArgs e)
@@ -201,7 +194,7 @@ namespace LiveDisplay.Fragments
                     , ToastLength.Short).Show();
             }
 
-            //Only do this process if the notification that I want to show is different than the one that 
+            //Only do this process if the notification that I want to show is different than the one that
             //the Notification Widget has.
             //If it's the same then simply show it.
             if ((string)notification.GetTag(Resource.String.defaulttag) != openNotification.GetCustomId())
@@ -210,24 +203,22 @@ namespace LiveDisplay.Fragments
                 notification.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
                 if (notification.Visibility != ViewStates.Visible)
                 {
-                    notification.Visibility = ViewStates.Visible;                    
+                    notification.Visibility = ViewStates.Visible;
                 }
             }
-            else if(notification.Visibility!= ViewStates.Visible)
+            else if (notification.Visibility != ViewStates.Visible)
             {
                 styleApplier?.ApplyStyle(openNotification);
-                notification.Visibility = ViewStates.Visible;                
+                notification.Visibility = ViewStates.Visible;
             }
             StartTimeout(false);
-
         }
-
 
         #endregion Events Implementation:
 
         //THis works like a charm :)
         private void StartTimeout(bool stop)
-        {            
+        {
             //This action is: 'Hide the notification, and set the timeoutStarted as finished(false)
             //because this action will be invoked only when the timeout has finished.
             void hideNotification() { if (notification != null) notification.Visibility = ViewStates.Gone; timeoutStarted = false; }
@@ -240,7 +231,6 @@ namespace LiveDisplay.Fragments
             }
             else
             {
-
                 if (timeoutStarted == true)
                 {
                     notification?.RemoveCallbacks(hideNotification);

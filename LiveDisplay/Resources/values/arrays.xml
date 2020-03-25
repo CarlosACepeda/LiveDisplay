@@ -21,7 +21,7 @@
   </string-array>
   <string-array name="listvalueschangedoubletapbehavior">
     <item>0</item>
-    <item>1</item>    
+    <item>1</item>
   </string-array>
 
   <string-array name="listentriesweatherupdatefrequency">
@@ -29,9 +29,9 @@
     <item>@string/thirtyminutes</item>
     <item>@string/onehour</item>
     <item>@string/sixhours</item>
-    <item>@string/twelvehours</item>  
+    <item>@string/twelvehours</item>
   </string-array>
-    
+
   <string-array name="listvaluesweatherupdatefrequency">
     <item>10</item>
     <item>30</item>

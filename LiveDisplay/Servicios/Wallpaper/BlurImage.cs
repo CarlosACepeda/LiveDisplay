@@ -1,7 +1,7 @@
-﻿using System.Threading;
-using Android.Content;
+﻿using Android.Content;
 using Android.Graphics;
 using Android.Renderscripts;
+using System.Threading;
 
 namespace LiveDisplay.Servicios.Wallpaper
 {
@@ -17,6 +17,7 @@ namespace LiveDisplay.Servicios.Wallpaper
         {
             this.context = context;
         }
+
         public BlurImage Intensity(float intensity)
         {
             if (intensity < Max_Radius && intensity > 0)
@@ -49,6 +50,7 @@ namespace LiveDisplay.Servicios.Wallpaper
             }
             return imageblurred;
         }
+
         private Bitmap Blur()
         {
             if (image == null)
@@ -63,7 +65,6 @@ namespace LiveDisplay.Servicios.Wallpaper
             RenderScript rs = RenderScript.Create(context);
             ScriptIntrinsicBlur intrinsicBlur = ScriptIntrinsicBlur.Create(rs, Element.U8_4(rs));
 
-
             Allocation inputallocation = Allocation.CreateFromBitmap(rs, input);
             Allocation outputallocation = Allocation.CreateFromBitmap(rs, output);
             intrinsicBlur.SetRadius(intensity);
@@ -74,6 +75,7 @@ namespace LiveDisplay.Servicios.Wallpaper
 
             return output;
         }
+
         public BlurImage Async(bool async)
         {
             this.async = async;

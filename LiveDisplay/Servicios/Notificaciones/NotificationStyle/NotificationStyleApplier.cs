@@ -35,8 +35,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
         private int actiontextMaxLines;
         private bool isCollapsed;
 
-        private const int DefaultActionIdentificator = Resource.String.defaulttag; 
-
+        private const int DefaultActionIdentificator = Resource.String.defaulttag;
 
         private LinearLayout notificationActions;
         private TextView title;
@@ -64,13 +63,13 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
         {
             this.notificationView = notificationView;
             this.notificationFragment = notificationFragment;
-            notificationActions= notificationView.FindViewById<LinearLayout>(Resource.Id.notificationActions);
+            notificationActions = notificationView.FindViewById<LinearLayout>(Resource.Id.notificationActions);
             title = notificationView.FindViewById<TextView>(Resource.Id.tvTitulo);
             text = notificationView.FindViewById<TextView>(Resource.Id.tvTexto);
             applicationName = notificationView.FindViewById<TextView>(Resource.Id.tvAppName);
             subtext = notificationView.FindViewById<TextView>(Resource.Id.tvnotifSubtext);
             when = notificationView.FindViewById<TextView>(Resource.Id.tvWhen);
-            closenotificationbutton = notificationView.FindViewById<ImageButton>(Resource.Id.closenotificationbutton);            
+            closenotificationbutton = notificationView.FindViewById<ImageButton>(Resource.Id.closenotificationbutton);
             inlineNotificationContainer = notificationView.FindViewById<LinearLayout>(Resource.Id.inlineNotificationContainer);
             inlineresponse = notificationView.FindViewById<EditText>(Resource.Id.tvInlineText);
             sendinlineresponse = notificationView.FindViewById<ImageButton>(Resource.Id.sendInlineResponseButton);
@@ -91,7 +90,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                     actionTextsAreinCapitalLetters = false;
                     shouldShowIcons = true;
                     actionTextsTypeface = "sans-serif-condensed";
-                    shouldShowIcons = false; 
+                    shouldShowIcons = false;
                     actiontextMaxLines = 1;
                     break;
 
@@ -109,18 +108,17 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                     shouldShowIcons = false; //MediaStyle overrides this.
                     actiontextMaxLines = 1;
                     break;
+
                 default:
                     break;
             }
 
-
             closenotificationbutton.Click += Closenotificationbutton_Click;
             togglenotificationcollapse.Click += Togglenotificationcollapse_Click;
-
-
         }
+
         public NotificationStyleApplier(bool isFloating)
-        { 
+        {
         }
 
         public void ApplyStyle(OpenNotification notification)
@@ -158,16 +156,17 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
             {
                 case BigPictureStyle:
 
-                        var notificationBigPicture = new BitmapDrawable(notification.BigPicture());
-                        WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
-                        {
-                            BlurLevel=0,
-                            OpacityLevel= 125,
-                            SecondsOfAttention= 5,
-                            Wallpaper= notificationBigPicture,
-                            WallpaperPoster= WallpaperPoster.Notification,
-                        });
+                    var notificationBigPicture = new BitmapDrawable(notification.BigPicture());
+                    WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
+                    {
+                        BlurLevel = 0,
+                        OpacityLevel = 125,
+                        SecondsOfAttention = 5,
+                        Wallpaper = notificationBigPicture,
+                        WallpaperPoster = WallpaperPoster.Notification,
+                    });
                     break;
+
                 case InboxStyle:
                     text.SetMaxLines(6); //Should be configurable(?)
                     break;
@@ -176,8 +175,9 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
 
                     text.SetMaxLines(9); //Shoud be configurable(?)
                     text.Text = notification.GetBigText();
-                    ApplyActionsStyle(notification); 
+                    ApplyActionsStyle(notification);
                     break;
+
                 case MediaStyle:
                     when.Text = string.Empty; //The MediaStyle shouldn't show a timestamp.
                     //notification.StartMediaCallback();
@@ -197,9 +197,11 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                     //Theres still things to do, this style has several stuff in Pie and Q versions.
                     //TODO
                     break;
+
                 case DecoratedCustomViewStyle:
                     //todo
                     break;
+
                 default:
                     //Do nothing, yet.
                     break;
@@ -210,7 +212,6 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
         private void Togglenotificationcollapse_Click(object sender, EventArgs e)
         {
             //TODO
-            
         }
 
         private void ApplyDefault(OpenNotification notification)
@@ -256,7 +257,6 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                 openAction.ClickAction();
                 SendInlineResponseAvailabityChanged?.Invoke(null, false); //Here I assume the send inline textbox is not present, because the action simply does not represent a direct reply.
             }
-
         }
 
         private void Sendinlineresponse_Click(object sender, EventArgs e)
@@ -275,10 +275,10 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                 imm.HideSoftInputFromInputMethod(view.WindowToken, 0);
             }
             SendInlineResponseAvailabityChanged?.Invoke(null, false); //Operation finished, inline response text is not available.
-
         }
+
         public void ApplyActionsStyle(OpenNotification notification)
-        {           
+        {
             notificationActions?.RemoveAllViews();
             if (notification.HasActions())
             {
@@ -287,7 +287,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                 {
                     OpenAction openAction = new OpenAction(action);
                     Button actionButton = new Button(Application.Context);
-                    float weight= 1f / actions.Count;
+                    float weight = 1f / actions.Count;
                     actionButton.LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MatchParent, weight);
                     actionButton.SetTextColor(Color.White); //Should change in MediaStyle (?)
                     actionButton.SetTag(DefaultActionIdentificator, openAction);
@@ -296,7 +296,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                     actionButton.SetMaxLines(actiontextMaxLines);
                     TypedValue outValue = new TypedValue();
                     Application.Context.Theme.ResolveAttribute(Android.Resource.Attribute.SelectableItemBackground, outValue, true);
-                    actionButton.SetBackgroundResource(outValue.ResourceId); 
+                    actionButton.SetBackgroundResource(outValue.ResourceId);
                     actionButton.SetTypeface(Typeface.Create(actionTextsTypeface, TypefaceStyle.Normal), TypefaceStyle.Normal);
                     //notificationActions.SetGravity(actionButtonsContainerGravity);
 
@@ -322,12 +322,10 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                         });
                 }
             }
-
         }
 
         public void ToggleExtendedActions(bool extended)
         {
-            
         }
 
         protected override void Dispose(bool disposing)

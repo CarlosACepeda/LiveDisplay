@@ -75,7 +75,7 @@ namespace LiveDisplay.Servicios.Music
                     break;
 
                 case MediaActionFlags.FastFoward:
-                    TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Down, Keycode.MediaFastForward));                
+                    TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Down, Keycode.MediaFastForward));
                     TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Up, Keycode.MediaFastForward));
                     break;
 
@@ -128,6 +128,7 @@ namespace LiveDisplay.Servicios.Music
                 case RemoteControlPlayState.Playing:
                     MusicPlaying?.Invoke(null, EventArgs.Empty);
                     break;
+
                 case RemoteControlPlayState.Paused:
                     MusicPaused?.Invoke(null, EventArgs.Empty);
                     break;

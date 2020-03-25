@@ -10,7 +10,6 @@
     using Android.Media;
     using Android.Media.Session;
     using Android.OS;
-    using Android.Preferences;
     using Android.Provider;
     using Android.Util;
     using Android.Views;
@@ -61,6 +60,7 @@
         private ViewPropertyAnimator viewPropertyAnimator;
         private TextView welcome;
         private ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
+
         public static event EventHandler<LockScreenLifecycleEventArgs> OnActivityStateChanged;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -82,7 +82,7 @@
 
             //Views
             //wallpaperView = FindViewById<ImageView>(Resource.Id.wallpaper);
-            //unlocker = FindViewById<ImageView>(Resource.Id.unlocker);           
+            //unlocker = FindViewById<ImageView>(Resource.Id.unlocker);
             startCamera = FindViewById<Button>(Resource.Id.btnStartCamera);
             startDialer = FindViewById<Button>(Resource.Id.btnStartPhone);
             clearAll = FindViewById<Button>(Resource.Id.btnClearAllNotifications);
@@ -133,13 +133,13 @@
             LoadConfiguration();
 
             OnActivityStateChanged += LockScreenActivity_OnActivityStateChanged;
-            WallpaperPublisher.CurrentWallpaperCleared += WallpaperPublisher_CurrentWallpaperCleared;            
+            WallpaperPublisher.CurrentWallpaperCleared += WallpaperPublisher_CurrentWallpaperCleared;
         }
 
         private void WallpaperPublisher_CurrentWallpaperCleared(object sender, CurrentWallpaperClearedEventArgs e)
         {
             //<document me>
-            if(e.PreviousWallpaperPoster== WallpaperPoster.Lockscreen) 
+            if (e.PreviousWallpaperPoster == WallpaperPoster.Lockscreen)
                 LoadWallpaper(new ConfigurationManager(AppPreferences.Default));
         }
 
@@ -156,11 +156,10 @@
 
         private void WatchdogInterval_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-
             //it works correctly, but I want to refactor this. (Regression)
-            if (currentActivityState== ActivityStates.Resumed)
-            AwakeHelper.TurnOffScreen();
-        }       
+            if (currentActivityState == ActivityStates.Resumed)
+                AwakeHelper.TurnOffScreen();
+        }
 
         private void MusicController_MusicPaused(object sender, EventArgs e)
         {
@@ -195,7 +194,6 @@
                             StopMusicController();
                             StopFloatingNotificationService();
                         });
-
                     }
                 }
             });
@@ -217,7 +215,7 @@
                 Window.DecorView.SetBackgroundColor(Color.Black);
                 if (e.BlurLevel > 0)
                 {
-                    if (e.Wallpaper?.Bitmap!=null)
+                    if (e.Wallpaper?.Bitmap != null)
                     {
                         BlurImage blurImage = new BlurImage(Application.Context);
                         blurImage.Load(e.Wallpaper.Bitmap).Intensity(e.BlurLevel);
@@ -235,7 +233,7 @@
                 }
                 else
                 {
-                    e.Wallpaper.Alpha= e.OpacityLevel;
+                    e.Wallpaper.Alpha = e.OpacityLevel;
                     //Window.SetBackgroundDrawable(null); //Clear wallpaper first(?)
                     Window.SetBackgroundDrawable(e.Wallpaper);
                 }
@@ -245,24 +243,24 @@
 
         private void Lockscreen_Touch(object sender, View.TouchEventArgs e)
         {
-                if (e.Event.Action == MotionEventActions.Down)
+            if (e.Event.Action == MotionEventActions.Down)
+            {
+                if (firstTouchTime == -1)
                 {
-                    if (firstTouchTime == -1)
+                    firstTouchTime = e.Event.DownTime;
+                }
+                else if (firstTouchTime != -1)
+                {
+                    finalTouchTime = e.Event.DownTime;
+                    if (firstTouchTime + threshold < finalTouchTime)
                     {
-                        firstTouchTime = e.Event.DownTime;
+                        firstTouchTime = finalTouchTime; //Let's set the last tap as the first, so the user doesnt have to press twice again
+                        return;
                     }
-                    else if (firstTouchTime != -1)
+                    else if (firstTouchTime + threshold > finalTouchTime)
                     {
-                        finalTouchTime = e.Event.DownTime;
-                        if (firstTouchTime + threshold < finalTouchTime)
-                        {
-                            firstTouchTime = finalTouchTime; //Let's set the last tap as the first, so the user doesnt have to press twice again
-                            return;
-                        }
-                        else if(firstTouchTime + threshold > finalTouchTime)
-                        {
-                            //0 Equals: Normal Behavior
-                            if (doubletapbehavior == "0")
+                        //0 Equals: Normal Behavior
+                        if (doubletapbehavior == "0")
                         {
                             if (e.Event.RawY < halfscreenheight)
                             {
@@ -279,8 +277,8 @@
                                 MoveTaskToBack(true);
                             }
                         }
-                            //The other value is "1" which means Inverted.
-                            else
+                        //The other value is "1" which means Inverted.
+                        else
                         {
                             if (e.Event.RawY < halfscreenheight)
                             {
@@ -297,12 +295,12 @@
                                 AwakeHelper.TurnOffScreen();
                             }
                         }
-                        }
-                        //Reset the values of touch
-                        firstTouchTime = -1;
-                        finalTouchTime = -1;
                     }
+                    //Reset the values of touch
+                    firstTouchTime = -1;
+                    finalTouchTime = -1;
                 }
+            }
         }
 
         protected override void OnResume()
@@ -313,7 +311,7 @@
             watchDog.Stop();
             watchDog.Start();
             OnActivityStateChanged?.Invoke(null, new LockScreenLifecycleEventArgs { State = ActivityStates.Resumed });
-            if (configurationManager.RetrieveAValue(ConfigurationParameters.TutorialRead)==false)
+            if (configurationManager.RetrieveAValue(ConfigurationParameters.TutorialRead) == false)
             {
                 welcome = FindViewById<TextView>(Resource.Id.welcomeoverlay);
                 welcome.Text = Resources.GetString(Resource.String.tutorialtext);
@@ -349,12 +347,15 @@
                 case AwakeStatus.Up:
                     livedisplayinfo.Text = "Awake is Active";
                     break;
+
                 case AwakeStatus.Sleeping:
                     livedisplayinfo.Text = "Awake is not Active (I'm sleeping)";
                     break;
+
                 case AwakeStatus.UpWithDeviceMotionDisabled:
                     livedisplayinfo.Text = "Awake is more or less Active";
                     break;
+
                 default:
                     break;
             }
@@ -368,7 +369,6 @@
                 welcome.Visibility = ViewStates.Gone;
                 welcome.Touch -= Welcome_Touch;
             }
-
         }
 
         private void MusicControllerKitkat_MusicPaused(object sender, EventArgs e) => CheckIfMusicIsStillPaused();
@@ -390,7 +390,6 @@
             OnActivityStateChanged?.Invoke(null, new LockScreenLifecycleEventArgs { State = ActivityStates.Paused });
             if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
             {
-
                 MusicController.MusicPlaying -= MusicController_MusicPlaying;
                 MusicController.MusicPaused -= MusicController_MusicPaused;
             }
@@ -556,21 +555,18 @@
                 StartAwakeService();
             }
             doubletapbehavior = configurationManager.RetrieveAValue(ConfigurationParameters.DoubleTapOnTopActionBehavior, "0");
-            
         }
 
         private void LoadWallpaper(ConfigurationManager configurationManager)
         {
-
             int savedblurlevel = configurationManager.RetrieveAValue(ConfigurationParameters.BlurLevel, 1);
             int savedOpacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, 255);
 
             switch (configurationManager.RetrieveAValue(ConfigurationParameters.ChangeWallpaper, "0"))
             {
-
                 case "0":
 
-                    WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = null, WallpaperPoster= WallpaperPoster.Lockscreen });
+                    WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = null, WallpaperPoster = WallpaperPoster.Lockscreen });
                     break;
 
                 case "1":
@@ -593,21 +589,19 @@
                     {
                         ThreadPool.QueueUserWorkItem(m =>
                         {
-                            Bitmap bitmap = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.ImagePath, imagePath));                            
+                            Bitmap bitmap = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.ImagePath, imagePath));
                             BlurImage blurImage = new BlurImage(Application.Context);
                             blurImage.Load(bitmap).Intensity(savedblurlevel).Async(true);
                             Drawable drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
-                            WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = new BitmapDrawable(bitmap), OpacityLevel = (short)savedOpacitylevel, BlurLevel = (short)savedblurlevel, WallpaperPoster = WallpaperPoster.Lockscreen });                            
+                            WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = new BitmapDrawable(bitmap), OpacityLevel = (short)savedOpacitylevel, BlurLevel = (short)savedblurlevel, WallpaperPoster = WallpaperPoster.Lockscreen });
                         });
-
-                    }                        
+                    }
                     break;
 
                 default:
                     Window.DecorView.SetBackgroundColor(Color.Black);
                     break;
             }
-
         }
 
         private void LoadNotificationFragment()
@@ -682,6 +676,7 @@
                 //NotificationFragment.NotificationClicked-= NotificationFragment_NotificationClicked;
             }
         }
+
         private void StopFloatingNotificationService()
         {
             using (Intent intent = new Intent(Application.Context, typeof(FloatingNotification)))
@@ -736,15 +731,17 @@
                 isMusicWidgetPresent = false;
             }
         }
-
     }
+
     public class LockScreenAnimationHelper : Java.Lang.Object, Animator.IAnimatorListener
     {
         private Window lockScreenWindow;
+
         public LockScreenAnimationHelper(Window window)
         {
-            lockScreenWindow = window; 
+            lockScreenWindow = window;
         }
+
         public void OnAnimationCancel(Animator animation)
         {
         }

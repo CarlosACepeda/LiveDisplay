@@ -1,12 +1,6 @@
 ﻿namespace LiveDisplay.Factories
 {
-
     using Android.App;
-    using Android.Content;
-    using Android.Graphics;
-    using Android.Graphics.Drawables;
-    using Android.Preferences;
-    using Android.Renderscripts;
     using LiveDisplay.Misc;
     using LiveDisplay.Servicios;
 

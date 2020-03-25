@@ -95,7 +95,7 @@
         private void IsApplicationHealthy()
         {
             using var accessestext = FindViewById<TextView>(Resource.Id.health);
-            if (Checkers.IsNotificationListenerEnabled()  && Checkers.IsThisAppADeviceAdministrator() && Checkers.ThisAppCanDrawOverlays())
+            if (Checkers.IsNotificationListenerEnabled() && Checkers.IsThisAppADeviceAdministrator() && Checkers.ThisAppCanDrawOverlays())
             {
                 accessestext.SetText(Resource.String.accessesstatusenabled);
                 accessestext.SetTextColor(Android.Graphics.Color.Green);

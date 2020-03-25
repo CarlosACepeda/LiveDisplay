@@ -62,18 +62,17 @@
             var spinnerAdapter = ArrayAdapter.CreateFromResource(this, Resource.Array.listentriesweatherupdatefrequency, Android.Resource.Layout.SimpleSpinnerDropDownItem);
 
             weatherupdatefrequency.Adapter = spinnerAdapter;
-            weatherupdatefrequency.ItemSelected += Weatherupdatefrequency_ItemSelected; 
+            weatherupdatefrequency.ItemSelected += Weatherupdatefrequency_ItemSelected;
             LoadConfiguration();
         }
 
         private void Weatherupdatefrequency_ItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
         {
-
             long interval_minutes = int.Parse(Resources.GetStringArray(Resource.Array.listvaluesweatherupdatefrequency)[e.Position]);
 
             JobInfo.Builder jobBuilder = new JobInfo.Builder(56114281, new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(GrabWeatherJob))));
             jobBuilder.SetPersisted(true);
-            jobBuilder.SetPeriodic(1000*60* interval_minutes);
+            jobBuilder.SetPeriodic(1000 * 60 * interval_minutes);
             jobBuilder.SetRequiredNetworkType(Android.App.Job.NetworkType.Unmetered);
             JobScheduler jobScheduler = (JobScheduler)Application.Context.GetSystemService(Context.JobSchedulerService);
             int result = jobScheduler.Schedule(jobBuilder.Build());
@@ -85,7 +84,6 @@
             {
                 Log.Info("LiveDisplay", "Job Result Not Sucess");
             }
-
         }
 
         private void Trytogetweather_Click(object sender, System.EventArgs e)
@@ -103,7 +101,6 @@
             {
                 var weather = await Weather.GetWeather(currentcity, countryCode, units);
 
-
                 RunOnUiThread(() =>
                 {
                     temperature.Text = weather?.MainWeather.Temperature.ToString() + temperatureSuffix;
@@ -112,7 +109,7 @@
                     citytext.Text = weather?.Name + ": " + weather?.Weather[0].Description;
                     humidity.Text = Resources.GetString(Resource.String.humidity) + ": " + weather?.MainWeather.Humidity.ToString();
 
-                    trytogetweather.Text =  GetString(Resource.String.testweathersettingsbutton);
+                    trytogetweather.Text = GetString(Resource.String.testweathersettingsbutton);
                     trytogetweather.Enabled = true;
                 });
 

@@ -3,7 +3,6 @@
     using Android.App;
     using Android.Content;
     using Android.OS;
-    using Android.Preferences;
     using Android.Provider;
     using Android.Views;
     using Android.Widget;
@@ -20,15 +19,19 @@
         private readonly ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Weather);
         private TextView date;
         private TextClock clock;
+
         //private RelativeLayout weatherclockcontainer;
         private TextView battery;
+
         private ImageView batteryIcon;
         private BatteryReceiver batteryReceiver;
         private TextView temperature;
+
         //private TextView minimumTemperature;
         //private TextView maximumTemperature;
         //private TextView humidity;
         private TextView description;
+
         //private TextView lastupdated;
         //private TextView city;
         //private LinearLayout weatherinfo;
@@ -74,10 +77,11 @@
             ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
             return v;
         }
+
         public override void OnResume()
         {
             LoadWeather();
-            base.OnResume();    
+            base.OnResume();
         }
 
         private void LoadWeather()
