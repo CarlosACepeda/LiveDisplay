@@ -11,6 +11,7 @@
     using Android.Views;
     using Android.Widget;
     using AndroidX.AppCompat.App;
+    using AndroidX.AppCompat.Widget;
     using LiveDisplay.Factories;
     using LiveDisplay.Misc;
     using LiveDisplay.Servicios;
@@ -22,7 +23,7 @@
     {
         private Button pickwallpaper;
         private AndroidX.AppCompat.Widget.Toolbar toolbar;
-        private ImageView wallpaperPreview;
+        private AppCompatImageView wallpaperPreview;
         private SeekBar blur;
         private SeekBar opacity;
         private Spinner wallpaperbeingsetted;
@@ -54,7 +55,7 @@
             }
 
             pickwallpaper = FindViewById<Button>(Resource.Id.pickwallpaper);
-            wallpaperPreview = FindViewById<ImageView>(Resource.Id.wallpaperPreview);
+            wallpaperPreview = FindViewById<AppCompatImageView>(Resource.Id.wallpaperPreview);
             blur = FindViewById<SeekBar>(Resource.Id.blur);
             opacity = FindViewById<SeekBar>(Resource.Id.opacity);
             wallpaperbeingsetted = FindViewById<Spinner>(Resource.Id.wallpaperbeingsetted);
@@ -114,7 +115,7 @@
                             Bitmap bitmap = ((BitmapDrawable)wallpaperManager.Drawable).Bitmap;
 
                             BlurImage blurImage = new BlurImage(Application.Context);
-                            blurImage.Load(bitmap).Intensity(defaultBlurLevel).Async(true);
+                            blurImage.Load(bitmap).Intensity(defaultBlurLevel);
                             Drawable drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
                             RunOnUiThread(() =>
                             {
@@ -196,7 +197,7 @@
                                     Bitmap bitmap = ((BitmapDrawable)wallpaperManager.Drawable).Bitmap;
 
                                     BlurImage blurImage = new BlurImage(Application.Context);
-                                    blurImage.Load(bitmap).Intensity(defaultBlurLevel).Async(true);
+                                    blurImage.Load(bitmap).Intensity(defaultBlurLevel);
                                     Drawable drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
                                     RunOnUiThread(() =>
                                     {
@@ -214,7 +215,7 @@
                                     using (var backgroundcopy = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.ImagePath, imagePath)))
                                     {
                                         BlurImage blurImage = new BlurImage(Application.Context);
-                                        blurImage.Load(backgroundcopy).Intensity(defaultBlurLevel).Async(true);
+                                        blurImage.Load(backgroundcopy).Intensity(defaultBlurLevel);
                                         var drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
                                         RunOnUiThread(() =>
                                         {
@@ -257,7 +258,7 @@
                         {
                             Bitmap bitmap = ((BitmapDrawable)Application.Context.GetDrawable(Resource.Drawable.album_artwork)).Bitmap;
                             BlurImage blurImage = new BlurImage(Application.Context);
-                            blurImage.Load(bitmap).Intensity(albumArtBlurLevel).Async(true);
+                            blurImage.Load(bitmap).Intensity(albumArtBlurLevel);
                             Drawable drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
                             RunOnUiThread(() =>
                         {
@@ -301,7 +302,7 @@
                         Bitmap bitmap = ((BitmapDrawable)wallpaperManager.Drawable).Bitmap;
 
                         BlurImage blurImage = new BlurImage(Application.Context);
-                        blurImage.Load(bitmap).Intensity(defaultBlurLevel).Async(true);
+                        blurImage.Load(bitmap).Intensity(defaultBlurLevel);
                         Drawable drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
                         RunOnUiThread(() =>
                         {
@@ -318,7 +319,7 @@
                         var imagePath = configurationManager.RetrieveAValue(ConfigurationParameters.ImagePath, "");
                         using var backgroundcopy = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.ImagePath, imagePath));
                         BlurImage blurImage = new BlurImage(Application.Context);
-                        blurImage.Load(backgroundcopy).Intensity(defaultBlurLevel).Async(true);
+                        blurImage.Load(backgroundcopy).Intensity(defaultBlurLevel);
                         var drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
                         RunOnUiThread(() =>
                         {
@@ -371,7 +372,7 @@
                         using (var backgroundcopy = (BitmapDrawable)wallpaperManager.Drawable)
                         {
                             BlurImage blurImage = new BlurImage(Application.Context);
-                            blurImage.Load(backgroundcopy.Bitmap).Intensity(e.SeekBar.Progress).Async(true);
+                            blurImage.Load(backgroundcopy.Bitmap).Intensity(e.SeekBar.Progress);
                             drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
                             RunOnUiThread(() =>
                             {
@@ -388,7 +389,7 @@
                         var imagePath = configurationManager.RetrieveAValue(ConfigurationParameters.ImagePath, "");
                         using var backgroundcopy = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.ImagePath, imagePath));
                         BlurImage blurImage = new BlurImage(Application.Context);
-                        blurImage.Load(backgroundcopy).Intensity(e.SeekBar.Progress).Async(true);
+                        blurImage.Load(backgroundcopy).Intensity(e.SeekBar.Progress);
                         drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
                         RunOnUiThread(() =>
                         {
@@ -450,7 +451,7 @@
                             defaultBlurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.BlurLevel, 1);
                             defaultOpacityLevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, 255);
                             BlurImage blurImage = new BlurImage(Application.Context);
-                            blurImage.Load(bitmap).Intensity(defaultBlurLevel).Async(true);
+                            blurImage.Load(bitmap).Intensity(defaultBlurLevel);
                             Drawable drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
                             RunOnUiThread(() =>
                             {

@@ -4,22 +4,23 @@
     using Android.App.Job;
     using Android.Content;
     using Android.OS;
-    using Android.Support.V7.App;
     using Android.Telephony;
     using Android.Util;
     using Android.Views;
     using Android.Widget;
+    using AndroidX.AppCompat.App;
+    using AndroidX.AppCompat.Widget;
     using LiveDisplay.Misc;
     using LiveDisplay.Servicios;
     using LiveDisplay.Servicios.Weather;
-    using System;
     using System.Threading;
+    using Toolbar = AndroidX.AppCompat.Widget.Toolbar;
 
     [Activity(Label = "@string/weather", Theme = "@style/LiveDisplayThemeDark.NoActionBar")]
     public class WeatherSettingsActivity : AppCompatActivity
     {
         private ConfigurationManager configurationManager;
-        private EditText city;
+        private AppCompatEditText city;
         private Switch useimperialsystem;
         private TextView citytext;
         private TextView humidity;
@@ -39,11 +40,11 @@
 
             // Create your application here
             SetContentView(Resource.Layout.WeatherSettings);
-            using (var toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar))
+            using (var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar))
             {
                 SetSupportActionBar(toolbar);
             }
-            city = FindViewById<EditText>(Resource.Id.cityedit);
+            city = FindViewById<AppCompatEditText>(Resource.Id.cityedit);
             useimperialsystem = FindViewById<Switch>(Resource.Id.useimperialsystem);
             city.FocusChange += City_FocusChange;
             useimperialsystem.CheckedChange += Useimperialsystem_CheckedChange;

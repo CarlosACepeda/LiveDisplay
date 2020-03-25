@@ -7,17 +7,17 @@ using Android.Preferences;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using AndroidX.Fragment.App;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
 using LiveDisplay.Servicios.Music;
 using LiveDisplay.Servicios.Music.MediaEventArgs;
 using LiveDisplay.Servicios.Wallpaper;
-using AndroidX.Fragment.App;
 using System;
 using System.Threading;
 using System.Timers;
-using Timer = System.Timers.Timer;
 using Fragment = AndroidX.Fragment.App.Fragment;
+using Timer = System.Timers.Timer;
 
 namespace LiveDisplay.Fragments
 {

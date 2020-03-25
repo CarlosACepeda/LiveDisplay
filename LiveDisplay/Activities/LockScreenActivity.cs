@@ -12,11 +12,12 @@
     using Android.OS;
     using Android.Preferences;
     using Android.Provider;
-    using Android.Support.V7.Widget;
     using Android.Util;
     using Android.Views;
     using Android.Views.Animations;
     using Android.Widget;
+    using AndroidX.AppCompat.App;
+    using AndroidX.RecyclerView.Widget;
     using LiveDisplay.Activities;
     using LiveDisplay.Activities.ActivitiesEventArgs;
     using LiveDisplay.Fragments;
@@ -31,8 +32,8 @@
     using System;
     using System.Threading;
 
-    [Activity(Label = "LockScreen", Theme = "@style/LiveDisplayThemeDark", ScreenOrientation = ScreenOrientation.Portrait, MainLauncher = false, TaskAffinity = "livedisplay.lockscreen", LaunchMode = LaunchMode.SingleInstance, ExcludeFromRecents = true)]
-    public class LockScreenActivity : Activity
+    [Activity(Label = "LockScreen", Theme = "@style/LiveDisplayThemeDark.NoActionBar", ScreenOrientation = ScreenOrientation.Portrait, MainLauncher = false, TaskAffinity = "livedisplay.lockscreen", LaunchMode = LaunchMode.SingleInstance, ExcludeFromRecents = true)]
+    public class LockScreenActivity : AppCompatActivity
     {
         private RecyclerView recycler;
         private RecyclerView.LayoutManager layoutManager;
@@ -611,7 +612,7 @@
 
         private void LoadNotificationFragment()
         {
-            using (FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction())
+            using (AndroidX.Fragment.App.FragmentTransaction fragmentTransaction = SupportFragmentManager.BeginTransaction())
             {
                 fragmentTransaction.Replace(Resource.Id.MusicNotificationPlaceholder, notificationFragment);
                 fragmentTransaction.SetCustomAnimations(Resource.Animation.fade_in, Resource.Animation.fade_out);
@@ -622,7 +623,7 @@
 
         private void LoadClockFragment()
         {
-            using (FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction())
+            using (AndroidX.Fragment.App.FragmentTransaction fragmentTransaction = SupportFragmentManager.BeginTransaction())
             {
                 fragmentTransaction.Replace(Resource.Id.weatherandcLockplaceholder, clockFragment);
                 fragmentTransaction.DisallowAddToBackStack();
@@ -716,7 +717,7 @@
         private void StartMusicController()
         {
             // я голоден... ; хД
-            using (FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction())
+            using (AndroidX.Fragment.App.FragmentTransaction fragmentTransaction = SupportFragmentManager.BeginTransaction())
             {
                 fragmentTransaction.Replace(Resource.Id.MusicNotificationPlaceholder, musicFragment);
                 fragmentTransaction.SetCustomAnimations(Resource.Animation.fade_in, Resource.Animation.fade_out);

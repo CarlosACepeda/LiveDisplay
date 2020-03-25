@@ -17,7 +17,7 @@ namespace LiveDisplay.Servicios
             switch (preferences)
             {
                 case AppPreferences.Default:
-                    sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
+                    sharedPreferences = AndroidX.Preference.PreferenceManager.GetDefaultSharedPreferences(Application.Context);
                     break;
                 case AppPreferences.Weather:
                     sharedPreferences = Application.Context.GetSharedPreferences("weatherpreferences", FileCreationMode.Private);

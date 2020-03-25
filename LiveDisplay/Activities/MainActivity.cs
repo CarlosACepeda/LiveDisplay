@@ -4,12 +4,11 @@
     using Android.App.Admin;
     using Android.Content;
     using Android.OS;
-    using Android.Preferences;
     using Android.Provider;
     using Android.Runtime;
-    using Android.Support.V7.App;
     using Android.Views;
     using Android.Widget;
+    using AndroidX.AppCompat.App;
     using LiveDisplay.BroadcastReceivers;
     using LiveDisplay.Misc;
     using LiveDisplay.Servicios;
@@ -20,12 +19,13 @@
     using Microsoft.AppCenter.Crashes;
     using System;
     using System.Threading;
-
+    using AlertDialog = AndroidX.AppCompat.App.AlertDialog;
+    using Toolbar = AndroidX.AppCompat.Widget.Toolbar;
 
     [Activity(Label = "@string/app_name", Theme = "@style/LiveDisplayThemeDark.NoActionBar", TaskAffinity = "livedisplay.main", MainLauncher = true)]
     internal class MainActivity : AppCompatActivity
     {
-        private Android.Support.V7.Widget.Toolbar toolbar;
+        private Toolbar toolbar;
         private TextView enableNotificationAccess, enableDeviceAdmin;
         private TextView enableDrawOverAccess;
         private RelativeLayout enableDrawOverAccessContainer;
@@ -181,7 +181,7 @@
                     break;
 
                 case Resource.Id.action_help:
-                    using (Android.Support.V7.App.AlertDialog.Builder builder = new Android.Support.V7.App.AlertDialog.Builder(this))
+                    using (AlertDialog.Builder builder = new AlertDialog.Builder(this))
                     {
                         builder.SetMessage(Resource.String.helptext);
                         builder.SetPositiveButton("ok, cool", null as EventHandler<DialogClickEventArgs>);
@@ -199,7 +199,7 @@
 
         protected void BindViews()
         {
-            using (toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.mainToolbar))
+            using (toolbar = FindViewById<Toolbar>(Resource.Id.mainToolbar))
             {
                 SetSupportActionBar(toolbar);
             }
@@ -225,7 +225,7 @@
 
         private void EnableDeviceAdmin_Click(object sender, EventArgs e)
         {
-            using (Android.Support.V7.App.AlertDialog.Builder builder = new Android.Support.V7.App.AlertDialog.Builder(this))
+            using (AlertDialog.Builder builder = new AlertDialog.Builder(this))
             {
                 builder.SetMessage(Resource.String.dialogfordeviceaccessdescription);
                 builder.SetPositiveButton(Resource.String.dialogallowbutton, new EventHandler<DialogClickEventArgs>(OnDialogPositiveButtonEventArgs));

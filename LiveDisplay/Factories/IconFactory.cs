@@ -3,7 +3,7 @@
     using Android.App;
     using Android.Content;
     using Android.Graphics.Drawables;
-    using Android.Support.V4.Content;
+    using AndroidX.Core.Content;
 
     internal class IconFactory
     {
