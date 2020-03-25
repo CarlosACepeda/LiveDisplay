@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="advanced">Avansat</string>
   <string name="blacklist">Listă Neagră</string>
   <string name="blackwallpaper">Negru</string>
   <string name="changewallpaper">Schimbă fundalul ecranului</string>
@@ -13,7 +14,11 @@
   <string name="idk">¯\\_(ツ)_/¯</string>
   <string name="inactivetimesettings">Ore de inactivitate</string>
   <string name="lockonboot">Blocați ecranul la pornire</string>
+  <string name="musiccontrolledfrommediasession">Alegeți cea mai bună sesiune multimedia</string>
+  <string name="musiccontrolledfromnotification">Folosiți cea mai recentă notificare care reprezintă redarea multimedia</string>
+  <string name="musicwidgetcontrolmethod">Metoda de control a Muzicii</string>
   <string name="musicwidgetenabled">Activează Widget de Muzică</string>
+  <string name="notavailableyet">Nu este disponibil încă ...</string>
   <string name="notificationsettings">Notificări</string>
   <string name="onehour">1 oră</string>
   <string name="opciones">Opțiuni</string>
@@ -25,14 +30,9 @@
   <string name="turnonnewnotification">Aprinde ecranul</string>
   <string name="twelvehours">12 ore</string>
   <string name="updateweathereach">Actualizare climă fiecare</string>
-  <string name="versionnumber">0.9.0-alpha1</string>
+  <string name="versionnumber">0.9.0-alpha2</string>
   <string name="wallpaperblur">Blurare</string>
   <string name="wallpaperopacity">Opacitate</string>
   <string name="weatherwidget">Widget de Climă</string>
   <string name="weatherwidgetenabled">Activează Widget de Climă</string>
-  <string name="musicwidgetcontrolmethod">Metoda de control a Muzicii</string>
-  <string name="advanced">Avansat</string>
-  <string name="musiccontrolledfrommediasession">Alegeți cea mai bună sesiune multimedia</string>
-  <string name="musiccontrolledfromnotification">Folosiți cea mai recentă notificare care reprezintă redarea multimedia</string>
-  <string name="notavailableyet">Nu este disponibil încă ...</string>
 </resources>

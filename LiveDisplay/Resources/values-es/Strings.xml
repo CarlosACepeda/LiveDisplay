@@ -7,6 +7,7 @@
   <string name="accessesstatusenabled">Accesos activados!</string>
   <string name="achep_ty">Ayuda y guía!</string>
   <string name="acknowledgments">Agradecimientos</string>
+  <string name="advanced">Avanzado</string>
   <string name="albumartappearancesetting">Carátula del Álbum</string>
   <string name="alertnopermissions">Debes permitir los permisos requeridos!</string>
   <string name="app_name">LiveDisplay</string>
@@ -67,9 +68,13 @@
   <string name="lockdelay_desc">Bloquear la pantalla después del tiempo dado</string>
   <string name="lockonboot">Bloquear la pantalla al iniciar</string>
   <string name="lockscreensettings">Lockscreen</string>
+  <string name="musiccontrolledfrommediasession">Elegir la mejor Sesión de Multimedia</string>
+  <string name="musiccontrolledfromnotification">Usar la notification más reciente que represente la reproducción de multimedia</string>
   <string name="musicwidget">Widget de Musica</string>
+  <string name="musicwidgetcontrolmethod">Método de control de Música</string>
   <string name="musicwidgetenabled">Activar el Widget de Música</string>
   <string name="nonallowedtoturnonscreen">No permitido para encender la pantalla</string>
+  <string name="notavailableyet">No disponible...aún.</string>
   <string name="notificationsettings">Notificaciones</string>
   <string name="notificationviewvisibilitytime">Después de clicar la notificación esconderla después de...</string>
   <string name="ok">Ok</string>
@@ -101,7 +106,7 @@
   <string name="updateweathereach">Actualizar clima cada</string>
   <string name="useimperialunits">Usar unidades imperiales</string>
   <string name="version">Versión</string>
-  <string name="versionnumber">0.9.0-alpha1</string>
+  <string name="versionnumber">0.9.0-alpha2</string>
   <string name="wallpaperblur">Difuminación</string>
   <string name="wallpaperopacity">Opacidad</string>
   <string name="wallpapersettingappliestoalbumart">La configuración actual también afecta las carátulas de album</string>
@@ -111,9 +116,4 @@
   <string name="weatherwidgetenabled">Activar el Widget del Clima</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">Diseño del icono de esta app!</string>
-  <string name="musicwidgetcontrolmethod">Método de control de Música</string>
-  <string name="advanced">Avanzado</string>
-  <string name="musiccontrolledfrommediasession">Elegir la mejor Sesión de Multimedia</string>
-  <string name="musiccontrolledfromnotification">Usar la notification más reciente que represente la reproducción de multimedia</string>
-  <string name="notavailableyet">No disponible...aún.</string>
 </resources>
