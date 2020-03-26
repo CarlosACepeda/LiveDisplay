@@ -1,49 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:a="http://schemas.android.com/apk/res-auto"
-	xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:a="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-	<androidx.appcompat.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
         android:theme="@style/AppToolbar"
         a:popupTheme="@style/popupTheme" />
-	<androidx.appcompat.widget.AppCompatEditText
-		android:hint="@string/entercityplaceholder"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:minWidth="25px"
-		android:minHeight="25px"
-		android:id="@+id/cityedit" />
-	<Switch
-		android:padding="10dp"
-		android:text="@string/useimperialunits"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:id="@+id/useimperialsystem" />
-	<Button
-		android:id="@+id/trytogetweather"
-		android:text="@string/testweathersettingsbutton"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content" />
-<include
-		layout="@layout/weather"
-	android:layout_width="match_parent"
-	android:layout_height="wrap_content" />
-	<TextView
-		tools:text="Update weather each:"
-		android:text="@string/updateweathereach"
+    <androidx.appcompat.widget.AppCompatEditText
+        android:paddingLeft="15dp"
+        android:hint="@string/entercityplaceholder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:id="@+id/cityedit" />
+    <Switch
+        android:padding="@dimen/preference_seekbar_padding_vertical"
+        android:text="@string/useimperialunits"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/useimperialsystem" />
+    <Switch
+        android:padding="@dimen/preference_seekbar_padding_vertical"
+        android:text="@string/allowweatherchangewallpaper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/allowchangingthewallpaper" />
+    <TextView
+        android:paddingLeft="@dimen/abc_dropdownitem_text_padding_left"
+        tools:text="Update weather each:"
+        android:text="@string/updateweathereach"
         android:textAppearance="?android:attr/textAppearanceMedium"
-		android:layout_height="wrap_content"
-		android:layout_width="match_parent"/>
-	<Spinner
-		android:id="@+id/weatherupdatefrequency"		
-		android:layout_height="wrap_content"
-		android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"/>
+    <Spinner
+        android:id="@+id/weatherupdatefrequency"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
 	/>
+    <Button
+        android:id="@+id/savesettings"
+        android:text="@string/saveweathersettings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <include
+        layout="@layout/weather"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    
 
 </LinearLayout>

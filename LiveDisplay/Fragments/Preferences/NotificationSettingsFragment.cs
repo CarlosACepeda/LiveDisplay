@@ -1,5 +1,6 @@
 ﻿using Android.App;
 using Android.Content;
+using Android.Content.Res;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
@@ -11,10 +12,8 @@ using System;
 
 namespace LiveDisplay.Fragments.Preferences
 {
-    public class NotificationSettingsFragment : PreferenceFragmentCompat, ISharedPreferencesOnSharedPreferenceChangeListener
+    public class NotificationSettingsFragment : PreferenceFragmentCompat
     {
-        private ISharedPreferences sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
-        private bool isSleepstarttimesetted = false;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
@@ -23,13 +22,11 @@ namespace LiveDisplay.Fragments.Preferences
 
         public override void OnResume()
         {
-            sharedPreferences.RegisterOnSharedPreferenceChangeListener(this);
             base.OnResume();
         }
 
         public override void OnPause()
         {
-            sharedPreferences.UnregisterOnSharedPreferenceChangeListener(this);
             base.OnPause();
         }
 
@@ -39,69 +36,21 @@ namespace LiveDisplay.Fragments.Preferences
             PreferenceManager.SetDefaultValues(Application.Context, Resource.Xml.notification_prefs, false);
 
             Preference blacklistpreference = FindPreference("blacklist");
-            Preference inactivehourssettingspreference = FindPreference("inactivetimesettings");
-
             blacklistpreference.PreferenceClick += Blacklistpreference_PreferenceClick;
-            inactivehourssettingspreference.PreferenceClick += Inactivehourssettingspreference_PreferenceClick;
+
+            SwitchPreference enablequickreplypreference = FindPreference("enablequickreply?") as SwitchPreference;
+
+            if (Build.VERSION.SdkInt < BuildVersionCodes.N)
+            {
+                enablequickreplypreference.Enabled = false;
+                enablequickreplypreference.Checked = false;
+            }
         }
 
         private void Blacklistpreference_PreferenceClick(object sender, Preference.PreferenceClickEventArgs e)
         {
             Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(BlacklistActivity)));
             StartActivity(intent);
-        }
-
-        private void Inactivehourssettingspreference_PreferenceClick(object sender, Preference.PreferenceClickEventArgs e)
-        {
-            using (TimePickerDialog datePickerDialog = new TimePickerDialog(Activity, PreferencesFragmentCompat_timepicked, DateTime.Now.Hour, DateTime.Now.Minute, false))
-            {
-                if (!isSleepstarttimesetted)
-                {
-                    Toast.MakeText(Activity, "Set the Start hour", ToastLength.Long).Show();
-                }
-                else
-                {
-                    Toast.MakeText(Activity, "Set the finish hour", ToastLength.Long).Show();
-                }
-                //datePickerDialog.Create();
-                datePickerDialog.Show();
-            }
-        }
-
-        private void PreferencesFragmentCompat_timepicked(object sender, TimePickerDialog.TimeSetEventArgs e)
-        {
-            //Simple trick to save two different values using the same timepicker.
-
-            ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
-            if (isSleepstarttimesetted)
-            {
-                configurationManager.SaveAValue(ConfigurationParameters.FinishSleepTime, string.Concat(e.HourOfDay.ToString() + e.Minute.ToString()));
-            }
-            else
-            {
-                configurationManager.SaveAValue(ConfigurationParameters.StartSleepTime, string.Concat(e.HourOfDay.ToString() + e.Minute.ToString()));
-                isSleepstarttimesetted = true;
-            }
-        }
-
-        public void OnSharedPreferenceChanged(ISharedPreferences sharedPreferences, string key)
-        {
-            switch (key)
-            {
-                case ConfigurationParameters.DoubleTapOnTopActionBehavior:
-                    Preference doubletaptopbehavior = FindPreference("doubletapontoppactionbehavior");
-                    switch (sharedPreferences.GetString(ConfigurationParameters.DoubleTapOnTopActionBehavior, "0"))
-                    {
-                        case "0":
-                            doubletaptopbehavior.SetSummary(Resource.String.doubletaptopactiondesc);
-                            break;
-
-                        case "1":
-                            doubletaptopbehavior.SetSummary(Resource.String.doubletaptopactioninverteddesc);
-                            break;
-                    }
-                    break;
-            }
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)

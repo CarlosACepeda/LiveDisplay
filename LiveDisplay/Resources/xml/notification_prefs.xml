@@ -13,63 +13,12 @@
       android:selectable="true"
       app:iconSpaceReserved="false">
     </Preference>
-    <!--<SwitchPreference
+    <SwitchPreference
         android:key="enablequickreply?"
         android:title="@string/enablequickreply"
         android:summary="@string/enablequickreplydesc"
-        ></SwitchPreference>-->
-  </PreferenceCategory>
-  <PreferenceCategory android:title="@string/awakesettings"
-                      app:iconSpaceReserved="false">
-    <SwitchPreference
-      android:defaultValue="false"
-      android:key="enableawake?"
-      android:title="@string/enableawake"
-      app:iconSpaceReserved="false">
-    </SwitchPreference>
-    <Preference
-      android:key="inactivetimesettings"
-      android:title="@string/inactivetimesettings"
-      android:summary="@string/inactivetimesettingsdesc"
-      app:iconSpaceReserved="false">
-    </Preference>
-    <SwitchPreference
-    android:key="turnonnewnotification?"
-    android:title="@string/turnonnewnotification"
-    android:summary="@string/turnonnewnotification_desc"
-    app:iconSpaceReserved="false">
-    </SwitchPreference>
-    <SwitchPreference
-      android:key="turnonusermovement?"
-      android:title="@string/turnonusermovement"
-      app:iconSpaceReserved="false">
-    </SwitchPreference>
-    <ListPreference
-      android:defaultValue="0"
-      android:key="doubletapontoppactionbehavior"
-      android:title="@string/doubletaptopaction"
-      android:summary="@string/doubletaptopactiondesc"
-      android:entries="@array/listentrieschangedoubletapbehavior"
-      android:entryValues="@array/listvalueschangedoubletapbehavior"
-      app:iconSpaceReserved="false">
-    </ListPreference>
-    <ListPreference
-      android:defaultValue="0"
-      android:key="startlockscreendelaytime"
-      android:title="@string/lockdelay"
-      android:summary="@string/lockdelay_desc"
-      android:entries="@array/listentriesstartlock"
-      android:entryValues="@array/listvaluesstartlock"
-      app:iconSpaceReserved="false">
-    </ListPreference>
-    <ListPreference
-      android:defaultValue="5000"
-      android:key="turnoffscreendelaytime"
-      android:title="@string/turnoffdelay"
-      android:summary="@string/turnoffdelay_desc"
-      android:entries="@array/listentriesturnoff"
-      android:entryValues="@array/listvaluesturnoff"
-      app:iconSpaceReserved="false">
-    </ListPreference>
+        android:defaultValue="true"
+        app:iconSpaceReserved="false"
+        />
   </PreferenceCategory>
 </PreferenceScreen>

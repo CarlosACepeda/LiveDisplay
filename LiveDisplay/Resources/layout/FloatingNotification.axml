@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:minHeight="70dp"
     android:background="?android:selectableItemBackground">
-	<android.support.v7.widget.CardView
+	<androidx.cardview.widget.CardView
 		app:contentPadding="3dp"
 		app:cardCornerRadius="5dp"
 		app:cardElevation="1dp"
@@ -65,5 +65,5 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content" />
 		</LinearLayout>
-	</android.support.v7.widget.CardView>
+	</androidx.cardview.widget.CardView>
 </LinearLayout>

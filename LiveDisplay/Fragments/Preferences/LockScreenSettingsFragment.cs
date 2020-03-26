@@ -7,7 +7,7 @@ using LiveDisplay.Activities;
 
 namespace LiveDisplay.Fragments.Preferences
 {
-    public class LockScreenSettingsFragment : AndroidX.Preference.PreferenceFragmentCompat
+    public class LockScreenSettingsFragment : PreferenceFragmentCompat
     {
         public override void OnCreate(Bundle savedInstanceState)
         {
@@ -20,10 +20,8 @@ namespace LiveDisplay.Fragments.Preferences
             PreferenceManager.SetDefaultValues(Application.Context, Resource.Xml.lockscreen_prefs, false);
 
             Preference wallpapersettingspreference = FindPreference("wallpapersettings");
-            Preference weathersettingspreference = FindPreference("weathersettings");
 
             wallpapersettingspreference.PreferenceClick += WallpaperSettingsPreference_PreferenceClick;
-            weathersettingspreference.PreferenceClick += Weathersettingspreference_PreferenceClick;
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -34,14 +32,6 @@ namespace LiveDisplay.Fragments.Preferences
         private void WallpaperSettingsPreference_PreferenceClick(object sender, Preference.PreferenceClickEventArgs e)
         {
             using (Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(BackgroundSettingsActivity))))
-            {
-                StartActivity(intent);
-            }
-        }
-
-        private void Weathersettingspreference_PreferenceClick(object sender, Preference.PreferenceClickEventArgs e)
-        {
-            using (Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(WeatherSettingsActivity))))
             {
                 StartActivity(intent);
             }

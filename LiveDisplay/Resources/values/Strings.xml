@@ -87,6 +87,7 @@
   <string name="pickwallpaper">Pick one</string>
   <string name="placeholder">Insert a string here</string>
   <string name="rus">Russian</string>
+  <string name="saveweathersettings">Save</string>
   <string name="searchappedittexthint">App name...</string>
   <string name="searchapptitle">Search for an app</string>
   <string name="secretmessagehint">Wings from Spanish</string>
@@ -98,7 +99,6 @@
   <string name="tenminutes">10 Minutes</string>
   <string name="tenseconds">10 seconds</string>
   <string name="testnotificationtext">Long press a notification from the list or press the X button to clear it</string>
-  <string name="testweathersettingsbutton">Test me!</string>
   <string name="thirtyminutes">30 Minutes</string>
   <string name="translations">Translations</string>
   <string name="turnoffdelay">Automatically turn screen off</string>
@@ -121,4 +121,6 @@
   <string name="weatherwidgetenabled">Enable Weather Widget</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
+  <string name="allowweatherchangewallpaper">Change wallpaper briefly after a update</string>
+  <string name="never">Never</string>
 </resources>

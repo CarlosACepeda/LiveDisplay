@@ -103,6 +103,7 @@
     <Compile Include="Fragments\MusicFragment.cs" />
     <Compile Include="Fragments\NotificationFragment.cs" />
     <Compile Include="Fragments\Preferences\AboutFragment.cs" />
+    <Compile Include="Fragments\Preferences\AwakeSettingsFragment.cs" />
     <Compile Include="Fragments\Preferences\LockScreenSettingsFragment.cs" />
     <Compile Include="Fragments\Preferences\MusicWidgetSettingsFragment.cs" />
     <Compile Include="Fragments\Preferences\NotificationSettingsFragment.cs" />
@@ -122,6 +123,7 @@
     <Compile Include="Servicios\Blacklist\Blacklist.cs" />
     <Compile Include="Servicios\ConfigurationManager.cs" />
     <Compile Include="Servicios\FloatingNotification\FloatingNotification.cs" />
+    <Compile Include="Servicios\Keyguard\KeyguardHelper.cs" />
     <Compile Include="Servicios\Music\Jukebox.cs" />
     <Compile Include="Servicios\Music\JukeboxKitkat.cs" />
     <Compile Include="Servicios\Music\MediaEventArgs\MediaActionEventArgs.cs" />
@@ -149,6 +151,7 @@
     <Compile Include="Servicios\Wallpaper\WallpaperPublisher.cs" />
     <Compile Include="Servicios\Weather\GrabWeatherJob.cs" />
     <Compile Include="Servicios\Weather\IconsForWeatherConditions.cs" />
+    <Compile Include="Servicios\Weather\MeasurementUnits.cs" />
     <Compile Include="Servicios\Weather\Weather.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -576,9 +579,6 @@
     <PackageReference Include="Xamarin.AndroidX.Fragment">
       <Version>1.2.2</Version>
     </PackageReference>
-    <PackageReference Include="Xamarin.AndroidX.Migration">
-      <Version>1.0.1</Version>
-    </PackageReference>
     <PackageReference Include="Xamarin.AndroidX.Preference">
       <Version>1.1.0</Version>
     </PackageReference>
@@ -597,6 +597,24 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\xml\about.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\ic_cloud_white_24dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\ic_cloud_white_24dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_cloud_white_24dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_cloud_white_24dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_cloud_white_24dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\xml\awake_prefs.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

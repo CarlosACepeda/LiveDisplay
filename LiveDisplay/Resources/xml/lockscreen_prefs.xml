@@ -28,15 +28,4 @@
         app:iconSpaceReserved="false">
     </SwitchPreference>
   </PreferenceCategory>
-
-  <PreferenceCategory
-    android:title="@string/weatherwidget"
-    app:iconSpaceReserved="false">
-    <Preference
-      android:key="weathersettings"
-      android:title="@string/changeweatherpreferences"
-      android:selectable="true"
-      app:iconSpaceReserved="false"
-      ></Preference>
-  </PreferenceCategory>
 </PreferenceScreen>

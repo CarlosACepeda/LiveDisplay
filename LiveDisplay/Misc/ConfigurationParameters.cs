@@ -34,11 +34,13 @@
         public const string WeatherCountryCode = "weathercountrycode";
         public const string WeatherTemperatureMeasureUnit = "weathertemperaturemeasureunit";
         public const string WeatherUpdateRequiresUnlimitedNetwork = "weatherupdaterequiresunlimitednetwork?";
+        public const string WeatherUpdateFrequency = "weatherupdatefrequency";
+        public const string WeatherUpdateChangesWallpaper = "weatherupdatechangeswallpaper?";
 
-        //For Notifications Settings, not yet used.
+        //For Notifications Settings
         public const string EnableQuickReply = "enablequickreply?";
 
-        //For Awake Settings: (Awake is fused with notification settings now, but here is separated to maintain
+        //For Awake Settings:
         //clearance about which settings are from
         public const string EnableAwakeService = "enableawake?";
 

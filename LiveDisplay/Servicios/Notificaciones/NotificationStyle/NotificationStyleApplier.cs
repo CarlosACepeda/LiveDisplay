@@ -8,6 +8,7 @@ using Android.Util;
 using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
+using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Wallpaper;
 using System;
 
@@ -214,20 +215,6 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
             //TODO
         }
 
-        private void ApplyDefault(OpenNotification notification)
-        {
-            title.Text = notification.Title();
-            text.Text = notification.Text();
-            applicationName.Text = notification.AppName();
-            subtext.Text = notification.SubText();
-            when.Text = notification.When();
-            closenotificationbutton.SetTag(DefaultActionIdentificator, notification);
-            closenotificationbutton.Click += Closenotificationbutton_Click;
-            closenotificationbutton.Visibility = notification.IsRemovable() ? ViewStates.Visible : ViewStates.Invisible;
-
-            ApplyActionsStyle(notification);
-        }
-
         private void Closenotificationbutton_Click(object sender, EventArgs e)
         {
             ImageButton closenotificationbutton = sender as ImageButton;
@@ -244,13 +231,16 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
 
             if (openAction.ActionRepresentDirectReply())
             {
-                notificationActions.Visibility = ViewStates.Invisible;
-                inlineNotificationContainer.Visibility = ViewStates.Visible;
-                inlineresponse.Hint = openAction.GetPlaceholderTextForInlineResponse();
-                sendinlineresponse.SetTag(DefaultActionIdentificator, openAction);
-                sendinlineresponse.Click += Sendinlineresponse_Click;
+                if (new ConfigurationManager(AppPreferences.Default).RetrieveAValue(ConfigurationParameters.EnableQuickReply))
+                {
+                    notificationActions.Visibility = ViewStates.Invisible;
+                    inlineNotificationContainer.Visibility = ViewStates.Visible;
+                    inlineresponse.Hint = openAction.GetPlaceholderTextForInlineResponse();
+                    sendinlineresponse.SetTag(DefaultActionIdentificator, openAction);
+                    sendinlineresponse.Click += Sendinlineresponse_Click;
 
-                SendInlineResponseAvailabityChanged?.Invoke(null, true); //Is currently showing.
+                    SendInlineResponseAvailabityChanged?.Invoke(null, true); //Is currently showing.
+                }
             }
             else
             {

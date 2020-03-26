@@ -130,17 +130,6 @@ namespace LiveDisplay.Servicios.Awake
             }
         }
 
-        public bool IsSystemLockScreenActive()
-        {
-            //uses a combination of several methods to implicitly identify
-            //that the device is currently locked.
-            //The purpose of this method is improve the flow of my lockscreen in combination
-            //with the system Lockscreen.
-            //TODO: Check DevicePolicyManager.ResetPassword
-            //getPasswordQuality() and getPasswordMinimumLength()
-            return false;
-        }
-
         private void CatcherHelper_NotificationListSizeChanged(object sender, Notificaciones.NotificationEventArgs.NotificationListSizeChangedEventArgs e)
         {
             if (configurationManager.RetrieveAValue(ConfigurationParameters.TurnOffScreenAfterLastNotificationCleared) == true)

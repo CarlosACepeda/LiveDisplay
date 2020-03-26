@@ -32,7 +32,7 @@
         //private TextView humidity;
         private TextView description;
 
-        //private TextView lastupdated;
+        private TextView lastupdated;
         //private TextView city;
         //private LinearLayout weatherinfo;
 
@@ -66,7 +66,7 @@
             //maximumTemperature = v.FindViewById<TextView>(Resource.Id.maximumtemperature);
             //humidity = v.FindViewById<TextView>(Resource.Id.humidity);
             description = v.FindViewById<TextView>(Resource.Id.weatherdescription);
-            //lastupdated = v.FindViewById<TextView>(Resource.Id.lastupdated);
+            lastupdated = v.FindViewById<TextView>(Resource.Id.lastupdated);
             //city = v.FindViewById<TextView>(Resource.Id.city);
             LoadDate();
 
@@ -88,19 +88,20 @@
         {
             string thecity = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherCity, string.Empty);
             string currentweather = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherCurrent, string.Empty);
+            string temperatureunit = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherTemperatureUnit, string.Empty);
             string minimumtemperature = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherMinimum, string.Empty);
             string maximumtemperature = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherMaximum, string.Empty);
             string weatherhumidity = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherHumidity, string.Empty);
             string weatherdescription = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherDescription, string.Empty);
             string weatherlastupdated = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherLastUpdated, string.Empty);
 
-            temperature.Text = currentweather;
+            temperature.Text = currentweather+ temperatureunit;
             //city.Text = thecity;
             //minimumTemperature.Text = minimumtemperature;
             //maximumTemperature.Text = maximumtemperature;
             //humidity.Text = weatherhumidity;
             description.Text = weatherdescription;
-            //lastupdated.Text = weatherlastupdated;
+            lastupdated.Text = weatherlastupdated;
         }
 
         private void Weatherclockcontainer_Click(object sender, EventArgs e)

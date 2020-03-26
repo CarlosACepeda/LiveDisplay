@@ -77,13 +77,6 @@
 			a:layout_width="wrap_content"
             a:layout_height="wrap_content" />
 	</LinearLayout>
-	<TextView
-			a:text="Fri 1:45am"
-			a:id="@+id/lastupdated"
-			a:fontFamily="sans-serif-condensed"
-			a:layout_width="wrap_content"
-            a:layout_height="wrap_content" />
-
 	</LinearLayout>-->
     <TextClock
         a:id="@+id/clockLock"
@@ -91,9 +84,9 @@
         a:layout_width="wrap_content"
         a:layout_height="wrap_content"
         a:textSize="45dp"
-		tools:text="1:45pm"
+        tools:text="1:45pm"
         a:fontFamily="sans-serif-condensed-light"
-		tools:visibility="visible"
+        tools:visibility="visible"
         />
 	
 	
@@ -125,6 +118,15 @@
 		a:minHeight="25px"
 		a:id="@+id/temperature" />
 	<TextView
+			tools:text="Fri 1:45am"
+			a:layout_above="@id/weatherdescription"
+			a:layout_alignLeft="@id/weatherdescription"
+			a:id="@+id/lastupdated"
+			a:paddingLeft="10dp"
+			a:fontFamily="sans-serif-condensed"
+			a:layout_width="wrap_content"
+            a:layout_height="wrap_content" />
+	<TextView
 		tools:text="Scattered Clouds"
 		a:fontFamily="sans-serif-condensed-light"
 		a:textAppearance="?android:attr/textAppearanceMedium"
@@ -135,7 +137,8 @@
 		a:paddingLeft="10dp"
 		a:minWidth="25px"
 		a:minHeight="25px"
-		a:id="@+id/weatherdescription" />	
+		a:id="@+id/weatherdescription" />
+
     <TextView
 		tools:text="3 de Septiembre"
         a:layout_width="match_parent"

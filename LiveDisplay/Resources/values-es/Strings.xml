@@ -84,6 +84,7 @@
   <string name="pickwallpaper">Elige uno</string>
   <string name="placeholder">Inserta una cadena aquí</string>
   <string name="rus">Ruso</string>
+  <string name="saveweathersettings">Guardar</string>
   <string name="searchappedittexthint">Nombre de la app...</string>
   <string name="searchapptitle">Busca una aplicación</string>
   <string name="secretmessageplaceholder">Ingresa la palabra secreta</string>
@@ -94,7 +95,6 @@
   <string name="tenminutes">10 Minutos</string>
   <string name="tenseconds">10 segundos</string>
   <string name="testnotificationtext">Manten presionado una notificación de la lista o presiona X para quitarla</string>
-  <string name="testweathersettingsbutton">Pruébame</string>
   <string name="thirtyminutes">30 Minutos</string>
   <string name="translations">Traducciones</string>
   <string name="turnoffdelay">Apagar pantalla automaticamente</string>
@@ -116,4 +116,6 @@
   <string name="weatherwidgetenabled">Activar el Widget del Clima</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">Diseño del icono de esta app!</string>
+  <string name="allowweatherchangewallpaper">Cambiar wallpaper brevemente después de una actualización</string>
+  <string name="never">Nunca</string>
 </resources>

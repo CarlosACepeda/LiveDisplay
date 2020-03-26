@@ -15,7 +15,7 @@ namespace LiveDisplay.Servicios
     [Service(Label = "MotionListener")]
     internal class AwakeService : Service, ISensorEventListener
     {
-        private static ISharedPreferences configurationManager = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
+        private static ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
         private SensorManager sensorManager;
         private Sensor accelerometerSensor;
         private Sensor proximitySensor;
@@ -28,8 +28,8 @@ namespace LiveDisplay.Servicios
 
         public static AwakeStatus GetAwakeStatus()
         {
-            int start = int.Parse(configurationManager.GetString(ConfigurationParameters.StartSleepTime, "0")); //12am
-            int end = int.Parse(configurationManager.GetString(ConfigurationParameters.FinishSleepTime, "500"));//5am
+            int start = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.StartSleepTime, "0")); //12am
+            int end = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.FinishSleepTime, "500"));//5am
             //Generates the hour as a 4 characters number in 24 hours for example: 2210 (10:10pm)
             var now = int.Parse(string.Concat(DateTime.Now.Hour.ToString("00"), DateTime.Now.Minute.ToString("00")));
             Log.Info("LiveDisplay", now.ToString());

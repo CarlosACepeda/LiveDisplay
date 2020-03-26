@@ -1,6 +1,13 @@
-﻿using LiveDisplay.DataRepository;
+﻿using Android.App;
+using Android.Graphics.Drawables;
+using Android.Util;
+using Android.Widget;
+using Javax.Security.Auth;
+using LiveDisplay.DataRepository;
 using LiveDisplay.Misc;
+using LiveDisplay.Servicios.Wallpaper;
 using System;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using static Newtonsoft.Json.JsonConvert;
@@ -10,6 +17,7 @@ namespace LiveDisplay.Servicios.Weather
     internal class Weather
     {
         private readonly static ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Weather);
+        private static string imageURL = "http://openweathermap.org/img/wn/{0}@2x.png";
 
         //This class will be the one that connects to the api and provide Lockscreen with Weather information.
         public static async Task<WeatherRoot> GetWeather(string city, string country, string measurementunit)
@@ -32,31 +40,51 @@ namespace LiveDisplay.Servicios.Weather
                     configurationManager.SaveAValue(ConfigurationParameters.WeatherLastUpdated, DateTime.Now.ToString("ddd" + "," + "hh:mm"));
                     configurationManager.SaveAValue(ConfigurationParameters.WeatherMaximum, weatherRoot.MainWeather.MaxTemperature.ToString());
                     configurationManager.SaveAValue(ConfigurationParameters.WeatherMaximum, weatherRoot.MainWeather.MinTemperature.ToString());
-                    string temperatureSuffix = "--";
-                    switch (measurementunit)
-                    {
-                        case "imperial":
-                            temperatureSuffix = "°f";
-                            break;
 
-                        case "metric":
-                            temperatureSuffix = "°c";
-                            break;
-                    }
-
-                    configurationManager.SaveAValue(ConfigurationParameters.WeatherCurrent, weatherRoot.MainWeather.Temperature.ToString() + temperatureSuffix);
+                    configurationManager.SaveAValue(ConfigurationParameters.WeatherCurrent, weatherRoot.MainWeather.Temperature.ToString());
                     string unitsuffix = "°k";
                     switch (measurementunit)
                     {
-                        case "imperial":
-                            unitsuffix = "°f";
+                        case MeasurementUnits.Fahrenheit:
+                            unitsuffix = "°F";
                             break;
 
-                        case "metric":
-                            unitsuffix = "°c";
+                        case MeasurementUnits.Celsius:
+                            unitsuffix = "°C";
+                            break;
+                        case MeasurementUnits.Kelvin:
+                            unitsuffix = "°K";
                             break;
                     }
-                    configurationManager.SaveAValue(ConfigurationParameters.WeatherTemperatureUnit, unitsuffix); //??????
+                    configurationManager.SaveAValue(ConfigurationParameters.WeatherTemperatureUnit, unitsuffix);
+
+                    using (var imageGrabClient = new HttpClient())
+                    {
+                        try
+                        {
+                            var stream = await imageGrabClient.GetStreamAsync(string.Format(imageURL, weatherRoot.Weather[0].Icon));
+                            Drawable drawable = Drawable.CreateFromStream(stream, "image");
+
+                            if (configurationManager.RetrieveAValue(ConfigurationParameters.WeatherUpdateChangesWallpaper))
+                            {
+                                WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
+                                {
+                                    BlurLevel = 5,
+                                    OpacityLevel = 100,
+                                    SecondsOfAttention = 5,
+                                    WallpaperPoster = WallpaperPoster.Weather,
+                                    Wallpaper = (BitmapDrawable)drawable
+                                });
+                            }
+                        }
+                        catch
+                        {                            
+                            Toast.MakeText(Application.Context, "FAILED DOWNLOAD IMAGE", ToastLength.Long).Show();
+                        }
+
+                    }
+
+
                     return weatherRoot;
                 }
                 catch
