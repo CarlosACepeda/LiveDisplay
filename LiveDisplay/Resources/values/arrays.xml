@@ -26,7 +26,7 @@
 
   <string-array name="listentriesweatherupdatefrequency">
     <item>@string/never</item>
-    <item>@string/tenminutes</item>
+    <item>@string/fifteenminutes</item>
     <item>@string/thirtyminutes</item>
     <item>@string/onehour</item>
     <item>@string/sixhours</item>
@@ -35,7 +35,7 @@
 
   <string-array name="listvaluesweatherupdatefrequency">
     <item>-1</item>
-    <item>10</item>
+    <item>15</item>
     <item>30</item>
     <item>60</item>
     <item>360</item>

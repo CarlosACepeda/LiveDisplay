@@ -10,6 +10,7 @@
   <string name="advanced">Avanzado</string>
   <string name="albumartappearancesetting">Carátula del Álbum</string>
   <string name="alertnopermissions">Debes permitir los permisos requeridos!</string>
+  <string name="allowweatherchangewallpaper">Cambiar wallpaper brevemente después de una actualización</string>
   <string name="app_name">LiveDisplay</string>
   <string name="askfortranslations">Quieres ayudar con las traducciones?</string>
   <string name="awakesettings">Awake</string>
@@ -50,6 +51,7 @@
   <string name="eng">Inglés</string>
   <string name="entercityplaceholder">Introduce una ciudad aquí</string>
   <string name="esp">Español</string>
+  <string name="fifteenminutes">15 Minutos</string>
   <string name="fifteenseconds">15 segundos</string>
   <string name="fiveseconds">5 segundos</string>
   <string name="githubproject">Quieres ayudar?</string>
@@ -73,6 +75,7 @@
   <string name="musicwidget">Widget de Musica</string>
   <string name="musicwidgetcontrolmethod">Método de control de Música</string>
   <string name="musicwidgetenabled">Activar el Widget de Música</string>
+  <string name="never">Nunca</string>
   <string name="nonallowedtoturnonscreen">No permitido para encender la pantalla</string>
   <string name="notavailableyet">No disponible...aún.</string>
   <string name="notificationsettings">Notificaciones</string>
@@ -92,7 +95,6 @@
   <string name="settings">Ajustes</string>
   <string name="showalbumart">Mostrar portada del álbum</string>
   <string name="sixhours">6 Horas</string>
-  <string name="tenminutes">10 Minutos</string>
   <string name="tenseconds">10 segundos</string>
   <string name="testnotificationtext">Manten presionado una notificación de la lista o presiona X para quitarla</string>
   <string name="thirtyminutes">30 Minutos</string>
@@ -106,7 +108,7 @@
   <string name="updateweathereach">Actualizar clima cada</string>
   <string name="useimperialunits">Usar unidades imperiales</string>
   <string name="version">Versión</string>
-  <string name="versionnumber">0.9.0-alpha2</string>
+  <string name="versionnumber">0.9.0-alpha4</string>
   <string name="wallpaperblur">Difuminación</string>
   <string name="wallpaperopacity">Opacidad</string>
   <string name="wallpapersettingappliestoalbumart">La configuración actual también afecta las carátulas de album</string>
@@ -116,6 +118,4 @@
   <string name="weatherwidgetenabled">Activar el Widget del Clima</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">Diseño del icono de esta app!</string>
-  <string name="allowweatherchangewallpaper">Cambiar wallpaper brevemente después de una actualización</string>
-  <string name="never">Nunca</string>
 </resources>

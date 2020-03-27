@@ -34,7 +34,7 @@ namespace LiveDisplay.Fragments.Preferences
         public override void OnCreatePreferences(Bundle savedInstanceState, string rootKey)
         {
             AddPreferencesFromResource(Resource.Xml.awake_prefs);
-            PreferenceManager.SetDefaultValues(Application.Context, Resource.Xml.awake_prefs, false);
+            PreferenceManager.SetDefaultValues(Application.Context, Resource.Xml.awake_prefs, true);
 
             Preference inactivehourssettingspreference = FindPreference("inactivetimesettings");
             inactivehourssettingspreference.PreferenceClick += Inactivehourssettingspreference_PreferenceClick;

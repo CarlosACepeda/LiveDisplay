@@ -40,7 +40,7 @@ namespace LiveDisplay.Servicios.Weather
                     configurationManager.SaveAValue(ConfigurationParameters.WeatherLastUpdated, DateTime.Now.ToString("ddd" + "," + "hh:mm"));
                     configurationManager.SaveAValue(ConfigurationParameters.WeatherMaximum, weatherRoot.MainWeather.MaxTemperature.ToString());
                     configurationManager.SaveAValue(ConfigurationParameters.WeatherMaximum, weatherRoot.MainWeather.MinTemperature.ToString());
-
+                    configurationManager.SaveAValue(ConfigurationParameters.WeatherCountryCode, country);
                     configurationManager.SaveAValue(ConfigurationParameters.WeatherCurrent, weatherRoot.MainWeather.Temperature.ToString());
                     string unitsuffix = "°k";
                     switch (measurementunit)

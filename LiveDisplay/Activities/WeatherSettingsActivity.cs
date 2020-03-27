@@ -10,9 +10,11 @@
     using Android.Widget;
     using AndroidX.AppCompat.App;
     using AndroidX.AppCompat.Widget;
+    using AndroidX.Work;
     using LiveDisplay.Misc;
     using LiveDisplay.Servicios;
     using LiveDisplay.Servicios.Weather;
+    using System;
     using System.Threading;
     using Toolbar = AndroidX.AppCompat.Widget.Toolbar;
 
@@ -20,8 +22,6 @@
     public class WeatherSettingsActivity : AppCompatActivity
     {
         private const int Jobid = 56114281;
-        JobInfo.Builder jobBuilder = new JobInfo.Builder(Jobid, new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(GrabWeatherJob))));
-        JobScheduler jobScheduler = (JobScheduler)Application.Context.GetSystemService(JobSchedulerService);
         private long interval_minutes;
         private string countryCode = string.Empty;
 
@@ -121,24 +121,13 @@
             }
             if (interval_minutes != -1)
             {
-                //In Kitkat this causes a Crash, TODO solve.
-                jobBuilder.SetPersisted(true);
-                jobBuilder.SetPeriodic(1000 * 60 * interval_minutes);
-                jobBuilder.SetRequiredNetworkType(Android.App.Job.NetworkType.Unmetered);
-                JobScheduler jobScheduler = (JobScheduler)Application.Context.GetSystemService(JobSchedulerService);
-                int result = jobScheduler.Schedule(jobBuilder.Build());
-                if (result == JobScheduler.ResultSuccess)
-                {
-                    Log.Info("LiveDisplay", "Job Result Sucess");
-                }
-                else
-                {
-                    Log.Info("LiveDisplay", "Job Result Not Sucess");
-                }
+                PeriodicWorkRequest weatherPeriodicWorkRequest = PeriodicWorkRequest.Builder.From<GrabWeatherJob>(TimeSpan.FromMinutes(interval_minutes)).Build();
+                WorkManager.GetInstance(this).Enqueue(weatherPeriodicWorkRequest);
+
             }
             else
             {
-                jobScheduler?.Cancel(Jobid);
+                WorkManager.GetInstance(this).CancelAllWork();
                 Toast.MakeText(this, "Set a frequency", ToastLength.Long).Show();
                 return;
             }

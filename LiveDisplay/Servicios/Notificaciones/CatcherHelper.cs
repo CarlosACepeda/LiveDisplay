@@ -61,6 +61,14 @@ namespace LiveDisplay.Servicios.Notificaciones
             {
                 if (!blockingstatus.HasFlag(LevelsOfAppBlocking.BlockInAppOnly))
                 {
+                    bool causesWakeUp = false;
+                    if (sbn.Notification.Priority >= (int)NotificationPriority.Default) //Solves a issue where non important notifications also turn on screen.
+                        //anyway this is a hotfix, a better method shoudl be used to improve the blacklist/the importance of notifications.
+                        causesWakeUp = true;
+                    else
+                        causesWakeUp = false;
+
+
                     int index = GetNotificationPosition(sbn); //Tries to get the index of a possible already existing notification in the list of notif.
                     if (index >= 0)
                     {
@@ -71,7 +79,8 @@ namespace LiveDisplay.Servicios.Notificaciones
                         StatusBarNotifications.Add(sbn);
                         using (var h = new Handler(Looper.MainLooper))
                             h.Post(() => { notificationAdapter.NotifyItemChanged(index); });
-                        OnNotificationPosted(blockingstatus.HasFlag(LevelsOfAppBlocking.None), sbn, true);
+
+                            OnNotificationPosted(causesWakeUp, sbn, true);
                     }
                     else
                     {
@@ -79,7 +88,7 @@ namespace LiveDisplay.Servicios.Notificaciones
 
                         using (var h = new Handler(Looper.MainLooper))
                             h.Post(() => { notificationAdapter.NotifyItemInserted(StatusBarNotifications.Count); });
-                        OnNotificationPosted(blockingstatus.HasFlag(LevelsOfAppBlocking.None), sbn, false);
+                        OnNotificationPosted(causesWakeUp, sbn, false);
                     }
                 }
             }

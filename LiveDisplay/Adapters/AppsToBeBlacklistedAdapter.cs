@@ -101,7 +101,7 @@ namespace LiveDisplay.Adapters
 
                 switch ((LevelsOfAppBlocking)flag)
                 {
-                    case LevelsOfAppBlocking.None:
+                    case LevelsOfAppBlocking.Default:
                         //the booleans are alredy false.
                         break;
 

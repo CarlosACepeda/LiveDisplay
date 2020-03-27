@@ -33,7 +33,7 @@ namespace LiveDisplay.Fragments.Preferences
         public override void OnCreatePreferences(Bundle savedInstanceState, string rootKey)
         {
             AddPreferencesFromResource(Resource.Xml.notification_prefs);
-            PreferenceManager.SetDefaultValues(Application.Context, Resource.Xml.notification_prefs, false);
+            PreferenceManager.SetDefaultValues(Application.Context, Resource.Xml.notification_prefs, true);
 
             Preference blacklistpreference = FindPreference("blacklist");
             blacklistpreference.PreferenceClick += Blacklistpreference_PreferenceClick;

@@ -11,6 +11,7 @@
   <string name="advanced">Advanced</string>
   <string name="albumartappearancesetting">Album Artwork</string>
   <string name="alertnopermissions">You must allow the required permission!</string>
+  <string name="allowweatherchangewallpaper">Change wallpaper briefly after a update</string>
   <string name="app_name">LiveDisplay</string>
   <string name="askfortranslations">Want to help with translations?</string>
   <string name="awakesettings">Awake</string>
@@ -52,6 +53,7 @@
   <string name="eng">English</string>
   <string name="entercityplaceholder">Enter a city here</string>
   <string name="esp">Spanish</string>
+  <string name="fifteenminutes">15 Minutes</string>
   <string name="fifteenseconds">15 seconds</string>
   <string name="fiveseconds">5 seconds</string>
   <string name="githubproject">Want to help?</string>
@@ -76,6 +78,7 @@
   <string name="musicwidget">Music Widget</string>
   <string name="musicwidgetcontrolmethod">Music Control Method</string>
   <string name="musicwidgetenabled">Enable Music Widget</string>
+  <string name="never">Never</string>
   <string name="nonallowedtoturnonscreen">Non allowed to turn on screen</string>
   <string name="notavailableyet">Not available... yet.</string>
   <string name="notificationsettings">Notifications</string>
@@ -96,7 +99,6 @@
   <string name="settings">Settings</string>
   <string name="showalbumart">Show media cover art</string>
   <string name="sixhours">6 Hours</string>
-  <string name="tenminutes">10 Minutes</string>
   <string name="tenseconds">10 seconds</string>
   <string name="testnotificationtext">Long press a notification from the list or press the X button to clear it</string>
   <string name="thirtyminutes">30 Minutes</string>
@@ -111,7 +113,7 @@
   <string name="updateweathereach">Update weather each:</string>
   <string name="useimperialunits">Use Imperial units</string>
   <string name="version">Version</string>
-  <string name="versionnumber">0.9.0-alpha2</string>
+  <string name="versionnumber">0.9.0-alpha4</string>
   <string name="wallpaperblur">Blur</string>
   <string name="wallpaperopacity">Opacity</string>
   <string name="wallpapersettingappliestoalbumart">Current setting also affects album artwork</string>
@@ -121,6 +123,4 @@
   <string name="weatherwidgetenabled">Enable Weather Widget</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
-  <string name="allowweatherchangewallpaper">Change wallpaper briefly after a update</string>
-  <string name="never">Never</string>
 </resources>

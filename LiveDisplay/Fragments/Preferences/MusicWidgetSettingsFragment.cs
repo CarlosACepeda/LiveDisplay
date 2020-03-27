@@ -15,7 +15,7 @@ namespace LiveDisplay.Fragments.Preferences
         public override void OnCreatePreferences(Bundle savedInstanceState, string rootKey)
         {
             AddPreferencesFromResource(Resource.Xml.music_widget_prefs);
-            PreferenceManager.SetDefaultValues(Application.Context, Resource.Xml.music_widget_prefs, false);
+            PreferenceManager.SetDefaultValues(Application.Context, Resource.Xml.music_widget_prefs, true);
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)

@@ -5,6 +5,7 @@ using Android.Widget;
 using LiveDisplay.Adapters;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
+using LiveDisplay.Servicios.Awake;
 using LiveDisplay.Servicios.Notificaciones;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
 using LiveDisplay.Servicios.Notificaciones.NotificationStyle;
@@ -62,6 +63,8 @@ namespace LiveDisplay.Fragments
         private void CatcherHelper_NotificationPosted(object sender, NotificationPostedEventArgs e)
         {
             openNotification = new OpenNotification(e.StatusBarNotification);
+            if (e.ShouldCauseWakeUp)
+                AwakeHelper.TurnOnScreen();
 
             //if the current notification widget does not have a tag, let's set it.
 

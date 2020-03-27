@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="advanced">Avansat</string>
+  <string name="allowweatherchangewallpaper">Schimbați tapetul scurt după o actualizare</string>
   <string name="blacklist">Listă Neagră</string>
   <string name="blackwallpaper">Negru</string>
   <string name="changewallpaper">Schimbă fundalul ecranului</string>
@@ -11,6 +12,7 @@
   <string name="dialogcancelbutton">închide</string>
   <string name="doubletaptosleep">Dublă apăsare pentru închidere</string>
   <string name="enabletestsetting">Activează \&lt;test\&gt; opțiuni</string>
+  <string name="fifteenminutes">15 Minute</string>
   <string name="idk">¯\\_(ツ)_/¯</string>
   <string name="inactivetimesettings">Ore de inactivitate</string>
   <string name="lockonboot">Blocați ecranul la pornire</string>
@@ -25,16 +27,14 @@
   <string name="saveweathersettings">Salvați</string>
   <string name="showalbumart">Arată coperta albumului</string>
   <string name="sixhours">6 ore</string>
-  <string name="tenminutes">10 Minute</string>
   <string name="testnotificationtext">Es Ține apăsat pe o notificare din listă o presiona X pentru a o elimina</string>
   <string name="thirtyminutes">30 Minute</string>
   <string name="turnonnewnotification">Aprinde ecranul</string>
   <string name="twelvehours">12 ore</string>
   <string name="updateweathereach">Actualizare climă fiecare</string>
-  <string name="versionnumber">0.9.0-alpha2</string>
+  <string name="versionnumber">0.9.0-alpha4</string>
   <string name="wallpaperblur">Blurare</string>
   <string name="wallpaperopacity">Opacitate</string>
   <string name="weatherwidget">Widget de Climă</string>
   <string name="weatherwidgetenabled">Activează Widget de Climă</string>
-  <string name="allowweatherchangewallpaper">Schimbați tapetul scurt după o actualizare</string>
 </resources>

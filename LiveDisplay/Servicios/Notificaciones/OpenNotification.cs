@@ -232,7 +232,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             {
                 if (statusbarnotification.Notification.Extras.GetBoolean(Notification.ExtraShowWhen) == true)
                 {
-                    Java.Util.Calendar calendar = Java.Util.Calendar.Instance;
+                    Calendar calendar = Calendar.Instance;
                     calendar.TimeInMillis = statusbarnotification.Notification.When;
                     return string.Format("{0:D2}:{1:D2} {2}", calendar.Get(CalendarField.Hour), calendar.Get(CalendarField.Minute), calendar.GetDisplayName((int)CalendarField.AmPm, (int)CalendarStyle.Short, Locale.Default));
                 }
@@ -263,7 +263,11 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         internal Bitmap MediaArtwork()
         {
-            return statusbarnotification.Notification.Extras.Get(Notification.ExtraLargeIcon) as Bitmap;
+            if(Build.VERSION.SdkInt< BuildVersionCodes.O)
+#pragma warning disable CS0618 // El tipo o el miembro están obsoletos
+                return statusbarnotification.Notification.Extras.Get(Notification.ExtraLargeIcon) as Bitmap;
+#pragma warning restore CS0618 // El tipo o el miembro están obsoletos
+            return statusbarnotification.Notification.LargeIcon;
         }
 
         internal NotificationPriority GetNotificationPriority()

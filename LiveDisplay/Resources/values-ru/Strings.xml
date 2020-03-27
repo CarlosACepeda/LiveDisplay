@@ -3,8 +3,10 @@
   <string name="about">О...</string>
   <string name="aboutinfotitle">Об этом приложении:</string>
   <string name="advanced">Передовой</string>
+  <string name="allowweatherchangewallpaper">Смените обои на короткое время после обновления</string>
   <string name="app_name">LiveDisplay</string>
   <string name="dialogcancelbutton">Отмена</string>
+  <string name="fifteenminutes">15 минут</string>
   <string name="idk">¯\\_(ツ)_/¯</string>
   <string name="musiccontrolledfrommediasession">Выберите лучшую мультимедийную сессию</string>
   <string name="musiccontrolledfromnotification">Используйте самое последнее уведомление, которое представляет воспроизведение мультимедиа</string>
@@ -13,9 +15,7 @@
   <string name="onehour">1 час</string>
   <string name="saveweathersettings">Cохранить</string>
   <string name="sixhours">6 часов</string>
-  <string name="tenminutes">10 минут</string>
   <string name="thirtyminutes">30 минут</string>
   <string name="twelvehours">12 часов</string>
   <string name="updateweathereach">Обновляйте погоду каждые:</string>
-  <string name="allowweatherchangewallpaper">Смените обои на короткое время после обновления</string>
 </resources>
