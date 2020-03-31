@@ -9,6 +9,7 @@ using Android.Widget;
 using LiveDisplay.Activities;
 using LiveDisplay.Adapters;
 using LiveDisplay.Misc;
+using LiveDisplay.Servicios.Awake;
 using LiveDisplay.Servicios.Notificaciones;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
 using System;
@@ -120,6 +121,9 @@ namespace LiveDisplay.Servicios.FloatingNotification
         private void CatcherHelper_NotificationPosted(object sender, NotificationPostedEventArgs e)
         {
             openNotification = new OpenNotification(e.StatusBarNotification);
+            if (e.ShouldCauseWakeUp)
+                AwakeHelper.TurnOnScreen();
+
 
             //if the current floating notification widget does not have a tag, let's set it.
 
@@ -219,7 +223,8 @@ namespace LiveDisplay.Servicios.FloatingNotification
 
                 if (floatingNotificationView.Visibility != ViewStates.Visible)
                 {
-                    if (currentActivityState == ActivityStates.Resumed)
+                    if (currentActivityState == ActivityStates.Resumed) //most of the times it won't work, when the Screen turns on then it gets here too quickly
+                        //before the lockscreen is in a Resumed state, causing the floating notification not being showed when the screen turns on, TODO.
                         floatingNotificationView.Visibility = ViewStates.Visible;
                 }
             }
