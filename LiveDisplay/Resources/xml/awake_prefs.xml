@@ -16,10 +16,11 @@
       app:iconSpaceReserved="false">
     </Preference>
     <SwitchPreference
-    android:key="turnonnewnotification?"
-    android:title="@string/turnonnewnotification"
-    android:summary="@string/turnonnewnotification_desc"
-    app:iconSpaceReserved="false">
+      android:defaultValue="true"
+      android:key="turnonnewnotification?"
+      android:title="@string/turnonnewnotification"
+      android:summary="@string/turnonnewnotification_desc"
+      app:iconSpaceReserved="false">
     </SwitchPreference>
     <SwitchPreference
       android:key="turnonusermovement?"

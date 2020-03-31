@@ -17,7 +17,7 @@
 	<RelativeLayout
 			a:layout_weight="4"
 			a:layout_width="match_parent"
-			a:layout_height="0dp"			
+			a:layout_height="0dp"
 			>
         <ImageView 
             a:id="@+id/livesidplayinfoicon"
@@ -38,7 +38,7 @@
             a:text="@string/clearallnotifications"
             a:layout_width="wrap_content"
             a:layout_height="match_parent"
-			a:layout_alignParentRight="true"            
+			a:layout_alignParentRight="true"
 			a:fontFamily="sans-serif-condensed-light"
             a:id="@+id/btnClearAllNotifications"
             a:textAllCaps="false"
@@ -78,6 +78,7 @@
             a:id="@+id/weatherandcLockplaceholder" />
     <!--This FrameLayout contains the Unlocker and the Shortcut button-->
         <FrameLayout
+            a:id="@+id/shortcutcontainer"
             a:layout_width="match_parent"
             a:layout_weight="5"
             a:layout_height="0dp">

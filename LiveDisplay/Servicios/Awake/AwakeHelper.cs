@@ -12,14 +12,13 @@ namespace LiveDisplay.Servicios.Awake
 {
     public class AwakeHelper : Java.Lang.Object
     {
-        private static ConfigurationManager configurationManager;
+        private static ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
 
         public AwakeHelper()
         {
             CatcherHelper.NotificationPosted += CatcherHelper_NotificationPosted;
             CatcherHelper.NotificationListSizeChanged += CatcherHelper_NotificationListSizeChanged;
             AwakeService.DeviceIsActive += AwakeService_DeviceIsActive;
-            configurationManager = new ConfigurationManager(AppPreferences.Default);
         }
 
         private void AwakeService_DeviceIsActive(object sender, EventArgs e)

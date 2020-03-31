@@ -14,7 +14,9 @@ namespace LiveDisplay.Servicios.Weather
         public override Result DoWork()
         {
             if (AwakeService.GetAwakeStatus() == Awake.AwakeStatus.Sleeping)
+            {
                 return Result.InvokeSuccess(); //We want to keep the job running but don't do the job itself while Awake is sleeping.
+            }
 
             ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Weather);
 

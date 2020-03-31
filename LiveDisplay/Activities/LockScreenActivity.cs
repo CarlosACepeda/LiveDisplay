@@ -24,6 +24,7 @@
     using LiveDisplay.Servicios;
     using LiveDisplay.Servicios.Awake;
     using LiveDisplay.Servicios.FloatingNotification;
+    using LiveDisplay.Servicios.Keyguard;
     using LiveDisplay.Servicios.Music;
     using LiveDisplay.Servicios.Notificaciones;
     using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
@@ -234,8 +235,7 @@
                 else
                 {
                     e.Wallpaper.Alpha = e.OpacityLevel;
-                    //Window.SetBackgroundDrawable(null); //Clear wallpaper first(?)
-                    Window.SetBackgroundDrawable(e.Wallpaper);
+                    Window.DecorView.Background = e.Wallpaper;
                 }
             });
             GC.Collect();
@@ -477,7 +477,14 @@
                 else
                 {
                     if (clearAll != null)
+                    {
                         clearAll.Visibility = ViewStates.Invisible;
+                    }
+                    if (configurationManager.RetrieveAValue(ConfigurationParameters.TurnOffScreenAfterLastNotificationCleared)
+                    && currentActivityState== ActivityStates.Resumed)
+                    {
+                        AwakeHelper.TurnOffScreen();
+                    }
                 }
             });
         }
@@ -555,6 +562,24 @@
                 StartAwakeService();
             }
             doubletapbehavior = configurationManager.RetrieveAValue(ConfigurationParameters.DoubleTapOnTopActionBehavior, "0");
+            if (configurationManager.RetrieveAValue(ConfigurationParameters.HideShortcutsWhenKeyguardSafe))
+            {
+                if(KeyguardHelper.IsSystemSecured())
+                using (var shortcuts = FindViewById<FrameLayout>(Resource.Id.shortcutcontainer))
+                {
+                    shortcuts.Visibility = ViewStates.Invisible;
+                }
+            }
+            else 
+            {
+                using (var shortcuts = FindViewById<FrameLayout>(Resource.Id.shortcutcontainer))
+                {
+                    if (shortcuts.Visibility != ViewStates.Visible)
+                    {
+                        shortcuts.Visibility = ViewStates.Visible;
+                    }
+                }
+            }
         }
 
         private void LoadWallpaper(ConfigurationManager configurationManager)

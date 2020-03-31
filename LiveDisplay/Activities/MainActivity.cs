@@ -12,6 +12,7 @@
     using LiveDisplay.BroadcastReceivers;
     using LiveDisplay.Misc;
     using LiveDisplay.Servicios;
+    using LiveDisplay.Servicios.Awake;
 
     //for CI.
     using Microsoft.AppCenter;
@@ -156,6 +157,7 @@
 
                     if (isApplicationHealthy)
                     {
+                        AwakeHelper.TurnOffScreen();
                         using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())
                         {
                             var notificationtext = Resources.GetString(Resource.String.testnotificationtext);

@@ -62,6 +62,8 @@
   <string name="help">Help</string>
   <string name="helptext">To remove this app go to Settings&gt; Device Administrators, then Uncheck LiveDisplay, now you should be able to uninstall normally</string>
   <string name="hidden">Sghr hr mns sgd rdbqds xnt zqd knnjhmf enq</string>
+  <string name="hideshortcutswhenkeyguardsafe">Hide Shortcuts</string>
+  <string name="hideshortcutswhenkeyguardsafedesc">Hide shortcuts when a screen lock is present</string>
   <string name="hidesystemicons">Do not show system icons</string>
   <string name="humidity">Humidity</string>
   <string name="idk">¯\\_(ツ)_/¯</string>
@@ -105,6 +107,7 @@
   <string name="translations">Translations</string>
   <string name="turnoffdelay">Automatically turn screen off</string>
   <string name="turnoffdelay_desc">If the screen turns on(e.g.: A new notification is posted) and there is not user interaction, turn off the screen in...</string>
+  <string name="turnoffscreenafterlastnotificationcleared">Turn off screen when last notification is cleared</string>
   <string name="turnonnewnotification">Turn on screen</string>
   <string name="turnonnewnotification_desc">Turn on screen if a new notification is received</string>
   <string name="turnonusermovement">Turn on screen on device pick up</string>
@@ -113,7 +116,7 @@
   <string name="updateweathereach">Update weather each:</string>
   <string name="useimperialunits">Use Imperial units</string>
   <string name="version">Version</string>
-  <string name="versionnumber">0.9.0-alpha4</string>
+  <string name="versionnumber">0.9.0-alpha5</string>
   <string name="wallpaperblur">Blur</string>
   <string name="wallpaperopacity">Opacity</string>
   <string name="wallpapersettingappliestoalbumart">Current setting also affects album artwork</string>

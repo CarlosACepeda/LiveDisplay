@@ -38,7 +38,6 @@ namespace LiveDisplay.Servicios.Notificaciones
                     ThereAreNotifications = true
                 });
             }
-            AwakeHelper awakeHelper = new AwakeHelper(); //Will help us to make certain operations as waking up the screen and such.
         }
 
         //If Catcher call this, it means that the notification is part of a Group of notifications and should be Grouped.
@@ -105,13 +104,12 @@ namespace LiveDisplay.Servicios.Notificaciones
                 }
             }
 
-            if (StatusBarNotifications.Count > 0)
+
+            OnNotificationListSizeChanged(new NotificationListSizeChangedEventArgs
             {
-                OnNotificationListSizeChanged(new NotificationListSizeChangedEventArgs
-                {
-                    ThereAreNotifications = true
-                });
-            }
+                ThereAreNotifications = StatusBarNotifications.Count > 0
+            }) ;
+            
         }
 
         public void OnNotificationRemoved(StatusBarNotification sbn)
@@ -129,14 +127,10 @@ namespace LiveDisplay.Servicios.Notificaciones
                             notificationAdapter.NotifyDataSetChanged();
                     });
             }
-
-            if (StatusBarNotifications.Count == 0)
+            OnNotificationListSizeChanged(new NotificationListSizeChangedEventArgs
             {
-                OnNotificationListSizeChanged(new NotificationListSizeChangedEventArgs
-                {
-                    ThereAreNotifications = false
-                });
-            }
+                ThereAreNotifications = !(StatusBarNotifications.Where(n => n.IsClearable).ToList().Count==0)
+            });
             OnNotificationRemoved();
         }
 

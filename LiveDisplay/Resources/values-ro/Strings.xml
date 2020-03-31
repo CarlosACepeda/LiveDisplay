@@ -13,6 +13,7 @@
   <string name="doubletaptosleep">Dublă apăsare pentru închidere</string>
   <string name="enabletestsetting">Activează \&lt;test\&gt; opțiuni</string>
   <string name="fifteenminutes">15 Minute</string>
+  <string name="hideshortcutswhenkeyguardsafe">Ascundeți comenzile rapide</string>
   <string name="idk">¯\\_(ツ)_/¯</string>
   <string name="inactivetimesettings">Ore de inactivitate</string>
   <string name="lockonboot">Blocați ecranul la pornire</string>
@@ -32,7 +33,6 @@
   <string name="turnonnewnotification">Aprinde ecranul</string>
   <string name="twelvehours">12 ore</string>
   <string name="updateweathereach">Actualizare climă fiecare</string>
-  <string name="versionnumber">0.9.0-alpha4</string>
   <string name="wallpaperblur">Blurare</string>
   <string name="wallpaperopacity">Opacitate</string>
   <string name="weatherwidget">Widget de Climă</string>
