@@ -79,7 +79,8 @@ namespace LiveDisplay.Servicios.Notificaciones
                         using (var h = new Handler(Looper.MainLooper))
                             h.Post(() => { notificationAdapter.NotifyItemChanged(index); });
 
-                            OnNotificationPosted(causesWakeUp, sbn, true);
+                            OnNotificationPosted(false, sbn, true);
+                        
                     }
                     else
                     {
