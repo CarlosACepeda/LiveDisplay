@@ -84,18 +84,6 @@ namespace LiveDisplay.Servicios
 
         public override void OnNotificationPosted(StatusBarNotification sbn)
         {
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-            {
-                //Let's attach the NotificationChannels that this package represents to this StatusbarNotification
-                try
-                {
-                    var channels = GetNotificationChannels(sbn.PackageName, sbn.User);
-                }
-                catch (Exception ex)
-                {
-                    Log.Info("LiveDisplay", "Oops!: " + ex.Message);
-                }
-            }
             catcherHelper.OnNotificationPosted(sbn);
 
             //var test6 = sbn.Notification.Extras.Get(Notification.ExtraMediaSession) as MediaSession.Token;

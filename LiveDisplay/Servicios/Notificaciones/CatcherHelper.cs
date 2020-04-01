@@ -2,7 +2,6 @@
 using Android.OS;
 using Android.Service.Notification;
 using LiveDisplay.Adapters;
-using LiveDisplay.Servicios.Awake;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
 using System;
 using System.Collections.Generic;
@@ -115,6 +114,9 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         public void OnNotificationRemoved(StatusBarNotification sbn)
         {
+            if (sbn.PackageName == "android" && sbn.Tag == "com.android.server.wm.AlertWindowNotification - com.underground.livedisplay")
+                return;
+
             int position = GetNotificationPosition(sbn);
             if (position >= 0)
             {
@@ -142,7 +144,8 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         private int GetNotificationPosition(StatusBarNotification sbn)
         {
-            return StatusBarNotifications.IndexOf(StatusBarNotifications.FirstOrDefault(o => o.Id == sbn.Id && o.PackageName == sbn.PackageName &&
+            return StatusBarNotifications.IndexOf(StatusBarNotifications.FirstOrDefault
+                (o => o.Id == sbn.Id && o.PackageName == sbn.PackageName && o.Tag== sbn.Tag &&
             o.Notification.Flags.HasFlag(NotificationFlags.GroupSummary) == sbn.Notification.Flags.HasFlag(NotificationFlags.GroupSummary)));
         }
 

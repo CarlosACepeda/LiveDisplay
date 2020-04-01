@@ -114,7 +114,6 @@
     <Compile Include="Activities\MainActivity.cs" />
     <Compile Include="Activities\LockScreenActivity.cs" />
     <Compile Include="Misc\PackageUtils.cs" />
-    <Compile Include="Misc\UnitsFlags.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Servicios\AwakeService.cs" />
