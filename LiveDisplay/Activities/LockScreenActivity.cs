@@ -214,15 +214,6 @@
             RunOnUiThread(() =>
             {
                 Window.DecorView.SetBackgroundColor(Color.Black);
-                if (e.BlurLevel > 0)
-                {
-                    if (e.Wallpaper?.Bitmap != null)
-                    {
-                        BlurImage blurImage = new BlurImage(Application.Context);
-                        blurImage.Load(e.Wallpaper.Bitmap).Intensity(e.BlurLevel);
-                        e.Wallpaper = new BitmapDrawable(Resources, blurImage.GetImageBlur());
-                    }
-                }
                 if (configurationManager.RetrieveAValue(ConfigurationParameters.DisableWallpaperChangeAnim) == false) //If the animation is not disabled.
                 {
                     Window.DecorView.Animate().SetDuration(100).Alpha(0.5f);
@@ -234,7 +225,6 @@
                 }
                 else
                 {
-                    e.Wallpaper.Alpha = e.OpacityLevel;
                     Window.DecorView.Background = e.Wallpaper;
                 }
             });
@@ -616,7 +606,7 @@
                         {
                             Bitmap bitmap = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.ImagePath, imagePath));
                             BlurImage blurImage = new BlurImage(Application.Context);
-                            blurImage.Load(bitmap).Intensity(savedblurlevel).Async(true);
+                            blurImage.Load(bitmap).Intensity(savedblurlevel);
                             Drawable drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
                             WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = new BitmapDrawable(bitmap), OpacityLevel = (short)savedOpacitylevel, BlurLevel = (short)savedblurlevel, WallpaperPoster = WallpaperPoster.Lockscreen });
                         });

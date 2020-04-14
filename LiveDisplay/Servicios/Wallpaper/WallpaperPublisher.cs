@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Android.App;
+using Android.Content;
+using Android.Graphics.Drawables;
+using Android.Util;
+using System;
 using System.Threading;
 
 namespace LiveDisplay.Servicios.Wallpaper
@@ -16,7 +20,8 @@ namespace LiveDisplay.Servicios.Wallpaper
 
         public static void ChangeWallpaper(WallpaperChangedEventArgs e)
         {
-            //It works please refactor because im sure it can be improved.
+            //It works please refactor because im sure it can be improved:
+            //maybe we can use LinkedLists to keep a queue of Wallpapers and its posters? 
 
             if (CurrentWallpaperPoster != e.WallpaperPoster) //This validation is because is invalid to the same entity to be at the same time the current wallpaper poster and also the previous one.
             {
@@ -38,6 +43,29 @@ namespace LiveDisplay.Servicios.Wallpaper
                         alreadywaiting = false;
                     }
                     );
+            }
+            if (e.BlurLevel > 0 && e.BlurLevel <= 25)
+            {
+                if (e.Wallpaper?.Bitmap != null)
+                {
+                    try
+                    {
+                        BlurImage blurImage = new BlurImage(Application.Context);
+                        blurImage.Load(e.Wallpaper.Bitmap).Intensity(e.BlurLevel);
+                        e.Wallpaper = new BitmapDrawable(Application.Context.Resources, blurImage.GetImageBlur());
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error("LiveDisplay", "Failed to blur wallpaper: " + ex.Message);
+                    }
+                }
+            }
+            if (e.OpacityLevel >= 0 || e.OpacityLevel <= 255)
+            {
+                if (e.Wallpaper?.Bitmap != null)
+                {
+                    e.Wallpaper.Alpha = e.OpacityLevel;
+                }
             }
             NewWallpaperIssued?.Invoke(null, e);
         }
