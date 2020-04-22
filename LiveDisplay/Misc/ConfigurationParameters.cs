@@ -38,8 +38,9 @@ namespace LiveDisplay.Misc
         public const string TurnOnUserMovement = "turnonusermovement?";
         public const string StartLockscreenDelayTime = "startlockscreendelaytime";
         public const string TurnOffScreenDelayTime = "turnoffscreendelaytime";
-        public const string TurnOffScreenAfterLastNotificationCleared = "turnoffscreenafterlastnotificationcleared?"; //TODO.
-        public const string MusicWidgetMethod = "musicwidgetmethod"; //Grab a session from the notification or from the media sessions listener.
+        public const string TurnOffScreenAfterLastNotificationCleared = "turnoffscreenafterlastnotificationcleared?";
+        public const string MusicWidgetMethod = "musicwidgetcontrolmethod"; //Grab a session from the notification or from the media sessions listener.
+        public const string HideNotificationWhenItsMediaPlaying = "hidenotificationwhenmediaplaying?"; //If the media session used belongs to a notification then hide this notification in the lockscreen.
         public const string HideShortcutsWhenKeyguardSafe = "hideshortcutswhenkeyguardsafe?";
 
 

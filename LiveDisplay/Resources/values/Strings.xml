@@ -74,9 +74,12 @@
   <string name="lockdelay_desc">Lock the screen in the given time</string>
   <string name="lockonboot">Lock the screen on device boot up</string>
   <string name="lockscreensettings">Lockscreen</string>
+  <string name="m_widgetcontrolmethodnotification">Use the Notification that represents media playing</string>
+  <string name="m_widgetcontrolmethodsession">Grab automatically the best Media Session from a list of current Media Sessions on the device.</string>
+  <string name="m_widgethidenotificationwhenmediaplaying">Hide the Notification</string>
   <string name="me">Carlos Cepeda</string>
-  <string name="musiccontrolledfrommediasession">Pick the best Media Session</string>
-  <string name="musiccontrolledfromnotification">Use the most recent Notification that represents current media playing</string>
+  <string name="musiccontrolledfrommediasession">Pick the best Media Session (more stable)</string>
+  <string name="musiccontrolledfromnotification">Use the most recent Notification that represents current media playing (quicker)</string>
   <string name="musicwidget">Music Widget</string>
   <string name="musicwidgetcontrolmethod">Music Control Method</string>
   <string name="musicwidgetenabled">Enable Music Widget</string>
@@ -116,7 +119,7 @@
   <string name="updateweathereach">Update weather each:</string>
   <string name="useimperialunits">Use Imperial units</string>
   <string name="version">Version</string>
-  <string name="versionnumber">0.9.0-alpha6</string>
+  <string name="versionnumber">0.9.1-alpha1</string>
   <string name="wallpaperblur">Blur</string>
   <string name="wallpaperopacity">Opacity</string>
   <string name="wallpapersettingappliestoalbumart">Current setting also affects album artwork</string>

@@ -72,8 +72,11 @@
   <string name="lockdelay_desc">Bloquear la pantalla después del tiempo dado</string>
   <string name="lockonboot">Bloquear la pantalla al iniciar</string>
   <string name="lockscreensettings">Lockscreen</string>
-  <string name="musiccontrolledfrommediasession">Elegir la mejor Sesión de Multimedia</string>
-  <string name="musiccontrolledfromnotification">Usar la notification más reciente que represente la reproducción de multimedia</string>
+  <string name="m_widgetcontrolmethodnotification">Usar la notificación que representa reproducción de medios</string>
+  <string name="m_widgetcontrolmethodsession">Elegir automaticamente la mejor sesión de Medios del listado de medios del dispositivo</string>
+  <string name="m_widgethidenotificationwhenmediaplaying">Esconder la notificación.</string>
+  <string name="musiccontrolledfrommediasession">Elegir la mejor Sesión de Multimedia (más estable) </string>
+  <string name="musiccontrolledfromnotification">Usar la notification más reciente que represente la reproducción de multimedia (más rapido)</string>
   <string name="musicwidget">Widget de Musica</string>
   <string name="musicwidgetcontrolmethod">Método de control de Música</string>
   <string name="musicwidgetenabled">Activar el Widget de Música</string>

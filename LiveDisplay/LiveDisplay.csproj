@@ -139,6 +139,7 @@
     <Compile Include="Servicios\Music\MusicController.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationItemClickedEventArgs.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationListSizeChangedEventArgs.cs" />
+    <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationRemovedEventArgs.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationStyle\NotificationStyleApplier.cs" />
     <Compile Include="Servicios\Notificaciones\OpenNotification.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationCancelledEventArgsKitkat.cs" />

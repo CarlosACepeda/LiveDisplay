@@ -120,7 +120,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
 
         private void CatcherHelper_NotificationPosted(object sender, NotificationPostedEventArgs e)
         {
-            openNotification = new OpenNotification(e.StatusBarNotification);
+            openNotification = e.OpenNotification;
             if (e.ShouldCauseWakeUp)
                 AwakeHelper.TurnOnScreen();
 

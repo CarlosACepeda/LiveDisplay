@@ -1,4 +1,5 @@
 ﻿using Android.Media.Session;
+using LiveDisplay.Misc;
 using System.Collections.Generic;
 
 namespace LiveDisplay.Servicios.Music
@@ -10,36 +11,28 @@ namespace LiveDisplay.Servicios.Music
     /// </summary>
     internal class ActiveMediaSessionsListener : Java.Lang.Object, MediaSessionManager.IOnActiveSessionsChangedListener
     {
-        private MediaController mediaController;
-
-        private MusicController musicController;
-
         public void OnActiveSessionsChanged(IList<MediaController> controllers)
         {
-            //Pick the best mediacontroller.
-            if (controllers.Count > 0)
-                foreach (var mediacontroller in controllers)
-                {
-                    if (mediacontroller?.GetTransportControls() != null)//Ensure that this session has transport controls we can control
+            if (new ConfigurationManager(AppPreferences.Default).RetrieveAValue(ConfigurationParameters.MusicWidgetMethod, "0") == "0")
+            {//0 equals 'Media Session'
+                //Pick the best mediacontroller.
+                if (controllers.Count > 0)
+                    foreach (var mediacontroller in controllers)
                     {
-                        mediaController = mediacontroller;
-                        try
+                        if (mediacontroller?.GetTransportControls() != null)//Ensure that this session has transport controls we can control
                         {
-                            musicController = MusicController.GetInstance();
-                            mediaController.RegisterCallback(musicController);
-                            //Retrieve the controls to control the media, duh.
-                            musicController.TransportControls = mediaController.GetTransportControls();
-                            musicController.MediaMetadata = mediaController.Metadata;
-                            musicController.PlaybackState = mediaController.PlaybackState;
+                            try
+                            {
+                                MusicController.StartPlayback(mediacontroller.SessionToken);
+                            }
+                            catch
+                            {
+                                MusicController.StopPlayback();
+                            }
+                            break;
                         }
-                        catch
-                        {
-                            mediaController?.UnregisterCallback(musicController);
-                            musicController.Dispose();
-                        }
-                        break;
                     }
-                }
+            }
         }
     }
 }

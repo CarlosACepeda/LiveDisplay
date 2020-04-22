@@ -20,13 +20,22 @@
       android:title="@string/advanced"
       app:iconSpaceReserved="false">
     <ListPreference
-          android:selectable="false"
+            android:selectable="false"
+          android:enabled="false"
           android:defaultValue="0"
           android:key="musicwidgetcontrolmethod"
           android:title="@string/musicwidgetcontrolmethod"
-          android:summary="@string/notavailableyet"
+          android:summary="@string/m_widgetcontrolmethodsession"
           android:entries="@array/listentriesmusicwidgetcontrolmethod"
           android:entryValues="@array/listvaluesmusicwidgetcontrolmethod"
           app:iconSpaceReserved="false" />
+    <SwitchPreference
+      android:defaultValue="false"
+      android:selectable="false"
+      android:enabled="false"
+      android:key="hidenotificationwhenmediaplaying?"
+      android:summary="@string/notavailableyet"
+      android:title="@string/m_widgethidenotificationwhenmediaplaying"
+      app:iconSpaceReserved="false" />
   </PreferenceCategory>
 </PreferenceScreen>

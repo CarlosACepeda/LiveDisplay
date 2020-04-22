@@ -331,7 +331,7 @@
                 CheckIfMusicIsStillPaused();
             }
             //Check if Awake is enabled.
-
+            //Refactor
             switch (AwakeService.GetAwakeStatus())
             {
                 case AwakeStatus.Up:
@@ -348,6 +348,29 @@
 
                 default:
                     break;
+            }
+            if (new ConfigurationManager(AppPreferences.Default).RetrieveAValue(ConfigurationParameters.MusicWidgetMethod, "0") == "1")
+            {
+                //1: equals, pick a media widget from the current notification/or the last shown notification that represents media playing.
+                //Then subscribe to the notificationposted event.
+                CatcherHelper.NotificationPosted += CatcherHelper_NotificationPosted;
+                CatcherHelper.NotificationRemoved += CatcherHelper_NotificationRemoved;
+            }
+        }
+
+        private void CatcherHelper_NotificationRemoved(object sender, NotificationRemovedEventArgs e)
+        {
+            if (e.OpenNotification.RepresentsMediaPlaying())
+            {
+                MusicController.StopPlayback(e.OpenNotification.GetMediaSessionToken());
+            }
+        }
+
+        private void CatcherHelper_NotificationPosted(object sender, NotificationPostedEventArgs e)
+        {
+            if (e.OpenNotification.RepresentsMediaPlaying())
+            {
+                MusicController.StartPlayback(e.OpenNotification.GetMediaSessionToken());
             }
         }
 
@@ -388,6 +411,12 @@
                 MusicControllerKitkat.MusicPlaying -= MusicControllerKitkat_MusicPlaying;
                 MusicControllerKitkat.MusicPaused -= MusicControllerKitkat_MusicPaused;
             }
+            if (new ConfigurationManager(AppPreferences.Default).RetrieveAValue(ConfigurationParameters.MusicWidgetMethod, "0") == "1")
+            {
+                CatcherHelper.NotificationPosted -= CatcherHelper_NotificationPosted;
+                CatcherHelper.NotificationRemoved -= CatcherHelper_NotificationRemoved;
+            }
+
             GC.Collect();
         }
 

@@ -44,11 +44,11 @@ namespace LiveDisplay.Servicios.Notificaciones
             if (IsRemovable())
                 using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())
                 {
-                    //If this notification has a mediacontroller callback registered we unregister it, to avoid leaks.
-                    if (mediaController != null)
-                    {
-                        mediaController.UnregisterCallback(MusicController.GetInstance());
-                    }
+                    ////If this notification has a mediacontroller callback registered we unregister it, to avoid leaks.
+                    //if (mediaController != null)
+                    //{
+                    //    mediaController.UnregisterCallback(MusicController.StartPlayback());
+                    //}
                     if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
                     {
                         slave.CancelNotification(GetPackageName(), GetTag(), GetId());
@@ -184,7 +184,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             return false;
         }
 
-        private MediaSession.Token GetMediaSessionToken()
+        public  MediaSession.Token GetMediaSessionToken()
         {
             try
             {
@@ -196,7 +196,8 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
         }
 
-        public bool StartMediaCallback()
+        //<only for testing>
+        private bool StartMediaCallback()
         {
             var mediaSessionToken = GetMediaSessionToken();
             if (mediaSessionToken == null) return false;
@@ -204,17 +205,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             {
                 try
                 {
-                    if (mediaController != null)
-                    {
-                        mediaController.UnregisterCallback(MusicController.GetInstance());
-                    }
-                    mediaController = new MediaController(Application.Context, GetMediaSessionToken());
-                    var musicController = MusicController.GetInstance();
-                    mediaController.RegisterCallback(MusicController.GetInstance());
-                    musicController.TransportControls = mediaController.GetTransportControls();
-                    musicController.MediaMetadata = mediaController.Metadata;
-                    musicController.PlaybackState = mediaController.PlaybackState;
-                    musicController.ActivityIntent = statusbarnotification.Notification.ContentIntent; //The current notification.
+                    MusicController.StartPlayback(mediaSessionToken);
                     Log.Info("LiveDisplay", "Callback registered Successfully");
                     return true;
                 }
@@ -224,6 +215,13 @@ namespace LiveDisplay.Servicios.Notificaciones
                     return false;
                 }
             }
+        }
+
+        public bool RepresentsMediaPlaying()
+        {
+            var mediaSessionToken = GetMediaSessionToken();
+            if (mediaSessionToken == null) return false;
+            return true;
         }
 
         internal string When()

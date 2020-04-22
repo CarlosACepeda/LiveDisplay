@@ -14,7 +14,7 @@ namespace LiveDisplay.Servicios.Notificaciones
         public static NotificationAdapter notificationAdapter;
         public static List<StatusBarNotification> StatusBarNotifications { get; internal set; }
 
-        public static event EventHandler NotificationRemoved;
+        public static event EventHandler<NotificationRemovedEventArgs> NotificationRemoved;
 
         public static event EventHandler<NotificationPostedEventArgs> NotificationPosted;
 
@@ -134,7 +134,10 @@ namespace LiveDisplay.Servicios.Notificaciones
             {
                 ThereAreNotifications = !(StatusBarNotifications.Where(n => n.IsClearable).ToList().Count==0)
             });
-            OnNotificationRemoved();
+            NotificationRemoved?.Invoke(this, new NotificationRemovedEventArgs()
+            {
+                OpenNotification = new OpenNotification(sbn),
+            });
         }
 
         public void CancelAllNotifications()
@@ -159,14 +162,10 @@ namespace LiveDisplay.Servicios.Notificaciones
             NotificationPosted?.Invoke(this, new NotificationPostedEventArgs()
             {
                 ShouldCauseWakeUp = shouldCauseWakeup,
-                StatusBarNotification = sbn,
+                OpenNotification = new OpenNotification(sbn),
                 UpdatesPreviousNotification = updatesPreviousNotification
             });
         }
 
-        private void OnNotificationRemoved()
-        {
-            NotificationRemoved?.Invoke(this, EventArgs.Empty); //Just notify the subscribers the notification was removed.
-        }
     }
 }
