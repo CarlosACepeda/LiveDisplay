@@ -54,6 +54,14 @@
                 a:layout_width="match_parent"
                 a:weightSum="10"
                 a:layout_height="0dp">
+            <!--<androidx.recyclerview.widget.RecyclerView
+                a:layout_weight="9"
+                a:id="@+id/FltNotificationListRecyclerView"
+                a:overScrollMode="never"
+                a:layout_width="0dp"
+                a:layout_height="wrap_content"
+                a:layout_gravity="bottom"
+			/>-->
             <FrameLayout
                 a:layout_weight="9"
                 a:layout_gravity="center"

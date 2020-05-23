@@ -92,6 +92,7 @@
     <Compile Include="Activities\TransparentActivity.cs" />
     <Compile Include="Activities\WeatherSettingsActivity.cs" />
     <Compile Include="Adapters\AppsToBeBlacklistedAdapter.cs" />
+    <Compile Include="Adapters\FilteredNotificationAdapter.cs" />
     <Compile Include="Adapters\NotificationAdapter.cs" />
     <Compile Include="BroadcastReceivers\AdminReceiver.cs" />
     <Compile Include="BroadcastReceivers\BatteryReceiver.cs" />
@@ -140,6 +141,9 @@
     <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationItemClickedEventArgs.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationListSizeChangedEventArgs.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationRemovedEventArgs.cs" />
+    <Compile Include="Servicios\Notificaciones\NotificationStyle\IStyle.cs" />
+    <Compile Include="Servicios\Notificaciones\NotificationStyle\MessagingStyle.cs" />
+    <Compile Include="Servicios\Notificaciones\NotificationStyle\NormalNotification.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationStyle\NotificationStyleApplier.cs" />
     <Compile Include="Servicios\Notificaciones\OpenNotification.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationCancelledEventArgsKitkat.cs" />
@@ -555,13 +559,13 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AppCenter">
-      <Version>3.1.0</Version>
+      <Version>3.2.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AppCenter.Analytics">
-      <Version>3.1.0</Version>
+      <Version>3.2.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AppCenter.Crashes">
-      <Version>3.1.0</Version>
+      <Version>3.2.1</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>12.0.3</Version>
@@ -579,10 +583,10 @@
       <Version>1.0.0</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.AndroidX.Fragment">
-      <Version>1.2.3</Version>
+      <Version>1.2.4</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.AndroidX.Preference">
-      <Version>1.1.0</Version>
+      <Version>1.1.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.AndroidX.RecyclerView">
       <Version>1.1.0</Version>

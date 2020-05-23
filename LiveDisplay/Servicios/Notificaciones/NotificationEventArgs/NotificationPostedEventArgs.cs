@@ -1,5 +1,4 @@
-﻿using Android.Service.Notification;
-using System;
+﻿using System;
 
 namespace LiveDisplay.Servicios.Notificaciones.NotificationEventArgs
 {

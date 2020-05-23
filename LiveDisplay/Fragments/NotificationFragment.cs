@@ -36,7 +36,6 @@ namespace LiveDisplay.Fragments
             View v = inflater.Inflate(Resource.Layout.NotificationFrag, container, false);
             notification = v.FindViewById<LinearLayout>(Resource.Id.llNotification);
             styleApplier = new NotificationStyleApplier(ref notification, this);
-
             notification.Drag += Notification_Drag;
             notification.Click += LlNotification_Click;
             NotificationAdapterViewHolder.ItemClicked += ItemClicked;

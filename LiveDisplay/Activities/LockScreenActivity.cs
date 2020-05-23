@@ -34,8 +34,8 @@
 
     [Activity(Label = "LockScreen", Theme = "@style/LiveDisplayThemeDark.NoActionBar", ScreenOrientation = ScreenOrientation.Portrait, MainLauncher = false, TaskAffinity = "livedisplay.lockscreen", LaunchMode = LaunchMode.SingleInstance, ExcludeFromRecents = true)]
     public class LockScreenActivity : AppCompatActivity
-    {
-        private RecyclerView recycler;
+    {        
+        private RecyclerView recycler/*, filteredRecyclerView*/;
         private RecyclerView.LayoutManager layoutManager;
 
         //private ImageView unlocker;
@@ -126,6 +126,14 @@
                     recycler.SetAdapter(CatcherHelper.notificationAdapter);
                 }
             }
+            //using (filteredRecyclerView = FindViewById<RecyclerView>(Resource.Id.FltNotificationListRecyclerView))
+            //{
+            //    using (layoutManager = new LinearLayoutManager(Application.Context))
+            //    {
+            //        recycler.SetLayoutManager(layoutManager);
+            //        recycler.SetAdapter(CatcherHelper.notificationAdapter);
+            //    }
+            //}
 
             LoadClockFragment();
 

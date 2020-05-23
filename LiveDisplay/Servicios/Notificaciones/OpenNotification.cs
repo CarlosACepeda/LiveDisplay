@@ -16,7 +16,7 @@ using System.Linq;
 
 namespace LiveDisplay.Servicios.Notificaciones
 {
-    internal class OpenNotification : Java.Lang.Object
+    public class OpenNotification : Java.Lang.Object
     {
         private StatusBarNotification statusbarnotification;
         private MediaController mediaController; //A media controller to be used with the  Media Session token provided by a MediaStyle notification.
@@ -400,7 +400,7 @@ namespace LiveDisplay.Servicios.Notificaciones
         }
     }
 
-    internal class OpenAction : Java.Lang.Object
+    public class OpenAction : Java.Lang.Object
     {
         private Notification.Action action;
         private RemoteInput remoteInputDirectReply;

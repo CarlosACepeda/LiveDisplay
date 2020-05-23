@@ -118,8 +118,9 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
             togglenotificationcollapse.Click += Togglenotificationcollapse_Click;
         }
 
-        public NotificationStyleApplier(bool isFloating)
+        public NotificationStyleApplier(IStyle style)
         {
+
         }
 
         public void ApplyStyle(OpenNotification notification)

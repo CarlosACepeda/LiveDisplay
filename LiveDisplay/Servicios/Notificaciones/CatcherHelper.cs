@@ -39,19 +39,16 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
         }
 
-        //If Catcher call this, it means that the notification is part of a Group of notifications and should be Grouped.
-        private void GroupNotification()
-        {
-            //After this, fire event.
-            //Find ID, if Found, Append to that notification, if not WtF. lol.
-        }
-
         public void OnNotificationPosted(StatusBarNotification sbn)
         {
             //This is the notification of 'LiveDisplay is showing above other apps'
             //Simply let's ignore it, because it's annoying. (Anyway, the user couldn't care less about this notification tbh)
             if (sbn.PackageName == "android" && sbn.Tag == "com.android.server.wm.AlertWindowNotification - com.underground.livedisplay")
                 return;
+
+            if (new OpenNotification(sbn).IsSummary())
+                return; //Ignore the summary notification. (it causes redundancy) anyway, In an ideal scenario I should hide this notification instead
+            //of ignoring it.
 
             var blockingstatus = Blacklist.ReturnBlockLevel(sbn.PackageName);
 
@@ -116,6 +113,9 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             if (sbn.PackageName == "android" && sbn.Tag == "com.android.server.wm.AlertWindowNotification - com.underground.livedisplay")
                 return;
+
+            if (new OpenNotification(sbn).IsSummary())
+                return; //Ignore the summary notification.
 
             int position = GetNotificationPosition(sbn);
             if (position >= 0)
