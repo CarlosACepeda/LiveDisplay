@@ -328,7 +328,7 @@ namespace LiveDisplay.Fragments
                     {
                         Wallpaper = new BitmapDrawable(Resources, e.AlbumArt),
                         OpacityLevel = (short)opacitylevel,
-                        BlurLevel = 0, //Causes a crash That currently I cant debug, damn, thats why is 0. (No blur) and ignoring the value the used have setted.
+                        BlurLevel = (short) blurLevel, //Causes a crash That currently I cant debug, damn, thats why is 0. (No blur) and ignoring the value the used have setted.
                         WallpaperPoster = WallpaperPoster.MusicPlayer //We must nutify WallpaperPublisher who is posting the wallpaper, otherwise it'll be ignored.
                     });
                 GC.Collect(0);
@@ -357,7 +357,7 @@ namespace LiveDisplay.Fragments
                         {
                             Wallpaper = wallpaper,
                             OpacityLevel = (short)opacitylevel,
-                            BlurLevel = 0, //Causes a crash That currently I cant debug, damn, thats why is 0. (No blur) and ignoring the value the used have setted.
+                            BlurLevel = (short) blurLevel, //Causes a crash That currently I cant debug, damn, thats why is 0. (No blur) and ignoring the value the used have setted.
                             WallpaperPoster = WallpaperPoster.MusicPlayer //We must nutify WallpaperPublisher who is posting the wallpaper, otherwise it'll be ignored.
                         });
                 });

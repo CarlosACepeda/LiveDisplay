@@ -71,6 +71,10 @@
             blur.Max = 25;
             blur.StopTrackingTouch += Blur_StopTrackingTouch;
             opacity.StopTrackingTouch += Opacity_StopTrackingTouch;
+
+            //Precondition: Background must be black so we can set the opacity correctly of the wallpaper when being set.
+            Window.DecorView.SetBackgroundColor(Color.Black);
+
             if (Checkers.ThisAppHasReadStoragePermission() == false)
             {
                 RequestPermissions(new string[1] { "android.permission.READ_EXTERNAL_STORAGE" }, REQUEST_CODE_READ_STORAGE_PERMISSION);
@@ -229,8 +233,7 @@
                         break;
 
                     case AlbumArtConfig:
-                        blur.Enabled = false; //we are disabling it forever, because after several tests It does not work to blur the
-                                              //Albumart cause causes a crash I cant debug, lost so many hours here.
+                        blur.Enabled = true;
                         if (appliesToMusicWidget.Checked == true)
                         {
                             appliesToMusicWidget.Enabled = false; //If the user tries to set the album artwork opacity and blur

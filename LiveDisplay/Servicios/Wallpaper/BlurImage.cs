@@ -1,6 +1,8 @@
-﻿using Android.Content;
+﻿using Android.App;
+using Android.Content;
 using Android.Graphics;
 using Android.Renderscripts;
+using Android.Views;
 using System.Threading;
 
 namespace LiveDisplay.Servicios.Wallpaper
@@ -12,10 +14,14 @@ namespace LiveDisplay.Servicios.Wallpaper
         private Context context;
         private Bitmap image;
         private float intensity;
+        private int deviceHeight;
+        private int deviceWidth;
 
         public BlurImage(Context context)
         {
             this.context = context;
+            deviceHeight = this.context.Resources.DisplayMetrics.HeightPixels;
+            deviceWidth = this.context.Resources.DisplayMetrics.WidthPixels;
         }
 
         public BlurImage Intensity(float intensity)
@@ -57,8 +63,12 @@ namespace LiveDisplay.Servicios.Wallpaper
             {
                 return image;
             }
-
-            Bitmap input = Bitmap.CreateScaledBitmap(image, image.Width, image.Height, false); //???
+            Bitmap input = null;
+            if (image.Width > deviceWidth || image.Height > deviceHeight)
+            {
+                input = Bitmap.CreateScaledBitmap(image, deviceWidth, deviceHeight, false);
+            }
+            else { input = image; }
 
             Bitmap output = Bitmap.CreateBitmap(input);
 

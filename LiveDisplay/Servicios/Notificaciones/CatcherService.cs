@@ -168,7 +168,7 @@ namespace LiveDisplay.Servicios
                 //var test5 = notification.Notification.Extras.GetCharSequenceArray(Notification.ExtraTextLines);
                 //var test6 = notification.Notification.Extras.Get("android.wearable.EXTENSIONS");
                 //var test7 = notification.Notification.Extras.KeySet();
-
+                if(notification.Notification.Flags.HasFlag(NotificationFlags.GroupSummary)==false) //Don't grab summary notifications yet. hotfix.
                 if ((notification.IsOngoing == false || notification.Notification.Flags.HasFlag(NotificationFlags.NoClear)) && notification.IsClearable == true)
                 {
                     statusBarNotifications.Add(notification);
