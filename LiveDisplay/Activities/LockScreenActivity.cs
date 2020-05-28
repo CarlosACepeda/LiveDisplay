@@ -340,18 +340,22 @@
             }
             //Check if Awake is enabled.
             //Refactor
-            switch (AwakeService.GetAwakeStatus())
+            switch (AwakeHelper.GetAwakeStatus())
             {
-                case AwakeStatus.Up:
-                    livedisplayinfo.Text = "Awake is Active";
+                case AwakeStatus.CompletelyDisabled:
+                    livedisplayinfo.Text = "Awake is disabled";
                     break;
-
                 case AwakeStatus.Sleeping:
                     livedisplayinfo.Text = "Awake is not Active (I'm sleeping)";
                     break;
-
-                case AwakeStatus.UpWithDeviceMotionDisabled:
+                case AwakeStatus.SleepingWithDeviceMotionEnabled:
                     livedisplayinfo.Text = "Awake is more or less Active";
+                    break;
+                case AwakeStatus.UpWithDeviceMotionDisabled:
+                    livedisplayinfo.Text = "Not listening for orientation changes.";
+                    break;
+                case AwakeStatus.Up:
+                    livedisplayinfo.Text = "Awake is Active";
                     break;
 
                 default:

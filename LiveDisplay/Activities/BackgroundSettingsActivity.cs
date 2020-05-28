@@ -171,11 +171,12 @@
             //in that case simply do nothing.
             if (Checkers.ThisAppHasReadStoragePermission())
             {
-                switch (e.Id)
+                currentSpinnerOptionSelected = (int)e.Id;
+
+                switch (currentSpinnerOptionSelected)
                 {
                     case DefaultWallpaperConfig:
 
-                        currentSpinnerOptionSelected = (int)e.Id;
 
                         appliesToMusicWidget.Enabled = true; //If the user tries to set the album artwork opacity and blur
                         blur.Enabled = true;

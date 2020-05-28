@@ -1,5 +1,6 @@
 ﻿using Android.App;
 using Android.Graphics.Drawables;
+using Android.OS.Storage;
 using Android.Util;
 using Android.Widget;
 using Javax.Security.Auth;
@@ -14,7 +15,7 @@ using static Newtonsoft.Json.JsonConvert;
 
 namespace LiveDisplay.Servicios.Weather
 {
-    internal class Weather
+    internal class OpenWeatherMapClient
     {
         private readonly static ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Weather);
         private static string imageURL = "http://openweathermap.org/img/wn/{0}@2x.png";
@@ -42,7 +43,7 @@ namespace LiveDisplay.Servicios.Weather
                     configurationManager.SaveAValue(ConfigurationParameters.WeatherMaximum, weatherRoot.MainWeather.MinTemperature.ToString());
                     configurationManager.SaveAValue(ConfigurationParameters.WeatherCountryCode, country);
                     configurationManager.SaveAValue(ConfigurationParameters.WeatherCurrent, weatherRoot.MainWeather.Temperature.ToString());
-                    string unitsuffix = "°k";
+                    string unitsuffix = "°K";
                     switch (measurementunit)
                     {
                         case MeasurementUnits.Fahrenheit:
@@ -79,11 +80,10 @@ namespace LiveDisplay.Servicios.Weather
                         }
                         catch
                         {                            
-                            Toast.MakeText(Application.Context, "FAILED DOWNLOAD IMAGE", ToastLength.Long).Show();
+                            Toast.MakeText(Application.Context, "FAILED TO DOWNLOAD IMAGE", ToastLength.Long).Show();
                         }
 
                     }
-
 
                     return weatherRoot;
                 }

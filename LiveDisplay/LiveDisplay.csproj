@@ -159,7 +159,7 @@
     <Compile Include="Servicios\Weather\GrabWeatherJob.cs" />
     <Compile Include="Servicios\Weather\IconsForWeatherConditions.cs" />
     <Compile Include="Servicios\Weather\MeasurementUnits.cs" />
-    <Compile Include="Servicios\Weather\Weather.cs" />
+    <Compile Include="Servicios\Weather\OpenWeatherMapClient.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\anim\fade_in.xml">
@@ -628,6 +628,9 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\xml\awake_prefs.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\LockScreen.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

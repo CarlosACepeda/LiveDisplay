@@ -50,7 +50,7 @@ namespace LiveDisplay.Fragments
 
             ThreadPool.QueueUserWorkItem(async m =>
             {
-                var weather = await Weather.GetWeather(thecity, countryCode, units);
+                var weather = await OpenWeatherMapClient.GetWeather(thecity, countryCode, units);
                 Activity.RunOnUiThread(() =>
                 {
                     temperature.Text = weather?.MainWeather.Temperature.ToString() + temperatureSuffix;

@@ -1,5 +1,6 @@
 ﻿using Android.App;
 using Android.Content;
+using Android.Content.Res;
 using Android.Hardware;
 using Android.OS;
 using Android.Preferences;
@@ -19,52 +20,14 @@ namespace LiveDisplay.Servicios
         private SensorManager sensorManager;
         private Sensor accelerometerSensor;
         private Sensor proximitySensor;
-        private bool isLaidDown = false;
-        private static bool sleeping = false;
+        public static bool isLaidDown = false;
         public static bool isInPocket;
         public static bool isRunning;
 
+        
+
         public static event EventHandler<EventArgs> DeviceIsActive;
 
-        public static AwakeStatus GetAwakeStatus()
-        {
-            int start = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.StartSleepTime, "0")); //12am
-            int end = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.FinishSleepTime, "500"));//5am
-            //Generates the hour as a 4 characters number in 24 hours for example: 2210 (10:10pm)
-            var now = int.Parse(string.Concat(DateTime.Now.Hour.ToString("00"), DateTime.Now.Minute.ToString("00")));
-            Log.Info("LiveDisplay", now.ToString());
-
-            if (start <= end) //The times are in the same day.
-            {
-                if (now >= start && now <= end)
-                {
-                    Log.Info("HELLO", "Im Sleeping");
-                    sleeping = true;
-                    return AwakeStatus.Sleeping;
-                }
-                else
-                {
-                    Log.Info("HELLO", "Im Active");
-                    sleeping = false;
-                    return AwakeStatus.Up;
-                }
-            }
-            else //The times are in different days.
-            {
-                if (now >= start || now <= end)
-                {
-                    Log.Info("HELLO", "Im Sleeping");
-                    sleeping = true;
-                    return AwakeStatus.Sleeping;
-                }
-                else
-                {
-                    Log.Info("HELLO", "Im Active");
-                    sleeping = false;
-                    return AwakeStatus.Up;
-                }
-            }
-        }
 
         public override IBinder OnBind(Intent intent)
         {
@@ -80,6 +43,7 @@ namespace LiveDisplay.Servicios
             proximitySensor = sensorManager.GetDefaultSensor(SensorType.Proximity);
             sensorManager.RegisterListener(this, accelerometerSensor, SensorDelay.Normal);
             sensorManager.RegisterListener(this, proximitySensor, SensorDelay.Normal);
+            isRunning = true;
             return StartCommandResult.Sticky;
         }
 
@@ -118,7 +82,6 @@ namespace LiveDisplay.Servicios
                     {
                         if (e.Values[2] < 9.6f && e.Values[1] > 3)
                         {
-                            //Awake the phone
                             DeviceIsActive?.Invoke(null, null);
                             isLaidDown = false;
                         }
@@ -149,7 +112,7 @@ namespace LiveDisplay.Servicios
                             //boundaries so the Proximity sensor does not detect anything. xD
                         }
                     }
-                    else //The sensor is a different value but I will just assume the phone prox. Sensor is not being blocked.
+                    else //The sensor value is a different value but I will just assume the phone prox. Sensor is not being blocked.
                     {
                         isInPocket = false;
                     }
@@ -159,6 +122,21 @@ namespace LiveDisplay.Servicios
                 default:
                     break;
             }
+            //Kind of works. :/
+            //If you turn off the screen when the phone is vertical then okay, the screen won't turn on, but if you lay down your phone
+            //and get it back up it won't turn on the screen again.
+            //Because the code doesn't recognize that I wan't to turn on the screen and that the phone is no longer vertical.
+            //if I remove the third argument then when I turn off the Screen it will immediately turn on the screen
+            //because it recognizes is vertical and also it isn't inside a pocket
+            //TODO: Fix this behavior
+
+            if (isInPocket == false && isLaidDown == false && ScreenOnOffReceiver.ScreenTurnedOffWhileInVertical==false)
+            {
+                if (configurationManager.RetrieveAValue(ConfigurationParameters.TurnOnUserMovement) == true)
+                {
+                    AwakeHelper.TurnOnScreen();
+                }
+            }
         }
 
         public override void OnDestroy()
@@ -166,6 +144,7 @@ namespace LiveDisplay.Servicios
             sensorManager.UnregisterListener(this);
             accelerometerSensor.Dispose();
             sensorManager.Dispose();
+            isRunning = false;
             base.OnDestroy();
         }
     }

@@ -3,6 +3,7 @@ using Android.App.Admin;
 using Android.Content;
 using Android.OS;
 using Android.Util;
+using LiveDisplay.BroadcastReceivers;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Notificaciones;
 using System;
@@ -30,10 +31,10 @@ namespace LiveDisplay.Servicios.Awake
         {
             if (configurationManager.RetrieveAValue(ConfigurationParameters.TurnOnNewNotification) == true)
             {
-                PowerManager pm = ((PowerManager)Application.Context.GetSystemService(Context.PowerService));
-                var screenLock = pm.NewWakeLock(WakeLockFlags.ScreenDim | WakeLockFlags.AcquireCausesWakeup, "Turn On Screen");
-                if (AwakeService.isInPocket == false) //Dont wake up is the phone is inside a pocket.
+                if (AwakeService.isInPocket == false || ScreenOnOffReceiver.IsScreenOn) //Dont wake up is the phone is inside a pocket, or if the screen is already on
                 {
+                    PowerManager pm = ((PowerManager)Application.Context.GetSystemService(Context.PowerService));
+                    var screenLock = pm.NewWakeLock(WakeLockFlags.ScreenDim | WakeLockFlags.AcquireCausesWakeup, "Turn On Screen");
                     screenLock.Acquire();
                     ThreadPool.QueueUserWorkItem(o =>
                     {
@@ -85,21 +86,57 @@ namespace LiveDisplay.Servicios.Awake
 #pragma warning restore CS0618 // El tipo o el miembro están obsoletos
         }
 
-        public bool IsAwakeListeningForDeviceOrientation()
+        public static void ToggleStartStopAwakeService(bool toggle)
         {
-            if (AwakeService.GetAwakeStatus() == AwakeStatus.Up)
-                return true;
-            return false;
+            if (toggle == true)
+            {
+                Intent awake = new Intent(Application.Context, typeof(AwakeService));
+                Application.Context.StartService(awake);
+            }
+            else 
+            {
+                Intent awake = new Intent(Application.Context, typeof(AwakeService));
+                Application.Context.StopService(awake);
+            }
         }
+        public static AwakeStatus GetAwakeStatus()
+        {
+            AwakeStatus result= AwakeStatus.CompletelyDisabled;
 
-        public bool IsAwakeActive()
+            if (IsAwakeEnabled() == false)
+            {
+                result = AwakeStatus.CompletelyDisabled;
+            }
+            else
+            {
+                if (IsAwakeActive() && AwakeService.isRunning)
+                {
+                    result = AwakeStatus.Up;
+                }
+                else if (IsAwakeActive() && AwakeService.isRunning == false)
+                {
+                    result = AwakeStatus.UpWithDeviceMotionDisabled;
+                }
+                else if (IsAwakeActive() == false && AwakeService.isRunning)
+                {
+                    result = AwakeStatus.SleepingWithDeviceMotionEnabled;
+                }
+                else if (IsAwakeActive() == false && AwakeService.isRunning == false)
+                {
+                    result = AwakeStatus.CompletelyDisabled;
+                }
+            }
+            return result;
+        }
+        private static bool IsAwakeActive()
         {
             //Check the current time and only react if the time this method is called is within the allowed hours.
-            int start = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.StartSleepTime, "0")); //12am
-            int end = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.FinishSleepTime, "500"));//5am
+            int start = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.StartSleepTime, "-1"));
+            int end = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.FinishSleepTime, "-1"));
             //Generates the hour as a 4 characters number in 24 hours for example: 2210 (10:10pm)
             var now = int.Parse(string.Concat(DateTime.Now.Hour.ToString("00"), DateTime.Now.Minute.ToString("00")));
             Log.Info("LiveDisplay", now.ToString());
+
 
             if (start <= end) //The times are in the same day.
             {
@@ -128,7 +165,18 @@ namespace LiveDisplay.Servicios.Awake
                 }
             }
         }
+        private static bool IsAwakeEnabled()
+        {
+            //Check if the user has set  hours in which the Awake functionality isn't working!
+            int start = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.StartSleepTime, "-1")); 
+            int end = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.FinishSleepTime, "-1"));
+            if (start == -1 || end == -1)
+            {
+                return false;
+            }
+            return true;
 
+        }
         private void CatcherHelper_NotificationListSizeChanged(object sender, Notificaciones.NotificationEventArgs.NotificationListSizeChangedEventArgs e)
         {
             if (configurationManager.RetrieveAValue(ConfigurationParameters.TurnOffScreenAfterLastNotificationCleared) == true)
@@ -153,11 +201,14 @@ namespace LiveDisplay.Servicios.Awake
         }
     }
 
+    [Flags]
     public enum AwakeStatus
     {
+        CompletelyDisabled= 0, //Not even enabled by te user yet.
         Up = 1,
-        Sleeping = 2,
-        UpWithDeviceMotionDisabled = 4 //It can turn on the screen but not when grabbing the phone from a flat surface.
+        Sleeping = 2, //Enabled but currently inactive! (Inactive hours)
+        UpWithDeviceMotionDisabled = 4, //It can turn on the screen but not when grabbing the phone from a flat surface.
                                        //Maybe because the Service that listens for the device motion is not running.
+        SleepingWithDeviceMotionEnabled= 8
     }
 }

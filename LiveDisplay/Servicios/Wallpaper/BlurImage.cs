@@ -63,7 +63,7 @@ namespace LiveDisplay.Servicios.Wallpaper
             {
                 return image;
             }
-            Bitmap input = null;
+            Bitmap input;
             if (image.Width > deviceWidth || image.Height > deviceHeight)
             {
                 input = Bitmap.CreateScaledBitmap(image, deviceWidth, deviceHeight, false);

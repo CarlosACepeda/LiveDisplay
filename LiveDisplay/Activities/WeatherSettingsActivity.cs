@@ -142,7 +142,7 @@
 
             ThreadPool.QueueUserWorkItem(async m =>
             {
-                var weather = await Weather.GetWeather(city.Text, countryCode, units);
+                var weather = await OpenWeatherMapClient.GetWeather(city.Text, countryCode, units);
 
                 RunOnUiThread(() =>
                 {

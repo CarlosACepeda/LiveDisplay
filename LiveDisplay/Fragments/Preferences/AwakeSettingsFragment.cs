@@ -7,6 +7,7 @@ using AndroidX.Preference;
 using LiveDisplay.Activities;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
+using LiveDisplay.Servicios.Awake;
 using System;
 
 namespace LiveDisplay.Fragments.Preferences
@@ -35,9 +36,49 @@ namespace LiveDisplay.Fragments.Preferences
         {
             AddPreferencesFromResource(Resource.Xml.awake_prefs);
             PreferenceManager.SetDefaultValues(Application.Context, Resource.Xml.awake_prefs, true);
+            SwitchPreference enableawake = FindPreference("enableawake?") as SwitchPreference;
+            if (enableawake.Checked == false)
+            {
+                ToggleAwakeSettingsItems(false);
+            }
+            else 
+            {
+                ToggleAwakeSettingsItems(true);
 
+            }
+        }
+
+
+
+        void ToggleAwakeSettingsItems(bool enableItems)
+        {
             Preference inactivehourssettingspreference = FindPreference("inactivetimesettings");
+            Preference turnonnewnotification = FindPreference("turnonnewnotification?");
+            Preference turnonusermovement = FindPreference("turnonusermovement?");
+            Preference doubletapontopactionbehavior = FindPreference("doubletapontoppactionbehavior");
+            Preference startlockscreendelaytime = FindPreference("startlockscreendelaytime");
+            Preference turnoffscreendelaytime = FindPreference("turnoffscreendelaytime");
+
+            inactivehourssettingspreference.Enabled = enableItems;
+            inactivehourssettingspreference.Selectable = enableItems;
+
+            turnonnewnotification.Enabled = enableItems;
+            turnonnewnotification.Selectable = enableItems;
+
+            turnonusermovement.Enabled = enableItems;
+            turnonusermovement.Selectable = enableItems;
+
+            doubletapontopactionbehavior.Enabled = enableItems;
+            doubletapontopactionbehavior.Selectable = enableItems;
+
+            startlockscreendelaytime.Enabled = enableItems;
+            startlockscreendelaytime.Selectable = enableItems;
+
+            turnoffscreendelaytime.Enabled = enableItems;
+            turnoffscreendelaytime.Selectable = enableItems;
+
             inactivehourssettingspreference.PreferenceClick += Inactivehourssettingspreference_PreferenceClick;
+
         }
 
         private void Blacklistpreference_PreferenceClick(object sender, Preference.PreferenceClickEventArgs e)
@@ -96,6 +137,22 @@ namespace LiveDisplay.Fragments.Preferences
                             break;
                     }
                     break;
+                case ConfigurationParameters.EnableAwakeService:
+                    switch (sharedPreferences.GetBoolean(ConfigurationParameters.EnableAwakeService, false))
+                    {
+                        case true:
+                            ToggleAwakeSettingsItems(true);
+                            AwakeHelper.ToggleStartStopAwakeService(true);
+                            break;
+
+                        case false:
+                            AwakeHelper.ToggleStartStopAwakeService(false);
+                            ToggleAwakeSettingsItems(false);
+                            break;
+                    }
+
+                    break;
+
             }
         }
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)

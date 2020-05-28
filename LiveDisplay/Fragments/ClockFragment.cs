@@ -10,6 +10,7 @@
     using LiveDisplay.BroadcastReceivers;
     using LiveDisplay.Misc;
     using LiveDisplay.Servicios;
+    using LiveDisplay.Servicios.Weather;
     using System;
 
     using Fragment = AndroidX.Fragment.App.Fragment;
@@ -81,7 +82,18 @@
         public override void OnResume()
         {
             LoadWeather();
+            GrabWeatherJob.WeatherUpdated += GrabWeatherJob_WeatherUpdated;
             base.OnResume();
+        }
+        public override void OnPause()
+        {
+            GrabWeatherJob.WeatherUpdated -= GrabWeatherJob_WeatherUpdated;
+            base.OnPause();
+        }
+
+        private void GrabWeatherJob_WeatherUpdated(object sender, bool e)
+        {
+            LoadWeather();
         }
 
         private void LoadWeather()
