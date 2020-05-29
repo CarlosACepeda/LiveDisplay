@@ -27,7 +27,7 @@
   <string name="contributetoprojectdesc">LiveDisplay en Github</string>
   <string name="currentwallpaper">Papel Tapiz Actual</string>
   <string name="defaultwallpaper">Papel tapiz por defecto</string>
-  <string name="defaultwallpaperappearance">Papel Tapiz por defecto</string>
+  <string name="defaultwallpaperappearance">Papel Tapiz</string>
   <string name="dialogallowbutton">Permitir</string>
   <string name="dialogcancelbutton">Cancelar</string>
   <string name="dialogcancelledclick">Muy bien, puedes cambiar esta opción después en la sección \'Notificaciones\'</string>

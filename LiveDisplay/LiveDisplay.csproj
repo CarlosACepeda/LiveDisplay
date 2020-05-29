@@ -142,9 +142,6 @@
     <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationItemClickedEventArgs.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationListSizeChangedEventArgs.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationRemovedEventArgs.cs" />
-    <Compile Include="Servicios\Notificaciones\NotificationStyle\IStyle.cs" />
-    <Compile Include="Servicios\Notificaciones\NotificationStyle\MessagingStyle.cs" />
-    <Compile Include="Servicios\Notificaciones\NotificationStyle\NormalNotification.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationStyle\NotificationStyleApplier.cs" />
     <Compile Include="Servicios\Notificaciones\OpenNotification.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationCancelledEventArgsKitkat.cs" />
@@ -366,10 +363,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\FloatingNotification.axml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
-    </AndroidResource>
     <AndroidResource Include="Resources\layout\LockScreen.axml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
@@ -379,10 +372,6 @@
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\MusicPlayer.axml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\layout\NotificationFrag.axml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
@@ -630,7 +619,10 @@
     <AndroidResource Include="Resources\xml\awake_prefs.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\LockScreen.xml" />
+    <AndroidResource Include="Resources\layout\FloatingNotification.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\NotificationFrag.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

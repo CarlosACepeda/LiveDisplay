@@ -457,23 +457,29 @@ namespace LiveDisplay.Servicios.Notificaciones
             return false;
         }
 
-        public Drawable GetActionIcon()
-        {
+        public Drawable GetActionIcon(Color color)
+        {            
+            Drawable actionIcon;
             try
             {
                 if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1)
                 {
-                    return IconFactory.ReturnActionIconDrawable(action.Icon, action.ActionIntent.CreatorPackage);
+                    actionIcon= IconFactory.ReturnActionIconDrawable(action.Icon, action.ActionIntent.CreatorPackage);
                 }
                 else
                 {
-                    return IconFactory.ReturnActionIconDrawable(action.JniPeerMembers.InstanceFields.GetInt32Value("icon.I", action), action.ActionIntent.CreatorPackage);
+                    actionIcon = IconFactory.ReturnActionIconDrawable(action.JniPeerMembers.InstanceFields.GetInt32Value("icon.I", action), action.ActionIntent.CreatorPackage);
                 }
             }
             catch
             {
                 return null;
             }
+            if (color!= null)
+            {
+                actionIcon.SetColorFilter(color, PorterDuff.Mode.Multiply);
+            }
+            return actionIcon;
         }
 
         public string GetPlaceholderTextForInlineResponse()

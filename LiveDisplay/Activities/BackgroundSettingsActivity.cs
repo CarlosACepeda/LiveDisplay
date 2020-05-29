@@ -31,7 +31,7 @@
         private WallpaperManager wallpaperManager;
         private ConfigurationManager configurationManager;
         private CheckBox appliesToMusicWidget;
-        private const int DefaultWallpaperConfig = 0;
+        private const int WallpaperConfig = 0;
         private const int AlbumArtConfig = 1;
         private const int CustomWallpaperConfig = 2;
         private int defaultBlurLevel, defaultOpacityLevel, albumArtBlurLevel, albumArtOpacityLevel;
@@ -105,6 +105,7 @@
                     wallpaperPreview.SetBackgroundColor(Color.Black);
                     blur.Enabled = false;
                     opacity.Enabled = false;
+                    appliesToMusicWidget.Enabled = false;
                     configurationManager.SaveAValue(ConfigurationParameters.ChangeWallpaper, "0");
 
                     break;
@@ -112,6 +113,8 @@
                 case 1: //1 is 'Default wallpaper.'
                     blur.Enabled = true;
                     opacity.Enabled = true;
+                    appliesToMusicWidget.Enabled = true;
+
                     ThreadPool.QueueUserWorkItem(m =>
                         {
                             defaultBlurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.BlurLevel, 1);
@@ -134,6 +137,10 @@
                     break;
 
                 case 2: //2 is 'Pick one wallpaper'
+                    blur.Enabled = true;
+                    opacity.Enabled = true;
+                    appliesToMusicWidget.Enabled = true;
+
                     configurationManager.SaveAValue(ConfigurationParameters.ChangeWallpaper, "2");
 
                     using (Intent intent = new Intent())
@@ -175,12 +182,10 @@
 
                 switch (currentSpinnerOptionSelected)
                 {
-                    case DefaultWallpaperConfig:
+                    case WallpaperConfig:
 
+                        if (pickwallpaper.Enabled == false) pickwallpaper.Enabled = true;
 
-                        appliesToMusicWidget.Enabled = true; //If the user tries to set the album artwork opacity and blur
-                        blur.Enabled = true;
-                        opacity.Enabled = true;
 
                         switch (configurationManager.RetrieveAValue(ConfigurationParameters.ChangeWallpaper, "0"))
                         {
@@ -188,6 +193,7 @@
                                 wallpaperPreview.SetBackgroundColor(Color.Black);
                                 blur.Enabled = false;
                                 opacity.Enabled = false;
+                                appliesToMusicWidget.Enabled = false;
                                 break;
 
                             case "1":
@@ -206,6 +212,9 @@
                                     }
                                     );
                                 });
+                                blur.Enabled = true;
+                                opacity.Enabled = true;
+                                appliesToMusicWidget.Enabled = true; //If the user tries to set the album artwork opacity and blur
                                 break;
 
                             case "2":
@@ -225,6 +234,10 @@
                                     }
                                 });
 
+                                appliesToMusicWidget.Enabled = true;
+                                blur.Enabled = true;
+                                opacity.Enabled = true;
+
                                 break;
                         }
 
@@ -234,10 +247,14 @@
                         break;
 
                     case AlbumArtConfig:
+                        pickwallpaper.Enabled = false;
+                        appliesToMusicWidget.Enabled = false;
                         blur.Enabled = true;
+                        opacity.Enabled = true;
+
                         if (appliesToMusicWidget.Checked == true)
                         {
-                            appliesToMusicWidget.Enabled = false; //If the user tries to set the album artwork opacity and blur
+                             //If the user tries to set the album artwork opacity and blur
                                                                   //then this checkbox is not anymore valid.
                             blur.Enabled = false;                 //As well as the Seekbars for blur and opacity, because
                             opacity.Enabled = false;              //the Default wallpaper config. also applies to the AlbumArt config.
@@ -337,7 +354,7 @@
             if (wallpaperPreview.Background != null)
                 wallpaperPreview.Background.Alpha = e.SeekBar.Progress;
 
-            if (currentSpinnerOptionSelected == DefaultWallpaperConfig)
+            if (currentSpinnerOptionSelected == WallpaperConfig)
             {
                 configurationManager.SaveAValue(ConfigurationParameters.OpacityLevel, e.SeekBar.Progress);
                 defaultOpacityLevel = e.SeekBar.Progress;
@@ -358,34 +375,26 @@
         {
             Drawable drawable = null;
 
-            switch (configurationManager.RetrieveAValue(ConfigurationParameters.ChangeWallpaper, "0"))
+            if (currentSpinnerOptionSelected == WallpaperConfig)
             {
-                case "1": //Default Wallpaper
-                    wallpaperManager.ForgetLoadedWallpaper();
-                    ThreadPool.QueueUserWorkItem(m =>
-                    {
-                        using (var backgroundcopy = (BitmapDrawable)wallpaperManager.Drawable)
-                        {
-                            BlurImage blurImage = new BlurImage(Application.Context);
-                            blurImage.Load(backgroundcopy.Bitmap).Intensity(e.SeekBar.Progress);
-                            drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
-                            RunOnUiThread(() =>
-                            {
-                                var previousAlpha = wallpaperPreview.Background.Alpha;
-                                wallpaperPreview.Background = drawable;
-                                wallpaperPreview.Background.Alpha = previousAlpha;
-                            });
-                        }
-                    });
-                    break;
-
-                case "2":
-                    ThreadPool.QueueUserWorkItem(m =>
-                    {
+                Bitmap wallpaper = null;
+                switch (configurationManager.RetrieveAValue(ConfigurationParameters.ChangeWallpaper, "0"))
+                {
+                    case "1": //Default Wallpaper (system)
+                        wallpaperManager.ForgetLoadedWallpaper();
+                        wallpaper = ((BitmapDrawable)wallpaperManager.Drawable).Bitmap;
+                        break;
+                    case "2": //User picked a custom wallpaper.
                         var imagePath = configurationManager.RetrieveAValue(ConfigurationParameters.ImagePath, "");
-                        using var backgroundcopy = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.ImagePath, imagePath));
+                        wallpaper = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.ImagePath, imagePath));
+                        break;
+                }
+                ThreadPool.QueueUserWorkItem(m =>
+                {
+                    using (wallpaper)
+                    {
                         BlurImage blurImage = new BlurImage(Application.Context);
-                        blurImage.Load(backgroundcopy).Intensity(e.SeekBar.Progress);
+                        blurImage.Load(wallpaper).Intensity(e.SeekBar.Progress);
                         drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
                         RunOnUiThread(() =>
                         {
@@ -393,25 +402,36 @@
                             wallpaperPreview.Background = drawable;
                             wallpaperPreview.Background.Alpha = previousAlpha;
                         });
-                    });
-                    break;
-            }
-
-            if (currentSpinnerOptionSelected == DefaultWallpaperConfig)
-            {
+                    }
+                });
                 configurationManager.SaveAValue(ConfigurationParameters.BlurLevel, e.SeekBar.Progress);
                 defaultBlurLevel = e.SeekBar.Progress;
             }
             else if (currentSpinnerOptionSelected == AlbumArtConfig)
             {
+                ThreadPool.QueueUserWorkItem(m =>
+                {
+                    using (var albumart = BitmapFactory.DecodeResource(Resources, Resource.Drawable.album_artwork))
+                    {
+                        //Bitmap bitmap = Bitmap.CreateBitmap(albumart);
+                        BlurImage blurImage = new BlurImage(Application.Context);
+                        blurImage.Load(albumart).Intensity(e.SeekBar.Progress);
+                        drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
+                        RunOnUiThread(() =>
+                        {
+                            var previousAlpha = wallpaperPreview.Background.Alpha;
+                            wallpaperPreview.Background = drawable;
+                            wallpaperPreview.Background.Alpha = previousAlpha;
+                        });
+                    }
+                });
+
+
                 configurationManager.SaveAValue(ConfigurationParameters.AlbumArtBlurLevel, e.SeekBar.Progress);
                 albumArtBlurLevel = e.SeekBar.Progress;
             }
-            else if (currentSpinnerOptionSelected == CustomWallpaperConfig)
-            {
-                configurationManager.SaveAValue(ConfigurationParameters.BlurLevel, e.SeekBar.Progress);
-                defaultBlurLevel = e.SeekBar.Progress;
-            }
+
+            
             GC.Collect(0);
         }
 

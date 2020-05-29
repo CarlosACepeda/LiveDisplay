@@ -29,7 +29,7 @@
   <string name="currentwallpaper">Current Wallpaper</string>
   <string name="defaulttag">idk</string>
   <string name="defaultwallpaper">Default wallpaper</string>
-  <string name="defaultwallpaperappearance">Default Wallpaper</string>
+  <string name="defaultwallpaperappearance">Wallpaper</string>
   <string name="dialogallowbutton">Allow</string>
   <string name="dialogcancelbutton">Cancel</string>
   <string name="dialogcancelledclick">Ok, you can change this setting later in Notifications section!</string>
@@ -119,7 +119,7 @@
   <string name="updateweathereach">Update weather each:</string>
   <string name="useimperialunits">Use Imperial units</string>
   <string name="version">Version</string>
-  <string name="versionnumber">0.9.1-alpha2</string>
+  <string name="versionnumber">0.9.1-alpha3</string>
   <string name="wallpaperblur">Blur</string>
   <string name="wallpaperopacity">Opacity</string>
   <string name="wallpapersettingappliestoalbumart">Current setting also affects album artwork</string>

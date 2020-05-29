@@ -66,7 +66,7 @@
 			android:layout_height="wrap_content"
 			android:layout_width="0dp"
 			android:src="@drawable/baseline_close_white_18"
-			/>		
+			/>
     </LinearLayout>
     <TextView
         android:fontFamily="sans-serif-condensed"
@@ -74,14 +74,14 @@
         android:textColor="@color/primary_text_default_material_dark"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tvTitulo" />
+        android:id="@+id/tvTitle" />
     <TextView
         android:fontFamily="sans-serif-condensed"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="@color/primary_text_default_material_dark"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tvTexto"
+        android:id="@+id/tvText"
         android:maxLines="6"
         android:minLines="0" />
     <ProgressBar        

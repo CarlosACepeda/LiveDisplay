@@ -18,6 +18,11 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
     /// Self explaining, this will apply the notification styles.
     /// But, I will interpret them differently as android does, to be adapted to my lockscreen.
     /// </summary>
+    public enum NotificationViewType
+    {
+        OnLockscreen,
+        Floating
+    }
     internal class NotificationStyleApplier : Java.Lang.Object
     {
         private const string BigPictureStyle = "android.app.Notification$BigPictureStyle";
@@ -50,6 +55,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
         private ImageButton sendinlineresponse;
         private ImageButton togglenotificationcollapse;
         private ProgressBar notificationProgress;
+        private NotificationViewType notificationViewType;
 
         public static event EventHandler<bool> SendInlineResponseAvailabityChanged;
 
@@ -60,13 +66,14 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
         //TODO: It should allow apply style to multiple View types.
         //For example, actually it only applies the style to the NotificationWidget
         //But not the Floating Notification.
-        public NotificationStyleApplier(ref LinearLayout notificationView, AndroidX.Fragment.App.Fragment notificationFragment)
+        public NotificationStyleApplier(ref LinearLayout notificationView, AndroidX.Fragment.App.Fragment notificationFragment, NotificationViewType notificationViewType)
         {
             this.notificationView = notificationView;
             this.notificationFragment = notificationFragment;
+            this.notificationViewType = notificationViewType;
             notificationActions = notificationView.FindViewById<LinearLayout>(Resource.Id.notificationActions);
-            title = notificationView.FindViewById<TextView>(Resource.Id.tvTitulo);
-            text = notificationView.FindViewById<TextView>(Resource.Id.tvTexto);
+            title = notificationView.FindViewById<TextView>(Resource.Id.tvTitle);
+            text = notificationView.FindViewById<TextView>(Resource.Id.tvText);
             applicationName = notificationView.FindViewById<TextView>(Resource.Id.tvAppName);
             subtext = notificationView.FindViewById<TextView>(Resource.Id.tvnotifSubtext);
             when = notificationView.FindViewById<TextView>(Resource.Id.tvWhen);
@@ -117,12 +124,6 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
             closenotificationbutton.Click += Closenotificationbutton_Click;
             togglenotificationcollapse.Click += Togglenotificationcollapse_Click;
         }
-
-        public NotificationStyleApplier(IStyle style)
-        {
-
-        }
-
         public void ApplyStyle(OpenNotification notification)
         {
             //The progress thing does not require a Style to be applied.
@@ -158,15 +159,18 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
             {
                 case BigPictureStyle:
 
-                    var notificationBigPicture = new BitmapDrawable(notification.BigPicture());
-                    WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
+                    if (notificationViewType == NotificationViewType.OnLockscreen)
                     {
-                        BlurLevel = 0,
-                        OpacityLevel = 125,
-                        SecondsOfAttention = 5,
-                        Wallpaper = notificationBigPicture,
-                        WallpaperPoster = WallpaperPoster.Notification,
-                    });
+                        var notificationBigPicture = new BitmapDrawable(notification.BigPicture());
+                        WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
+                        {
+                            BlurLevel = 0,
+                            OpacityLevel = 125,
+                            SecondsOfAttention = 5,
+                            Wallpaper = notificationBigPicture,
+                            WallpaperPoster = WallpaperPoster.Notification,
+                        });
+                    }
                     break;
 
                 case InboxStyle:
@@ -182,17 +186,19 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
 
                 case MediaStyle:
                     when.Text = string.Empty; //The MediaStyle shouldn't show a timestamp.
-                    //notification.StartMediaCallback();
-                    var notificationMediaArtwork = new BitmapDrawable(notification.MediaArtwork());
-                    WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
+                                              //notification.StartMediaCallback();
+                    if (notificationViewType == NotificationViewType.OnLockscreen)
                     {
-                        BlurLevel = 0,
-                        OpacityLevel = 125,
-                        SecondsOfAttention = 5,
-                        Wallpaper = notificationMediaArtwork,
-                        WallpaperPoster = WallpaperPoster.Notification,
-                    });
-
+                        var notificationMediaArtwork = new BitmapDrawable(Application.Context.Resources, notification.MediaArtwork());
+                        WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
+                        {
+                            BlurLevel = 0,
+                            OpacityLevel = 125,
+                            SecondsOfAttention = 5,
+                            Wallpaper = notificationMediaArtwork,
+                            WallpaperPoster = WallpaperPoster.Notification,
+                        });
+                    }
                     break;
 
                 case MessagingStyle:
@@ -236,6 +242,13 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                 {
                     notificationActions.Visibility = ViewStates.Invisible;
                     inlineNotificationContainer.Visibility = ViewStates.Visible;
+                    //if (notificationViewType == NotificationViewType.Floating)
+                    //{
+                    //    sendinlineresponse.RequestFocus(); //The Floating view doesn't have focus, so the keyboard can't spawn.
+                    //    var imm = Application.Context.GetSystemService(Context.InputMethodService) as InputMethodManager;
+                    //    imm.ToggleSoftInput(ShowFlags.Implicit, 0);
+                    //   TODO: Keyboard doesn't work in floating windows. :/
+                    //}
                     inlineresponse.Hint = openAction.GetPlaceholderTextForInlineResponse();
                     sendinlineresponse.SetTag(DefaultActionIdentificator, openAction);
                     sendinlineresponse.Click += Sendinlineresponse_Click;
@@ -259,7 +272,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
             notificationActions.Visibility = ViewStates.Visible;
             inlineNotificationContainer.Visibility = ViewStates.Invisible;
             // Check if no view has focus:
-            View view = notificationFragment.Activity.CurrentFocus;
+            View view = notificationFragment?.Activity?.CurrentFocus;
             if (view != null)
             {
                 InputMethodManager imm = (InputMethodManager)notificationFragment.Activity.GetSystemService(Context.InputMethodService);
@@ -280,7 +293,15 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                     Button actionButton = new Button(Application.Context);
                     float weight = 1f / actions.Count;
                     actionButton.LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MatchParent, weight);
-                    actionButton.SetTextColor(Color.White); //Should change in MediaStyle (?)
+                    if (notificationViewType == NotificationViewType.OnLockscreen)
+                    {
+                        actionButton.SetTextColor(Color.White); //Should change in MediaStyle (?)
+                    }
+                    else 
+                    {
+                        actionButton.SetTextColor(Color.Black); //Should change in MediaStyle (?)
+
+                    }
                     actionButton.SetTag(DefaultActionIdentificator, openAction);
                     actionButton.Click += AnActionButton_Click;
                     actionButton.Gravity = actionButtonsGravity;
@@ -300,13 +321,21 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                     {
                         actionButton.TransformationMethod = null; //Disables all caps text.
                     }
-
+                    Color actionbuttonsColor;
+                    if (notificationViewType == NotificationViewType.OnLockscreen)
+                    {
+                        actionbuttonsColor = Color.White;
+                    }
+                    else 
+                    {
+                        actionbuttonsColor = Color.Black;
+                    }
                     Handler looper = new Handler(Looper.MainLooper);
                     looper.Post(() =>
                         {
                             if (shouldShowIcons || notification.Style() == MediaStyle) //The MediaStyle allows icons to be shown.
                             {
-                                actionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction.GetActionIcon(), null, null, null);
+                                actionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction.GetActionIcon(actionbuttonsColor), null, null, null);
                             }
 
                             notificationActions.AddView(actionButton);

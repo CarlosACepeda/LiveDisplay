@@ -12,6 +12,7 @@ using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Awake;
 using LiveDisplay.Servicios.Notificaciones;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
+using LiveDisplay.Servicios.Notificaciones.NotificationStyle;
 using System;
 
 namespace LiveDisplay.Servicios.FloatingNotification
@@ -23,6 +24,8 @@ namespace LiveDisplay.Servicios.FloatingNotification
     [Service(Enabled = true)]
     internal class FloatingNotification : Service, View.IOnTouchListener
     {
+        private NotificationStyleApplier styleApplier;
+
         private IWindowManager windowManager;
         private LinearLayout floatingNotificationView;
         private TextView floatingNotificationTitle;
@@ -70,7 +73,10 @@ namespace LiveDisplay.Servicios.FloatingNotification
                 Width = (int)floatingNotificationWidth,
                 Height = ViewGroup.LayoutParams.WrapContent,
                 Type = layoutType,
-                Flags = WindowManagerFlags.NotFocusable | WindowManagerFlags.WatchOutsideTouch | WindowManagerFlags.ShowWhenLocked,
+                Flags = 
+                WindowManagerFlags.NotFocusable 
+                | WindowManagerFlags.WatchOutsideTouch 
+                | WindowManagerFlags.ShowWhenLocked,
                 Format = Format.Translucent,
                 Gravity = GravityFlags.CenterHorizontal | GravityFlags.CenterVertical
             };
@@ -78,11 +84,16 @@ namespace LiveDisplay.Servicios.FloatingNotification
 
             windowManager.AddView(floatingNotificationView, layoutParams);
 
-            floatingNotificationAppName = floatingNotificationView.FindViewById<TextView>(Resource.Id.floatingappname);
-            floatingNotificationWhen = floatingNotificationView.FindViewById<TextView>(Resource.Id.floatingwhen);
-            floatingNotificationTitle = floatingNotificationView.FindViewById<TextView>(Resource.Id.floatingtitle);
-            floatingNotificationText = floatingNotificationView.FindViewById<TextView>(Resource.Id.floatingtext);
-            floatingNotificationActionsContainer = floatingNotificationView.FindViewById<LinearLayout>(Resource.Id.floatingNotificationActions);
+            floatingNotificationAppName = floatingNotificationView.FindViewById<TextView>(Resource.Id.tvAppName);
+            floatingNotificationWhen = floatingNotificationView.FindViewById<TextView>(Resource.Id.tvWhen);
+            floatingNotificationTitle = floatingNotificationView.FindViewById<TextView>(Resource.Id.tvTitle);
+            floatingNotificationText = floatingNotificationView.FindViewById<TextView>(Resource.Id.tvText);
+            floatingNotificationActionsContainer = floatingNotificationView.FindViewById<LinearLayout>(Resource.Id.notificationActions);
+
+
+            styleApplier = new NotificationStyleApplier(ref floatingNotificationView, null, NotificationViewType.Floating);
+
+
 
             CatcherHelper.NotificationRemoved += CatcherHelper_NotificationRemoved;
             CatcherHelper.NotificationPosted += CatcherHelper_NotificationPosted;
@@ -145,81 +156,16 @@ namespace LiveDisplay.Servicios.FloatingNotification
             {
                 if ((string)floatingNotificationView.GetTag(Resource.String.defaulttag) == openNotification.GetCustomId())
                 {
-                    floatingNotificationAppName.Text = openNotification.AppName();
-                    floatingNotificationWhen.Text = openNotification.When();
-                    floatingNotificationTitle.Text = openNotification.Title();
-                    floatingNotificationText.Text = openNotification.Text();
-                    floatingNotificationActionsContainer.RemoveAllViews();
+                    styleApplier?.ApplyStyle(openNotification);
 
-                    if (openNotification.HasActions() == true)
-                    {
-                        var actions = openNotification.RetrieveActions();
-                        foreach (var a in actions)
-                        {
-                            OpenAction openAction = new OpenAction(a);
-                            float weight = (float)1 / actions.Count;
-
-                            Button anActionButton = new Button(Application.Context)
-                            {
-                                LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MatchParent, weight),
-                                Text = openAction.Title(),
-                            };
-                            anActionButton.SetTypeface(Typeface.Create("sans-serif-condensed", TypefaceStyle.Normal), TypefaceStyle.Normal);
-                            anActionButton.SetMaxLines(1);
-                            anActionButton.SetTextColor(Color.Black);
-                            anActionButton.Click += (o, eventargs) =>
-                            {
-                                openAction.ClickAction();
-                            };
-                            anActionButton.Gravity = GravityFlags.CenterVertical;
-                            TypedValue outValue = new TypedValue();
-                            Application.Context.Theme.ResolveAttribute(Android.Resource.Attribute.SelectableItemBackgroundBorderless, outValue, true);
-                            anActionButton.SetBackgroundResource(outValue.ResourceId);
-                            //anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction.GetActionIcon(), null, null, null);
-                            floatingNotificationActionsContainer.AddView(anActionButton);
-                        };
-                    }
+                    floatingNotificationView.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
                 }
             }
             else
             {
                 //Is a new notification, so set a new tag.
                 floatingNotificationView.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
-
-                floatingNotificationAppName.Text = openNotification.AppName();
-                floatingNotificationWhen.Text = openNotification.When();
-                floatingNotificationTitle.Text = openNotification.Title();
-                floatingNotificationText.Text = openNotification.Text();
-                floatingNotificationActionsContainer.RemoveAllViews();
-
-                if (openNotification.HasActions() == true)
-                {
-                    var actions = openNotification.RetrieveActions();
-                    foreach (var a in actions)
-                    {
-                        OpenAction openAction = new OpenAction(a);
-                        float weight = (float)1 / actions.Count;
-
-                        Button anActionButton = new Button(Application.Context)
-                        {
-                            LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MatchParent, weight),
-                            Text = openAction.Title(),
-                        };
-                        anActionButton.SetTypeface(Typeface.Create("sans-serif-condensed", TypefaceStyle.Normal), TypefaceStyle.Normal);
-                        anActionButton.SetMaxLines(1);
-                        anActionButton.SetTextColor(Color.Black);
-                        anActionButton.Click += (o, eventargs) =>
-                        {
-                            openAction.ClickAction();
-                        };
-                        anActionButton.Gravity = GravityFlags.CenterVertical;
-                        TypedValue outValue = new TypedValue();
-                        Application.Context.Theme.ResolveAttribute(Android.Resource.Attribute.SelectableItemBackgroundBorderless, outValue, true);
-                        anActionButton.SetBackgroundResource(outValue.ResourceId);
-                        //anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction.GetActionIcon(), null, null, null);
-                        floatingNotificationActionsContainer.AddView(anActionButton);
-                    };
-                }
+                styleApplier?.ApplyStyle(openNotification);
 
                 if (floatingNotificationView.Visibility != ViewStates.Visible)
                 {
@@ -262,77 +208,8 @@ namespace LiveDisplay.Servicios.FloatingNotification
             //If it's the same then simply show it.
             if ((string)floatingNotificationView.GetTag(Resource.String.defaulttag) != openNotification.GetCustomId())
             {
-                floatingNotificationAppName.Text = openNotification.AppName();
-                floatingNotificationWhen.Text = openNotification.When();
-                floatingNotificationTitle.Text = openNotification.Title();
-                floatingNotificationText.Text = openNotification.Text();
-                floatingNotificationActionsContainer.RemoveAllViews();
-
-                if (openNotification.HasActions() == true)
-                {
-                    var actions = openNotification.RetrieveActions();
-                    foreach (var a in actions)
-                    {
-                        OpenAction openAction = new OpenAction(a);
-                        float weight = (float)1 / actions.Count;
-
-                        Button anActionButton = new Button(Application.Context)
-                        {
-                            LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MatchParent, weight),
-                            Text = openAction.Title(),
-                        };
-                        anActionButton.SetTypeface(Typeface.Create("sans-serif-condensed", TypefaceStyle.Normal), TypefaceStyle.Normal);
-                        anActionButton.SetMaxLines(1);
-                        anActionButton.SetTextColor(Color.Black);
-                        anActionButton.Click += (o, eventargs) =>
-                        {
-                            openAction.ClickAction();
-                        };
-                        anActionButton.Gravity = GravityFlags.CenterVertical;
-                        TypedValue outValue = new TypedValue();
-                        Application.Context.Theme.ResolveAttribute(Android.Resource.Attribute.SelectableItemBackgroundBorderless, outValue, true);
-                        anActionButton.SetBackgroundResource(outValue.ResourceId);
-                        //anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction.GetActionIcon(), null, null, null);
-                        floatingNotificationActionsContainer.AddView(anActionButton);
-                    };
-                }
-            }
-            else
-            {
-                floatingNotificationAppName.Text = openNotification.AppName();
-                floatingNotificationWhen.Text = openNotification.When();
-                floatingNotificationTitle.Text = openNotification.Title();
-                floatingNotificationText.Text = openNotification.Text();
-                floatingNotificationActionsContainer.RemoveAllViews();
-
-                if (openNotification.HasActions() == true)
-                {
-                    var actions = openNotification.RetrieveActions();
-                    foreach (var a in actions)
-                    {
-                        OpenAction openAction = new OpenAction(a);
-                        float weight = (float)1 / actions.Count;
-
-                        Button anActionButton = new Button(Application.Context)
-                        {
-                            LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MatchParent, weight),
-                            Text = openAction.Title(),
-                        };
-                        anActionButton.SetTypeface(Typeface.Create("sans-serif-condensed", TypefaceStyle.Normal), TypefaceStyle.Normal);
-                        anActionButton.SetMaxLines(1);
-                        anActionButton.SetTextColor(Color.Black);
-                        anActionButton.Click += (o, eventargs) =>
-                        {
-                            openAction.ClickAction();
-                        };
-                        anActionButton.Gravity = GravityFlags.CenterVertical;
-                        TypedValue outValue = new TypedValue();
-                        Application.Context.Theme.ResolveAttribute(Android.Resource.Attribute.SelectableItemBackgroundBorderless, outValue, true);
-                        anActionButton.SetBackgroundResource(outValue.ResourceId);
-                        //anActionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction.GetActionIcon(), null, null, null);
-                        floatingNotificationActionsContainer.AddView(anActionButton);
-                    };
-                }
+                styleApplier?.ApplyStyle(openNotification);
+                floatingNotificationView.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
             }
             if (floatingNotificationView.Visibility != ViewStates.Visible)
             {
