@@ -62,7 +62,7 @@ namespace LiveDisplay.Fragments
                     {
                         Wallpaper = CurrentAlbumArt,
                         OpacityLevel = (short)opacitylevel,
-                        BlurLevel = 0, //Causes a crash That currently I cant debug, damn, thats why is 0. (No blur) and ignoring the value the used have setted.
+                        BlurLevel = (short)blurLevel,
                         WallpaperPoster = WallpaperPoster.MusicPlayer //We must nutify WallpaperPublisher who is posting the wallpaper, otherwise the wallpaper will be ignored.
                     });
             }
@@ -328,7 +328,7 @@ namespace LiveDisplay.Fragments
                     {
                         Wallpaper = new BitmapDrawable(Resources, e.AlbumArt),
                         OpacityLevel = (short)opacitylevel,
-                        BlurLevel = (short) blurLevel, //Causes a crash That currently I cant debug, damn, thats why is 0. (No blur) and ignoring the value the used have setted.
+                        BlurLevel = (short) blurLevel, 
                         WallpaperPoster = WallpaperPoster.MusicPlayer //We must nutify WallpaperPublisher who is posting the wallpaper, otherwise it'll be ignored.
                     });
                 GC.Collect(0);
@@ -349,7 +349,7 @@ namespace LiveDisplay.Fragments
                     var albumart = e.MediaMetadata.GetBitmap(MediaMetadata.MetadataKeyAlbumArt);
                     var wallpaper = new BitmapDrawable(Activity.Resources, albumart);
                     int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtOpacityLevel, 255);
-                    int blurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtBlurLevel, 1); //Never used (for now)
+                    int blurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtBlurLevel, 1);
                     CurrentAlbumArt = wallpaper;
 
                     if (configurationManager.RetrieveAValue(ConfigurationParameters.ShowAlbumArt))

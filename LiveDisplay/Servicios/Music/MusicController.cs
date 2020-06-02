@@ -6,6 +6,7 @@ using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Music.MediaEventArgs;
 using System;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace LiveDisplay.Servicios.Music
@@ -24,7 +25,7 @@ namespace LiveDisplay.Servicios.Music
         static MediaController.TransportControls _transportControls;
         static MediaMetadata _mediaMetadata;
         private static MusicController instance;
-        public PendingIntent ActivityIntent { get; set; }
+        private static PendingIntent _activityIntent;
         private static MediaController _currentMediaController;
         private static MediaSession.Token _currentToken;
         private static bool _playbackstarted;
@@ -97,6 +98,7 @@ namespace LiveDisplay.Servicios.Music
                 _transportControls = controller.GetTransportControls();
                 _mediaMetadata = controller.Metadata;
                 _playbackState = controller.PlaybackState;
+                _activityIntent = controller.SessionActivity;
             }
             Jukebox.MediaEvent += Jukebox_MediaEvent;
         }
@@ -142,7 +144,7 @@ namespace LiveDisplay.Servicios.Music
                     OnMediaMetadataChanged(new MediaMetadataChangedEventArgs
                     {
                         MediaMetadata = _mediaMetadata,
-                        ActivityIntent = ActivityIntent
+                        ActivityIntent = _activityIntent
                     });
                     //Send Playbackstate of the media.
                     OnMediaPlaybackChanged(new MediaPlaybackStateChangedEventArgs
@@ -176,12 +178,12 @@ namespace LiveDisplay.Servicios.Music
 
             OnMediaMetadataChanged(new MediaMetadataChangedEventArgs
             {
-                ActivityIntent = ActivityIntent,
-                MediaMetadata = metadata
+                ActivityIntent = _activityIntent,
+                MediaMetadata = _mediaMetadata
             });
             //Datos de la Media que se está reproduciendo.
 
-            base.OnMetadataChanged(metadata);
+            base.OnMetadataChanged(_mediaMetadata);
             //Memory is growing until making a GC.
             GC.Collect();
         }
@@ -242,7 +244,7 @@ namespace LiveDisplay.Servicios.Music
                 return false;
             }
         }
-        //if you don't pass any argument it'll effectively do anything.
+        //if you don't pass any argument it'll effectively do nothing.
         public static bool StopPlayback(MediaSession.Token token= null)
         {
             if (_currentToken == token) //Making sure we are stopping the same one we started.
