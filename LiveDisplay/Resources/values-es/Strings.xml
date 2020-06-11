@@ -123,4 +123,5 @@
   <string name="weatherwidgetenabled">Activar el Widget del Clima</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">Diseño del icono de esta app!</string>
+  <string name="listenfordevicemotion">Detectar los movimientos del dispotivo</string>
 </resources>

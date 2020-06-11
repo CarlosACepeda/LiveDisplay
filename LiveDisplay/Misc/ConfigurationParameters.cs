@@ -1,6 +1,4 @@
-﻿using Android.Provider;
-
-namespace LiveDisplay.Misc
+﻿namespace LiveDisplay.Misc
 {
     internal sealed class ConfigurationParameters
     {
@@ -32,6 +30,7 @@ namespace LiveDisplay.Misc
         public const string WeatherUpdateChangesWallpaper = "weatherupdatechangeswallpaper?";
         public const string EnableQuickReply = "enablequickreply?";
         public const string EnableAwakeService = "enableawake?";
+        public const string ListenForDeviceMotion = "listenfordevicemotion?";
         public const string TurnOnNewNotification = "turnonnewnotification?";
         public const string StartSleepTime = "startsleeptime";
         public const string FinishSleepTime = "finishsleeptime";

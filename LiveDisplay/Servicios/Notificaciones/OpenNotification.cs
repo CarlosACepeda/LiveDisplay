@@ -409,8 +409,8 @@ namespace LiveDisplay.Servicios.Notificaciones
         public OpenAction(Notification.Action action)
         {
             this.action = action;
-            var test1 = action.Extras;
-            var test2 = action.Extras.KeySet();
+            //var test1 = action.Extras;
+            //var test2 = action.Extras.KeySet();
         }
 
         public string Title()

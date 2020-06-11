@@ -6,6 +6,7 @@ using Android.Runtime;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using AndroidX.RecyclerView.Widget;
 using LiveDisplay.Activities;
 using LiveDisplay.Adapters;
 using LiveDisplay.Misc;
@@ -64,9 +65,27 @@ namespace LiveDisplay.Servicios.FloatingNotification
             var lol = LayoutInflater.From(this);
 
             floatingNotificationView = (LinearLayout)lol.Inflate(Resource.Layout.FloatingNotification, null);
+            //var floatingList = (RecyclerView)lol.Inflate(Resource.Layout.NotificationList, null);
 
+            //using (var layoutManager = new LinearLayoutManager(Application.Context))
+            //{
+            //    floatingList.SetLayoutManager(layoutManager);
+            //    floatingList.SetAdapter(CatcherHelper.notificationAdapter);
+            //}
             int width = 200;
             var floatingNotificationWidth = TypedValue.ApplyDimension(ComplexUnitType.Dip, width, Resources.DisplayMetrics);
+
+            //var uiOptions = (int)floatingList.SystemUiVisibility;
+            //var newUiOptions = uiOptions;
+
+            //newUiOptions |= (int)SystemUiFlags.Fullscreen;
+            //newUiOptions |= (int)SystemUiFlags.HideNavigation;
+            //newUiOptions |= (int)SystemUiFlags.Immersive;
+            //// This option will make bars disappear by themselves
+            //newUiOptions |= (int)SystemUiFlags.ImmersiveSticky;
+            //floatingList.SystemUiVisibility = (StatusBarVisibility)newUiOptions;
+
+
 
             WindowManagerLayoutParams layoutParams = new WindowManagerLayoutParams
             {
@@ -83,6 +102,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
             floatingNotificationView.Visibility = ViewStates.Gone;
 
             windowManager.AddView(floatingNotificationView, layoutParams);
+            //windowManager.AddView(floatingList, layoutParams);
 
             floatingNotificationAppName = floatingNotificationView.FindViewById<TextView>(Resource.Id.tvAppName);
             floatingNotificationWhen = floatingNotificationView.FindViewById<TextView>(Resource.Id.tvWhen);
@@ -99,11 +119,11 @@ namespace LiveDisplay.Servicios.FloatingNotification
             CatcherHelper.NotificationPosted += CatcherHelper_NotificationPosted;
             NotificationAdapterViewHolder.ItemClicked += NotificationAdapterViewHolder_ItemClicked;
             NotificationAdapterViewHolder.ItemLongClicked += NotificationAdapterViewHolder_ItemLongClicked;
-            LockScreenActivity.OnActivityStateChanged += LockScreenActivity_OnActivityStateChanged;
+            ActivityLifecycleHelper.GetInstance().ActivityStateChanged += LockScreenActivity_OnActivityStateChanged;
             floatingNotificationView.SetOnTouchListener(this);
         }
 
-        private void LockScreenActivity_OnActivityStateChanged(object sender, Activities.ActivitiesEventArgs.LockScreenLifecycleEventArgs e)
+        private void LockScreenActivity_OnActivityStateChanged(object sender, ActivityStateChangedEventArgs e)
         {
             switch (e.State)
             {
@@ -230,7 +250,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
         public override void OnDestroy()
         {
             base.OnDestroy();
-            LockScreenActivity.OnActivityStateChanged -= LockScreenActivity_OnActivityStateChanged;
+            ActivityLifecycleHelper.GetInstance().ActivityStateChanged -= LockScreenActivity_OnActivityStateChanged;
             floatingNotificationView.Click -= FloatingNotificationView_Click;
             NotificationAdapterViewHolder.ItemClicked -= NotificationAdapterViewHolder_ItemClicked;
             NotificationAdapterViewHolder.ItemLongClicked -= NotificationAdapterViewHolder_ItemLongClicked;

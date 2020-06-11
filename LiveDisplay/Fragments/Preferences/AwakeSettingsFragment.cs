@@ -43,7 +43,11 @@ namespace LiveDisplay.Fragments.Preferences
             }
             else 
             {
-                ToggleAwakeSettingsItems(true);
+                if (AwakeHelper.GetAwakeStatus() == AwakeStatus.CompletelyDisabled)
+                {
+                    Inactivehourssettingspreference_PreferenceClick(null, null);
+                    ToggleAwakeSettingsItems(true);
+                }
 
             }
         }
@@ -52,6 +56,7 @@ namespace LiveDisplay.Fragments.Preferences
 
         void ToggleAwakeSettingsItems(bool enableItems)
         {
+            Preference listendevicemotion = FindPreference("listenfordevicemotion?");
             Preference inactivehourssettingspreference = FindPreference("inactivetimesettings");
             Preference turnonnewnotification = FindPreference("turnonnewnotification?");
             Preference turnonusermovement = FindPreference("turnonusermovement?");
@@ -59,15 +64,25 @@ namespace LiveDisplay.Fragments.Preferences
             Preference startlockscreendelaytime = FindPreference("startlockscreendelaytime");
             Preference turnoffscreendelaytime = FindPreference("turnoffscreendelaytime");
 
+            listendevicemotion.Enabled = enableItems;
+            listendevicemotion.Selectable = enableItems;
+
             inactivehourssettingspreference.Enabled = enableItems;
             inactivehourssettingspreference.Selectable = enableItems;
 
             turnonnewnotification.Enabled = enableItems;
             turnonnewnotification.Selectable = enableItems;
 
-            turnonusermovement.Enabled = enableItems;
-            turnonusermovement.Selectable = enableItems;
-
+            if (new ConfigurationManager(AppPreferences.Default).RetrieveAValue(ConfigurationParameters.ListenForDeviceMotion) == false)
+            {
+                turnonusermovement.Enabled = false;
+                turnonusermovement.Selectable = false;
+            }
+            else
+            {
+                turnonusermovement.Enabled = enableItems;
+                turnonusermovement.Selectable = enableItems;
+            }
             doubletapontopactionbehavior.Enabled = enableItems;
             doubletapontopactionbehavior.Selectable = enableItems;
 
@@ -141,18 +156,41 @@ namespace LiveDisplay.Fragments.Preferences
                     switch (sharedPreferences.GetBoolean(ConfigurationParameters.EnableAwakeService, false))
                     {
                         case true:
-                            ToggleAwakeSettingsItems(true);
-                            AwakeHelper.ToggleStartStopAwakeService(true);
+                            if (AwakeHelper.GetAwakeStatus() == AwakeStatus.CompletelyDisabled)
+                            {
+                                Inactivehourssettingspreference_PreferenceClick(null, null);
+                            }
+                            else
+                            {
+                                ToggleAwakeSettingsItems(true);
+                            }
                             break;
 
                         case false:
-                            AwakeHelper.ToggleStartStopAwakeService(false);
                             ToggleAwakeSettingsItems(false);
                             break;
                     }
 
                     break;
+                case ConfigurationParameters.ListenForDeviceMotion:
+                    Preference turnonusermovement = FindPreference("turnonusermovement?");
+                    switch (sharedPreferences.GetBoolean(ConfigurationParameters.ListenForDeviceMotion, false))
+                    {
 
+                        case true:
+                            AwakeHelper.ToggleStartStopAwakeService(true);
+                            turnonusermovement.Enabled = true;
+                            turnonusermovement.Selectable = true;
+
+                            break;
+                        case false:
+                            AwakeHelper.ToggleStartStopAwakeService(false);
+                            turnonusermovement.Enabled = false;
+                            turnonusermovement.Selectable = false;
+                            break;
+                    }
+
+                    break;
             }
         }
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)

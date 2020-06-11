@@ -68,14 +68,19 @@
                 a:layout_width="25dp"
                 a:layout_height="wrap_content"
                 a:id="@+id/MusicNotificationPlaceholder" />
-            <androidx.recyclerview.widget.RecyclerView
+<!--            <androidx.recyclerview.widget.RecyclerView
                 a:layout_weight="1"
                 a:id="@+id/NotificationListRecyclerView"
                 a:overScrollMode="never"
                 a:layout_width="25dp"
                 a:layout_height="wrap_content"
-                a:layout_gravity="bottom"
-			/>
+                a:layout_gravity="bottom"/>-->
+            <include
+                a:layout_weight="1"
+                layout="@layout/notificationlist"
+                a:layout_width="25dp"
+                a:layout_height="wrap_content"
+                a:layout_gravity="bottom"/>
 
      </LinearLayout>
     <!--This FrameLayout contains the clock and later the System icons which aren't available... yet.-->

@@ -17,8 +17,6 @@
     using Android.Widget;
     using AndroidX.AppCompat.App;
     using AndroidX.RecyclerView.Widget;
-    using LiveDisplay.Activities;
-    using LiveDisplay.Activities.ActivitiesEventArgs;
     using LiveDisplay.Fragments;
     using LiveDisplay.Misc;
     using LiveDisplay.Servicios;
@@ -57,13 +55,9 @@
         private Animation fadeoutanimation;
         private string doubletapbehavior;
         private bool isMusicWidgetPresent;
-        private ActivityStates currentActivityState;
         private ViewPropertyAnimator viewPropertyAnimator;
         private TextView welcome;
         private ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
-
-        public static event EventHandler<LockScreenLifecycleEventArgs> OnActivityStateChanged;
-
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -141,7 +135,6 @@
 
             LoadConfiguration();
 
-            OnActivityStateChanged += LockScreenActivity_OnActivityStateChanged;
             WallpaperPublisher.CurrentWallpaperCleared += WallpaperPublisher_CurrentWallpaperCleared;
         }
 
@@ -150,11 +143,6 @@
             //<document me>
             if (e.PreviousWallpaperPoster == WallpaperPoster.Lockscreen)
                 LoadWallpaper(new ConfigurationManager(AppPreferences.Default));
-        }
-
-        private void LockScreenActivity_OnActivityStateChanged(object sender, LockScreenLifecycleEventArgs e)
-        {
-            currentActivityState = e.State;
         }
 
         private void Fadeoutanimation_AnimationEnd(object sender, Animation.AnimationEndEventArgs e)
@@ -166,7 +154,7 @@
         private void WatchdogInterval_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             //it works correctly, but I want to refactor this. (Regression)
-            if (currentActivityState == ActivityStates.Resumed)
+            if (ActivityLifecycleHelper.GetInstance().GetActivityState(typeof(LockScreenActivity)) == ActivityStates.Resumed)
                 AwakeHelper.TurnOffScreen();
         }
 
@@ -182,7 +170,7 @@
             ThreadPool.QueueUserWorkItem(method =>
             {
                 Thread.Sleep(5000); //Wait 5 seconds.
-                if (currentActivityState == ActivityStates.Resumed)
+                if (ActivityLifecycleHelper.GetInstance().GetActivityState(typeof(LockScreenActivity)) == ActivityStates.Resumed)
                 {
                     if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
                     {
@@ -308,7 +296,7 @@
             watchDog.Elapsed += WatchdogInterval_Elapsed;
             watchDog.Stop();
             watchDog.Start();
-            OnActivityStateChanged?.Invoke(null, new LockScreenLifecycleEventArgs { State = ActivityStates.Resumed });
+            ActivityLifecycleHelper.GetInstance().NotifyActivityStateChange(typeof(LockScreenActivity), ActivityStates.Resumed);
             if (configurationManager.RetrieveAValue(ConfigurationParameters.TutorialRead) == false)
             {
                 welcome = FindViewById<TextView>(Resource.Id.welcomeoverlay);
@@ -342,22 +330,27 @@
             //Refactor
             switch (AwakeHelper.GetAwakeStatus())
             {
+                case AwakeStatus.None:
+                    livedisplayinfo.Text = Resources.GetString(Resource.String.idk);
+                    break;
                 case AwakeStatus.CompletelyDisabled:
-                    livedisplayinfo.Text = "Awake is disabled";
-                    break;
-                case AwakeStatus.Sleeping:
-                    livedisplayinfo.Text = "Awake is not Active (I'm sleeping)";
-                    break;
-                case AwakeStatus.SleepingWithDeviceMotionEnabled:
-                    livedisplayinfo.Text = "Awake is more or less Active";
-                    break;
-                case AwakeStatus.UpWithDeviceMotionDisabled:
-                    livedisplayinfo.Text = "Not listening for orientation changes.";
+                    livedisplayinfo.Text = "Completely disabled";
                     break;
                 case AwakeStatus.Up:
-                    livedisplayinfo.Text = "Awake is Active";
+                    livedisplayinfo.Text = "Awake is active";
                     break;
-
+                case AwakeStatus.Sleeping:
+                    livedisplayinfo.Text = "Awake is Sleeping";
+                    break;
+                case AwakeStatus.UpWithDeviceMotionDisabled:
+                    livedisplayinfo.Text = "Awake is active but not listening orientation changes";
+                    break;
+                case AwakeStatus.SleepingWithDeviceMotionEnabled:
+                    livedisplayinfo.Text = "Awake is sleeping but listening orientation changes";
+                    break;
+                case AwakeStatus.DisabledbyUser:
+                    livedisplayinfo.Text = "Awake is disabled by the user.";
+                    break;
                 default:
                     break;
             }
@@ -412,7 +405,7 @@
             base.OnPause();
             watchDog.Stop();
             watchDog.Elapsed -= WatchdogInterval_Elapsed;
-            OnActivityStateChanged?.Invoke(null, new LockScreenLifecycleEventArgs { State = ActivityStates.Paused });
+            ActivityLifecycleHelper.GetInstance().NotifyActivityStateChange(typeof(LockScreenActivity), ActivityStates.Paused);
             if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
             {
                 MusicController.MusicPlaying -= MusicController_MusicPlaying;
@@ -435,10 +428,9 @@
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            OnActivityStateChanged?.Invoke(null, new LockScreenLifecycleEventArgs { State = ActivityStates.Destroyed });
+            ActivityLifecycleHelper.GetInstance().NotifyActivityStateChange(typeof(LockScreenActivity), ActivityStates.Destroyed);
             //Unbind events
 
-            OnActivityStateChanged -= LockScreenActivity_OnActivityStateChanged;
             //unlocker.Touch -= Unlocker_Touch;
             clearAll.Click -= BtnClearAll_Click;
             WallpaperPublisher.NewWallpaperIssued -= Wallpaper_NewWallpaperIssued;
@@ -512,7 +504,8 @@
                         clearAll.Visibility = ViewStates.Invisible;
                     }
                     if (configurationManager.RetrieveAValue(ConfigurationParameters.TurnOffScreenAfterLastNotificationCleared)
-                    && currentActivityState== ActivityStates.Resumed)
+                    &&
+                    ActivityLifecycleHelper.GetInstance().GetActivityState(typeof(LockScreenActivity))== ActivityStates.Resumed)
                     {
                         AwakeHelper.TurnOffScreen();
                     }
@@ -588,10 +581,6 @@
 
             int interval = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.TurnOffScreenDelayTime, "5000"));
             watchDog.Interval = interval;
-            if (configurationManager.RetrieveAValue(ConfigurationParameters.EnableAwakeService) == true)
-            {
-                StartAwakeService();
-            }
             doubletapbehavior = configurationManager.RetrieveAValue(ConfigurationParameters.DoubleTapOnTopActionBehavior, "0");
             if (configurationManager.RetrieveAValue(ConfigurationParameters.HideShortcutsWhenKeyguardSafe))
             {
@@ -748,23 +737,6 @@
                 StartService(intent);
             }
         }
-
-        private void StartAwakeService()
-        {
-            using (Intent intent = new Intent(Application.Context, typeof(AwakeService)))
-            {
-                StartService(intent);
-            }
-        }
-
-        private void StopAwakeService()
-        {
-            using (Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(AwakeService))))
-            {
-                StopService(intent);
-            }
-        }
-
         private void StartMusicController()
         {
             // я голоден... ; хД
@@ -781,7 +753,7 @@
 
         private void StopMusicController()
         {
-            if (currentActivityState == ActivityStates.Resumed)
+            if (ActivityLifecycleHelper.GetInstance().GetActivityState(typeof(LockScreenActivity)) == ActivityStates.Resumed)
             {
                 LoadNotificationFragment();
                 isMusicWidgetPresent = false;

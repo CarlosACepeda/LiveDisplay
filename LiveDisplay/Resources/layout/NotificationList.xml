@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.recyclerview.widget.RecyclerView xmlns:a="http://schemas.android.com/apk/res/android"
+    a:layout_weight="1"
+    a:id="@+id/NotificationListRecyclerView"
+    a:overScrollMode="never"
+    a:layout_width="25dp"
+    a:layout_height="wrap_content"
+    a:layout_gravity="bottom"/>
+

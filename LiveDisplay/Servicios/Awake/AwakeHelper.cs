@@ -101,34 +101,22 @@ namespace LiveDisplay.Servicios.Awake
         }
         public static AwakeStatus GetAwakeStatus()
         {
-            AwakeStatus result= AwakeStatus.CompletelyDisabled;
+            if (UserHasEnabledAwake() == false && UserHasSetAwakeHours() == false)
+                return AwakeStatus.CompletelyDisabled;
+            if (UserHasEnabledAwake() == false && UserHasSetAwakeHours())
+                return AwakeStatus.DisabledbyUser;
+            if (UserHasEnabledAwake() && IsAwakeUp() && AwakeService.isRunning)
+                return AwakeStatus.Up;
+            if (UserHasEnabledAwake() && IsAwakeUp() && AwakeService.isRunning == false)
+                return AwakeStatus.UpWithDeviceMotionDisabled;
+            if (UserHasEnabledAwake() && IsAwakeUp()== false && AwakeService.isRunning)
+                return AwakeStatus.SleepingWithDeviceMotionEnabled;
+            if (UserHasEnabledAwake() && IsAwakeUp() == false && AwakeService.isRunning == false)
+                return AwakeStatus.Sleeping;
 
-            if (IsAwakeEnabled() == false)
-            {
-                result = AwakeStatus.CompletelyDisabled;
-            }
-            else
-            {
-                if (IsAwakeActive() && AwakeService.isRunning)
-                {
-                    result = AwakeStatus.Up;
-                }
-                else if (IsAwakeActive() && AwakeService.isRunning == false)
-                {
-                    result = AwakeStatus.UpWithDeviceMotionDisabled;
-                }
-                else if (IsAwakeActive() == false && AwakeService.isRunning)
-                {
-                    result = AwakeStatus.SleepingWithDeviceMotionEnabled;
-                }
-                else if (IsAwakeActive() == false && AwakeService.isRunning == false)
-                {
-                    result = AwakeStatus.CompletelyDisabled;
-                }
-            }
-            return result;
+            return AwakeStatus.None;
         }
-        private static bool IsAwakeActive()
+        private static bool IsAwakeUp()
         {
             //Check the current time and only react if the time this method is called is within the allowed hours.
             int start = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.StartSleepTime, "-1"));
@@ -165,7 +153,16 @@ namespace LiveDisplay.Servicios.Awake
                 }
             }
         }
-        private static bool IsAwakeEnabled()
+        private static bool UserHasEnabledAwake()
+        {
+            //Check if the user has enabled it in the first place
+            if (configurationManager.RetrieveAValue(ConfigurationParameters.EnableAwakeService) == false)
+            {
+                return false;
+            }
+            return true;
+        }
+        private static bool UserHasSetAwakeHours()
         {
             //Check if the user has set  hours in which the Awake functionality isn't working!
             int start = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.StartSleepTime, "-1")); 
@@ -204,11 +201,13 @@ namespace LiveDisplay.Servicios.Awake
     [Flags]
     public enum AwakeStatus
     {
-        CompletelyDisabled= 0, //Not even enabled by te user yet.
+        None= -1, //Shrug.
+        CompletelyDisabled= 0, //Not even enabled by the user yet.
         Up = 1,
         Sleeping = 2, //Enabled but currently inactive! (Inactive hours)
         UpWithDeviceMotionDisabled = 4, //It can turn on the screen but not when grabbing the phone from a flat surface.
                                        //Maybe because the Service that listens for the device motion is not running.
-        SleepingWithDeviceMotionEnabled= 8
+        SleepingWithDeviceMotionEnabled= 8,
+        DisabledbyUser= 64
     }
 }
