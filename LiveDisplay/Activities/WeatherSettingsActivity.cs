@@ -65,7 +65,7 @@
             humidity = FindViewById<TextView>(Resource.Id.humidity);
             weatherupdatefrequency = FindViewById<Spinner>(Resource.Id.weatherupdatefrequency);
 
-            var spinnerAdapter = ArrayAdapter.CreateFromResource(this, Resource.Array.listentriesweatherupdatefrequency, Android.Resource.Layout.SimpleSpinnerDropDownItem);
+            var spinnerAdapter = ArrayAdapter<string>.CreateFromResource(this, Resource.Array.listentriesweatherupdatefrequency, Android.Resource.Layout.SimpleSpinnerDropDownItem);
 
             weatherupdatefrequency.Adapter = spinnerAdapter;
         }

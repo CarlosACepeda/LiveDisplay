@@ -63,9 +63,6 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
         private AndroidX.Fragment.App.Fragment notificationFragment; //Required to do operations such as hiding the keyboard.
         private View notificationView;
 
-        //TODO: It should allow apply style to multiple View types.
-        //For example, actually it only applies the style to the NotificationWidget
-        //But not the Floating Notification.
         public NotificationStyleApplier(ref LinearLayout notificationView, AndroidX.Fragment.App.Fragment notificationFragment, NotificationViewType notificationViewType)
         {
             this.notificationView = notificationView;
@@ -242,13 +239,13 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                 {
                     notificationActions.Visibility = ViewStates.Invisible;
                     inlineNotificationContainer.Visibility = ViewStates.Visible;
-                    //if (notificationViewType == NotificationViewType.Floating)
-                    //{
-                    //    sendinlineresponse.RequestFocus(); //The Floating view doesn't have focus, so the keyboard can't spawn.
-                    //    var imm = Application.Context.GetSystemService(Context.InputMethodService) as InputMethodManager;
-                    //    imm.ToggleSoftInput(ShowFlags.Implicit, 0);
-                    //   TODO: Keyboard doesn't work in floating windows. :/
-                    //}
+                    if (notificationViewType == NotificationViewType.Floating)
+                    {                       
+                        sendinlineresponse.RequestFocus(); //The Floating view doesn't have focus, so the keyboard can't spawn.
+                        var imm = Application.Context.GetSystemService(Context.InputMethodService) as InputMethodManager;
+                        imm.ToggleSoftInput(ShowFlags.Forced, 0);
+                        //TODO: Keyboard doesn't work in floating windows. :/
+                    }
                     inlineresponse.Hint = openAction.GetPlaceholderTextForInlineResponse();
                     sendinlineresponse.SetTag(DefaultActionIdentificator, openAction);
                     sendinlineresponse.Click += Sendinlineresponse_Click;

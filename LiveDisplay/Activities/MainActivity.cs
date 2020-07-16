@@ -163,11 +163,11 @@
                             var notificationtext = Resources.GetString(Resource.String.testnotificationtext);
                             if (Build.VERSION.SdkInt > BuildVersionCodes.NMr1)
                             {
-                                slave.PostNotification("LiveDisplay", notificationtext, true, NotificationImportance.Max);
+                                slave.PostNotification(1, "LiveDisplay", notificationtext, true, NotificationImportance.Max);
                             }
                             else
                             {
-                                slave.PostNotification("LiveDisplay", notificationtext, true, NotificationPriority.Max);
+                                slave.PostNotification(1, "LiveDisplay", notificationtext, true, NotificationPriority.Max);
                             }
                         }
                         using (Intent intent = new Intent(Application.Context, typeof(LockScreenActivity)))
@@ -227,17 +227,22 @@
 
         private void EnableDeviceAdmin_Click(object sender, EventArgs e)
         {
-            using (AlertDialog.Builder builder = new AlertDialog.Builder(this))
+            if (Checkers.IsThisAppADeviceAdministrator())
             {
-                builder.SetMessage(Resource.String.dialogfordeviceaccessdescription);
-                builder.SetPositiveButton(Resource.String.dialogallowbutton, new EventHandler<DialogClickEventArgs>(OnDialogPositiveButtonEventArgs));
-                builder.SetNegativeButton(Resource.String.dialogcancelbutton, new EventHandler<DialogClickEventArgs>(OnDialogNegativeButtonEventArgs));
-                builder.Show();
+                ComponentName devAdminReceiver = new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(AdminReceiver)));
+                DevicePolicyManager dpm = (DevicePolicyManager)GetSystemService(Context.DevicePolicyService);
+                dpm.RemoveActiveAdmin(devAdminReceiver);
             }
-        }
-
-        private void OnDialogNegativeButtonEventArgs(object sender, DialogClickEventArgs e)
-        {
+            else
+            {
+                using (AlertDialog.Builder builder = new AlertDialog.Builder(this))
+                {
+                    builder.SetMessage(Resource.String.dialogfordeviceaccessdescription);
+                    builder.SetPositiveButton(Resource.String.dialogallowbutton, new EventHandler<DialogClickEventArgs>(OnDialogPositiveButtonEventArgs));
+                    builder.SetNegativeButton(Resource.String.dialogcancelbutton, null as EventHandler<DialogClickEventArgs>);
+                    builder.Show();
+                }
+            }
         }
 
         private void OnDialogPositiveButtonEventArgs(object sender, DialogClickEventArgs e)

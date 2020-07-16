@@ -60,7 +60,7 @@
             opacity = FindViewById<SeekBar>(Resource.Id.opacity);
             wallpaperbeingsetted = FindViewById<Spinner>(Resource.Id.wallpaperbeingsetted);
             appliesToMusicWidget = FindViewById<CheckBox>(Resource.Id.appliesToMusicWidget);
-            var spinnerAdapter = ArrayAdapter.CreateFromResource(this, Resource.Array.listentriescurrentwallpapersetting, Android.Resource.Layout.SimpleSpinnerDropDownItem);
+            var spinnerAdapter = ArrayAdapter<string>.CreateFromResource(this, Resource.Array.listentriescurrentwallpapersetting, Android.Resource.Layout.SimpleSpinnerDropDownItem);
             wallpaperbeingsetted.Adapter = spinnerAdapter;
 
             wallpaperbeingsetted.ItemSelected += Wallpaperbeingsetted_ItemSelected;

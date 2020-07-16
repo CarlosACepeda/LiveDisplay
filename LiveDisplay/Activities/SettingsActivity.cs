@@ -52,7 +52,7 @@
 
             //Check first if what we have to start is a fragment replace or start a new activity
             //I've developed a custom convention for this.
-            //if the name of the fragment contains 'Fragment' then it should do the replace fragment operation
+            //if the name of the fragment class file contains 'Fragment' then it should do the replace fragment operation
             //if contains 'Activity' then it should start an activity.
             if (pref.Fragment.Contains("Fragment"))
             {

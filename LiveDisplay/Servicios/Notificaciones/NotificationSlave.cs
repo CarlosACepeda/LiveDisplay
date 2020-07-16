@@ -57,7 +57,7 @@ namespace LiveDisplay.Servicios
             OnAllNotificationsCancelled();
         }
 
-        public void PostNotification(string title, string text, bool autoCancellable, NotificationPriority notificationPriority)
+        public void PostNotification(int notifid, string title, string text, bool autoCancellable, NotificationPriority notificationPriority)
         {
 #pragma warning disable CS0618 // 'Notification.Builder(Context) está obsoleto
             Notification.Builder builder = new Notification.Builder(Application.Context);
@@ -70,10 +70,10 @@ namespace LiveDisplay.Servicios
 #pragma warning restore CS0618 // 'Notification.Builder.SetPriority(int)' está obsoleto: 'deprecated'
 
             builder.SetSmallIcon(Resource.Drawable.ic_stat_default_appicon);
-            notificationManager.Notify(1, builder.Build());
+            notificationManager.Notify(notifid, builder.Build());
         }
 
-        public void PostNotification(string title, string text, bool autoCancellable, NotificationImportance notificationImportance)
+        public void PostNotification(int notifid,string title, string text, bool autoCancellable, NotificationImportance notificationImportance)
         {
             NotificationChannel notificationChannel = new NotificationChannel("livedisplaynotificationchannel", "LiveDisplay", notificationImportance);
             notificationManager.CreateNotificationChannel(notificationChannel);
@@ -94,7 +94,7 @@ namespace LiveDisplay.Servicios
 
             builder.AddAction(action.Build());
 
-            notificationManager.Notify(1, builder.Build());
+            notificationManager.Notify(notifid, builder.Build());
         }
 
         public void SendDumbNotification()
