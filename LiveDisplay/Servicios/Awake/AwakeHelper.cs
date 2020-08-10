@@ -5,6 +5,7 @@ using Android.OS;
 using Android.Util;
 using LiveDisplay.BroadcastReceivers;
 using LiveDisplay.Misc;
+using LiveDisplay.Servicios.Keyguard;
 using LiveDisplay.Servicios.Notificaciones;
 using System;
 using System.Threading;
@@ -75,7 +76,21 @@ namespace LiveDisplay.Servicios.Awake
                     policy = (DevicePolicyManager)Application.Context.GetSystemService(Context.DevicePolicyService);
                     try
                     {
-                        policy.LockNow();
+                        //Special workaround that still makes harm but not as much as it would without the workaround.
+                        //So, if the next line of code gets triggered 'policy.LockNow()' it would lock the device, but, if 
+                        //the device has been locked when the user has set a fingerprint and also if the lockscreen is still present
+                        //then after unlocking by using the fingerprint the user has to write
+                        //the pattern, aaand also double tap to exit LiveDisplay, lol.
+                        //this workaround is to prevent that, when I don't call policy.LockNow() the user doesn't have to write the pattern
+                        //or whatever side security method they have set along the fingerprint, the cost of this btw is that double tap won't work
+                        //neither the automatic screen off. (I don't know how to solve that yet) it is the lesser of two evils.
+                        //However it doesn't work sometimes, I guess it is better to simply warn the user about it.
+                        //And disable the turn off screen capabilities of LiveDisplay while a fingerprint lock is active.
+                        if (KeyguardHelper.IsDeviceCurrentlyLocked() && KeyguardHelper.IsFingerprintSet()){
+                            //Do nothing.
+                        }
+                        else
+                            policy.LockNow();
                     }
                     catch (Exception)
                     {

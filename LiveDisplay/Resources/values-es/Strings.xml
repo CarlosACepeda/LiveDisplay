@@ -68,6 +68,7 @@
   <string name="immediately">De inmediato</string>
   <string name="inactivetimesettings">Horas inactivas</string>
   <string name="inactivetimesettingsdesc">Desactivar Awake en ciertas horas</string>
+  <string name="listenfordevicemotion">Detectar los movimientos del dispotivo</string>
   <string name="lockdelay">Bloquear automaticamente</string>
   <string name="lockdelay_desc">Bloquear la pantalla después del tiempo dado</string>
   <string name="lockonboot">Bloquear la pantalla al iniciar</string>
@@ -123,5 +124,4 @@
   <string name="weatherwidgetenabled">Activar el Widget del Clima</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">Diseño del icono de esta app!</string>
-  <string name="listenfordevicemotion">Detectar los movimientos del dispotivo</string>
 </resources>

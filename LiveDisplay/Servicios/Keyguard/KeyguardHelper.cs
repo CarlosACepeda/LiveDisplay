@@ -1,5 +1,6 @@
 ﻿using Android.App;
 using Android.Content;
+using Android.Hardware.Fingerprints;
 
 namespace LiveDisplay.Servicios.Keyguard
 {
@@ -19,6 +20,13 @@ namespace LiveDisplay.Servicios.Keyguard
             if (myKM.IsKeyguardLocked)
                 return true;
             return false;
+        }
+        public static bool IsFingerprintSet()
+        {
+            FingerprintManager myFM= (FingerprintManager)Application.Context.GetSystemService(Context.KeyguardService);
+            if (myFM.IsHardwareDetected == false) return false;
+
+            return myFM.HasEnrolledFingerprints;
         }
     }
 }

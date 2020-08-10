@@ -70,6 +70,7 @@
   <string name="immediately">Immediately</string>
   <string name="inactivetimesettings">Inactive hours</string>
   <string name="inactivetimesettingsdesc">Disable Awake at certain hours</string>
+  <string name="listenfordevicemotion">Listen for device motion</string>
   <string name="lockdelay">Automatic lock</string>
   <string name="lockdelay_desc">Lock the screen in the given time</string>
   <string name="lockonboot">Lock the screen on device boot up</string>
@@ -119,7 +120,7 @@
   <string name="updateweathereach">Update weather each:</string>
   <string name="useimperialunits">Use Imperial units</string>
   <string name="version">Version</string>
-  <string name="versionnumber">0.9.1-alpha3</string>
+  <string name="versionnumber">0.9.1-alpha4</string>
   <string name="wallpaperblur">Blur</string>
   <string name="wallpaperopacity">Opacity</string>
   <string name="wallpapersettingappliestoalbumart">Current setting also affects album artwork</string>
@@ -129,5 +130,4 @@
   <string name="weatherwidgetenabled">Enable Weather Widget</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
-  <string name="listenfordevicemotion">Listen for device motion</string>
 </resources>

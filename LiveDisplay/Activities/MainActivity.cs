@@ -31,7 +31,6 @@
         private TextView enableDrawOverAccess;
         private RelativeLayout enableDrawOverAccessContainer;
         private bool isApplicationHealthy;
-
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -46,7 +45,26 @@
             CheckDeviceAdminAccess();
             CheckDrawOverOtherAppsAccess();
             IsApplicationHealthy();
+            AdminReceiver.OnDeviceAdminEnabled += AdminReceiver_OnDeviceAdminEnabled;
             base.OnResume();
+        }
+
+        private void AdminReceiver_OnDeviceAdminEnabled(object sender, bool e)
+        {
+            using var adminGivenImageView = FindViewById<ImageView>(Resource.Id.deviceAccessCheckbox);
+            switch (e)
+            {
+                case true:
+                    adminGivenImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
+                    break;
+
+                case false:
+                    adminGivenImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
+                    break;
+            }
+            ThreadPool.QueueUserWorkItem(m => { 
+                Thread.Sleep(500);
+                IsApplicationHealthy(); });
         }
 
         private void CheckDeviceAdminAccess()
@@ -113,6 +131,8 @@
         protected override void OnPause()
         {
             base.OnPause();
+            AdminReceiver.OnDeviceAdminEnabled -= AdminReceiver_OnDeviceAdminEnabled;
+
         }
 
         protected override void OnDestroy()
