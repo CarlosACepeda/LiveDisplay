@@ -37,14 +37,14 @@ namespace LiveDisplay.Fragments
         public override void OnCreate(Bundle savedInstanceState)
         {
 
-            timer = new Timer
-            {
-                Interval = 1000 //1 second.
-            };
-            timer.Elapsed += Timer_Elapsed;
-            timer.Enabled = true;
+            //timer = new Timer
+            //{
+            //    Interval = 1000 //1 second.
+            //};
+            //timer.Elapsed += Timer_Elapsed;
+            //timer.Enabled = true;
 
-            WallpaperPublisher.CurrentWallpaperCleared += WallpaperPublisher_CurrentWallpaperHasBeenCleared;
+            //WallpaperPublisher.CurrentWallpaperCleared += WallpaperPublisher_CurrentWallpaperHasBeenCleared;
 
             base.OnCreate(savedInstanceState);
         }
@@ -72,21 +72,21 @@ namespace LiveDisplay.Fragments
             //View view = inflater.Inflate(Resource.Layout.MusicPlayer, container, false);
             View view = inflater.Inflate(Resource.Layout.MusicPlayer2, container, false);
 
-            BindViews(view);
-            BindViewEvents();
-            BindMusicControllerEvents();
-            timer.Elapsed += Timer_Elapsed;
+            //BindViews(view);
+            //BindViewEvents();
+            //BindMusicControllerEvents();
+            //timer.Elapsed += Timer_Elapsed;
 
-            RetrieveMediaInformation();
+            //RetrieveMediaInformation();
 
             return view;
         }
         public override void OnDestroyView()
         {
-            UnbindMusicControllerEvents();
-            WallpaperPublisher.ReleaseWallpaper();
-            timer.Elapsed -= Timer_Elapsed;
-            UnbindViewEvents();
+            //UnbindMusicControllerEvents();
+            //WallpaperPublisher.ReleaseWallpaper();
+            //timer.Elapsed -= Timer_Elapsed;
+            //UnbindViewEvents();
             base.OnDestroyView();
         }
 

@@ -20,6 +20,7 @@
         private readonly ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Weather);
         private TextView date;
         private TextClock clock;
+        private LinearLayout maincontainer;
 
         //private RelativeLayout weatherclockcontainer;
         private TextView battery;
@@ -57,7 +58,7 @@
             View v = inflater.Inflate(Resource.Layout.cLock2, container, false);
             date = v.FindViewById<TextView>(Resource.Id.txtFechaLock);
             clock = v.FindViewById<TextClock>(Resource.Id.clockLock);
-            //weatherclockcontainer = v.FindViewById<RelativeLayout>(Resource.Id.weatherclockcontainer);
+            maincontainer = v.FindViewById<LinearLayout>(Resource.Id.container);
             battery = v.FindViewById<TextView>(Resource.Id.batteryLevel);
             batteryIcon = v.FindViewById<ImageView>(Resource.Id.batteryIcon);
             temperature = v.FindViewById<TextView>(Resource.Id.temperature);

@@ -34,21 +34,21 @@ namespace LiveDisplay.Fragments
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             View v = inflater.Inflate(Resource.Layout.NotificationFrag, container, false);
-            notification = v.FindViewById<LinearLayout>(Resource.Id.llNotification);
-            styleApplier = new NotificationStyleApplier(ref notification, this, NotificationViewType.OnLockscreen);
-            notification.Drag += Notification_Drag;
-            notification.Click += LlNotification_Click;
-            NotificationAdapterViewHolder.ItemClicked += ItemClicked;
-            NotificationAdapterViewHolder.ItemLongClicked += ItemLongClicked;
-            CatcherHelper.NotificationPosted += CatcherHelper_NotificationPosted;
-            CatcherHelper.NotificationRemoved += CatcherHelper_NotificationRemoved;
-            NotificationStyleApplier.SendInlineResponseAvailabityChanged += NotificationStyleApplier_SendInlineResponseAvailabityChanged;
+            notification = v.FindViewById<LinearLayout>(Resource.Id.container);
+            //styleApplier = new NotificationStyleApplier(ref notification, this, NotificationViewType.OnLockscreen);
+            //notification.Drag += Notification_Drag;
+            //notification.Click += LlNotification_Click;
+            //NotificationAdapterViewHolder.ItemClicked += ItemClicked;
+            //NotificationAdapterViewHolder.ItemLongClicked += ItemLongClicked;
+            //CatcherHelper.NotificationPosted += CatcherHelper_NotificationPosted;
+            //CatcherHelper.NotificationRemoved += CatcherHelper_NotificationRemoved;
+            //NotificationStyleApplier.SendInlineResponseAvailabityChanged += NotificationStyleApplier_SendInlineResponseAvailabityChanged;
 
-            if (openNotification == null) //We don't have a notification to show here, so...
-            {
-                //...Now ask Catcher to send us the last notification posted to fill the views..
-                NotificationSlave.NotificationSlaveInstance().RetrieveLastNotification();
-            }
+            //if (openNotification == null) //We don't have a notification to show here, so...
+            //{
+            //    //...Now ask Catcher to send us the last notification posted to fill the views..
+            //    NotificationSlave.NotificationSlaveInstance().RetrieveLastNotification();
+            //}
             return v;
         }
 
@@ -130,13 +130,13 @@ namespace LiveDisplay.Fragments
         }
         public override void OnDestroyView()
         {
-            notification.Drag -= Notification_Drag;
-            notification.Click -= LlNotification_Click;
-            NotificationAdapterViewHolder.ItemClicked -= ItemClicked;
-            NotificationAdapterViewHolder.ItemLongClicked -= ItemLongClicked;
-            CatcherHelper.NotificationRemoved -= CatcherHelper_NotificationRemoved;
-            CatcherHelper.NotificationPosted -= CatcherHelper_NotificationPosted;
-            NotificationStyleApplier.SendInlineResponseAvailabityChanged -= NotificationStyleApplier_SendInlineResponseAvailabityChanged;
+            //notification.Drag -= Notification_Drag;
+            //notification.Click -= LlNotification_Click;
+            //NotificationAdapterViewHolder.ItemClicked -= ItemClicked;
+            //NotificationAdapterViewHolder.ItemLongClicked -= ItemLongClicked;
+            //CatcherHelper.NotificationRemoved -= CatcherHelper_NotificationRemoved;
+            //CatcherHelper.NotificationPosted -= CatcherHelper_NotificationPosted;
+            //NotificationStyleApplier.SendInlineResponseAvailabityChanged -= NotificationStyleApplier_SendInlineResponseAvailabityChanged;
 
             styleApplier = null;
 

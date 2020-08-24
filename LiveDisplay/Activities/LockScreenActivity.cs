@@ -62,18 +62,18 @@
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.LockScreen2);
-            ThreadPool.QueueUserWorkItem(isApphealthy =>
-            {
-                if (Checkers.IsNotificationListenerEnabled() == false || Checkers.ThisAppCanDrawOverlays() == false || Checkers.IsThisAppADeviceAdministrator() == false)
-                {
-                    RunOnUiThread(() =>
-                    {
-                        Toast.MakeText(Application.Context, "You dont have the required permissions", ToastLength.Long).Show();
-                        Finish();
-                    }
-                    );
-                }
-            });
+            //ThreadPool.QueueUserWorkItem(isApphealthy =>
+            //{
+            //    if (Checkers.IsNotificationListenerEnabled() == false || Checkers.ThisAppCanDrawOverlays() == false || Checkers.IsThisAppADeviceAdministrator() == false)
+            //    {
+            //        RunOnUiThread(() =>
+            //        {
+            //            Toast.MakeText(Application.Context, "You dont have the required permissions", ToastLength.Long).Show();
+            //            Finish();
+            //        }
+            //        );
+            //    }
+            //});
 
             //Views
             //wallpaperView = FindViewById<ImageView>(Resource.Id.wallpaper);
@@ -125,8 +125,8 @@
             //    }
             //}
 
-            //LoadAllFragments(); //initialize with the clock.
-            ReplaceFragment("clock_fragment");
+            LoadAllFragments(); //initialize with the clock.
+            //ReplaceFragment("clock_fragment");
 
             LoadConfiguration();
 
@@ -777,7 +777,17 @@
                     break;
             }
         }
-       
+
+        private void LoadAllFragments()
+        {
+            AndroidX.Fragment.App.FragmentManager fragmentManager = SupportFragmentManager;
+            AndroidX.Fragment.App.FragmentTransaction transaction = SupportFragmentManager.BeginTransaction();
+            transaction.Add(Resource.Id.WidgetPlaceholder, CreateFragment("clock_fragment"), "clock_fragment");
+            transaction.Add(Resource.Id.WidgetPlaceholder, CreateFragment("notification_fragment"), "notification_fragment");
+            transaction.Add(Resource.Id.WidgetPlaceholder, CreateFragment("music_fragment"), "music_fragment");
+            transaction.Commit();
+
+        }
         private void ReplaceFragment(string tag)
         {
             AndroidX.Fragment.App.FragmentManager fragmentManager = SupportFragmentManager;

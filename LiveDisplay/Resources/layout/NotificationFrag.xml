@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/llNotification"
+    android:id="@+id/container"
     android:layout_gravity="bottom"
     android:animateLayoutChanges="true"
     android:orientation="vertical"
@@ -10,7 +10,7 @@
     android:minHeight="70dp"
     android:background="?android:selectableItemBackground"
     tools:visibility="visible"
-    android:visibility="invisible">
+    android:visibility="visible">
 	
     <LinearLayout
 		android:weightSum="10"
@@ -23,7 +23,7 @@
 			android:layout_weight="8"
 			android:layout_height="wrap_content">
 			<TextView
-				tools:text="Spotify"
+				android:text="Spotify"
 				android:fontFamily="sans-serif-condensed"
 				android:textColor="@color/primary_text_default_material_dark"
 				android:textStyle="italic"
@@ -35,7 +35,7 @@
 				android:layout_width="3dp"
 				android:layout_height="wrap_content" />
 			<TextView
-				tools:text="8:13 PM"
+				android:text="8:13 PM"
 				android:fontFamily="sans-serif-condensed"
 				android:textAppearance="?android:attr/textAppearanceSmall"
 				android:textColor="@color/primary_text_default_material_dark"
@@ -48,7 +48,7 @@
                 android:layout_width="3dp"
                 android:layout_height="wrap_content"/>
             <TextView
-				tools:text="Trap Workout"
+				android:text="Trap Workout"
                 android:fontFamily="sans-serif-condensed"
                 android:textSize="16dp"
                 android:id="@+id/tvnotifSubtext"
@@ -73,7 +73,7 @@
     </LinearLayout>
     <TextView
 		android:textSize="22dp"
-		tools:text="One by One - Hunter Siegel Remix"
+		android:text="One by One - Hunter Siegel Remix"
         android:fontFamily="sans-serif-condensed"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/primary_text_default_material_dark"
@@ -81,7 +81,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/tvTitle" />
     <TextView
-		tools:text="GG Magree, Hunter Segel"
+		android:text="GG Magree, Hunter Segel"
         android:fontFamily="sans-serif-condensed"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="@color/primary_text_default_material_dark"

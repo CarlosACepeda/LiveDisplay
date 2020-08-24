@@ -175,7 +175,7 @@
 
                 case Resource.Id.action_sendtestnotification:
 
-                    if (isApplicationHealthy)
+                    if (true)
                     {
                         AwakeHelper.TurnOffScreen();
                         using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())
