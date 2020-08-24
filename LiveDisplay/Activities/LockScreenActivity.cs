@@ -17,6 +17,7 @@
     using Android.Widget;
     using AndroidX.AppCompat.App;
     using AndroidX.RecyclerView.Widget;
+    using LiveDisplay.Adapters;
     using LiveDisplay.Fragments;
     using LiveDisplay.Misc;
     using LiveDisplay.Servicios;
@@ -32,7 +33,10 @@
 
     [Activity(Label = "LockScreen", Theme = "@style/LiveDisplayThemeDark.NoActionBar", ScreenOrientation = ScreenOrientation.Portrait, MainLauncher = false, TaskAffinity = "livedisplay.lockscreen", LaunchMode = LaunchMode.SingleInstance, ExcludeFromRecents = true)]
     public class LockScreenActivity : AppCompatActivity
-    {        
+    {
+
+        private AndroidX.Fragment.App.Fragment clockFragment, musicFragment, notificationFragment;
+
         private RecyclerView recycler/*, filteredRecyclerView*/;
         private RecyclerView.LayoutManager layoutManager;
 
@@ -40,10 +44,6 @@
         private Button clearAll;
 
         private TextView livedisplayinfo;
-        private NotificationFragment notificationFragment;
-        private MusicFragment musicFragment;
-        private ClockFragment clockFragment;
-        private WeatherFragment weatherFragment;
         private Button startCamera;
         private Button startDialer;
         private LinearLayout lockscreen; //The root linear layout, used to implement double tap to sleep.
@@ -61,7 +61,7 @@
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.LockScreen);
+            SetContentView(Resource.Layout.LockScreen2);
             ThreadPool.QueueUserWorkItem(isApphealthy =>
             {
                 if (Checkers.IsNotificationListenerEnabled() == false || Checkers.ThisAppCanDrawOverlays() == false || Checkers.IsThisAppADeviceAdministrator() == false)
@@ -89,10 +89,6 @@
             fadeoutanimation = AnimationUtils.LoadAnimation(Application.Context, Resource.Animation.abc_fade_out);
             fadeoutanimation.AnimationEnd += Fadeoutanimation_AnimationEnd;
 
-            notificationFragment = new NotificationFragment();
-            musicFragment = new MusicFragment();
-            clockFragment = new ClockFragment();
-            weatherFragment = new WeatherFragment();
             clearAll.Click += BtnClearAll_Click;
             //unlocker.Touch += Unlocker_Touch;
             startCamera.Click += StartCamera_Click;
@@ -129,14 +125,105 @@
             //    }
             //}
 
-            LoadClockFragment();
-
-            LoadNotificationFragment();
+            //LoadAllFragments(); //initialize with the clock.
+            ReplaceFragment("clock_fragment");
 
             LoadConfiguration();
 
             WallpaperPublisher.CurrentWallpaperCleared += WallpaperPublisher_CurrentWallpaperCleared;
         }
+
+        //private void WidgetStatusPublisher_OnWidgetStatusChanged(object sender, WidgetStatusEventArgs e)
+        //{            
+
+        //    switch (e.WidgetName)
+        //    {
+        //        case "NotificationFragment":
+
+        //            switch (e.Status)
+        //            {
+        //                case WidgetStatusEventArgs.WidgetStatus.Unknown:
+        //                    break;
+        //                case WidgetStatusEventArgs.WidgetStatus.Present:
+        //                    if (WidgetStatusPublisher.GetWidgetStatus("ClockFragment") == WidgetStatusEventArgs.WidgetStatus.Present)
+        //                    {
+        //                        ReplaceFragment("notification_fragment");
+        //                    }
+        //                    break;
+        //                case WidgetStatusEventArgs.WidgetStatus.NonPresent:
+        //                    if (WidgetStatusPublisher.GetWidgetStatus("MusicFragment") == WidgetStatusEventArgs.WidgetStatus.NonPresent)
+        //                    {
+        //                        ReplaceFragment("clock_fragment");
+        //                        break;
+        //                    }
+        //                    if (WidgetStatusPublisher.GetWidgetStatus("NotificationFragment") == WidgetStatusEventArgs.WidgetStatus.NonPresent)
+        //                    {
+        //                        ReplaceFragment("clock_fragment");
+        //                        break;
+        //                    }
+        //                    break;
+        //                case WidgetStatusEventArgs.WidgetStatus.Active:
+        //                    break;
+        //                default:
+        //                    break;
+        //            }
+
+        //            break;
+        //        case "ClockFragment":
+        //            //if (true)
+        //            //{
+        //            //    ReplaceFragment("clock_fragment");
+        //            //    break;
+        //            //}
+
+        //            switch (e.Status)
+        //            {
+
+        //                case WidgetStatusEventArgs.WidgetStatus.Unknown:
+        //                    break;
+        //                case WidgetStatusEventArgs.WidgetStatus.Present:
+
+        //                    if (WidgetStatusPublisher.GetWidgetStatus("NotificationFragment") == WidgetStatusEventArgs.WidgetStatus.Present)
+        //                    {
+        //                        ReplaceFragment("clock_fragment");
+        //                    }
+        //                        break;
+        //                case WidgetStatusEventArgs.WidgetStatus.NonPresent:
+        //                    if (WidgetStatusPublisher.GetWidgetStatus("MusicFragment") == WidgetStatusEventArgs.WidgetStatus.Active)
+        //                    {
+        //                        ReplaceFragment("music_fragment");
+        //                    }
+        //                    else if (WidgetStatusPublisher.GetWidgetStatus("ClockFragment") == WidgetStatusEventArgs.WidgetStatus.NonPresent)
+        //                    {
+        //                        ReplaceFragment("clock_fragment");
+        //                    }
+
+        //                    break;
+        //                case WidgetStatusEventArgs.WidgetStatus.Active:
+        //                    break;
+        //                default:
+        //                    break;
+        //            }
+        //            break;
+        //        //case "MusicFragment":
+        //        //    switch (e.Status)
+        //        //    {
+        //        //        case WidgetStatusEventArgs.WidgetStatus.Unknown:
+        //        //            break;
+        //        //        case WidgetStatusEventArgs.WidgetStatus.Present:
+        //        //            break;
+        //        //        case WidgetStatusEventArgs.WidgetStatus.NonPresent:
+        //        //            break;
+        //        //        case WidgetStatusEventArgs.WidgetStatus.Active:
+        //        //            break;
+        //        //        default:
+        //        //            break;
+        //        //    }
+        //        //    break;
+        //        default:
+        //            break;
+        //    }
+        //}
 
         private void WallpaperPublisher_CurrentWallpaperCleared(object sender, CurrentWallpaperClearedEventArgs e)
         {
@@ -160,7 +247,10 @@
 
         private void MusicController_MusicPaused(object sender, EventArgs e)
         {
-            CheckIfMusicIsStillPaused();
+            if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetMethod, "0") == "0") //0 is MediaSession.
+            {
+                CheckIfMusicIsStillPaused();
+            }
         }
 
         private void CheckIfMusicIsStillPaused()
@@ -198,11 +288,14 @@
 
         private void MusicController_MusicPlaying(object sender, EventArgs e)
         {
-            if (isMusicWidgetPresent == false) //Avoid unnecessary calls
-                RunOnUiThread(() =>
-                {
-                    StartMusicController();
-                });
+            if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetMethod, "0")=="0") //0 is MediaSession.
+            {
+                if (isMusicWidgetPresent == false) //Avoid unnecessary calls
+                    RunOnUiThread(() =>
+                    {
+                        StartMusicController();
+                    });
+            }
         }
 
         private void Wallpaper_NewWallpaperIssued(object sender, WallpaperChangedEventArgs e)
@@ -319,9 +412,27 @@
             }
             else
             {
+                if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
+                {
+                    MusicController.MusicPlaying -= MusicController_MusicPlaying;
+                    MusicController.MusicPaused -= MusicController_MusicPaused;
+                }
+                else
+                {
+                    MusicControllerKitkat.MusicPlaying -= MusicControllerKitkat_MusicPlaying;
+                    MusicControllerKitkat.MusicPaused -= MusicControllerKitkat_MusicPaused;
+                }
+
                 StopMusicController();
                 StopFloatingNotificationService();
             }
+
+
+            CatcherHelper.NotificationPosted += CatcherHelper_NotificationPosted;
+            CatcherHelper.NotificationRemoved += CatcherHelper_NotificationRemoved;
+            NotificationAdapterViewHolder.ItemClicked += NotificationAdapterViewHolder_ItemClicked;
+            NotificationFragment.IsWidgetVisible += NotificationFragment_IsWidgetVisible;
+
             if (isMusicWidgetPresent) //It'll always be true(?) (What's this field for)? //Regression test!
             {
                 CheckIfMusicIsStillPaused();
@@ -354,28 +465,51 @@
                 default:
                     break;
             }
-            if (new ConfigurationManager(AppPreferences.Default).RetrieveAValue(ConfigurationParameters.MusicWidgetMethod, "0") == "1")
+        }
+
+        private void NotificationFragment_IsWidgetVisible(object sender, bool e)
+        {
+            if (e == false)
             {
-                //1: equals, pick a media widget from the current notification/or the last shown notification that represents media playing.
-                //Then subscribe to the notificationposted event.
-                CatcherHelper.NotificationPosted += CatcherHelper_NotificationPosted;
-                CatcherHelper.NotificationRemoved += CatcherHelper_NotificationRemoved;
+                ReplaceFragment("clock_fragment");
             }
         }
 
-        private void CatcherHelper_NotificationRemoved(object sender, NotificationRemovedEventArgs e)
+        private void NotificationAdapterViewHolder_ItemClicked(object sender, NotificationItemClickedEventArgs e)
         {
-            if (e.OpenNotification.RepresentsMediaPlaying())
+            if (isMusicWidgetPresent == false)
             {
-                MusicController.StopPlayback(e.OpenNotification.GetMediaSessionToken());
+                ReplaceFragment("notification_fragment");
             }
         }
 
         private void CatcherHelper_NotificationPosted(object sender, NotificationPostedEventArgs e)
         {
+            if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetMethod, "0") == "1")
+            {
+                //1: equals, pick a media widget from the current notification/or the last shown notification that represents media playing.
+                //Then subscribe to the notificationposted event.
+                if (e.OpenNotification.RepresentsMediaPlaying())
+                {
+                    MusicController.StartPlayback(e.OpenNotification.GetMediaSessionToken());
+                    //Also start the Widget to control the playback.
+                    StartMusicController();
+                }
+            }
+            else
+            {
+                ReplaceFragment("notification_fragment");
+            }
+
+        }
+        private void CatcherHelper_NotificationRemoved(object sender, NotificationRemovedEventArgs e)
+        {
             if (e.OpenNotification.RepresentsMediaPlaying())
             {
-                MusicController.StartPlayback(e.OpenNotification.GetMediaSessionToken());
+                MusicController.StopPlayback(e.OpenNotification.GetMediaSessionToken());
+                ReplaceFragment("clock_fragment");
+                StopFloatingNotificationService();
+                isMusicWidgetPresent = false;
             }
         }
 
@@ -416,11 +550,10 @@
                 MusicControllerKitkat.MusicPlaying -= MusicControllerKitkat_MusicPlaying;
                 MusicControllerKitkat.MusicPaused -= MusicControllerKitkat_MusicPaused;
             }
-            if (new ConfigurationManager(AppPreferences.Default).RetrieveAValue(ConfigurationParameters.MusicWidgetMethod, "0") == "1")
-            {
-                CatcherHelper.NotificationPosted -= CatcherHelper_NotificationPosted;
-                CatcherHelper.NotificationRemoved -= CatcherHelper_NotificationRemoved;
-            }
+            CatcherHelper.NotificationPosted -= CatcherHelper_NotificationPosted;
+            CatcherHelper.NotificationRemoved -= CatcherHelper_NotificationRemoved;
+            NotificationAdapterViewHolder.ItemClicked -= NotificationAdapterViewHolder_ItemClicked;
+            NotificationFragment.IsWidgetVisible -= NotificationFragment_IsWidgetVisible;
 
             GC.Collect();
         }
@@ -452,10 +585,6 @@
             viewPropertyAnimator.Dispose();
 
             //Dispose Fragments
-            notificationFragment.Dispose();
-            musicFragment.Dispose();
-            clockFragment.Dispose();
-            weatherFragment.Dispose();
             livedisplayinfo?.Dispose();
         }
 
@@ -648,26 +777,69 @@
                     break;
             }
         }
-
-        private void LoadNotificationFragment()
+       
+        private void ReplaceFragment(string tag)
         {
-            using (AndroidX.Fragment.App.FragmentTransaction fragmentTransaction = SupportFragmentManager.BeginTransaction())
+            AndroidX.Fragment.App.FragmentManager fragmentManager = SupportFragmentManager;
+            AndroidX.Fragment.App.FragmentTransaction transaction = SupportFragmentManager.BeginTransaction();
+
+
+            var currentFragment = fragmentManager.FindFragmentById(Resource.Id.WidgetPlaceholder);
+            var nextFragment = fragmentManager.FindFragmentByTag(tag);
+
+            if (currentFragment != null)
             {
-                fragmentTransaction.Replace(Resource.Id.MusicNotificationPlaceholder, notificationFragment);
-                fragmentTransaction.SetCustomAnimations(Resource.Animation.fade_in, Resource.Animation.fade_out);
-                fragmentTransaction.DisallowAddToBackStack();
-                fragmentTransaction.Commit();
+                if (currentFragment == nextFragment) { return; } //Already existent.
+                else
+                {
+                    transaction.Remove(currentFragment);
+                    Log.Debug("LiveDisplay", "f removed: " + currentFragment?.ToString());
+                }
             }
+
+            if (nextFragment == null)
+            {
+                nextFragment = CreateFragment(tag);
+                transaction.Replace(Resource.Id.WidgetPlaceholder, nextFragment, tag);
+            }
+            else
+            {
+                Log.Debug("LiveDisplay", "f attach: " + nextFragment.ToString());
+                transaction.Replace(Resource.Id.WidgetPlaceholder, nextFragment, tag);
+            }
+            transaction.Commit();
         }
 
-        private void LoadClockFragment()
+        private AndroidX.Fragment.App.Fragment CreateFragment(string tag)
         {
-            using (AndroidX.Fragment.App.FragmentTransaction fragmentTransaction = SupportFragmentManager.BeginTransaction())
+            AndroidX.Fragment.App.Fragment result = null;
+            switch (tag)
             {
-                fragmentTransaction.Replace(Resource.Id.weatherandcLockplaceholder, clockFragment);
-                fragmentTransaction.DisallowAddToBackStack();
-                fragmentTransaction.Commit();
+                case "clock_fragment":
+
+                    if (clockFragment == null)
+                    {
+                        clockFragment = new ClockFragment();
+                    }
+                    result = clockFragment;
+                    break;
+                case "notification_fragment":
+                    if (notificationFragment == null)
+                    {
+                        notificationFragment = new NotificationFragment();
+                    }
+                    result = notificationFragment;
+                    break;
+                case "music_fragment":
+                    if (musicFragment == null)
+                    {
+                        musicFragment = new MusicFragment();
+                    }
+                    result = musicFragment;
+                    break;
             }
+            Log.Debug("LiveDisplay", "create: " + result.ToString());
+            return result;
         }
 
         private void AddFlags()
@@ -740,14 +912,8 @@
         private void StartMusicController()
         {
             // я голоден... ; хД
-            using (AndroidX.Fragment.App.FragmentTransaction fragmentTransaction = SupportFragmentManager.BeginTransaction())
-            {
-                fragmentTransaction.Replace(Resource.Id.MusicNotificationPlaceholder, musicFragment);
-                fragmentTransaction.SetCustomAnimations(Resource.Animation.fade_in, Resource.Animation.fade_out);
-                fragmentTransaction.DisallowAddToBackStack();
-                fragmentTransaction.Commit();
-            }
             isMusicWidgetPresent = true;
+            ReplaceFragment("music_fragment");
             StartFloatingNotificationService();
         }
 
@@ -755,8 +921,8 @@
         {
             if (ActivityLifecycleHelper.GetInstance().GetActivityState(typeof(LockScreenActivity)) == ActivityStates.Resumed)
             {
-                LoadNotificationFragment();
                 isMusicWidgetPresent = false;
+                ReplaceFragment("clock_fragment");
             }
         }
     }

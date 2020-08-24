@@ -29,6 +29,7 @@ namespace LiveDisplay.Servicios
         private AudioManager audioManager;
         private CatcherHelper catcherHelper;
         private List<StatusBarNotification> statusBarNotifications;
+        private StatusBarNotification lastPostedNotification;
 
         public override IBinder OnBind(Intent intent)
         {
@@ -84,6 +85,7 @@ namespace LiveDisplay.Servicios
 
         public override void OnNotificationPosted(StatusBarNotification sbn)
         {
+            lastPostedNotification = sbn;
             catcherHelper.OnNotificationPosted(sbn);
 
             //var test6 = sbn.Notification.Extras.Get(Notification.ExtraMediaSession) as MediaSession.Token;
@@ -172,6 +174,7 @@ namespace LiveDisplay.Servicios
                 if ((notification.IsOngoing == false || notification.Notification.Flags.HasFlag(NotificationFlags.NoClear)) && notification.IsClearable == true)
                 {
                     statusBarNotifications.Add(notification);
+                        lastPostedNotification = notification;
                 }
             }
 
@@ -185,6 +188,13 @@ namespace LiveDisplay.Servicios
             notificationSlave.AllNotificationsCancelled += NotificationSlave_AllNotificationsCancelled;
             notificationSlave.NotificationCancelled += NotificationSlave_NotificationCancelled;
             notificationSlave.NotificationCancelledLollipop += NotificationSlave_NotificationCancelledLollipop;
+            notificationSlave.ResendLastNotificationRequested += NotificationSlave_ResendLastNotificationRequested;
+            
+        }
+
+        private void NotificationSlave_ResendLastNotificationRequested(object sender, EventArgs e)
+        {
+            OnNotificationPosted(lastPostedNotification);
         }
 
         private void RegisterReceivers()

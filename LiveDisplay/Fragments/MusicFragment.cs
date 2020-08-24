@@ -36,7 +36,6 @@ namespace LiveDisplay.Fragments
 
         public override void OnCreate(Bundle savedInstanceState)
         {
-            BindMusicControllerEvents();
 
             timer = new Timer
             {
@@ -55,7 +54,7 @@ namespace LiveDisplay.Fragments
             if (e.PreviousWallpaperPoster == WallpaperPoster.MusicPlayer)
             {
                 int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtOpacityLevel, 255);
-                int blurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtBlurLevel, 1); //Never used (for now)
+                int blurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtBlurLevel, 1); 
 
                 if (configurationManager.RetrieveAValue(ConfigurationParameters.ShowAlbumArt))
                     WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
@@ -70,13 +69,34 @@ namespace LiveDisplay.Fragments
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            View view = inflater.Inflate(Resource.Layout.MusicPlayer, container, false);
+            //View view = inflater.Inflate(Resource.Layout.MusicPlayer, container, false);
+            View view = inflater.Inflate(Resource.Layout.MusicPlayer2, container, false);
 
             BindViews(view);
             BindViewEvents();
+            BindMusicControllerEvents();
+            timer.Elapsed += Timer_Elapsed;
 
             RetrieveMediaInformation();
+
             return view;
+        }
+        public override void OnDestroyView()
+        {
+            UnbindMusicControllerEvents();
+            WallpaperPublisher.ReleaseWallpaper();
+            timer.Elapsed -= Timer_Elapsed;
+            UnbindViewEvents();
+            base.OnDestroyView();
+        }
+
+        private void UnbindMusicControllerEvents()
+        {
+            MusicController.MediaPlaybackChanged -= MusicController_MediaPlaybackChanged;
+            MusicController.MediaMetadataChanged -= MusicController_MediaMetadataChanged;
+            MusicControllerKitkat.MediaMetadataChanged -= MusicControllerKitkat_MediaMetadataChanged;
+            MusicControllerKitkat.MediaPlaybackChanged -= MusicControllerKitkat_MediaPlaybackChanged;
+            WallpaperPublisher.CurrentWallpaperCleared -= WallpaperPublisher_CurrentWallpaperHasBeenCleared;
         }
 
         public override void OnDestroy()
@@ -85,13 +105,6 @@ namespace LiveDisplay.Fragments
             tvArtist = null;
             tvTitle = null;
             skbSeekSongTime = null;
-            MusicController.MediaPlaybackChanged -= MusicController_MediaPlaybackChanged;
-            MusicController.MediaMetadataChanged -= MusicController_MediaMetadataChanged;
-            MusicControllerKitkat.MediaMetadataChanged -= MusicControllerKitkat_MediaMetadataChanged;
-            MusicControllerKitkat.MediaPlaybackChanged -= MusicControllerKitkat_MediaPlaybackChanged;
-            WallpaperPublisher.CurrentWallpaperCleared -= WallpaperPublisher_CurrentWallpaperHasBeenCleared;
-            WallpaperPublisher.ReleaseWallpaper();
-            timer.Elapsed -= Timer_Elapsed;
             timer.Dispose();
             base.OnDestroy();
         }
@@ -100,6 +113,18 @@ namespace LiveDisplay.Fragments
 
         #region Fragment Views events
 
+        private void UnbindViewEvents()
+        {
+            btnSkipPrevious.Click -= BtnSkipPrevious_Click;
+            btnSkipPrevious.LongClick -= BtnSkipPrevious_LongClick;
+            btnPlayPause.Click -= BtnPlayPause_Click;
+            btnSkipNext.Click -= BtnSkipNext_Click;
+            btnSkipNext.LongClick -= BtnSkipNext_LongClick;
+            skbSeekSongTime.ProgressChanged -= SkbSeekSongTime_ProgressChanged;
+            skbSeekSongTime.StopTrackingTouch -= SkbSeekSongTime_StopTrackingTouch;
+            musicPlayerContainer.LongClick -= MusicPlayerContainer_LongClick;
+            musicPlayerContainer.Click -= MusicPlayerContainer_Click;
+        }
         private void BindViewEvents()
         {
             btnSkipPrevious.Click += BtnSkipPrevious_Click;
@@ -411,6 +436,20 @@ namespace LiveDisplay.Fragments
             skbSeekSongTime = view.FindViewById<SeekBar>(Resource.Id.seeksongTime);
 
             musicPlayerContainer = view.FindViewById<LinearLayout>(Resource.Id.musicPlayerContainer);
+        }
+        private void UnbindViews()
+        {
+            tvTitle.Dispose();
+            tvAlbum.Dispose();
+            tvArtist.Dispose();
+
+            btnSkipPrevious.Dispose();
+            btnPlayPause.Dispose();
+            btnSkipNext.Dispose();
+            skbSeekSongTime.Dispose();
+
+            musicPlayerContainer.Dispose();
+
         }
 
         private void RetrieveMediaInformation()

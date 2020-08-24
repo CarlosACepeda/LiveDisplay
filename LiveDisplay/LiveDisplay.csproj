@@ -156,6 +156,7 @@
     <Compile Include="Servicios\Weather\IconsForWeatherConditions.cs" />
     <Compile Include="Servicios\Weather\MeasurementUnits.cs" />
     <Compile Include="Servicios\Weather\OpenWeatherMapClient.cs" />
+    <Compile Include="Servicios\Widget\WidgetStatusPublisher.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\anim\fade_in.xml">
@@ -625,6 +626,24 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\NotificationList.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\LockScreen2.xml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\MusicPlayer2.axml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\cLock2.xml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

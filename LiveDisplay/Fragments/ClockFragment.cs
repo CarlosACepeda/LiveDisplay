@@ -34,14 +34,12 @@
         private TextView description;
 
         private TextView lastupdated;
-        //private TextView city;
+        private TextView city;
         //private LinearLayout weatherinfo;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-
-            RegisterBatteryReceiver();
         }
 
         private void RegisterBatteryReceiver()
@@ -56,7 +54,7 @@
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            View v = inflater.Inflate(Resource.Layout.cLock, container, false);
+            View v = inflater.Inflate(Resource.Layout.cLock2, container, false);
             date = v.FindViewById<TextView>(Resource.Id.txtFechaLock);
             clock = v.FindViewById<TextClock>(Resource.Id.clockLock);
             //weatherclockcontainer = v.FindViewById<RelativeLayout>(Resource.Id.weatherclockcontainer);
@@ -68,14 +66,17 @@
             //humidity = v.FindViewById<TextView>(Resource.Id.humidity);
             description = v.FindViewById<TextView>(Resource.Id.weatherdescription);
             lastupdated = v.FindViewById<TextView>(Resource.Id.lastupdated);
-            //city = v.FindViewById<TextView>(Resource.Id.city);
+            city = v.FindViewById<TextView>(Resource.Id.city);
             LoadDate();
+            RegisterBatteryReceiver();
+
 
             //View Events
             clock.Click += Clock_Click;
             //weatherclockcontainer.Click += Weatherclockcontainer_Click;
             BatteryReceiver.BatteryInfoChanged += BatteryReceiver_BatteryInfoChanged;
             ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
+
             return v;
         }
 
@@ -108,7 +109,7 @@
             string weatherlastupdated = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherLastUpdated, string.Empty);
 
             temperature.Text = currentweather+ temperatureunit;
-            //city.Text = thecity;
+            city.Text = thecity;
             //minimumTemperature.Text = minimumtemperature;
             //maximumTemperature.Text = maximumtemperature;
             //humidity.Text = weatherhumidity;
@@ -134,8 +135,10 @@
         public override void OnDestroyView()
         {
             base.OnDestroyView();
+
             battery.Dispose();
             Application.Context.UnregisterReceiver(batteryReceiver);
+            clock.Click -= Clock_Click;
             BatteryReceiver.BatteryInfoChanged -= BatteryReceiver_BatteryInfoChanged;
         }
 

@@ -22,7 +22,7 @@
         <ImageView 
             a:id="@+id/livesidplayinfoicon"
             tools:src="@drawable/baseline_nights_stay_white_18"
-            a:layout_width="wrap_content"               
+            a:layout_width="wrap_content"
             a:layout_height="match_parent"/>
 		<TextView
                 a:id="@+id/livedisplayinfo"
@@ -47,9 +47,8 @@
     <!--This linear layout contains the Framelayout used for containing Notification and Music Widgets, 
     and also the RecyclerView containing the notification list
     -->
-    <LinearLayout
-			
-                a:layout_weight="79"
+    <LinearLayout			
+                a:layout_weight="89"
                 a:orientation="horizontal"
                 a:layout_width="match_parent"
                 a:weightSum="10"
@@ -65,9 +64,9 @@
             <FrameLayout
                 a:layout_weight="9"
                 a:layout_gravity="center"
-                a:layout_width="25dp"
-                a:layout_height="wrap_content"
-                a:id="@+id/MusicNotificationPlaceholder" />
+                a:layout_width="0dp"
+                a:layout_height="match_parent"
+                a:id="@+id/WidgetPlaceholder" />
 <!--            <androidx.recyclerview.widget.RecyclerView
                 a:layout_weight="1"
                 a:id="@+id/NotificationListRecyclerView"
@@ -75,20 +74,14 @@
                 a:layout_width="25dp"
                 a:layout_height="wrap_content"
                 a:layout_gravity="bottom"/>-->
-            <include
+            <include                
                 a:layout_weight="1"
+                a:layout_width="0dp"
                 layout="@layout/notificationlist"
-                a:layout_width="25dp"
                 a:layout_height="wrap_content"
                 a:layout_gravity="bottom"/>
 
      </LinearLayout>
-    <!--This FrameLayout contains the clock and later the System icons which aren't available... yet.-->
-        <FrameLayout
-            a:layout_weight="10"
-            a:layout_width="match_parent"
-            a:layout_height="0dp"
-            a:id="@+id/weatherandcLockplaceholder" />
     <!--This FrameLayout contains the Unlocker and the Shortcut button-->
         <FrameLayout
             a:id="@+id/shortcutcontainer"

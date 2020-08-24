@@ -6,5 +6,6 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationEventArgs
         //the StatusBarNotification that was just removed
         public OpenNotification OpenNotification { get; set; }
 
+
     }
 }

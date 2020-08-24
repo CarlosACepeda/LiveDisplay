@@ -20,6 +20,8 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         public static event EventHandler<NotificationListSizeChangedEventArgs> NotificationListSizeChanged;
 
+        //So it can grab it from here.
+
         /// <summary>
         /// Constructor of the Class
         /// </summary>
@@ -41,6 +43,7 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         public void OnNotificationPosted(StatusBarNotification sbn)
         {
+            if (sbn == null) { return; }
             //This is the notification of 'LiveDisplay is showing above other apps'
             //Simply let's ignore it, because it's annoying. (Anyway, the user couldn't care less about this notification tbh)
             if (sbn.PackageName == "android" && sbn.Tag == "com.android.server.wm.AlertWindowNotification - com.underground.livedisplay")
@@ -118,8 +121,15 @@ namespace LiveDisplay.Servicios.Notificaciones
                 return; //Ignore the summary notification.
 
             int position = GetNotificationPosition(sbn);
+            OpenNotification notificationToBeRemoved = null;
+
             if (position >= 0)
             {
+                //if found, then use the Notification to be removed instead. 
+                //the reason is that the 'sbn' coming from this method has less data.
+                //then it makes data that I need from the notification unavailable.
+                notificationToBeRemoved = new OpenNotification(StatusBarNotifications[position]);
+
                 StatusBarNotifications.RemoveAt(position);
                 using (var h = new Handler(Looper.MainLooper))
                     h.Post(() =>
@@ -136,7 +146,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             });
             NotificationRemoved?.Invoke(this, new NotificationRemovedEventArgs()
             {
-                OpenNotification = new OpenNotification(sbn),
+                OpenNotification = notificationToBeRemoved ?? new OpenNotification(sbn), //avoid nulls.
             });
         }
 
@@ -167,5 +177,6 @@ namespace LiveDisplay.Servicios.Notificaciones
             });
         }
 
+        
     }
 }

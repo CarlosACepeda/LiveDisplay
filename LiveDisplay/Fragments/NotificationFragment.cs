@@ -22,7 +22,7 @@ namespace LiveDisplay.Fragments
         private bool timeoutStarted = false;
         private NotificationStyleApplier styleApplier;
         private ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
-
+        public static event EventHandler<bool> IsWidgetVisible;
         #region Lifecycle events
 
         public override void OnCreate(Bundle savedInstanceState)
@@ -43,6 +43,12 @@ namespace LiveDisplay.Fragments
             CatcherHelper.NotificationPosted += CatcherHelper_NotificationPosted;
             CatcherHelper.NotificationRemoved += CatcherHelper_NotificationRemoved;
             NotificationStyleApplier.SendInlineResponseAvailabityChanged += NotificationStyleApplier_SendInlineResponseAvailabityChanged;
+
+            if (openNotification == null) //We don't have a notification to show here, so...
+            {
+                //...Now ask Catcher to send us the last notification posted to fill the views..
+                NotificationSlave.NotificationSlaveInstance().RetrieveLastNotification();
+            }
             return v;
         }
 
@@ -122,13 +128,23 @@ namespace LiveDisplay.Fragments
                 });
             }
         }
-
-        public override void OnDestroy()
+        public override void OnDestroyView()
         {
+            notification.Drag -= Notification_Drag;
+            notification.Click -= LlNotification_Click;
             NotificationAdapterViewHolder.ItemClicked -= ItemClicked;
             NotificationAdapterViewHolder.ItemLongClicked -= ItemLongClicked;
             CatcherHelper.NotificationRemoved -= CatcherHelper_NotificationRemoved;
             CatcherHelper.NotificationPosted -= CatcherHelper_NotificationPosted;
+            NotificationStyleApplier.SendInlineResponseAvailabityChanged -= NotificationStyleApplier_SendInlineResponseAvailabityChanged;
+
+            styleApplier = null;
+
+            base.OnDestroyView();
+        }
+
+        public override void OnDestroy()
+        {
             openNotification?.Dispose();
             base.OnDestroy();
         }
@@ -145,6 +161,7 @@ namespace LiveDisplay.Fragments
                 //Remove tag, notification removed
                 openNotification = null;
                 notification?.SetTag(Resource.String.defaulttag, null);
+                IsWidgetVisible?.Invoke(null, false);
             });
         }
 
@@ -208,12 +225,13 @@ namespace LiveDisplay.Fragments
                     notification.Visibility = ViewStates.Visible;
                 }
             }
-            else if (notification.Visibility != ViewStates.Visible)
+            else
             {
                 styleApplier?.ApplyStyle(openNotification);
                 notification.Visibility = ViewStates.Visible;
             }
             StartTimeout(false);
+
         }
 
         #endregion Events Implementation:
@@ -223,7 +241,11 @@ namespace LiveDisplay.Fragments
         {
             //This action is: 'Hide the notification, and set the timeoutStarted as finished(false)
             //because this action will be invoked only when the timeout has finished.
-            void hideNotification() { if (notification != null) notification.Visibility = ViewStates.Gone; timeoutStarted = false; }
+            void hideNotification() { if (notification != null) 
+                    notification.Visibility = ViewStates.Gone; 
+                timeoutStarted = false;
+                IsWidgetVisible?.Invoke(null, false);
+            }
             //If the timeout has started, then cancel the action, and start again.
 
             if (stop)
@@ -236,14 +258,14 @@ namespace LiveDisplay.Fragments
                 if (timeoutStarted == true)
                 {
                     notification?.RemoveCallbacks(hideNotification);
-                    notification?.PostDelayed(hideNotification, 5000);
+                    notification?.PostDelayed(hideNotification,7000);
                 }
                 //If not, simply wait 5 seconds then hide the notification, in that span of time, the timeout is
                 //marked as Started(true)
                 else
                 {
                     timeoutStarted = true;
-                    notification?.PostDelayed(hideNotification, 5000);
+                    notification?.PostDelayed(hideNotification, 7000);
                 }
             }
         }

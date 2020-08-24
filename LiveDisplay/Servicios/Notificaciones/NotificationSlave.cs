@@ -15,6 +15,7 @@ namespace LiveDisplay.Servicios
         public event EventHandler<NotificationCancelledEventArgsKitkat> NotificationCancelled;
 
         public event EventHandler<NotificationCancelledEventArgsLollipop> NotificationCancelledLollipop;
+        public event EventHandler ResendLastNotificationRequested;
 
         public event EventHandler AllNotificationsCancelled;
 
@@ -121,6 +122,11 @@ namespace LiveDisplay.Servicios
 
             builder.SetSmallIcon(Resource.Drawable.ic_stat_default_appicon);
             notificationManager.Notify(2, builder.Build());
+        }
+
+        public void RetrieveLastNotification() //ask Catcher to resend the last notification posted, (In case it was missed)
+        {
+            ResendLastNotificationRequested?.Invoke(this, null);
         }
 
         //Raising events.
