@@ -89,12 +89,14 @@
   <string name="notavailableyet">Not available... yet.</string>
   <string name="notificationsettings">Notifications</string>
   <string name="notificationviewvisibilitytime">After clicking the notification hide it after...</string>
+  <string name="now_playing">Now Playing:</string>
   <string name="ok">Ok</string>
   <string name="onehour">1 Hour</string>
   <string name="opciones">Options</string>
   <string name="partiallyblocked">Block only in the app</string>
   <string name="pickwallpaper">Pick one</string>
   <string name="placeholder">Insert a string here</string>
+  <string name="playing_from_template">From {0}</string>
   <string name="rus">Russian</string>
   <string name="saveweathersettings">Save</string>
   <string name="searchappedittexthint">App name...</string>
@@ -120,7 +122,7 @@
   <string name="updateweathereach">Update weather each:</string>
   <string name="useimperialunits">Use Imperial units</string>
   <string name="version">Version</string>
-  <string name="versionnumber">0.9.2-alpha1</string>
+  <string name="versionnumber">0.9.2-beta1</string>
   <string name="wallpaperblur">Blur</string>
   <string name="wallpaperopacity">Opacity</string>
   <string name="wallpapersettingappliestoalbumart">Current setting also affects album artwork</string>

@@ -10,7 +10,9 @@ using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
 using LiveDisplay.Servicios.Music;
 using LiveDisplay.Servicios.Music.MediaEventArgs;
+using LiveDisplay.Servicios.Notificaciones;
 using LiveDisplay.Servicios.Wallpaper;
+using LiveDisplay.Servicios.Widget;
 using System;
 using System.Threading;
 using System.Timers;
@@ -21,32 +23,77 @@ namespace LiveDisplay.Fragments
 {
     public class MusicFragment : Fragment
     {
-        private TextView tvTitle, tvArtist, tvAlbum;
-        private Button btnSkipPrevious, btnPlayPause, btnSkipNext;
-        private LinearLayout musicPlayerContainer;
+        private TextView tvTitle, tvArtist, tvAlbum, sourceApp, playbackstatus;
+        private Button btnSkipPrevious, btnPlayPause, btnSkipNext, btnLaunchNotification;
+        private LinearLayout maincontainer;
         private SeekBar skbSeekSongTime;
         private PlaybackStateCode playbackState;
         private PendingIntent activityIntent; //A Pending intent if available to start the activity associated with this music fragent.
         private BitmapDrawable CurrentAlbumArt;
+        private OpenNotification openNotification; //Used if the button launch Notification is used.
 
         private Timer timer;
         private ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
 
+        private bool timeoutStarted = false;
+        private bool initForFirstTime= true;
         #region Fragment Lifecycle
 
         public override void OnCreate(Bundle savedInstanceState)
         {
 
-            //timer = new Timer
-            //{
-            //    Interval = 1000 //1 second.
-            //};
-            //timer.Elapsed += Timer_Elapsed;
-            //timer.Enabled = true;
+            timer = new Timer
+            {
+                Interval = 1000 //1 second.
+            };
+            timer.Elapsed += Timer_Elapsed;
+            timer.Enabled = true;
 
-            //WallpaperPublisher.CurrentWallpaperCleared += WallpaperPublisher_CurrentWallpaperHasBeenCleared;
+            WallpaperPublisher.CurrentWallpaperCleared += WallpaperPublisher_CurrentWallpaperHasBeenCleared;
+            WidgetStatusPublisher.OnWidgetStatusChanged += WidgetStatusPublisher_OnWidgetStatusChanged;
+            Activity.RunOnUiThread(() => Toast.MakeText(Context, "MusicFragment: OnCreate", ToastLength.Long).Show());
 
             base.OnCreate(savedInstanceState);
+        }
+
+        private void WidgetStatusPublisher_OnWidgetStatusChanged(object sender, WidgetStatusEventArgs e)
+        {
+            if (e.WidgetName == "MusicFragment")
+            {
+                if (e.Show)
+                {
+                    if (maincontainer != null)
+                    {
+                        if (initForFirstTime==true)
+                        {
+                            RetrieveMediaInformation(); //Retrieving media information is when the music widget has never been used before.
+                            //so it needs information to fill its views.
+                            initForFirstTime = false;
+                        }
+                        maincontainer.Visibility = ViewStates.Visible;
+                    }
+                }
+                else
+                {
+                    if (maincontainer != null)
+                        maincontainer.Visibility = ViewStates.Invisible;
+                }
+            }
+            if (e.WidgetName == "NotificationFragment")
+            {
+                if (e.Show)
+                {
+                    if (maincontainer != null)
+                        maincontainer.Visibility = ViewStates.Invisible;
+
+                }
+                else
+                {
+                    if (maincontainer != null && WidgetStatusPublisher.CurrentActiveWidget== "MusicFragment")
+                        maincontainer.Visibility = ViewStates.Visible;
+                }
+            }
+
         }
 
         private void WallpaperPublisher_CurrentWallpaperHasBeenCleared(object sender, CurrentWallpaperClearedEventArgs e)
@@ -72,12 +119,13 @@ namespace LiveDisplay.Fragments
             //View view = inflater.Inflate(Resource.Layout.MusicPlayer, container, false);
             View view = inflater.Inflate(Resource.Layout.MusicPlayer2, container, false);
 
-            //BindViews(view);
-            //BindViewEvents();
-            //BindMusicControllerEvents();
-            //timer.Elapsed += Timer_Elapsed;
+            BindViews(view);
+            BindViewEvents();
+            BindMusicControllerEvents();
+            timer.Elapsed += Timer_Elapsed;
 
-            //RetrieveMediaInformation();
+            
+            Activity.RunOnUiThread(() => Toast.MakeText(Context, "MusicFragment: OnCreateView", ToastLength.Long).Show());
 
             return view;
         }
@@ -87,8 +135,22 @@ namespace LiveDisplay.Fragments
             //WallpaperPublisher.ReleaseWallpaper();
             //timer.Elapsed -= Timer_Elapsed;
             //UnbindViewEvents();
+            Activity.RunOnUiThread(() => Toast.MakeText(Context, "MusicFragment: OnDestroyView", ToastLength.Long).Show());
+
             base.OnDestroyView();
         }
+        public override void OnPause()
+        {
+            Activity.RunOnUiThread(() => Toast.MakeText(Context, "MusicFragment: OnPause", ToastLength.Long).Show());
+            base.OnPause();
+        }
+        public override void OnResume()
+        {
+            Activity.RunOnUiThread(() => Toast.MakeText(Context, "MusicFragment: OnResume", ToastLength.Long).Show());
+
+            base.OnResume();
+        }
+
 
         private void UnbindMusicControllerEvents()
         {
@@ -106,6 +168,8 @@ namespace LiveDisplay.Fragments
             tvTitle = null;
             skbSeekSongTime = null;
             timer.Dispose();
+            WidgetStatusPublisher.OnWidgetStatusChanged -= WidgetStatusPublisher_OnWidgetStatusChanged;
+            Activity.RunOnUiThread(() => Toast.MakeText(Context, "MusicFragment: OnDestroy", ToastLength.Long).Show());
             base.OnDestroy();
         }
 
@@ -122,8 +186,8 @@ namespace LiveDisplay.Fragments
             btnSkipNext.LongClick -= BtnSkipNext_LongClick;
             skbSeekSongTime.ProgressChanged -= SkbSeekSongTime_ProgressChanged;
             skbSeekSongTime.StopTrackingTouch -= SkbSeekSongTime_StopTrackingTouch;
-            musicPlayerContainer.LongClick -= MusicPlayerContainer_LongClick;
-            musicPlayerContainer.Click -= MusicPlayerContainer_Click;
+            maincontainer.LongClick -= MusicPlayerContainer_LongClick;
+            maincontainer.Click -= MusicPlayerContainer_Click;
         }
         private void BindViewEvents()
         {
@@ -134,8 +198,9 @@ namespace LiveDisplay.Fragments
             btnSkipNext.LongClick += BtnSkipNext_LongClick;
             skbSeekSongTime.ProgressChanged += SkbSeekSongTime_ProgressChanged;
             skbSeekSongTime.StopTrackingTouch += SkbSeekSongTime_StopTrackingTouch;
-            musicPlayerContainer.LongClick += MusicPlayerContainer_LongClick;
-            musicPlayerContainer.Click += MusicPlayerContainer_Click;
+            maincontainer.LongClick += MusicPlayerContainer_LongClick;
+            maincontainer.Click += MusicPlayerContainer_Click;
+            
         }
 
         private void MusicPlayerContainer_Click(object sender, EventArgs e)
@@ -344,8 +409,9 @@ namespace LiveDisplay.Fragments
                 tvAlbum.Text = e.Album;
                 tvArtist.Text = e.Artist;
                 skbSeekSongTime.Max = (int)e.Duration;
+
                 int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtOpacityLevel, 255);
-                int blurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtBlurLevel, 1); //Never used (for now)
+                int blurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtBlurLevel, 1);
                 CurrentAlbumArt = new BitmapDrawable(Resources, e.AlbumArt);
 
                 if (configurationManager.RetrieveAValue(ConfigurationParameters.ShowAlbumArt))
@@ -369,6 +435,12 @@ namespace LiveDisplay.Fragments
                 tvAlbum.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyAlbum);
                 tvArtist.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyArtist);
                 skbSeekSongTime.Max = (int)e.MediaMetadata.GetLong(MediaMetadata.MetadataKeyDuration);
+                if (e.AppName != string.Empty)
+                {
+                    sourceApp.Text = string.Format(Resources.GetString(Resource.String.playing_from_template), e.AppName);
+                }
+
+
                 ThreadPool.QueueUserWorkItem(m =>
                 {
                     var albumart = e.MediaMetadata.GetBitmap(MediaMetadata.MetadataKeyAlbumArt);
@@ -398,6 +470,7 @@ namespace LiveDisplay.Fragments
                     case PlaybackStateCode.Paused:
                         btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
                         playbackState = PlaybackStateCode.Paused;
+                        StartTimeout(true);
                         MoveSeekbar(false);
 
                         break;
@@ -405,11 +478,13 @@ namespace LiveDisplay.Fragments
                     case PlaybackStateCode.Playing:
                         btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_pause_white_24dp, 0, 0);
                         playbackState = PlaybackStateCode.Playing;
+                        StartTimeout(false);
                         MoveSeekbar(true);
 
                         break;
 
                     case PlaybackStateCode.Stopped:
+                        HideMusicWidget();
                         btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
                         playbackState = PlaybackStateCode.Stopped;
                         MoveSeekbar(false);
@@ -429,13 +504,18 @@ namespace LiveDisplay.Fragments
             tvTitle = view.FindViewById<TextView>(Resource.Id.tvSongName);
             tvAlbum = view.FindViewById<TextView>(Resource.Id.tvAlbumName);
             tvArtist = view.FindViewById<TextView>(Resource.Id.tvArtistName);
+            sourceApp = view.FindViewById<TextView>(Resource.Id.sourceapp);
+            playbackstatus = view.FindViewById<TextView>(Resource.Id.playbackstatus);
 
             btnSkipPrevious = view.FindViewById<Button>(Resource.Id.btnMediaPrevious);
             btnPlayPause = view.FindViewById<Button>(Resource.Id.btnMediaPlayPlause);
             btnSkipNext = view.FindViewById<Button>(Resource.Id.btnMediaNext);
+            btnLaunchNotification = view.FindViewById<Button>(Resource.Id.btnLaunchNotification);
+
             skbSeekSongTime = view.FindViewById<SeekBar>(Resource.Id.seeksongTime);
 
-            musicPlayerContainer = view.FindViewById<LinearLayout>(Resource.Id.musicPlayerContainer);
+
+            maincontainer = view.FindViewById<LinearLayout>(Resource.Id.container);
         }
         private void UnbindViews()
         {
@@ -448,7 +528,7 @@ namespace LiveDisplay.Fragments
             btnSkipNext.Dispose();
             skbSeekSongTime.Dispose();
 
-            musicPlayerContainer.Dispose();
+            maincontainer.Dispose();
 
         }
 
@@ -490,5 +570,39 @@ namespace LiveDisplay.Fragments
                 skbSeekSongTime.Progress += 1000;
             }
         }
+
+        private void StartTimeout(bool start)
+        {
+            if (start==false)
+            {
+                maincontainer?.RemoveCallbacks(HideMusicWidget); //Stop counting.
+                return;
+            }
+            else
+            {
+                if (timeoutStarted == true)
+                {
+                    maincontainer?.RemoveCallbacks(HideMusicWidget);
+                    maincontainer?.PostDelayed(HideMusicWidget, 7000);
+                }
+                //If not, simply wait 7 seconds then hide the notification, in that span of time, the timeout is
+                //marked as Started(true)
+                else
+                {
+                    timeoutStarted = true;
+                    maincontainer?.PostDelayed(HideMusicWidget, 7000);
+                }
+            }
+        }
+        void HideMusicWidget()
+        {
+            if (maincontainer != null)
+            {
+                maincontainer.Visibility = ViewStates.Gone;
+                timeoutStarted = false;
+                WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "MusicFragment", Active=false });
+            }
+        }
+
     }
 }

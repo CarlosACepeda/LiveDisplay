@@ -23,8 +23,10 @@
   <string name="musicwidgetenabled">Activează Widget de Muzică</string>
   <string name="notavailableyet">Nu este disponibil încă ...</string>
   <string name="notificationsettings">Notificări</string>
+  <string name="now_playing">Acum Jucăm:</string>
   <string name="onehour">1 oră</string>
   <string name="opciones">Opțiuni</string>
+  <string name="playing_from_template">Din {0}</string>
   <string name="saveweathersettings">Salvați</string>
   <string name="showalbumart">Arată coperta albumului</string>
   <string name="sixhours">6 ore</string>

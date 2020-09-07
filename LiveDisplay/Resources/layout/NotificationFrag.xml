@@ -10,7 +10,7 @@
     android:minHeight="70dp"
     android:background="?android:selectableItemBackground"
     tools:visibility="visible"
-    android:visibility="visible">
+    android:visibility="invisible">
 	
     <LinearLayout
 		android:weightSum="10"
