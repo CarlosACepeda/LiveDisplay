@@ -86,12 +86,14 @@
   <string name="notavailableyet">No disponible...aún.</string>
   <string name="notificationsettings">Notificaciones</string>
   <string name="notificationviewvisibilitytime">Después de clicar la notificación esconderla después de...</string>
+  <string name="now_playing">Reproduciendo Ahora:</string>
   <string name="ok">Ok</string>
   <string name="onehour">1 Hora</string>
   <string name="opciones">Opciones</string>
   <string name="partiallyblocked">Solo en la app</string>
   <string name="pickwallpaper">Elige uno</string>
   <string name="placeholder">Inserta una cadena aquí</string>
+  <string name="playing_from_template">Desde {0}</string>
   <string name="rus">Ruso</string>
   <string name="saveweathersettings">Guardar</string>
   <string name="searchappedittexthint">Nombre de la app...</string>

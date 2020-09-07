@@ -9,6 +9,8 @@ namespace LiveDisplay.Misc
 
         public static string GetTheAppName(string package)
         {
+            if (package == null) return string.Empty;
+
             ApplicationInfo applicationInfo = packageManager.GetApplicationInfo(package, 0); //Zero means: No specific PackageInfoFlags specified.
             package = packageManager.GetApplicationLabel(applicationInfo);
             return package;

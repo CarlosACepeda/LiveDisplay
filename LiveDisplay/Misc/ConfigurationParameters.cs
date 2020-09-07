@@ -49,5 +49,11 @@
 
         //toggles where to show a minitutorial to the user when it launches the lockscreen for the first time.
         public const string TutorialRead = "tutorialread?";
+
+        //Never used by the user: Which widget should be shown first when starting the lockscreen.
+        //By default it is the clock. (possible values: "clock", "music", "notification")
+        public const string StartingWidget = "clock";
+
+
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Android.Media.Session;
 using LiveDisplay.Misc;
+using LiveDisplay.Servicios.Widget;
 using System.Collections.Generic;
 
 namespace LiveDisplay.Servicios.Music
@@ -24,6 +25,8 @@ namespace LiveDisplay.Servicios.Music
                             try
                             {
                                 MusicController.StartPlayback(mediacontroller.SessionToken);
+                                WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = true, WidgetName = "MusicFragment", Active=true });
+                                
                             }
                             catch
                             {

@@ -10,6 +10,7 @@ using Android.Views.InputMethods;
 using Android.Widget;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Wallpaper;
+using LiveDisplay.Servicios.Widget;
 using System;
 
 namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
@@ -225,6 +226,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
             OpenNotification openNotification = closenotificationbutton.GetTag(DefaultActionIdentificator) as OpenNotification;
             openNotification.Cancel();
             notificationView.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
+            WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "NotificationFragment" }); 
             notificationView.Visibility = ViewStates.Invisible;
         }
 

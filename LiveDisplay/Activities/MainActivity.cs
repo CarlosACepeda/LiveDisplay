@@ -51,80 +51,92 @@
 
         private void AdminReceiver_OnDeviceAdminEnabled(object sender, bool e)
         {
-            using var adminGivenImageView = FindViewById<ImageView>(Resource.Id.deviceAccessCheckbox);
-            switch (e)
+            using (var adminGivenImageView = FindViewById<ImageView>(Resource.Id.deviceAccessCheckbox))
             {
-                case true:
-                    adminGivenImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
-                    break;
+                switch (e)
+                {
+                    case true:
+                        adminGivenImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
+                        break;
 
-                case false:
-                    adminGivenImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
-                    break;
+                    case false:
+                        adminGivenImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
+                        break;
+                }
+                ThreadPool.QueueUserWorkItem(m =>
+                {
+                    Thread.Sleep(500);
+                    IsApplicationHealthy();
+                });
             }
-            ThreadPool.QueueUserWorkItem(m => { 
-                Thread.Sleep(500);
-                IsApplicationHealthy(); });
         }
 
         private void CheckDeviceAdminAccess()
         {
-            using var adminGivenImageView = FindViewById<ImageView>(Resource.Id.deviceAccessCheckbox);
-            switch (Checkers.IsThisAppADeviceAdministrator())
+            using (var adminGivenImageView = FindViewById<ImageView>(Resource.Id.deviceAccessCheckbox))
             {
-                case true:
-                    adminGivenImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
-                    break;
+                switch (Checkers.IsThisAppADeviceAdministrator())
+                {
+                    case true:
+                        adminGivenImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
+                        break;
 
-                case false:
-                    adminGivenImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
-                    break;
+                    case false:
+                        adminGivenImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
+                        break;
+                }
             }
         }
 
         private void CheckNotificationAccess()
         {
-            using var notificationAccessGivenImageView = FindViewById<ImageView>(Resource.Id.notificationAccessCheckbox);
-            switch (Checkers.IsNotificationListenerEnabled())
+            using (var notificationAccessGivenImageView = FindViewById<ImageView>(Resource.Id.notificationAccessCheckbox))
             {
-                case true:
-                    notificationAccessGivenImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
+                switch (Checkers.IsNotificationListenerEnabled())
+                {
+                    case true:
+                        notificationAccessGivenImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
 
-                    break;
+                        break;
 
-                case false:
-                    notificationAccessGivenImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
-                    break;
+                    case false:
+                        notificationAccessGivenImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
+                        break;
+                }
             }
         }
 
         private void CheckDrawOverOtherAppsAccess()
         {
-            using var drawOverOtherAppsImageView = FindViewById<ImageView>(Resource.Id.drawOverOtherAppsAccessCheckbox);
-            if (Checkers.ThisAppCanDrawOverlays())
+            using (var drawOverOtherAppsImageView = FindViewById<ImageView>(Resource.Id.drawOverOtherAppsAccessCheckbox))
             {
-                drawOverOtherAppsImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
-            }
-            else
-            {
-                drawOverOtherAppsImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
+                if (Checkers.ThisAppCanDrawOverlays())
+                {
+                    drawOverOtherAppsImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
+                }
+                else
+                {
+                    drawOverOtherAppsImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
+                }
             }
         }
 
         private void IsApplicationHealthy()
         {
-            using var accessestext = FindViewById<TextView>(Resource.Id.health);
-            if (Checkers.IsNotificationListenerEnabled() && Checkers.IsThisAppADeviceAdministrator() && Checkers.ThisAppCanDrawOverlays())
+            using (var accessestext = FindViewById<TextView>(Resource.Id.health))
             {
-                accessestext.SetText(Resource.String.accessesstatusenabled);
-                accessestext.SetTextColor(Android.Graphics.Color.Green);
-                isApplicationHealthy = true;
-            }
-            else
-            {
-                accessestext.SetText(Resource.String.accessesstatusdisabled);
-                accessestext.SetTextColor(Android.Graphics.Color.Red);
-                isApplicationHealthy = false;
+                if (Checkers.IsNotificationListenerEnabled() && Checkers.IsThisAppADeviceAdministrator() && Checkers.ThisAppCanDrawOverlays())
+                {
+                    accessestext.SetText(Resource.String.accessesstatusenabled);
+                    accessestext.SetTextColor(Android.Graphics.Color.Green);
+                    isApplicationHealthy = true;
+                }
+                else
+                {
+                    accessestext.SetText(Resource.String.accessesstatusdisabled);
+                    accessestext.SetTextColor(Android.Graphics.Color.Red);
+                    isApplicationHealthy = false;
+                }
             }
         }
 
@@ -175,7 +187,7 @@
 
                 case Resource.Id.action_sendtestnotification:
 
-                    if (isApplicationHealthy)
+                    if (true)
                     {
                         AwakeHelper.TurnOffScreen();
                         using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())
@@ -241,8 +253,9 @@
 
         private void EnableDrawOverAccess_Click(object sender, EventArgs e)
         {
-            using var intent = new Intent(Settings.ActionManageOverlayPermission);
-            StartActivityForResult(intent, 25);
+            using (var intent = new Intent(Settings.ActionManageOverlayPermission))            
+                StartActivityForResult(intent, 25);
+            
         }
 
         private void EnableDeviceAdmin_Click(object sender, EventArgs e)

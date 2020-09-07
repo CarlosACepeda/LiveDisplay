@@ -29,6 +29,7 @@ namespace LiveDisplay.Servicios.Music
         private static MediaController _currentMediaController;
         private static MediaSession.Token _currentToken;
         private static bool _playbackstarted;
+        private static string _appname;
 
         #region events
 
@@ -99,6 +100,7 @@ namespace LiveDisplay.Servicios.Music
                 _mediaMetadata = controller.Metadata;
                 _playbackState = controller.PlaybackState;
                 _activityIntent = controller.SessionActivity;
+                _appname = PackageUtils.GetTheAppName(controller.PackageName);
             }
             Jukebox.MediaEvent += Jukebox_MediaEvent;
         }
@@ -144,7 +146,8 @@ namespace LiveDisplay.Servicios.Music
                     OnMediaMetadataChanged(new MediaMetadataChangedEventArgs
                     {
                         MediaMetadata = _mediaMetadata,
-                        ActivityIntent = _activityIntent
+                        ActivityIntent = _activityIntent,
+                        AppName= _appname
                     });
                     //Send Playbackstate of the media.
                     OnMediaPlaybackChanged(new MediaPlaybackStateChangedEventArgs
@@ -179,7 +182,8 @@ namespace LiveDisplay.Servicios.Music
             OnMediaMetadataChanged(new MediaMetadataChangedEventArgs
             {
                 ActivityIntent = _activityIntent,
-                MediaMetadata = _mediaMetadata
+                MediaMetadata = _mediaMetadata,
+                AppName= _appname
             });
             //Datos de la Media que se está reproduciendo.
 

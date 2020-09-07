@@ -1,5 +1,6 @@
 ﻿using Android.App;
 using Android.Media;
+using Android.Net.Wifi.Aware;
 using System;
 
 namespace LiveDisplay.Servicios.Music.MediaEventArgs
@@ -8,5 +9,6 @@ namespace LiveDisplay.Servicios.Music.MediaEventArgs
     {
         public MediaMetadata MediaMetadata { get; set; }
         public PendingIntent ActivityIntent { get; set; }
+        public string AppName { get; set; }
     }
 }

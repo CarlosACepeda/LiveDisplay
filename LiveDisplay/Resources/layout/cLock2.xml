@@ -3,8 +3,10 @@
 	xmlns:tools="http://schemas.android.com/tools"
     a:layout_width="match_parent"
     a:layout_height="match_parent"
-	a:id="@+id/weatherclockcontainer"
+	a:id="@+id/container"
 	a:orientation="vertical"
+	tools:visibility="visible"
+	a:visibility="invisible"
     a:gravity="bottom">
 	<!--<LinearLayout
 		a:id="@+id/weatherinfo"
