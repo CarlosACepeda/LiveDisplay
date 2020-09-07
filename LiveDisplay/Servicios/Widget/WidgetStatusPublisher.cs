@@ -25,8 +25,6 @@ namespace LiveDisplay.Servicios.Widget
         {
             if (e.Active)
                 CurrentActiveWidget = e.WidgetName;
-            else {
-                CurrentActiveWidget = string.Empty;}
 
             OnWidgetStatusChanged?.Invoke(null, e);
         }
