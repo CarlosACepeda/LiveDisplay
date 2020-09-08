@@ -62,18 +62,18 @@
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.LockScreen2);
-            //ThreadPool.QueueUserWorkItem(isApphealthy =>
-            //{
-            //    if (Checkers.IsNotificationListenerEnabled() == false || Checkers.ThisAppCanDrawOverlays() == false || Checkers.IsThisAppADeviceAdministrator() == false)
-            //    {
-            //        RunOnUiThread(() =>
-            //        {
-            //            Toast.MakeText(Application.Context, "You dont have the required permissions", ToastLength.Long).Show();
-            //            Finish();
-            //        }
-            //        );
-            //    }
-            //});
+            ThreadPool.QueueUserWorkItem(isApphealthy =>
+            {
+                if (Checkers.IsNotificationListenerEnabled() == false || Checkers.IsThisAppADeviceAdministrator() == false)
+                {
+                    RunOnUiThread(() =>
+                    {
+                        Toast.MakeText(Application.Context, "You dont have the required permissions", ToastLength.Long).Show();
+                        Finish();
+                    }
+                    );
+                }
+            });
 
             //Views
             //wallpaperView = FindViewById<ImageView>(Resource.Id.wallpaper);
@@ -156,7 +156,11 @@
         {
             RunOnUiThread(() =>
             {
-                Window.DecorView.SetBackgroundColor(Color.Black);
+                if (configurationManager.RetrieveAValue(ConfigurationParameters.AwakeCausesBlackWallpaper))
+                {
+                    Window.DecorView.SetBackgroundColor(Color.Black);
+                    return;
+                }
                 if (configurationManager.RetrieveAValue(ConfigurationParameters.DisableWallpaperChangeAnim) == false) //If the animation is not disabled.
                 {
                     Window.DecorView.Animate().SetDuration(100).Alpha(0.5f);
@@ -471,8 +475,8 @@
 
         private void LoadWallpaper(ConfigurationManager configurationManager)
         {
-            int savedblurlevel = configurationManager.RetrieveAValue(ConfigurationParameters.BlurLevel, 1);
-            int savedOpacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, 255);
+            int savedblurlevel = configurationManager.RetrieveAValue(ConfigurationParameters.BlurLevel, ConfigurationParameters.DefaultBlurLevel);
+            int savedOpacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, ConfigurationParameters.DefaultOpacityLevel);
 
             switch (configurationManager.RetrieveAValue(ConfigurationParameters.ChangeWallpaper, "0"))
             {

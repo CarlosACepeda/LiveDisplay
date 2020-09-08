@@ -39,4 +39,6 @@
   <string name="wallpaperopacity">Opacitate</string>
   <string name="weatherwidget">Widget de Climă</string>
   <string name="weatherwidgetenabled">Activează Widget de Climă</string>
+  <string name="awakecausesblackwall">Ecranul rămâne negru</string>
+  <string name="awakecausesblackwall_desc">Ecranul nu arăta nici unul tapet</string>
 </resources>

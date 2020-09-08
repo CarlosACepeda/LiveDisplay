@@ -51,7 +51,6 @@ namespace LiveDisplay.Fragments
 
             WallpaperPublisher.CurrentWallpaperCleared += WallpaperPublisher_CurrentWallpaperHasBeenCleared;
             WidgetStatusPublisher.OnWidgetStatusChanged += WidgetStatusPublisher_OnWidgetStatusChanged;
-            Activity.RunOnUiThread(() => Toast.MakeText(Context, "MusicFragment: OnCreate", ToastLength.Long).Show());
 
             base.OnCreate(savedInstanceState);
         }
@@ -76,7 +75,11 @@ namespace LiveDisplay.Fragments
                 else
                 {
                     if (maincontainer != null)
+                    {
                         maincontainer.Visibility = ViewStates.Invisible;
+                        //Also release Wallpaper, if holded.
+                        WallpaperPublisher.ReleaseWallpaper();
+                    }
                 }
             }
             if (e.WidgetName == "NotificationFragment")
@@ -100,8 +103,8 @@ namespace LiveDisplay.Fragments
         {
             if (e.PreviousWallpaperPoster == WallpaperPoster.MusicPlayer)
             {
-                int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtOpacityLevel, 255);
-                int blurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtBlurLevel, 1); 
+                int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtOpacityLevel, ConfigurationParameters.DefaultAlbumartOpacityLevel);
+                int blurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtBlurLevel, ConfigurationParameters.DefaultAlbumartBlurLevel); 
 
                 if (configurationManager.RetrieveAValue(ConfigurationParameters.ShowAlbumArt))
                     WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
@@ -123,31 +126,24 @@ namespace LiveDisplay.Fragments
             BindViewEvents();
             BindMusicControllerEvents();
             timer.Elapsed += Timer_Elapsed;
-
             
-            Activity.RunOnUiThread(() => Toast.MakeText(Context, "MusicFragment: OnCreateView", ToastLength.Long).Show());
-
             return view;
         }
         public override void OnDestroyView()
         {
-            //UnbindMusicControllerEvents();
-            //WallpaperPublisher.ReleaseWallpaper();
-            //timer.Elapsed -= Timer_Elapsed;
-            //UnbindViewEvents();
-            Activity.RunOnUiThread(() => Toast.MakeText(Context, "MusicFragment: OnDestroyView", ToastLength.Long).Show());
+            UnbindMusicControllerEvents();
+            WallpaperPublisher.ReleaseWallpaper();
+            timer.Elapsed -= Timer_Elapsed;
+            UnbindViewEvents();
 
             base.OnDestroyView();
         }
         public override void OnPause()
         {
-            Activity.RunOnUiThread(() => Toast.MakeText(Context, "MusicFragment: OnPause", ToastLength.Long).Show());
             base.OnPause();
         }
         public override void OnResume()
         {
-            Activity.RunOnUiThread(() => Toast.MakeText(Context, "MusicFragment: OnResume", ToastLength.Long).Show());
-
             base.OnResume();
         }
 
@@ -168,8 +164,9 @@ namespace LiveDisplay.Fragments
             tvTitle = null;
             skbSeekSongTime = null;
             timer.Dispose();
+            WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "MusicFragment", Active = false });
             WidgetStatusPublisher.OnWidgetStatusChanged -= WidgetStatusPublisher_OnWidgetStatusChanged;
-            Activity.RunOnUiThread(() => Toast.MakeText(Context, "MusicFragment: OnDestroy", ToastLength.Long).Show());
+            //UnbindViews();
             base.OnDestroy();
         }
 
@@ -410,8 +407,8 @@ namespace LiveDisplay.Fragments
                 tvArtist.Text = e.Artist;
                 skbSeekSongTime.Max = (int)e.Duration;
 
-                int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtOpacityLevel, 255);
-                int blurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtBlurLevel, 1);
+                int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtOpacityLevel, ConfigurationParameters.DefaultAlbumartOpacityLevel);
+                int blurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtBlurLevel, ConfigurationParameters.DefaultAlbumartBlurLevel);
                 CurrentAlbumArt = new BitmapDrawable(Resources, e.AlbumArt);
 
                 if (configurationManager.RetrieveAValue(ConfigurationParameters.ShowAlbumArt))
@@ -445,8 +442,8 @@ namespace LiveDisplay.Fragments
                 {
                     var albumart = e.MediaMetadata.GetBitmap(MediaMetadata.MetadataKeyAlbumArt);
                     var wallpaper = new BitmapDrawable(Activity.Resources, albumart);
-                    int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtOpacityLevel, 255);
-                    int blurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtBlurLevel, 1);
+                    int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtOpacityLevel, ConfigurationParameters.DefaultAlbumartOpacityLevel);
+                    int blurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtBlurLevel, ConfigurationParameters.DefaultAlbumartBlurLevel);
                     CurrentAlbumArt = wallpaper;
 
                     if (configurationManager.RetrieveAValue(ConfigurationParameters.ShowAlbumArt))

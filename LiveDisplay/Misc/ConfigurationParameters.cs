@@ -5,7 +5,11 @@
         public const string ImagePath = "imagePath";
         public const string ChangeWallpaper = "changewallpaper";
         public const string BlurLevel = "blurlevel";
+        public const int DefaultBlurLevel = 1;
+        public const int DefaultAlbumartBlurLevel = 16;
         public const string OpacityLevel = "opacitylevel";
+        public const int DefaultOpacityLevel =100;
+        public const int DefaultAlbumartOpacityLevel = 40;
         public const string AlbumArtBlurLevel = "albumartblurlevel";
         public const string AlbumArtOpacityLevel = "albumartopacitylevel";
         public const string DefaultWallpaperSettingsAppliesToAlbumArt = "copywallpsettingsfromdefaultwallpaper";
@@ -32,6 +36,7 @@
         public const string EnableAwakeService = "enableawake?";
         public const string ListenForDeviceMotion = "listenfordevicemotion?";
         public const string TurnOnNewNotification = "turnonnewnotification?";
+        public const string AwakeCausesBlackWallpaper = "awakecausesblackwallpaper?";
         public const string StartSleepTime = "startsleeptime";
         public const string FinishSleepTime = "finishsleeptime";
         public const string TurnOnUserMovement = "turnonusermovement?";
@@ -41,7 +46,6 @@
         public const string MusicWidgetMethod = "musicwidgetcontrolmethod"; //Grab a session from the notification or from the media sessions listener.
         public const string HideNotificationWhenItsMediaPlaying = "hidenotificationwhenmediaplaying?"; //If the media session used belongs to a notification then hide this notification in the lockscreen.
         public const string HideShortcutsWhenKeyguardSafe = "hideshortcutswhenkeyguardsafe?";
-
 
         //Misc.
         //It serves the purpose of enabling certain messages to be shown in a Toast Message useful for the developer.

@@ -125,7 +125,7 @@
         {
             using (var accessestext = FindViewById<TextView>(Resource.Id.health))
             {
-                if (Checkers.IsNotificationListenerEnabled() && Checkers.IsThisAppADeviceAdministrator() && Checkers.ThisAppCanDrawOverlays())
+                if (Checkers.IsNotificationListenerEnabled() && Checkers.IsThisAppADeviceAdministrator())
                 {
                     accessestext.SetText(Resource.String.accessesstatusenabled);
                     accessestext.SetTextColor(Android.Graphics.Color.Green);
@@ -187,7 +187,7 @@
 
                 case Resource.Id.action_sendtestnotification:
 
-                    if (true)
+                    if (isApplicationHealthy)
                     {
                         AwakeHelper.TurnOffScreen();
                         using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())
@@ -253,7 +253,7 @@
 
         private void EnableDrawOverAccess_Click(object sender, EventArgs e)
         {
-            using (var intent = new Intent(Settings.ActionManageOverlayPermission))            
+            using (var intent = new Intent(Settings.ActionManageOverlayPermission))
                 StartActivityForResult(intent, 25);
             
         }

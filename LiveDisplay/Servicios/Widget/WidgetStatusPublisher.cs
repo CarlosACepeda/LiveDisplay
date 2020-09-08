@@ -13,7 +13,7 @@ using Android.Widget;
 
 namespace LiveDisplay.Servicios.Widget
 {
-    //Widgets (fragments) should invoke the event! always, the reason is that lockscreen has to know the state of all the widgets.
+    //Widgets (fragments) should invoke the event! always, the reason is that the widgets had to know the state of all the widgets.
     //in order to show/hide them.
     public class WidgetStatusPublisher
     {
@@ -24,8 +24,13 @@ namespace LiveDisplay.Servicios.Widget
         public static void RequestShow(WidgetStatusEventArgs e)
         {
             if (e.Active)
+            {
                 CurrentActiveWidget = e.WidgetName;
-
+            }
+            else if (e.WidgetName == CurrentActiveWidget && e.Active == false)
+            {
+                CurrentActiveWidget = string.Empty;
+            }
             OnWidgetStatusChanged?.Invoke(null, e);
         }
 

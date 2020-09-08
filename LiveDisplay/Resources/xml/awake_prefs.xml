@@ -33,6 +33,12 @@
       android:title="@string/turnonusermovement"
       app:iconSpaceReserved="false">
     </SwitchPreference>
+    <SwitchPreference
+      android:key="awakecausesblackwallpaper?"
+      android:title="@string/awakecausesblackwall"
+     android:summary="@string/awakecausesblackwall_desc"
+      app:iconSpaceReserved="false">
+    </SwitchPreference>
     <ListPreference
       android:defaultValue="0"
       android:key="doubletapontoppactionbehavior"

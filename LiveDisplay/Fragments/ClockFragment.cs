@@ -43,7 +43,6 @@
         {
             base.OnCreate(savedInstanceState);
             WidgetStatusPublisher.OnWidgetStatusChanged += WidgetStatusPublisher_OnWidgetStatusChanged;
-            Activity.RunOnUiThread(() => Toast.MakeText(Context, "ClockFragment: OnCreate", ToastLength.Long).Show());
         }
 
         private void RegisterBatteryReceiver()
@@ -78,9 +77,7 @@
             //View Events
             clock.Click += Clock_Click;
             //weatherclockcontainer.Click += Weatherclockcontainer_Click;
-            BatteryReceiver.BatteryInfoChanged += BatteryReceiver_BatteryInfoChanged;            
-            Activity.RunOnUiThread(() => Toast.MakeText(Context, "ClockFragment: OnCreateView", ToastLength.Long).Show());
-
+            BatteryReceiver.BatteryInfoChanged += BatteryReceiver_BatteryInfoChanged;
 
             return v;
         }
@@ -94,7 +91,6 @@
             }
             LoadWeather();
             GrabWeatherJob.WeatherUpdated += GrabWeatherJob_WeatherUpdated;
-            Activity.RunOnUiThread(() => Toast.MakeText(Context, "ClockFragment: OnResume", ToastLength.Long).Show());
 
             base.OnResume();
         }
@@ -147,13 +143,11 @@
         public override void OnPause()
         {
             GrabWeatherJob.WeatherUpdated -= GrabWeatherJob_WeatherUpdated;
-            Activity.RunOnUiThread(() => Toast.MakeText(Context, "ClockFragment: OnPause", ToastLength.Long).Show());
 
             base.OnPause();
         }
         public override void OnDestroy()
         {
-            Activity.RunOnUiThread(() => Toast.MakeText(Context, "ClockFragment: OnDestroy", ToastLength.Long).Show());
             WidgetStatusPublisher.OnWidgetStatusChanged -= WidgetStatusPublisher_OnWidgetStatusChanged;
             initForFirstTime = false;
             base.OnDestroy();
@@ -207,7 +201,6 @@
             Application.Context.UnregisterReceiver(batteryReceiver);
             clock.Click -= Clock_Click;
             BatteryReceiver.BatteryInfoChanged -= BatteryReceiver_BatteryInfoChanged;
-            Activity.RunOnUiThread(() => Toast.MakeText(Context, "ClockFragment: OnDestroyView", ToastLength.Long).Show());
 
         }
 

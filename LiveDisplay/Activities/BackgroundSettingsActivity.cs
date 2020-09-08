@@ -119,8 +119,8 @@
 
                     ThreadPool.QueueUserWorkItem(m =>
                         {
-                            defaultBlurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.BlurLevel, 1);
-                            defaultOpacityLevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, 255);
+                            defaultBlurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.BlurLevel, defaultBlurLevel);
+                            defaultOpacityLevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, defaultOpacityLevel);
 
                             Bitmap bitmap = ((BitmapDrawable)wallpaperManager.Drawable).Bitmap;
 
@@ -130,7 +130,7 @@
                             RunOnUiThread(() =>
                             {
                                 wallpaperPreview.Background = drawable;
-                                wallpaperPreview.Background.Alpha = defaultBlurLevel;
+                                wallpaperPreview.Background.Alpha = defaultOpacityLevel;
                             }
                             );
                         });
@@ -215,7 +215,9 @@
                                     );
                                 });
                                 blur.Enabled = true;
+                                blur.SetProgress(defaultBlurLevel, true);
                                 opacity.Enabled = true;
+                                opacity.SetProgress(defaultOpacityLevel, true);
                                 appliesToMusicWidget.Enabled = true; //If the user tries to set the album artwork opacity and blur
                                 break;
 
@@ -236,9 +238,11 @@
                                     }
                                 });
 
-                                appliesToMusicWidget.Enabled = true;
                                 blur.Enabled = true;
+                                blur.SetProgress(defaultBlurLevel, true);
                                 opacity.Enabled = true;
+                                opacity.SetProgress(defaultOpacityLevel, true);
+                                appliesToMusicWidget.Enabled = true; //If the user tries to set the album artwork opacity and blur
 
                                 break;
                         }
@@ -296,10 +300,10 @@
 
         private void LoadConfiguration()
         {
-            defaultBlurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.BlurLevel, 1);
-            defaultOpacityLevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, 255);
-            albumArtBlurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtBlurLevel, 1);
-            albumArtOpacityLevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtOpacityLevel, 255);
+            defaultBlurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.BlurLevel, ConfigurationParameters.DefaultBlurLevel);
+            defaultOpacityLevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, ConfigurationParameters.DefaultOpacityLevel);
+            albumArtBlurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtBlurLevel, ConfigurationParameters.DefaultAlbumartBlurLevel);
+            albumArtOpacityLevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtOpacityLevel, ConfigurationParameters.DefaultAlbumartOpacityLevel);
             appliesToMusicWidget.Checked = configurationManager.RetrieveAValue(ConfigurationParameters.DefaultWallpaperSettingsAppliesToAlbumArt);
             blur.Progress = defaultBlurLevel;
             opacity.Progress = defaultBlurLevel;
@@ -377,6 +381,8 @@
 
         private void Blur_StopTrackingTouch(object sender, SeekBar.StopTrackingTouchEventArgs e)
         {
+            if (e.SeekBar.Progress == 0) return;
+
             Drawable drawable = null;
 
             if (currentSpinnerOptionSelected == WallpaperConfig)
@@ -447,6 +453,10 @@
             {
                 Toast.MakeText(this, "You must allow LiveDisplay to read storage to retrieve images", ToastLength.Long).Show();
                 Finish();
+            }
+            else
+            {
+                LoadConfiguration();
             }
         }
 

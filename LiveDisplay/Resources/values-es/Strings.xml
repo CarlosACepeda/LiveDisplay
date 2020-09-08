@@ -126,4 +126,6 @@
   <string name="weatherwidgetenabled">Activar el Widget del Clima</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">Diseño del icono de esta app!</string>
+  <string name="awakecausesblackwall">La pantalla permanece negra</string>
+  <string name="awakecausesblackwall_desc">La pantalla no muestra ningún fondo de pantalla</string>
 </resources>

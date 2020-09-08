@@ -177,7 +177,7 @@ namespace LiveDisplay.Servicios.Awake
             }
             return true;
         }
-        private static bool UserHasSetAwakeHours()
+        public static bool UserHasSetAwakeHours()
         {
             //Check if the user has set  hours in which the Awake functionality isn't working!
             int start = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.StartSleepTime, "-1")); 

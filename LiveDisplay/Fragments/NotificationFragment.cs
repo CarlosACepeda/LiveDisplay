@@ -1,4 +1,5 @@
-﻿using Android.OS;
+﻿using Android.App;
+using Android.OS;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
@@ -31,7 +32,6 @@ namespace LiveDisplay.Fragments
             base.OnCreate(savedInstanceState);
             NotificationAdapterViewHolder.ItemClicked += ItemClicked;
             // Create your fragment here
-            Activity.RunOnUiThread(() => Toast.MakeText(Context, "NotifFragment: OnCreate", ToastLength.Long).Show());
             WidgetStatusPublisher.OnWidgetStatusChanged += WidgetStatusPublisher_OnWidgetStatusChanged;
 
         }
@@ -53,18 +53,14 @@ namespace LiveDisplay.Fragments
             //    //...Now ask Catcher to send us the last notification posted to fill the views..
             //    NotificationSlave.NotificationSlaveInstance().RetrieveLastNotification();
             //}
-            Activity.RunOnUiThread(() => Toast.MakeText(Context, "NotifFragment: OnCreateView", ToastLength.Long).Show());
             return v;
         }
         public override void OnPause()
         {
-            Activity.RunOnUiThread(() => Toast.MakeText(Context, "NotifFragment: OnPause", ToastLength.Long).Show());
             base.OnPause();
         }
         public override void OnResume()
         {
-            Activity.RunOnUiThread(() => Toast.MakeText(Context, "NotifFragment: OnResume", ToastLength.Long).Show());
-
             base.OnResume();
         }
         private void NotificationStyleApplier_SendInlineResponseAvailabityChanged(object sender, bool e)
@@ -108,7 +104,7 @@ namespace LiveDisplay.Fragments
 
             if (configurationManager.RetrieveAValue(ConfigurationParameters.TestEnabled))
             {
-                Toast.MakeText(Activity, "Progress Indeterminate?: " + openNotification.IsProgressIndeterminate().ToString() + "\n"
+                Toast.MakeText(Application.Context, "Progress Indeterminate?: " + openNotification.IsProgressIndeterminate().ToString() + "\n"
                     + "Current Progress: " + openNotification.GetProgress().ToString() + "\n"
                     + "Max Progress: " + openNotification.GetProgressMax().ToString() + "\n"
                     + openNotification.GetGroupInfo()
@@ -117,7 +113,7 @@ namespace LiveDisplay.Fragments
 
             if (e.UpdatesPreviousNotification)
             {
-                Activity.RunOnUiThread(() =>
+                Activity?.RunOnUiThread(() =>
                 {
                     //if updates a previous notification, let's see if first of all the notification
                     //to be updated is the same that's currently being displayed in the Notification Widget.
@@ -145,7 +141,7 @@ namespace LiveDisplay.Fragments
             }
             else
             {
-                Activity.RunOnUiThread(() =>
+                Activity?.RunOnUiThread(() =>
                 {
                     styleApplier?.ApplyStyle(openNotification);
                     maincontainer.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
@@ -160,15 +156,12 @@ namespace LiveDisplay.Fragments
         }
         public override void OnDestroyView()
         {
-            //notification.Drag -= Notification_Drag;
-            //notification.Click -= LlNotification_Click;
-            //NotificationAdapterViewHolder.ItemLongClicked -= ItemLongClicked;
-            //CatcherHelper.NotificationRemoved -= CatcherHelper_NotificationRemoved;
-            //CatcherHelper.NotificationPosted -= CatcherHelper_NotificationPosted;
-            //NotificationStyleApplier.SendInlineResponseAvailabityChanged -= NotificationStyleApplier_SendInlineResponseAvailabityChanged;
-
-            styleApplier = null;
-            Activity.RunOnUiThread(() => Toast.MakeText(Context, "NotifFragment: OnDestroyView", ToastLength.Long).Show());
+            //maincontainer.Drag -= Notification_Drag;
+            //maincontainer.Click -= LlNotification_Click;
+            NotificationAdapterViewHolder.ItemLongClicked -= ItemLongClicked;
+            CatcherHelper.NotificationRemoved -= CatcherHelper_NotificationRemoved;
+            CatcherHelper.NotificationPosted -= CatcherHelper_NotificationPosted;
+            NotificationStyleApplier.SendInlineResponseAvailabityChanged -= NotificationStyleApplier_SendInlineResponseAvailabityChanged;
 
             base.OnDestroyView();
         }
@@ -176,10 +169,11 @@ namespace LiveDisplay.Fragments
         public override void OnDestroy()
         {
             openNotification?.Dispose();
-            Activity.RunOnUiThread(() => Toast.MakeText(Context, "NotifFragment: OnDestroy", ToastLength.Long).Show());
+            
+
             NotificationAdapterViewHolder.ItemClicked -= ItemClicked;
             WidgetStatusPublisher.OnWidgetStatusChanged -= WidgetStatusPublisher_OnWidgetStatusChanged;
-
+            styleApplier = null;
             base.OnDestroy();
         }
 
@@ -199,10 +193,15 @@ namespace LiveDisplay.Fragments
 
         #region Events Implementation:
 
-        private void CatcherHelper_NotificationRemoved(object sender, EventArgs e)
+        private void CatcherHelper_NotificationRemoved(object sender, NotificationRemovedEventArgs e)
         {
             Activity?.RunOnUiThread(() =>
             {
+                if (e.OpenNotification.RepresentsMediaPlaying())
+                {
+                    MusicController.StopPlayback(e.OpenNotification.GetMediaSessionToken());
+                    WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "MusicFragment", Active= false });
+                }
                 WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "NotificationFragment" });
 
                 maincontainer.Visibility = ViewStates.Gone;
@@ -218,7 +217,7 @@ namespace LiveDisplay.Fragments
             {
                 try
                 {
-                    Activity.RunOnUiThread(() => openNotification.ClickNotification());
+                    Activity?.RunOnUiThread(() => openNotification.ClickNotification());
                     if (openNotification.IsAutoCancellable())
                     {
                         WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "NotificationFragment" });
@@ -254,7 +253,7 @@ namespace LiveDisplay.Fragments
 
             if (configurationManager.RetrieveAValue(ConfigurationParameters.TestEnabled))
             {
-                Toast.MakeText(Activity, "Progress Indeterminate?: " + openNotification.IsProgressIndeterminate().ToString() + "\n"
+                Toast.MakeText(Application.Context, "Progress Indeterminate?: " + openNotification.IsProgressIndeterminate().ToString() + "\n"
                     + "Current Progress: " + openNotification.GetProgress().ToString() + "\n"
                     + "Max Progress: " + openNotification.GetProgressMax().ToString() + "\n"
                     + openNotification.GetGroupInfo()
