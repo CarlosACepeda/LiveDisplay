@@ -17,7 +17,7 @@
 	<RelativeLayout
 			a:layout_weight="4"
 			a:layout_width="match_parent"
-			a:layout_height="0dp"			
+			a:layout_height="0dp"
 			>
         <ImageView 
             a:id="@+id/livesidplayinfoicon"
@@ -27,7 +27,7 @@
 		<TextView
                 a:id="@+id/livedisplayinfo"
 				a:layout_width="wrap_content"
-				a:layout_height="match_parent"				
+				a:layout_height="match_parent"
 				a:paddingLeft="15dp"
 				a:paddingTop="3dp"
 				a:fontFamily="sans-serif-condensed-light"
@@ -38,7 +38,7 @@
             a:text="@string/clearallnotifications"
             a:layout_width="wrap_content"
             a:layout_height="match_parent"
-			a:layout_alignParentRight="true"            
+			a:layout_alignParentRight="true"
 			a:fontFamily="sans-serif-condensed-light"
             a:id="@+id/btnClearAllNotifications"
             a:textAllCaps="false"
@@ -54,20 +54,33 @@
                 a:layout_width="match_parent"
                 a:weightSum="10"
                 a:layout_height="0dp">
+            <!--<androidx.recyclerview.widget.RecyclerView
+                a:layout_weight="9"
+                a:id="@+id/FltNotificationListRecyclerView"
+                a:overScrollMode="never"
+                a:layout_width="0dp"
+                a:layout_height="wrap_content"
+                a:layout_gravity="bottom"
+			/>-->
             <FrameLayout
                 a:layout_weight="9"
                 a:layout_gravity="center"
                 a:layout_width="25dp"
                 a:layout_height="wrap_content"
                 a:id="@+id/MusicNotificationPlaceholder" />
-            <android.support.v7.widget.RecyclerView
+<!--            <androidx.recyclerview.widget.RecyclerView
                 a:layout_weight="1"
                 a:id="@+id/NotificationListRecyclerView"
                 a:overScrollMode="never"
                 a:layout_width="25dp"
                 a:layout_height="wrap_content"
-                a:layout_gravity="bottom"
-			/>
+                a:layout_gravity="bottom"/>-->
+            <include
+                a:layout_weight="1"
+                layout="@layout/notificationlist"
+                a:layout_width="25dp"
+                a:layout_height="wrap_content"
+                a:layout_gravity="bottom"/>
 
      </LinearLayout>
     <!--This FrameLayout contains the clock and later the System icons which aren't available... yet.-->
@@ -78,6 +91,7 @@
             a:id="@+id/weatherandcLockplaceholder" />
     <!--This FrameLayout contains the Unlocker and the Shortcut button-->
         <FrameLayout
+            a:id="@+id/shortcutcontainer"
             a:layout_width="match_parent"
             a:layout_weight="5"
             a:layout_height="0dp">

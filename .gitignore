@@ -259,3 +259,5 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+/MigrationBackup/769a58ad/LiveDisplay
+/MigrationBackup/f414b94e/LiveDisplay

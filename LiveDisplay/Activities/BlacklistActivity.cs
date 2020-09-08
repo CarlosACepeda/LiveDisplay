@@ -3,16 +3,16 @@
     using Android.App;
     using Android.Content.PM;
     using Android.OS;
-    using Android.Support.V7.App;
-    using Android.Support.V7.Widget;
     using Android.Widget;
+    using AndroidX.AppCompat.App;
+    using AndroidX.RecyclerView.Widget;
     using LiveDisplay.Adapters;
     using LiveDisplay.Misc;
     using LiveDisplay.Servicios;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
-    using Toolbar = Android.Support.V7.Widget.Toolbar;
+    using Toolbar = AndroidX.AppCompat.Widget.Toolbar;
 
     [Activity(Label = "@string/blacklist", Theme = "@style/LiveDisplayThemeDark.NoActionBar")]
     public class BlacklistActivity : AppCompatActivity

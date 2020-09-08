@@ -1,31 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using Android.App;
+﻿using Android.App;
 using Android.App.Admin;
 using Android.Content;
 using Android.OS;
-using Android.Runtime;
 using Android.Util;
-using Android.Views;
-using Android.Widget;
+using LiveDisplay.BroadcastReceivers;
 using LiveDisplay.Misc;
+using LiveDisplay.Servicios.Keyguard;
 using LiveDisplay.Servicios.Notificaciones;
-using Microsoft.AppCenter.Crashes;
+using System;
+using System.Threading;
 
 namespace LiveDisplay.Servicios.Awake
 {
-    public class AwakeHelper: Java.Lang.Object
+    public class AwakeHelper : Java.Lang.Object
     {
-        static ConfigurationManager configurationManager;
+        private static ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
+
         public AwakeHelper()
         {
             CatcherHelper.NotificationPosted += CatcherHelper_NotificationPosted;
             CatcherHelper.NotificationListSizeChanged += CatcherHelper_NotificationListSizeChanged;
             AwakeService.DeviceIsActive += AwakeService_DeviceIsActive;
-            configurationManager = new ConfigurationManager(AppPreferences.Default);
         }
 
         private void AwakeService_DeviceIsActive(object sender, EventArgs e)
@@ -37,10 +32,10 @@ namespace LiveDisplay.Servicios.Awake
         {
             if (configurationManager.RetrieveAValue(ConfigurationParameters.TurnOnNewNotification) == true)
             {
-                PowerManager pm = ((PowerManager)Application.Context.GetSystemService(Context.PowerService));
-                var screenLock = pm.NewWakeLock(WakeLockFlags.ScreenDim | WakeLockFlags.AcquireCausesWakeup, "Turn On Screen");
-                if (AwakeService.isInPocket == false) //Dont wake up is the phone is inside a pocket.
+                if (AwakeService.isInPocket == false || ScreenOnOffReceiver.IsScreenOn) //Dont wake up is the phone is inside a pocket, or if the screen is already on
                 {
+                    PowerManager pm = ((PowerManager)Application.Context.GetSystemService(Context.PowerService));
+                    var screenLock = pm.NewWakeLock(WakeLockFlags.ScreenDim | WakeLockFlags.AcquireCausesWakeup, "Turn On Screen");
                     screenLock.Acquire();
                     ThreadPool.QueueUserWorkItem(o =>
                     {
@@ -53,6 +48,7 @@ namespace LiveDisplay.Servicios.Awake
                 }
             }
         }
+
         public static void TurnOffScreen()
         {
             PowerManager pm = (PowerManager)Application.Context.GetSystemService(Context.PowerService);
@@ -80,7 +76,21 @@ namespace LiveDisplay.Servicios.Awake
                     policy = (DevicePolicyManager)Application.Context.GetSystemService(Context.DevicePolicyService);
                     try
                     {
-                        policy.LockNow();
+                        //Special workaround that still makes harm but not as much as it would without the workaround.
+                        //So, if the next line of code gets triggered 'policy.LockNow()' it would lock the device, but, if 
+                        //the device has been locked when the user has set a fingerprint and also if the lockscreen is still present
+                        //then after unlocking by using the fingerprint the user has to write
+                        //the pattern, aaand also double tap to exit LiveDisplay, lol.
+                        //this workaround is to prevent that, when I don't call policy.LockNow() the user doesn't have to write the pattern
+                        //or whatever side security method they have set along the fingerprint, the cost of this btw is that double tap won't work
+                        //neither the automatic screen off. (I don't know how to solve that yet) it is the lesser of two evils.
+                        //However it doesn't work sometimes, I guess it is better to simply warn the user about it.
+                        //And disable the turn off screen capabilities of LiveDisplay while a fingerprint lock is active.
+                        if (KeyguardHelper.IsDeviceCurrentlyLocked() && KeyguardHelper.IsFingerprintSet()){
+                            //Do nothing.
+                        }
+                        else
+                            policy.LockNow();
                     }
                     catch (Exception)
                     {
@@ -90,21 +100,46 @@ namespace LiveDisplay.Servicios.Awake
             }
 #pragma warning restore CS0618 // El tipo o el miembro están obsoletos
         }
-        public bool IsAwakeListeningForDeviceOrientation()
-        {
-            if(AwakeService.GetAwakeStatus()== AwakeStatus.Up)
-                return true;
-            return false;
-        }
 
-        public bool IsAwakeActive()
+        public static void ToggleStartStopAwakeService(bool toggle)
+        {
+            if (toggle == true)
+            {
+                Intent awake = new Intent(Application.Context, typeof(AwakeService));
+                Application.Context.StartService(awake);
+            }
+            else 
+            {
+                Intent awake = new Intent(Application.Context, typeof(AwakeService));
+                Application.Context.StopService(awake);
+            }
+        }
+        public static AwakeStatus GetAwakeStatus()
+        {
+            if (UserHasEnabledAwake() == false && UserHasSetAwakeHours() == false)
+                return AwakeStatus.CompletelyDisabled;
+            if (UserHasEnabledAwake() == false && UserHasSetAwakeHours())
+                return AwakeStatus.DisabledbyUser;
+            if (UserHasEnabledAwake() && IsAwakeUp() && AwakeService.isRunning)
+                return AwakeStatus.Up;
+            if (UserHasEnabledAwake() && IsAwakeUp() && AwakeService.isRunning == false)
+                return AwakeStatus.UpWithDeviceMotionDisabled;
+            if (UserHasEnabledAwake() && IsAwakeUp()== false && AwakeService.isRunning)
+                return AwakeStatus.SleepingWithDeviceMotionEnabled;
+            if (UserHasEnabledAwake() && IsAwakeUp() == false && AwakeService.isRunning == false)
+                return AwakeStatus.Sleeping;
+
+            return AwakeStatus.None;
+        }
+        private static bool IsAwakeUp()
         {
             //Check the current time and only react if the time this method is called is within the allowed hours.
-            int start = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.StartSleepTime, "0")); //12am
-            int end = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.FinishSleepTime, "500"));//5am
+            int start = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.StartSleepTime, "-1"));
+            int end = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.FinishSleepTime, "-1"));
             //Generates the hour as a 4 characters number in 24 hours for example: 2210 (10:10pm)
             var now = int.Parse(string.Concat(DateTime.Now.Hour.ToString("00"), DateTime.Now.Minute.ToString("00")));
             Log.Info("LiveDisplay", now.ToString());
+
 
             if (start <= end) //The times are in the same day.
             {
@@ -132,9 +167,28 @@ namespace LiveDisplay.Servicios.Awake
                     return true;
                 }
             }
+        }
+        private static bool UserHasEnabledAwake()
+        {
+            //Check if the user has enabled it in the first place
+            if (configurationManager.RetrieveAValue(ConfigurationParameters.EnableAwakeService) == false)
+            {
+                return false;
+            }
+            return true;
+        }
+        public static bool UserHasSetAwakeHours()
+        {
+            //Check if the user has set  hours in which the Awake functionality isn't working!
+            int start = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.StartSleepTime, "-1")); 
+            int end = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.FinishSleepTime, "-1"));
+            if (start == -1 || end == -1)
+            {
+                return false;
+            }
+            return true;
 
         }
-
         private void CatcherHelper_NotificationListSizeChanged(object sender, Notificaciones.NotificationEventArgs.NotificationListSizeChangedEventArgs e)
         {
             if (configurationManager.RetrieveAValue(ConfigurationParameters.TurnOffScreenAfterLastNotificationCleared) == true)
@@ -150,7 +204,6 @@ namespace LiveDisplay.Servicios.Awake
                 TurnOnScreen();
         }
 
-
         protected override void Dispose(bool disposing)
         {
             CatcherHelper.NotificationPosted -= CatcherHelper_NotificationPosted;
@@ -159,12 +212,17 @@ namespace LiveDisplay.Servicios.Awake
             base.Dispose(disposing);
         }
     }
+
+    [Flags]
     public enum AwakeStatus
     {
+        None= -1, //Shrug.
+        CompletelyDisabled= 0, //Not even enabled by the user yet.
         Up = 1,
-        Sleeping = 2,
-        UpWithDeviceMotionDisabled = 4 //It can turn on the screen but not when grabbing the phone from a flat surface.
-            //Maybe because the Service that listens for the device motion is not running.
-
+        Sleeping = 2, //Enabled but currently inactive! (Inactive hours)
+        UpWithDeviceMotionDisabled = 4, //It can turn on the screen but not when grabbing the phone from a flat surface.
+                                       //Maybe because the Service that listens for the device motion is not running.
+        SleepingWithDeviceMotionEnabled= 8,
+        DisabledbyUser= 64
     }
 }

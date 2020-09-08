@@ -1,0 +1,82 @@
+﻿<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:title="@string/about"
+  android:icon="@drawable/ic_info_white_24dp">
+  <PreferenceCategory android:title="@string/about"
+                      app:iconSpaceReserved="false">
+    <Preference
+      android:title="@string/about"
+      android:summary="@string/aboutinfo"
+      android:persistent="false"
+      android:selectable="false"
+      app:iconSpaceReserved="false">
+    </Preference>
+    <Preference
+     android:title="@string/version"
+     android:summary="@string/versionnumber"
+     android:selectable="false"
+     android:persistent="false"
+      app:iconSpaceReserved="false">
+    </Preference>
+    <Preference
+      android:key="contributetoproject"
+      android:title="@string/githubproject"
+      android:summary="@string/contributetoprojectdesc"
+      android:selectable="true"
+      android:persistent="false"
+      app:iconSpaceReserved="false">
+    </Preference>
+  </PreferenceCategory>
+  <PreferenceCategory android:title="@string/translations"
+                      app:iconSpaceReserved="false">
+    <Preference
+      android:title="@string/eng"
+      android:summary="@string/me"
+      android:persistent="false"
+      android:selectable="false"
+      app:iconSpaceReserved="false">
+    </Preference>
+    <Preference
+      android:title="@string/esp"
+      android:summary="@string/me"
+      android:persistent="false"
+      android:selectable="false"
+      app:iconSpaceReserved="false">
+    </Preference>
+    <Preference
+    android:title="@string/askfortranslations"
+    android:summary="@string/contactme"
+    android:selectable="true"
+    android:persistent="false"
+    app:iconSpaceReserved="false">
+      <intent
+        android:action="android.intent.action.VIEW"
+        android:data="mailto:carlosalt5126@hotmail.es">
+        <extra
+          android:name="android.intent.extra.SUBJECT"
+          android:value="Transalations for LiveDisplay">
+        </extra>
+        <extra
+          android:name="android.intent.extra.TEXT"
+          android:value="Hello there, I want to help with translations for [Language you want to translate]">
+        </extra>
+      </intent>
+    </Preference>
+  </PreferenceCategory>
+  <PreferenceCategory android:title="@string/acknowledgments"
+                      app:iconSpaceReserved="false">
+    <Preference
+      android:title="@string/yasujizr"
+      android:summary="@string/yasujizr_ty"
+      android:persistent="false"
+      android:selectable="false"
+      app:iconSpaceReserved="false">
+    </Preference>
+    <Preference
+      android:title="@string/achep"
+      android:summary="@string/achep_ty"
+      android:persistent="false"
+      android:selectable="false"
+      app:iconSpaceReserved="false" />
+  </PreferenceCategory>
+</PreferenceScreen>

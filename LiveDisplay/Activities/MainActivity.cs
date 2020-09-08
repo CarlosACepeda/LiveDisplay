@@ -4,15 +4,15 @@
     using Android.App.Admin;
     using Android.Content;
     using Android.OS;
-    using Android.Preferences;
     using Android.Provider;
     using Android.Runtime;
-    using Android.Support.V7.App;
     using Android.Views;
     using Android.Widget;
+    using AndroidX.AppCompat.App;
     using LiveDisplay.BroadcastReceivers;
     using LiveDisplay.Misc;
     using LiveDisplay.Servicios;
+    using LiveDisplay.Servicios.Awake;
 
     //for CI.
     using Microsoft.AppCenter;
@@ -20,17 +20,17 @@
     using Microsoft.AppCenter.Crashes;
     using System;
     using System.Threading;
-
+    using AlertDialog = AndroidX.AppCompat.App.AlertDialog;
+    using Toolbar = AndroidX.AppCompat.Widget.Toolbar;
 
     [Activity(Label = "@string/app_name", Theme = "@style/LiveDisplayThemeDark.NoActionBar", TaskAffinity = "livedisplay.main", MainLauncher = true)]
     internal class MainActivity : AppCompatActivity
     {
-        private Android.Support.V7.Widget.Toolbar toolbar;
+        private Toolbar toolbar;
         private TextView enableNotificationAccess, enableDeviceAdmin;
         private TextView enableDrawOverAccess;
         private RelativeLayout enableDrawOverAccessContainer;
         private bool isApplicationHealthy;
-
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -45,7 +45,30 @@
             CheckDeviceAdminAccess();
             CheckDrawOverOtherAppsAccess();
             IsApplicationHealthy();
+            AdminReceiver.OnDeviceAdminEnabled += AdminReceiver_OnDeviceAdminEnabled;
             base.OnResume();
+        }
+
+        private void AdminReceiver_OnDeviceAdminEnabled(object sender, bool e)
+        {
+            using (var adminGivenImageView = FindViewById<ImageView>(Resource.Id.deviceAccessCheckbox))
+            {
+                switch (e)
+                {
+                    case true:
+                        adminGivenImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
+                        break;
+
+                    case false:
+                        adminGivenImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
+                        break;
+                }
+                ThreadPool.QueueUserWorkItem(m =>
+                {
+                    Thread.Sleep(500);
+                    IsApplicationHealthy();
+                });
+            }
         }
 
         private void CheckDeviceAdminAccess()
@@ -60,10 +83,6 @@
 
                     case false:
                         adminGivenImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
-
-                        break;
-
-                    default:
                         break;
                 }
             }
@@ -82,9 +101,6 @@
 
                     case false:
                         notificationAccessGivenImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
-                        break;
-
-                    default:
                         break;
                 }
             }
@@ -109,7 +125,7 @@
         {
             using (var accessestext = FindViewById<TextView>(Resource.Id.health))
             {
-                if (Checkers.IsNotificationListenerEnabled() == true && Checkers.IsThisAppADeviceAdministrator() && Checkers.ThisAppCanDrawOverlays())
+                if (Checkers.IsNotificationListenerEnabled() && Checkers.IsThisAppADeviceAdministrator())
                 {
                     accessestext.SetText(Resource.String.accessesstatusenabled);
                     accessestext.SetTextColor(Android.Graphics.Color.Green);
@@ -127,6 +143,8 @@
         protected override void OnPause()
         {
             base.OnPause();
+            AdminReceiver.OnDeviceAdminEnabled -= AdminReceiver_OnDeviceAdminEnabled;
+
         }
 
         protected override void OnDestroy()
@@ -171,16 +189,17 @@
 
                     if (isApplicationHealthy)
                     {
+                        AwakeHelper.TurnOffScreen();
                         using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())
                         {
                             var notificationtext = Resources.GetString(Resource.String.testnotificationtext);
                             if (Build.VERSION.SdkInt > BuildVersionCodes.NMr1)
                             {
-                                slave.PostNotification("LiveDisplay", notificationtext, true, NotificationImportance.Low);
+                                slave.PostNotification(1, "LiveDisplay", notificationtext, true, NotificationImportance.Max);
                             }
                             else
                             {
-                                slave.PostNotification("LiveDisplay", notificationtext, true, NotificationPriority.Low);
+                                slave.PostNotification(1, "LiveDisplay", notificationtext, true, NotificationPriority.Max);
                             }
                         }
                         using (Intent intent = new Intent(Application.Context, typeof(LockScreenActivity)))
@@ -196,7 +215,7 @@
                     break;
 
                 case Resource.Id.action_help:
-                    using (Android.Support.V7.App.AlertDialog.Builder builder = new Android.Support.V7.App.AlertDialog.Builder(this))
+                    using (AlertDialog.Builder builder = new AlertDialog.Builder(this))
                     {
                         builder.SetMessage(Resource.String.helptext);
                         builder.SetPositiveButton("ok, cool", null as EventHandler<DialogClickEventArgs>);
@@ -214,7 +233,7 @@
 
         protected void BindViews()
         {
-            using (toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.mainToolbar))
+            using (toolbar = FindViewById<Toolbar>(Resource.Id.mainToolbar))
             {
                 SetSupportActionBar(toolbar);
             }
@@ -235,24 +254,28 @@
         private void EnableDrawOverAccess_Click(object sender, EventArgs e)
         {
             using (var intent = new Intent(Settings.ActionManageOverlayPermission))
-            {
                 StartActivityForResult(intent, 25);
-            }
+            
         }
 
         private void EnableDeviceAdmin_Click(object sender, EventArgs e)
         {
-            using (Android.Support.V7.App.AlertDialog.Builder builder = new Android.Support.V7.App.AlertDialog.Builder(this))
+            if (Checkers.IsThisAppADeviceAdministrator())
             {
-                builder.SetMessage(Resource.String.dialogfordeviceaccessdescription);
-                builder.SetPositiveButton(Resource.String.dialogallowbutton, new EventHandler<DialogClickEventArgs>(OnDialogPositiveButtonEventArgs));
-                builder.SetNegativeButton(Resource.String.dialogcancelbutton, new EventHandler<DialogClickEventArgs>(OnDialogNegativeButtonEventArgs));
-                builder.Show();
+                ComponentName devAdminReceiver = new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(AdminReceiver)));
+                DevicePolicyManager dpm = (DevicePolicyManager)GetSystemService(Context.DevicePolicyService);
+                dpm.RemoveActiveAdmin(devAdminReceiver);
             }
-        }
-
-        private void OnDialogNegativeButtonEventArgs(object sender, DialogClickEventArgs e)
-        {
+            else
+            {
+                using (AlertDialog.Builder builder = new AlertDialog.Builder(this))
+                {
+                    builder.SetMessage(Resource.String.dialogfordeviceaccessdescription);
+                    builder.SetPositiveButton(Resource.String.dialogallowbutton, new EventHandler<DialogClickEventArgs>(OnDialogPositiveButtonEventArgs));
+                    builder.SetNegativeButton(Resource.String.dialogcancelbutton, null as EventHandler<DialogClickEventArgs>);
+                    builder.Show();
+                }
+            }
         }
 
         private void OnDialogPositiveButtonEventArgs(object sender, DialogClickEventArgs e)

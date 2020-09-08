@@ -29,6 +29,7 @@ namespace LiveDisplay.Servicios
         private AudioManager audioManager;
         private CatcherHelper catcherHelper;
         private List<StatusBarNotification> statusBarNotifications;
+        private StatusBarNotification lastPostedNotification;
 
         public override IBinder OnBind(Intent intent)
         {
@@ -53,7 +54,7 @@ namespace LiveDisplay.Servicios
         }
 
         public override void OnListenerConnected()
-        {            
+        {
             activeMediaSessionsListener = new ActiveMediaSessionsListener();
             //RemoteController Lollipop and Beyond Implementation
             mediaSessionManager = (MediaSessionManager)GetSystemService(MediaSessionService);
@@ -84,18 +85,7 @@ namespace LiveDisplay.Servicios
 
         public override void OnNotificationPosted(StatusBarNotification sbn)
         {
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-            {
-                //Let's attach the NotificationChannels that this package represents to this StatusbarNotification
-                try
-                {
-                    var channels= GetNotificationChannels(sbn.PackageName, sbn.User);
-                }
-                catch (Exception ex)
-                {
-                    Log.Info("LiveDisplay", "Oops!: " + ex.Message);
-                }
-            }
+            lastPostedNotification = sbn;
             catcherHelper.OnNotificationPosted(sbn);
 
             //var test6 = sbn.Notification.Extras.Get(Notification.ExtraMediaSession) as MediaSession.Token;
@@ -118,7 +108,6 @@ namespace LiveDisplay.Servicios
             //        //mediaController?.UnregisterCallback(musicController);
             //        //musicController.Dispose();
             //    }
-
 
             //    //mediaController.RegisterCallback(MusicController.GetInstance());
             //}
@@ -160,8 +149,6 @@ namespace LiveDisplay.Servicios
             return base.OnUnbind(intent);
         }
 
-        
-
         private void RetrieveNotificationFromStatusBar()
         {
             statusBarNotifications = new List<StatusBarNotification>();
@@ -176,15 +163,18 @@ namespace LiveDisplay.Servicios
                 //    mediaController.RegisterCallback(MusicController.GetInstance());
                 //}
 
+                //var test1 = notification.Notification.Extras.GetString(Notification.ExtraTemplate);
+                //var test2 = notification.Notification.Extras;
+                //var test3 = notification.Notification.Flags;
+                //var test4 = notification.Notification.Extras.GetCharSequence(Notification.ExtraSummaryText);
+                //var test5 = notification.Notification.Extras.GetCharSequenceArray(Notification.ExtraTextLines);
+                //var test6 = notification.Notification.Extras.Get("android.wearable.EXTENSIONS");
+                //var test7 = notification.Notification.Extras.KeySet();
+                if(notification.Notification.Flags.HasFlag(NotificationFlags.GroupSummary)==false) //Don't grab summary notifications yet. hotfix.
                 if ((notification.IsOngoing == false || notification.Notification.Flags.HasFlag(NotificationFlags.NoClear)) && notification.IsClearable == true)
                 {
                     statusBarNotifications.Add(notification);
-                    //var test1 = notification.Notification.Extras.GetString(Notification.ExtraTemplate);
-                    //var test2 = notification.Notification.Extras;
-                    //var test3 = notification.Notification.Flags;
-                    //var test4 = notification.Notification.Extras.GetCharSequence(Notification.ExtraSummaryText);
-                    //var test5 = notification.Notification.Extras.GetCharSequenceArray(Notification.ExtraTextLines);
-                    //GetRemoteInput(notification);
+                        lastPostedNotification = notification;
                 }
             }
 
@@ -198,6 +188,13 @@ namespace LiveDisplay.Servicios
             notificationSlave.AllNotificationsCancelled += NotificationSlave_AllNotificationsCancelled;
             notificationSlave.NotificationCancelled += NotificationSlave_NotificationCancelled;
             notificationSlave.NotificationCancelledLollipop += NotificationSlave_NotificationCancelledLollipop;
+            notificationSlave.ResendLastNotificationRequested += NotificationSlave_ResendLastNotificationRequested;
+            
+        }
+
+        private void NotificationSlave_ResendLastNotificationRequested(object sender, EventArgs e)
+        {
+            OnNotificationPosted(lastPostedNotification);
         }
 
         private void RegisterReceivers()

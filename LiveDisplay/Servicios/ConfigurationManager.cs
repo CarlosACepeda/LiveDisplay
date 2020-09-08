@@ -1,7 +1,5 @@
 ﻿using Android.App;
 using Android.Content;
-using Android.Preferences;
-using Android.Util;
 using System;
 
 namespace LiveDisplay.Servicios
@@ -17,8 +15,9 @@ namespace LiveDisplay.Servicios
             switch (preferences)
             {
                 case AppPreferences.Default:
-                    sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
+                    sharedPreferences = AndroidX.Preference.PreferenceManager.GetDefaultSharedPreferences(Application.Context);
                     break;
+
                 case AppPreferences.Weather:
                     sharedPreferences = Application.Context.GetSharedPreferences("weatherpreferences", FileCreationMode.Private);
                     break;
@@ -60,9 +59,10 @@ namespace LiveDisplay.Servicios
             return sharedPreferences.GetInt(key, defValue);
         }
     }
+
     public enum AppPreferences
     {
-        Default= 1,
-        Weather= 2
+        Default = 1,
+        Weather = 2
     }
 }

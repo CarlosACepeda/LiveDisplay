@@ -1,34 +1,48 @@
-﻿using Android.App;
-using Android.App.Job;
-using Android.Content;
+﻿using Android.Content;
+using Android.Util;
+using AndroidX.Work;
 using LiveDisplay.Misc;
+using LiveDisplay.Servicios.Awake;
 using System;
-using System.Threading.Tasks;
 
 namespace LiveDisplay.Servicios.Weather
 {
-    [Service(Name = "com.underground.livedisplay.DownloadJob",
-         Permission = "android.permission.BIND_JOB_SERVICE")]
-    public class GrabWeatherJob : JobService
+    public class GrabWeatherJob : Worker
     {
-        public override bool OnStartJob(JobParameters @params)
+        public static event EventHandler<bool> WeatherUpdated; 
+
+        public GrabWeatherJob(Context context, WorkerParameters workerParameters) : base(context, workerParameters)
         {
+
+        }
+        public override Result DoWork()
+        {
+            if (AwakeHelper.GetAwakeStatus() == AwakeStatus.Sleeping || AwakeHelper.GetAwakeStatus() == AwakeStatus.SleepingWithDeviceMotionEnabled)
+            {
+                return Result.InvokeSuccess(); //We want to keep the job running but don't do the job itself while Awake is sleeping.
+            }
+
             ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Weather);
 
             string city = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherCity, "New York");
             string country = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherCountryCode, "us");
             string unit = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherTemperatureMeasureUnit, "metric");
-            Task.Run(() =>
-            {
-                var result = Weather.GetWeather(city, country, unit);
-                JobFinished(@params, false);
-            });
-            return true;
-        }
 
-        public override bool OnStopJob(JobParameters @params)
-        {
-            return false;
+            var result = OpenWeatherMapClient.GetWeather(city, country, unit);
+            if (result != null)
+            {
+                Log.Info("LiveDisplay", "Job Result Sucess");
+                WeatherUpdated?.Invoke(null, true);
+                return Result.InvokeSuccess();
+            }
+            else
+            {
+                Log.Info("LiveDisplay", "Job Result Not Sucess");
+                WeatherUpdated?.Invoke(null, false);
+                return Result.InvokeRetry();
+            }
+            
+
         }
     }
 }

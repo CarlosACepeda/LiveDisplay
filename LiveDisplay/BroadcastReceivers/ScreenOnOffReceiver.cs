@@ -1,6 +1,5 @@
 ﻿using Android.App;
 using Android.Content;
-using Android.Preferences;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
 using System.Threading;
@@ -13,6 +12,7 @@ namespace LiveDisplay.BroadcastReceivers
     public class ScreenOnOffReceiver : BroadcastReceiver
     {
         public static bool IsScreenOn { get; set; } = true;
+        public static bool ScreenTurnedOffWhileInVertical { get; set; } = true; //most of the times when one turns off the phone the same is vertical.
         private ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
 
         public override void OnReceive(Context context, Intent intent)
@@ -26,6 +26,16 @@ namespace LiveDisplay.BroadcastReceivers
             {
                 //Start hidden in Darkness. :$
                 IsScreenOn = false;
+
+                if (AwakeService.isLaidDown == false)
+                {
+                    ScreenTurnedOffWhileInVertical = true;
+                }
+                else 
+                {
+                    ScreenTurnedOffWhileInVertical = false;
+                }
+
                 int delaytolockscreen = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.StartLockscreenDelayTime, "0"));
 
                 ThreadPool.QueueUserWorkItem(m =>
@@ -37,7 +47,7 @@ namespace LiveDisplay.BroadcastReceivers
                                                     //in summary the Lockscreen only can start when screen is off
                     using (Intent lockScreenIntent = new Intent(Application.Context, typeof(LockScreenActivity)))
                     {
-                        lockScreenIntent.AddFlags(ActivityFlags.NewDocument);
+                        lockScreenIntent.AddFlags(ActivityFlags.NewDocument | ActivityFlags.NoAnimation);
 
                         if (IsScreenOn == false)
                         {

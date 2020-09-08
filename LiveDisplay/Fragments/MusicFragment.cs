@@ -3,7 +3,6 @@ using Android.Graphics.Drawables;
 using Android.Media;
 using Android.Media.Session;
 using Android.OS;
-using Android.Preferences;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
@@ -11,34 +10,37 @@ using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
 using LiveDisplay.Servicios.Music;
 using LiveDisplay.Servicios.Music.MediaEventArgs;
+using LiveDisplay.Servicios.Notificaciones;
 using LiveDisplay.Servicios.Wallpaper;
+using LiveDisplay.Servicios.Widget;
 using System;
 using System.Threading;
 using System.Timers;
-using Fragment = Android.App.Fragment;
+using Fragment = AndroidX.Fragment.App.Fragment;
 using Timer = System.Timers.Timer;
 
 namespace LiveDisplay.Fragments
 {
     public class MusicFragment : Fragment
     {
-        private TextView tvTitle, tvArtist, tvAlbum;
-        private Button btnSkipPrevious, btnPlayPause, btnSkipNext;
-        private LinearLayout musicPlayerContainer;
+        private TextView tvTitle, tvArtist, tvAlbum, sourceApp, playbackstatus;
+        private Button btnSkipPrevious, btnPlayPause, btnSkipNext, btnLaunchNotification;
+        private LinearLayout maincontainer;
         private SeekBar skbSeekSongTime;
         private PlaybackStateCode playbackState;
         private PendingIntent activityIntent; //A Pending intent if available to start the activity associated with this music fragent.
-        BitmapDrawable CurrentAlbumArt; 
-
+        private BitmapDrawable CurrentAlbumArt;
+        private OpenNotification openNotification; //Used if the button launch Notification is used.
 
         private Timer timer;
         private ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
 
+        private bool timeoutStarted = false;
+        private bool initForFirstTime= true;
         #region Fragment Lifecycle
 
         public override void OnCreate(Bundle savedInstanceState)
         {
-            BindMusicControllerEvents();
 
             timer = new Timer
             {
@@ -47,41 +49,112 @@ namespace LiveDisplay.Fragments
             timer.Elapsed += Timer_Elapsed;
             timer.Enabled = true;
 
-
             WallpaperPublisher.CurrentWallpaperCleared += WallpaperPublisher_CurrentWallpaperHasBeenCleared;
+            WidgetStatusPublisher.OnWidgetStatusChanged += WidgetStatusPublisher_OnWidgetStatusChanged;
 
             base.OnCreate(savedInstanceState);
+        }
+
+        private void WidgetStatusPublisher_OnWidgetStatusChanged(object sender, WidgetStatusEventArgs e)
+        {
+            if (e.WidgetName == "MusicFragment")
+            {
+                if (e.Show)
+                {
+                    if (maincontainer != null)
+                    {
+                        if (initForFirstTime==true)
+                        {
+                            RetrieveMediaInformation(); //Retrieving media information is when the music widget has never been used before.
+                            //so it needs information to fill its views.
+                            initForFirstTime = false;
+                        }
+                        maincontainer.Visibility = ViewStates.Visible;
+                    }
+                }
+                else
+                {
+                    if (maincontainer != null)
+                    {
+                        maincontainer.Visibility = ViewStates.Invisible;
+                        //Also release Wallpaper, if holded.
+                        WallpaperPublisher.ReleaseWallpaper();
+                    }
+                }
+            }
+            if (e.WidgetName == "NotificationFragment")
+            {
+                if (e.Show)
+                {
+                    if (maincontainer != null)
+                        maincontainer.Visibility = ViewStates.Invisible;
+
+                }
+                else
+                {
+                    if (maincontainer != null && WidgetStatusPublisher.CurrentActiveWidget== "MusicFragment")
+                        maincontainer.Visibility = ViewStates.Visible;
+                }
+            }
+
         }
 
         private void WallpaperPublisher_CurrentWallpaperHasBeenCleared(object sender, CurrentWallpaperClearedEventArgs e)
         {
             if (e.PreviousWallpaperPoster == WallpaperPoster.MusicPlayer)
             {
-                int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtOpacityLevel, 255);
-                int blurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtBlurLevel, 1); //Never used (for now)
+                int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtOpacityLevel, ConfigurationParameters.DefaultAlbumartOpacityLevel);
+                int blurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtBlurLevel, ConfigurationParameters.DefaultAlbumartBlurLevel); 
 
                 if (configurationManager.RetrieveAValue(ConfigurationParameters.ShowAlbumArt))
                     WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
                     {
                         Wallpaper = CurrentAlbumArt,
                         OpacityLevel = (short)opacitylevel,
-                        BlurLevel = 0, //Causes a crash That currently I cant debug, damn, thats why is 0. (No blur) and ignoring the value the used have setted.
+                        BlurLevel = (short)blurLevel,
                         WallpaperPoster = WallpaperPoster.MusicPlayer //We must nutify WallpaperPublisher who is posting the wallpaper, otherwise the wallpaper will be ignored.
-
                     });
-
             }
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            View view = inflater.Inflate(Resource.Layout.MusicPlayer, container, false);
+            //View view = inflater.Inflate(Resource.Layout.MusicPlayer, container, false);
+            View view = inflater.Inflate(Resource.Layout.MusicPlayer2, container, false);
 
             BindViews(view);
             BindViewEvents();
-
-            RetrieveMediaInformation();
+            BindMusicControllerEvents();
+            timer.Elapsed += Timer_Elapsed;
+            
             return view;
+        }
+        public override void OnDestroyView()
+        {
+            UnbindMusicControllerEvents();
+            WallpaperPublisher.ReleaseWallpaper();
+            timer.Elapsed -= Timer_Elapsed;
+            UnbindViewEvents();
+
+            base.OnDestroyView();
+        }
+        public override void OnPause()
+        {
+            base.OnPause();
+        }
+        public override void OnResume()
+        {
+            base.OnResume();
+        }
+
+
+        private void UnbindMusicControllerEvents()
+        {
+            MusicController.MediaPlaybackChanged -= MusicController_MediaPlaybackChanged;
+            MusicController.MediaMetadataChanged -= MusicController_MediaMetadataChanged;
+            MusicControllerKitkat.MediaMetadataChanged -= MusicControllerKitkat_MediaMetadataChanged;
+            MusicControllerKitkat.MediaPlaybackChanged -= MusicControllerKitkat_MediaPlaybackChanged;
+            WallpaperPublisher.CurrentWallpaperCleared -= WallpaperPublisher_CurrentWallpaperHasBeenCleared;
         }
 
         public override void OnDestroy()
@@ -90,14 +163,10 @@ namespace LiveDisplay.Fragments
             tvArtist = null;
             tvTitle = null;
             skbSeekSongTime = null;
-            MusicController.MediaPlaybackChanged -= MusicController_MediaPlaybackChanged;
-            MusicController.MediaMetadataChanged -= MusicController_MediaMetadataChanged;
-            MusicControllerKitkat.MediaMetadataChanged -= MusicControllerKitkat_MediaMetadataChanged;
-            MusicControllerKitkat.MediaPlaybackChanged -= MusicControllerKitkat_MediaPlaybackChanged;
-            WallpaperPublisher.CurrentWallpaperCleared -= WallpaperPublisher_CurrentWallpaperHasBeenCleared;
-            WallpaperPublisher.ReleaseWallpaper();
-            timer.Elapsed -= Timer_Elapsed;
             timer.Dispose();
+            WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "MusicFragment", Active = false });
+            WidgetStatusPublisher.OnWidgetStatusChanged -= WidgetStatusPublisher_OnWidgetStatusChanged;
+            //UnbindViews();
             base.OnDestroy();
         }
 
@@ -105,6 +174,18 @@ namespace LiveDisplay.Fragments
 
         #region Fragment Views events
 
+        private void UnbindViewEvents()
+        {
+            btnSkipPrevious.Click -= BtnSkipPrevious_Click;
+            btnSkipPrevious.LongClick -= BtnSkipPrevious_LongClick;
+            btnPlayPause.Click -= BtnPlayPause_Click;
+            btnSkipNext.Click -= BtnSkipNext_Click;
+            btnSkipNext.LongClick -= BtnSkipNext_LongClick;
+            skbSeekSongTime.ProgressChanged -= SkbSeekSongTime_ProgressChanged;
+            skbSeekSongTime.StopTrackingTouch -= SkbSeekSongTime_StopTrackingTouch;
+            maincontainer.LongClick -= MusicPlayerContainer_LongClick;
+            maincontainer.Click -= MusicPlayerContainer_Click;
+        }
         private void BindViewEvents()
         {
             btnSkipPrevious.Click += BtnSkipPrevious_Click;
@@ -114,8 +195,9 @@ namespace LiveDisplay.Fragments
             btnSkipNext.LongClick += BtnSkipNext_LongClick;
             skbSeekSongTime.ProgressChanged += SkbSeekSongTime_ProgressChanged;
             skbSeekSongTime.StopTrackingTouch += SkbSeekSongTime_StopTrackingTouch;
-            musicPlayerContainer.LongClick += MusicPlayerContainer_LongClick;
-            musicPlayerContainer.Click += MusicPlayerContainer_Click;
+            maincontainer.LongClick += MusicPlayerContainer_LongClick;
+            maincontainer.Click += MusicPlayerContainer_Click;
+            
         }
 
         private void MusicPlayerContainer_Click(object sender, EventArgs e)
@@ -324,8 +406,9 @@ namespace LiveDisplay.Fragments
                 tvAlbum.Text = e.Album;
                 tvArtist.Text = e.Artist;
                 skbSeekSongTime.Max = (int)e.Duration;
-                int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtOpacityLevel, 255);
-                int blurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtBlurLevel, 1); //Never used (for now)
+
+                int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtOpacityLevel, ConfigurationParameters.DefaultAlbumartOpacityLevel);
+                int blurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtBlurLevel, ConfigurationParameters.DefaultAlbumartBlurLevel);
                 CurrentAlbumArt = new BitmapDrawable(Resources, e.AlbumArt);
 
                 if (configurationManager.RetrieveAValue(ConfigurationParameters.ShowAlbumArt))
@@ -333,9 +416,8 @@ namespace LiveDisplay.Fragments
                     {
                         Wallpaper = new BitmapDrawable(Resources, e.AlbumArt),
                         OpacityLevel = (short)opacitylevel,
-                        BlurLevel = 0, //Causes a crash That currently I cant debug, damn, thats why is 0. (No blur) and ignoring the value the used have setted.
+                        BlurLevel = (short) blurLevel, 
                         WallpaperPoster = WallpaperPoster.MusicPlayer //We must nutify WallpaperPublisher who is posting the wallpaper, otherwise it'll be ignored.
-
                     });
                 GC.Collect(0);
             });
@@ -346,25 +428,31 @@ namespace LiveDisplay.Fragments
             Activity?.RunOnUiThread(() =>
             {
                 activityIntent = e.ActivityIntent;
-                tvTitle.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyTitle);
-                tvAlbum.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyAlbum);
-                tvArtist.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyArtist);
-                skbSeekSongTime.Max = (int)e.MediaMetadata.GetLong(MediaMetadata.MetadataKeyDuration);
+                tvTitle.Text = e.MediaMetadata?.GetString(MediaMetadata.MetadataKeyTitle);
+                tvAlbum.Text = e.MediaMetadata?.GetString(MediaMetadata.MetadataKeyAlbum);
+                tvArtist.Text = e.MediaMetadata?.GetString(MediaMetadata.MetadataKeyArtist);
+                skbSeekSongTime.Max = (int)e.MediaMetadata?.GetLong(MediaMetadata.MetadataKeyDuration);
+                if (e.AppName != string.Empty)
+                {
+                    sourceApp.Text = string.Format(Resources.GetString(Resource.String.playing_from_template), e.AppName);
+                }
+
+
                 ThreadPool.QueueUserWorkItem(m =>
                 {
-                    var albumart = e.MediaMetadata.GetBitmap(MediaMetadata.MetadataKeyAlbumArt);
+                    var albumart = e.MediaMetadata?.GetBitmap(MediaMetadata.MetadataKeyAlbumArt);
                     var wallpaper = new BitmapDrawable(Activity.Resources, albumart);
-                    int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtOpacityLevel, 255);
-                    int blurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtBlurLevel, 1); //Never used (for now)
+                    int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtOpacityLevel, ConfigurationParameters.DefaultAlbumartOpacityLevel);
+                    int blurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtBlurLevel, ConfigurationParameters.DefaultAlbumartBlurLevel);
                     CurrentAlbumArt = wallpaper;
 
                     if (configurationManager.RetrieveAValue(ConfigurationParameters.ShowAlbumArt))
                         WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
                         {
-                            Wallpaper= wallpaper,
+                            Wallpaper = wallpaper,
                             OpacityLevel = (short)opacitylevel,
-                            BlurLevel = 0, //Causes a crash That currently I cant debug, damn, thats why is 0. (No blur) and ignoring the value the used have setted.
-                            WallpaperPoster= WallpaperPoster.MusicPlayer //We must nutify WallpaperPublisher who is posting the wallpaper, otherwise it'll be ignored.
+                            BlurLevel = (short) blurLevel,
+                            WallpaperPoster = WallpaperPoster.MusicPlayer //We must nutify WallpaperPublisher who is posting the wallpaper, otherwise it'll be ignored.
                         });
                 });
             });
@@ -379,6 +467,7 @@ namespace LiveDisplay.Fragments
                     case PlaybackStateCode.Paused:
                         btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
                         playbackState = PlaybackStateCode.Paused;
+                        StartTimeout(true);
                         MoveSeekbar(false);
 
                         break;
@@ -386,11 +475,13 @@ namespace LiveDisplay.Fragments
                     case PlaybackStateCode.Playing:
                         btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_pause_white_24dp, 0, 0);
                         playbackState = PlaybackStateCode.Playing;
+                        StartTimeout(false);
                         MoveSeekbar(true);
 
                         break;
 
                     case PlaybackStateCode.Stopped:
+                        HideMusicWidget();
                         btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
                         playbackState = PlaybackStateCode.Stopped;
                         MoveSeekbar(false);
@@ -410,13 +501,32 @@ namespace LiveDisplay.Fragments
             tvTitle = view.FindViewById<TextView>(Resource.Id.tvSongName);
             tvAlbum = view.FindViewById<TextView>(Resource.Id.tvAlbumName);
             tvArtist = view.FindViewById<TextView>(Resource.Id.tvArtistName);
+            sourceApp = view.FindViewById<TextView>(Resource.Id.sourceapp);
+            playbackstatus = view.FindViewById<TextView>(Resource.Id.playbackstatus);
 
             btnSkipPrevious = view.FindViewById<Button>(Resource.Id.btnMediaPrevious);
             btnPlayPause = view.FindViewById<Button>(Resource.Id.btnMediaPlayPlause);
             btnSkipNext = view.FindViewById<Button>(Resource.Id.btnMediaNext);
+            btnLaunchNotification = view.FindViewById<Button>(Resource.Id.btnLaunchNotification);
+
             skbSeekSongTime = view.FindViewById<SeekBar>(Resource.Id.seeksongTime);
 
-            musicPlayerContainer = view.FindViewById<LinearLayout>(Resource.Id.musicPlayerContainer);
+
+            maincontainer = view.FindViewById<LinearLayout>(Resource.Id.container);
+        }
+        private void UnbindViews()
+        {
+            tvTitle.Dispose();
+            tvAlbum.Dispose();
+            tvArtist.Dispose();
+
+            btnSkipPrevious.Dispose();
+            btnPlayPause.Dispose();
+            btnSkipNext.Dispose();
+            skbSeekSongTime.Dispose();
+
+            maincontainer.Dispose();
+
         }
 
         private void RetrieveMediaInformation()
@@ -454,8 +564,42 @@ namespace LiveDisplay.Fragments
             }
             else
             {
-                skbSeekSongTime.Progress = skbSeekSongTime.Progress + 1000;
+                skbSeekSongTime.Progress += 1000;
             }
         }
+
+        private void StartTimeout(bool start)
+        {
+            if (start==false)
+            {
+                maincontainer?.RemoveCallbacks(HideMusicWidget); //Stop counting.
+                return;
+            }
+            else
+            {
+                if (timeoutStarted == true)
+                {
+                    maincontainer?.RemoveCallbacks(HideMusicWidget);
+                    maincontainer?.PostDelayed(HideMusicWidget, 7000);
+                }
+                //If not, simply wait 7 seconds then hide the notification, in that span of time, the timeout is
+                //marked as Started(true)
+                else
+                {
+                    timeoutStarted = true;
+                    maincontainer?.PostDelayed(HideMusicWidget, 7000);
+                }
+            }
+        }
+        void HideMusicWidget()
+        {
+            if (maincontainer != null)
+            {
+                maincontainer.Visibility = ViewStates.Gone;
+                timeoutStarted = false;
+                WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "MusicFragment", Active=false });
+            }
+        }
+
     }
 }

@@ -5,6 +5,8 @@ using Android.Util;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Music.MediaEventArgs;
 using System;
+using System.Net;
+using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace LiveDisplay.Servicios.Music
@@ -19,11 +21,16 @@ namespace LiveDisplay.Servicios.Music
         #region Class members
 
         public static PlaybackStateCode MusicStatus { get; private set; }
-        public PlaybackState PlaybackState { get; set; }
-        public MediaController.TransportControls TransportControls { get; set; }
-        public MediaMetadata MediaMetadata { get; set; }
+        static PlaybackState _playbackState;
+        static MediaController.TransportControls _transportControls;
+        static MediaMetadata _mediaMetadata;
         private static MusicController instance;
-        public PendingIntent ActivityIntent { get; set; }
+        private static PendingIntent _activityIntent;
+        private static MediaController _currentMediaController;
+        private static MediaSession.Token _currentToken;
+        private static bool _playbackstarted;
+        private static string _appname;
+
         #region events
 
         public static event EventHandler<MediaPlaybackStateChangedEventArgs> MediaPlaybackChanged;
@@ -38,18 +45,73 @@ namespace LiveDisplay.Servicios.Music
 
         #endregion Class members
 
-        internal static MusicController GetInstance()
+        /// <summary>
+        /// Pass a MediaSession.Token to create one MediaController.
+        /// 
+        /// </summary>
+        /// <param name="mediaController"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public static bool StartPlayback(MediaSession.Token token)
         {
             if (instance == null)
             {
-                instance = new MusicController();
+                if (token != null)
+                {
+                    _currentMediaController = new MediaController(Application.Context, token);
+                    _currentToken = token;
+                }
+                else
+                {
+                    throw new ArgumentException("Token can't be null!");
+                }
+                GetCurrentInstance(_currentMediaController);
+                return StartMediaPlayback();
             }
+            else 
+            {
+                if (IsPlaybackStarted(token) == false)
+                {
+                    StopPlayback(_currentToken); //the incoming token is different so I will stop the previous media callback before
+                                                                          //creating a new one.
+
+                    _currentMediaController = new MediaController(Application.Context, token);
+                    _currentToken = token;
+                    LoadMediaControllerData(_currentMediaController);
+                    return StartMediaPlayback();
+                }
+                else 
+                {
+                    //The mediaplayback is already started for this session in particular, do nothing.
+                    return false;
+                }
+            }
+        }
+        private static MusicController GetCurrentInstance(MediaController controller)
+        {
+            if (instance == null)
+                instance = new MusicController(controller);
             return instance;
         }
-
-        private MusicController()
+        private MusicController(MediaController controller)
         {
-            Jukebox.MediaEvent += Jukebox_MediaEvent; //Subscribe to this event only once because this class is a Singleton.
+            LoadMediaControllerData(controller);
+            Jukebox.MediaEvent += Jukebox_MediaEvent;
+        }
+        private static void LoadMediaControllerData(MediaController controller)
+        {
+            if (controller != null)
+            {
+                _transportControls = controller.GetTransportControls();
+                _mediaMetadata = controller.Metadata;
+                _playbackState = controller.PlaybackState;
+                _activityIntent = controller.SessionActivity;
+                _appname = PackageUtils.GetTheAppName(controller.PackageName);
+                //Invoke MediaMetadata and MediaPlayback changed events, so all listeners will get notified of
+                //the new Loaded mediacontroller.
+                instance?.OnMetadataChanged(controller.Metadata);
+                instance?.OnPlaybackStateChanged(controller.PlaybackState);
+            }
         }
 
         private void Jukebox_MediaEvent(object sender, MediaActionEventArgs e)
@@ -57,49 +119,50 @@ namespace LiveDisplay.Servicios.Music
             switch (e.MediaActionFlags)
             {
                 case MediaActionFlags.Play:
-                    TransportControls.Play();
+                    _transportControls?.Play();
                     break;
 
                 case MediaActionFlags.Pause:
-                    TransportControls.Pause();
+                    _transportControls?.Pause();
                     break;
 
                 case MediaActionFlags.SkipToNext:
-                    TransportControls.SkipToNext();
+                    _transportControls?.SkipToNext();
                     break;
 
                 case MediaActionFlags.SkipToPrevious:
-                    TransportControls.SkipToPrevious();
+                    _transportControls?.SkipToPrevious();
                     break;
 
                 case MediaActionFlags.SeekTo:
-                    TransportControls.SeekTo(e.Time);
+                    _transportControls?.SeekTo(e.Time);
                     break;
 
                 case MediaActionFlags.FastFoward:
-                    TransportControls.FastForward();
+                    _transportControls?.FastForward();
                     break;
 
                 case MediaActionFlags.Rewind:
-                    TransportControls.Rewind();
+                    _transportControls?.Rewind();
                     break;
 
                 case MediaActionFlags.Stop:
-                    TransportControls.Stop();
+                    _transportControls?.Stop();
                     break;
 
                 case MediaActionFlags.RetrieveMediaInformation:
                     //Send media information.
                     OnMediaMetadataChanged(new MediaMetadataChangedEventArgs
                     {
-                        MediaMetadata = MediaMetadata,
-                        ActivityIntent = ActivityIntent
+                        MediaMetadata = _mediaMetadata,
+                        ActivityIntent = _activityIntent,
+                        AppName= _appname
                     });
                     //Send Playbackstate of the media.
                     OnMediaPlaybackChanged(new MediaPlaybackStateChangedEventArgs
                     {
-                        PlaybackState = PlaybackState.State,
-                        CurrentTime = PlaybackState.Position
+                        PlaybackState = _playbackState.State,
+                        CurrentTime = _playbackState.Position
                     });
 
                     break;
@@ -111,7 +174,7 @@ namespace LiveDisplay.Servicios.Music
 
         public override void OnPlaybackStateChanged(PlaybackState state)
         {
-            PlaybackState = state;
+            _playbackState = state;
             MusicStatus = state.State;
             OnMediaPlaybackChanged(new MediaPlaybackStateChangedEventArgs
             {
@@ -123,16 +186,17 @@ namespace LiveDisplay.Servicios.Music
 
         public override void OnMetadataChanged(MediaMetadata metadata)
         {
-            MediaMetadata = metadata;
+            _mediaMetadata = metadata;
 
             OnMediaMetadataChanged(new MediaMetadataChangedEventArgs
             {
-                ActivityIntent= ActivityIntent,
-                MediaMetadata = metadata
+                ActivityIntent = _activityIntent,
+                MediaMetadata = _mediaMetadata,
+                AppName= _appname
             });
             //Datos de la Media que se está reproduciendo.
 
-            base.OnMetadataChanged(metadata);
+            base.OnMetadataChanged(_mediaMetadata);
             //Memory is growing until making a GC.
             GC.Collect();
         }
@@ -174,12 +238,61 @@ namespace LiveDisplay.Servicios.Music
             base.Dispose(disposing);
         }
 
+        private static bool StartMediaPlayback()
+        {
+            if (_currentMediaController == null)
+            {
+                Log.Warn("LiveDisplay", "current Media controller is null!");
+            }
+            try
+            {
+                _currentMediaController.RegisterCallback(instance);
+                _playbackstarted = true;
+                return true;
+            }
+            catch (Exception)
+            {
+                Log.Warn("LiveDisplay", "Failed MusicController#StartMediaCallback");
+                _playbackstarted = false;
+                return false;
+            }
+        }
+        //if you don't pass any argument it'll effectively do nothing.
+        public static bool StopPlayback(MediaSession.Token token= null)
+        {
+            if (_currentToken == token) //Making sure we are stopping the same one we started.
+            {
+                try
+                {
+                    _currentMediaController.UnregisterCallback(instance);
+                    _playbackstarted = false;
+                    return true;
+                }
+                catch (Exception)
+                {
+                    Log.Warn("LiveDisplay", "Failed MusicController#StopMediaCallback");
+                    _playbackstarted = false;
+                    return false;
+                }
+            }
+            return false;
+        }
+        private static bool IsPlaybackStarted(MediaSession.Token token)
+        {
+            if (_currentToken.Equals(token) && _playbackstarted == true)
+            {
+                return true;
+            }
+            return false;
+        }
         public override void OnSessionDestroyed()
         {
+            StopPlayback(_currentToken); //Just in case... to avoid memory leaks.
             Jukebox.MediaEvent -= Jukebox_MediaEvent;
-            PlaybackState?.Dispose();
-            TransportControls?.Dispose();
-            MediaMetadata?.Dispose();
+            _playbackState?.Dispose();
+            _transportControls?.Dispose();
+            _mediaMetadata?.Dispose();
+            _currentMediaController?.Dispose();
             instance = null;
             Log.Info("LiveDisplay", "MusicController dispose method");
             base.OnSessionDestroyed();

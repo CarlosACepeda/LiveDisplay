@@ -16,14 +16,16 @@ using System.Linq;
 
 namespace LiveDisplay.Servicios.Notificaciones
 {
-    internal class OpenNotification : Java.Lang.Object
+    public class OpenNotification : Java.Lang.Object
     {
         private StatusBarNotification statusbarnotification;
         private MediaController mediaController; //A media controller to be used with the  Media Session token provided by a MediaStyle notification.
+
         public OpenNotification(StatusBarNotification sbn)
         {
             statusbarnotification = sbn;
         }
+
         private string GetKey()
         {
             if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
@@ -31,20 +33,22 @@ namespace LiveDisplay.Servicios.Notificaciones
 
             return string.Empty;
         }
+
         private int GetId()
         {
             return statusbarnotification.Id;
         }
+
         public void Cancel()
         {
             if (IsRemovable())
                 using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())
                 {
-                    //If this notification has a mediacontroller callback registered we unregister it, to avoid leaks.
-                    if (mediaController != null)
-                    {
-                        mediaController.UnregisterCallback(MusicController.GetInstance());
-                    }
+                    ////If this notification has a mediacontroller callback registered we unregister it, to avoid leaks.
+                    //if (mediaController != null)
+                    //{
+                    //    mediaController.UnregisterCallback(MusicController.StartPlayback());
+                    //}
                     if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
                     {
                         slave.CancelNotification(GetPackageName(), GetTag(), GetId());
@@ -55,11 +59,15 @@ namespace LiveDisplay.Servicios.Notificaciones
                     }
                 }
         }
+
         //I need to pinpoint this notification, this is the way.
         //When-> Helps to really ensure is the same notification by checking also the time it was posted
-        public string GetCustomId() => GetPackageName() + GetTag() + GetId()+ When();
+        public string GetCustomId() => GetPackageName() + GetTag() + GetId() + When();
+
         private string GetTag() => statusbarnotification.Tag;
+
         private string GetPackageName() => statusbarnotification.PackageName;
+
         public string Title()
         {
             try
@@ -94,8 +102,8 @@ namespace LiveDisplay.Servicios.Notificaciones
             {
                 return string.Empty;
             }
-
         }
+
         public string GetTextLines()
         {
             try
@@ -112,8 +120,8 @@ namespace LiveDisplay.Servicios.Notificaciones
             {
                 return null;
             }
-
         }
+
         public string GetBigText()
         {
             try
@@ -124,8 +132,8 @@ namespace LiveDisplay.Servicios.Notificaciones
             {
                 return string.Empty;
             }
-
         }
+
         public string SubText()
         {
             try
@@ -137,6 +145,7 @@ namespace LiveDisplay.Servicios.Notificaciones
                 return string.Empty;
             }
         }
+
         public void ClickNotification()
         {
             try
@@ -174,7 +183,8 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
             return false;
         }
-        private MediaSession.Token GetMediaSessionToken()
+
+        public  MediaSession.Token GetMediaSessionToken()
         {
             try
             {
@@ -185,7 +195,9 @@ namespace LiveDisplay.Servicios.Notificaciones
                 return null;
             }
         }
-        public bool StartMediaCallback()
+
+        //<only for testing>
+        private bool StartMediaCallback()
         {
             var mediaSessionToken = GetMediaSessionToken();
             if (mediaSessionToken == null) return false;
@@ -193,17 +205,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             {
                 try
                 {
-                    if (mediaController != null)
-                    {
-                        mediaController.UnregisterCallback(MusicController.GetInstance());
-                    }
-                    mediaController = new MediaController(Application.Context, GetMediaSessionToken());
-                    var musicController = MusicController.GetInstance();
-                    mediaController.RegisterCallback(MusicController.GetInstance());
-                    musicController.TransportControls = mediaController.GetTransportControls();
-                    musicController.MediaMetadata = mediaController.Metadata;
-                    musicController.PlaybackState = mediaController.PlaybackState;
-                    musicController.ActivityIntent = statusbarnotification.Notification.ContentIntent; //The current notification.
+                    MusicController.StartPlayback(mediaSessionToken);
                     Log.Info("LiveDisplay", "Callback registered Successfully");
                     return true;
                 }
@@ -215,13 +217,20 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
         }
 
+        public bool RepresentsMediaPlaying()
+        {
+            var mediaSessionToken = GetMediaSessionToken();
+            if (mediaSessionToken == null) return false;
+            return true;
+        }
+
         internal string When()
         {
             try
             {
                 if (statusbarnotification.Notification.Extras.GetBoolean(Notification.ExtraShowWhen) == true)
                 {
-                    Java.Util.Calendar calendar = Java.Util.Calendar.Instance;
+                    Calendar calendar = Calendar.Instance;
                     calendar.TimeInMillis = statusbarnotification.Notification.When;
                     return string.Format("{0:D2}:{1:D2} {2}", calendar.Get(CalendarField.Hour), calendar.Get(CalendarField.Minute), calendar.GetDisplayName((int)CalendarField.AmPm, (int)CalendarStyle.Short, Locale.Default));
                 }
@@ -249,17 +258,26 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             return statusbarnotification.Notification.Extras.Get(Notification.ExtraPicture) as Bitmap;
         }
+
         internal Bitmap MediaArtwork()
         {
-            return statusbarnotification.Notification.Extras.Get(Notification.ExtraLargeIcon) as Bitmap;
+            if(Build.VERSION.SdkInt< BuildVersionCodes.O)
+#pragma warning disable CS0618 // El tipo o el miembro están obsoletos
+                return statusbarnotification.Notification.Extras.Get(Notification.ExtraLargeIcon) as Bitmap;
+#pragma warning restore CS0618 // El tipo o el miembro están obsoletos
+            return statusbarnotification.Notification.LargeIcon;
         }
 
         internal NotificationPriority GetNotificationPriority()
         {
-            if (Build.VERSION.SdkInt < BuildVersionCodes.O)
+            try
+            {
                 return (NotificationPriority)statusbarnotification.Notification.Priority;
-
-            return (NotificationPriority)(-1);
+            }
+            catch
+            {
+                return (NotificationPriority)(-155);
+            }
         }
 
         internal NotificationImportance GetNotificationImportance()
@@ -268,9 +286,9 @@ namespace LiveDisplay.Servicios.Notificaciones
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
                 return (NotificationImportance)(-1);
 
-            return (NotificationImportance)(-1);
-
+            return (NotificationImportance)(-1); //<-- try to return an appropiate value
         }
+
         private NotificationChannel GetNotificationChannel()
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
@@ -278,6 +296,7 @@ namespace LiveDisplay.Servicios.Notificaciones
 
             return null; //TODO.
         }
+
         internal string Style()
         {
             try
@@ -298,6 +317,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
             return false;
         }
+
         //<test only, check if this notification is part of a group or is a group summary or any info related with group notifications.>
         internal string GetGroupInfo()
         {
@@ -309,7 +329,6 @@ namespace LiveDisplay.Servicios.Notificaciones
             else
             {
                 result += " This is NOT summary!";
-
             }
 
             if (Style() != null)
@@ -322,8 +341,8 @@ namespace LiveDisplay.Servicios.Notificaciones
             else
                 result += " Is not group";
 
-            result += "\n" + "Package: "+ GetPackageName()+ " Id: "+ GetId()+ " Tag :" + GetTag();
-
+            result += "\n" + "Package: " + GetPackageName() + " Id: " + GetId() + " Tag :" + GetTag()
+                + " Importance: " + GetNotificationImportance() + " Priority: " + GetNotificationPriority();
             return result;
         }
 
@@ -331,13 +350,14 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             if (Build.VERSION.SdkInt <= BuildVersionCodes.N) return false;
             else return statusbarnotification.IsGroup;
-
         }
+
         public bool IsSummary()
         {
             if (Build.VERSION.SdkInt <= BuildVersionCodes.Kitkat) return false;
             else return statusbarnotification.Notification.Flags.HasFlag(NotificationFlags.GroupSummary);
         }
+
         internal int GetProgress()
         {
             try
@@ -349,6 +369,7 @@ namespace LiveDisplay.Servicios.Notificaciones
                 return -2;
             }
         }
+
         internal int GetProgressMax()
         {
             try
@@ -360,6 +381,7 @@ namespace LiveDisplay.Servicios.Notificaciones
                 return -2;
             }
         }
+
         internal bool IsProgressIndeterminate()
         {
             try
@@ -371,9 +393,14 @@ namespace LiveDisplay.Servicios.Notificaciones
                 return false;
             }
         }
+
+        internal int[] CompactViewActionsIndices()
+        {
+            return statusbarnotification.Notification.Extras.GetIntArray(Notification.ExtraCompactActions);
+        }
     }
 
-    internal class OpenAction: Java.Lang.Object
+    public class OpenAction : Java.Lang.Object
     {
         private Notification.Action action;
         private RemoteInput remoteInputDirectReply;
@@ -382,6 +409,8 @@ namespace LiveDisplay.Servicios.Notificaciones
         public OpenAction(Notification.Action action)
         {
             this.action = action;
+            //var test1 = action.Extras;
+            //var test2 = action.Extras.KeySet();
         }
 
         public string Title()
@@ -407,11 +436,12 @@ namespace LiveDisplay.Servicios.Notificaciones
                 Log.Info("LiveDisplay", "Click notification action failed");
             }
         }
+
         public bool ActionRepresentDirectReply()
         {
             //Direct reply action is a new feature in Nougat, so when called on Marshmallow and backwards, so in those cases an Action will never represent a Direct Reply.
             if (Build.VERSION.SdkInt < BuildVersionCodes.N) return false;
-            
+
             remoteInputs = action.GetRemoteInputs();
             if (remoteInputs == null || remoteInputs?.Length == 0) return false;
 
@@ -427,23 +457,29 @@ namespace LiveDisplay.Servicios.Notificaciones
             return false;
         }
 
-        public Drawable GetActionIcon()
-        {
+        public Drawable GetActionIcon(Color color)
+        {            
+            Drawable actionIcon;
             try
             {
                 if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1)
                 {
-                    return IconFactory.ReturnActionIconDrawable(action.Icon, action.ActionIntent.CreatorPackage);
+                    actionIcon= IconFactory.ReturnActionIconDrawable(action.Icon, action.ActionIntent.CreatorPackage);
                 }
                 else
                 {
-                    return IconFactory.ReturnActionIconDrawable(action.JniPeerMembers.InstanceFields.GetInt32Value("icon.I", action), action.ActionIntent.CreatorPackage);
+                    actionIcon = IconFactory.ReturnActionIconDrawable(action.JniPeerMembers.InstanceFields.GetInt32Value("icon.I", action), action.ActionIntent.CreatorPackage);
                 }
             }
             catch
             {
                 return null;
             }
+            if (color!= null)
+            {
+                actionIcon.SetColorFilter(color, PorterDuff.Mode.Multiply);
+            }
+            return actionIcon;
         }
 
         public string GetPlaceholderTextForInlineResponse()

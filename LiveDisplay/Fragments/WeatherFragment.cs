@@ -1,5 +1,4 @@
-﻿using Android.App;
-using Android.Content;
+﻿using Android.Content;
 using Android.OS;
 using Android.Telephony;
 using Android.Views;
@@ -8,6 +7,7 @@ using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
 using LiveDisplay.Servicios.Weather;
 using System.Threading;
+using Fragment = AndroidX.Fragment.App.Fragment;
 
 namespace LiveDisplay.Fragments
 {
@@ -50,7 +50,7 @@ namespace LiveDisplay.Fragments
 
             ThreadPool.QueueUserWorkItem(async m =>
             {
-                var weather = await Weather.GetWeather(thecity, countryCode, units);
+                var weather = await OpenWeatherMapClient.GetWeather(thecity, countryCode, units);
                 Activity.RunOnUiThread(() =>
                 {
                     temperature.Text = weather?.MainWeather.Temperature.ToString() + temperatureSuffix;

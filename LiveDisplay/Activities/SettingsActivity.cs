@@ -1,15 +1,18 @@
 ﻿namespace LiveDisplay.Activities
 {
     using Android.App;
+    using Android.Content;
     using Android.OS;
-    using Android.Support.V7.App;
     using Android.Widget;
+    using AndroidX.AppCompat.App;
+    using AndroidX.Preference;
     using LiveDisplay.Fragments;
+    using LiveDisplay.Fragments.Preferences;
 
     [Activity(Label = "@string/settings", Theme = "@style/LiveDisplayThemeDark.NoActionBar")]
-    public class SettingsActivity : AppCompatActivity
+    public class SettingsActivity : AppCompatActivity, PreferenceFragmentCompat.IOnPreferenceStartFragmentCallback
     {
-        private Android.Support.V7.Widget.Toolbar toolbar;
+        private AndroidX.AppCompat.Widget.Toolbar toolbar;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -17,7 +20,7 @@
 
             // Create your application here
             SetContentView(Resource.Layout.Settings);
-            using (toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar))
+            using (toolbar = FindViewById<AndroidX.AppCompat.Widget.Toolbar>(Resource.Id.toolbar))
             {
                 SetSupportActionBar(toolbar);
                 SupportActionBar.SetDefaultDisplayHomeAsUpEnabled(true);
@@ -33,17 +36,73 @@
                 }
             }
         }
-        
 
         protected override void OnPostCreate(Bundle savedInstanceState)
         {
             base.OnPostCreate(savedInstanceState);
-            FragmentManager.BeginTransaction().Replace(Resource.Id.content, new PreferencesFragmentCompat()).Commit();
+            SupportFragmentManager.BeginTransaction().Replace(Resource.Id.content, new PreferencesFragment()).Commit();
         }
 
-        protected override void OnDestroy()
+        public bool OnPreferenceStartFragment(PreferenceFragmentCompat caller, Preference pref)
         {
-            base.OnDestroy();
+            string fragmentQualifiedName = string.Empty;
+            string activityQualifiedName = string.Empty;
+            //Switch: a Workaround, there's not possible way to get the Qualified name of the Fragment to Start
+            //in Xamarin Android.
+
+            //Check first if what we have to start is a fragment replace or start a new activity
+            //I've developed a custom convention for this.
+            //if the name of the fragment class file contains 'Fragment' then it should do the replace fragment operation
+            //if contains 'Activity' then it should start an activity.
+            if (pref.Fragment.Contains("Fragment"))
+            {
+                switch (pref.Fragment)
+                {
+                    case "LockScreenSettingsFragment":
+                        fragmentQualifiedName = Java.Lang.Class.FromType(typeof(LockScreenSettingsFragment)).Name;
+                        break;
+                    case "NotificationSettingsFragment":
+                        fragmentQualifiedName = Java.Lang.Class.FromType(typeof(NotificationSettingsFragment)).Name;
+                        break;
+                    case "AwakeSettingsFragment":
+                        fragmentQualifiedName = Java.Lang.Class.FromType(typeof(AwakeSettingsFragment)).Name;
+                        break;
+                    case "MusicWidgetSettingsFragment":
+                        fragmentQualifiedName = Java.Lang.Class.FromType(typeof(MusicWidgetSettingsFragment)).Name;
+                        break;
+                    case "AboutFragment":
+                        fragmentQualifiedName = Java.Lang.Class.FromType(typeof(AboutFragment)).Name;
+                        break;
+                    default:
+                        break;
+                }
+                // Instantiate the new Fragment
+                var args = pref.Extras;
+                var fragment = SupportFragmentManager.FragmentFactory.Instantiate(
+                    ClassLoader,
+                    fragmentQualifiedName); //Normally it should be 'pref.Fragment'
+                fragment.Arguments = args;
+                fragment.SetTargetFragment(caller, 0);
+                // Replace the existing Fragment with the new Fragment
+                SupportFragmentManager.BeginTransaction()
+                        .Replace(Resource.Id.content, fragment)
+                        .AddToBackStack(null)
+                        .Commit();
+            }
+            else if (pref.Fragment.Contains("Activity"))
+            {
+                switch (pref.Fragment)
+                {
+                    case "WeatherSettingsActivity":
+                        activityQualifiedName = Java.Lang.Class.FromType(typeof(WeatherSettingsActivity)).Name;
+                        break;
+                }
+                using (Intent intent = new Intent(Application.Context, Java.Lang.Class.ForName(activityQualifiedName)))
+                {
+                    StartActivity(intent);
+                }
+            }
+            return true;
         }
     }
 }

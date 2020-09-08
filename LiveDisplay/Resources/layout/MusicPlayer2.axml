@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/container"
+    android:animateLayoutChanges="true"
+    android:layout_gravity="bottom"
+    android:gravity="bottom"
+    android:orientation="vertical"
+    android:visibility="invisible"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/playbackstatus"
+        android:paddingRight="30dp"
+        android:alpha="0.5"
+        android:text="@string/now_playing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <TextView
+		android:paddingRight="30dp"
+		android:textSize="25dp"
+        android:fontFamily="sans-serif-condensed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvSongName"
+        android:textColor="@color/primary_text_default_material_dark"
+        android:textStyle="normal" />
+    <TextView
+		android:paddingRight="30dp"
+		android:textSize="19dp"
+        android:fontFamily="sans-serif-condensed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvArtistName"
+        android:textColor="@color/primary_text_default_material_dark"
+        android:textStyle="normal" />
+    <TextView
+		android:paddingRight="30dp"
+	    android:textSize="17dp"
+        android:fontFamily="sans-serif-condensed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvAlbumName"
+        android:textStyle="italic"
+        android:textColor="@color/primary_text_default_material_dark" />
+    <SeekBar
+        android:alpha="0.5"
+		android:paddingRight="30dp"
+        android:visibility="visible"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/seeksongTime" />
+    <TextView
+        android:id="@+id/sourceapp"
+        android:paddingRight="30dp"
+        android:alpha="0.5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/mediaControls">
+        <Button
+            android:drawableTop="@drawable/ic_skip_previous_white_24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/btnMediaPrevious"
+            android:background="?android:attr/selectableItemBackground" />
+        <Button
+            android:drawableTop="@drawable/ic_play_arrow_white_24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/btnMediaPlayPlause"
+            android:background="?android:attr/selectableItemBackground" />
+        <Button
+            android:drawableTop="@drawable/ic_skip_next_white_24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/btnMediaNext"
+            android:background="?android:attr/selectableItemBackground" />
+        <Button
+            android:visibility="visible"
+            android:drawableTop="@drawable/ic_notifications_white_24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/btnLaunchNotification"
+            android:background="?android:attr/selectableItemBackground" />
+    </LinearLayout>
+</LinearLayout>

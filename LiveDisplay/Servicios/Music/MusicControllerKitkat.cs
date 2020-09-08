@@ -3,6 +3,7 @@ using Android.Util;
 using Android.Views;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Music.MediaEventArgs;
+using LiveDisplay.Servicios.Widget;
 using System;
 
 namespace LiveDisplay.Servicios.Music
@@ -16,6 +17,8 @@ namespace LiveDisplay.Servicios.Music
     internal class MusicControllerKitkat : IDisposable
     {
         private static MusicControllerKitkat instance;
+
+        private bool requestedWidgetStart = false;
 
         public static RemoteControlPlayState MusicStatus { get; private set; }
         public RemoteControlPlayState PlaybackState { get; set; }
@@ -75,7 +78,7 @@ namespace LiveDisplay.Servicios.Music
                     break;
 
                 case MediaActionFlags.FastFoward:
-                    TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Down, Keycode.MediaFastForward));                
+                    TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Down, Keycode.MediaFastForward));
                     TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Up, Keycode.MediaFastForward));
                     break;
 
@@ -126,8 +129,14 @@ namespace LiveDisplay.Servicios.Music
             switch (state)
             {
                 case RemoteControlPlayState.Playing:
+                    if (requestedWidgetStart == false)
+                    {
+                        WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = true, WidgetName = "MusicFragment", Active=true });
+                        requestedWidgetStart = true;
+                    }
                     MusicPlaying?.Invoke(null, EventArgs.Empty);
                     break;
+
                 case RemoteControlPlayState.Paused:
                     MusicPaused?.Invoke(null, EventArgs.Empty);
                     break;
@@ -144,7 +153,7 @@ namespace LiveDisplay.Servicios.Music
                 Album = mediaMetadata.GetString((MediaMetadataEditKey)MetadataKey.Album, ""),
                 AlbumArt = mediaMetadata.GetBitmap(MediaMetadataEditKey.BitmapKeyArtwork, null),
                 Duration = mediaMetadata.GetLong((MediaMetadataEditKey)MetadataKey.Duration, 0)
-            });
+            });            
         }
 
         #region Raising events.

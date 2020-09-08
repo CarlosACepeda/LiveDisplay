@@ -1,7 +1,5 @@
 ﻿using Android.App;
-using Android.Content;
 using Android.Content.PM;
-using Android.Preferences;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,27 +14,20 @@ namespace LiveDisplay.Servicios
 
             return packageManager.GetInstalledPackages(0).ToList();
         }
-
-        public static void ToggleAppBlacklistState(string whichApp, bool isBlacklisted)
-        {
-            ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
-            configurationManager.SaveAValue(whichApp, isBlacklisted);
-        }
-
         public static LevelsOfAppBlocking ReturnBlockLevel(string whichApp)
         {
             ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
             return (LevelsOfAppBlocking)configurationManager.RetrieveAValue(whichApp, 0);
-        }
+        }        
     }
 
     [Flags]
     public enum LevelsOfAppBlocking
     {
-        None = 0,
+        Default = 0,
         Blacklisted = 1,
         NonAllowedToTurnScreenOn = 2,
         BlockInAppOnly = 4,
-        TotallyBlocked = Blacklisted | NonAllowedToTurnScreenOn | BlockInAppOnly //Invalid, how is totally blocked also 'BlockInAppOnly'?
+        TotallyBlocked = 8,
     }
 }

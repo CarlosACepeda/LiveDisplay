@@ -2,6 +2,7 @@
 using Android.Content;
 using Android.Preferences;
 using LiveDisplay.Misc;
+using LiveDisplay.Servicios;
 
 namespace LiveDisplay.BroadcastReceivers
 {
@@ -9,11 +10,11 @@ namespace LiveDisplay.BroadcastReceivers
     [IntentFilter(new[] { Intent.ActionBootCompleted })]
     public class BootCompleteReceiver : BroadcastReceiver
     {
-        private ISharedPreferences sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
+        private readonly ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
 
         public override void OnReceive(Context context, Intent intent)
         {
-            if (sharedPreferences.GetBoolean(ConfigurationParameters.LockOnBoot, false) == true)
+            if (configurationManager.RetrieveAValue(ConfigurationParameters.LockOnBoot))
             {
                 Intent lanzarLockScreen = new Intent(context, typeof(LockScreenActivity));
                 lanzarLockScreen.AddFlags(ActivityFlags.NewTask);

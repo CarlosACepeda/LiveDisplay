@@ -1,188 +1,26 @@
 ﻿<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-  <!--This is the first preference screen-->
-  <PreferenceScreen android:title="@string/lockscreensettings"
-                    android:icon="@drawable/ic_lockscreen_24dp">
-  <PreferenceCategory android:title="@string/opciones">
-    <SwitchPreference
-   android:key="hiddenclock?"
-   android:title="@string/showclock" />
-    <SwitchPreference
-      android:key="testenabled?"
-      android:summary="@string/idk"
-      android:title="@string/enabletestsetting" />
-    <SwitchPreference
-      android:defaultValue="true"
-      android:key="lockonboot?"
-      android:title="@string/lockonboot">
-    </SwitchPreference>
-    <Preference
-      android:key="wallpapersettings"
-      android:title="@string/changewallpaperappearance"
-      android:selectable="true">
-    </Preference>
-  <SwitchPreference
-      android:defaultValue="false"
-      android:key="disablewallpaperchangeanim?"
-      android:title="@string/disablewallpapertransitionanim"
-      android:summary="@string/disablewallpapertransitionanimdesc">
-    </SwitchPreference>
-  </PreferenceCategory>
-    <PreferenceCategory
-      android:title="@string/musicwidget">
-      <SwitchPreference
-        android:defaultValue="true"
-        android:key="musicwidgetenabled?"
-        android:title="@string/musicwidgetenabled">
-      </SwitchPreference>
-      <SwitchPreference
-        android:defaultValue="true"
-        android:key="showalbumart?"
-        android:title="@string/showalbumart">
-      </SwitchPreference>
-    </PreferenceCategory>
-    <PreferenceCategory
-      android:title="@string/weatherwidget">
-      <Preference
-        android:key="weathersettings"
-        android:title="@string/changeweatherpreferences"
-        android:selectable="true"
-      ></Preference>
-    </PreferenceCategory>
-</PreferenceScreen>
-  <!--This is the Second preference screen-->
-  <PreferenceScreen
-    android:title="@string/notificationsettings"
-    android:icon="@drawable/ic_notifications_white_24dp">
-
-    <PreferenceCategory android:title="@string/notificationsettings">
-      <!--It will launch an activity for selecting apps in the blacklist-->
-      <Preference
-        android:key="blacklist"
-        android:title="@string/blacklist"
-        android:summary="@string/blacklistdesc"
-        android:selectable="true">
-      </Preference>
-      <!--<SwitchPreference
-        android:key="enablequickreply?"
-        android:title="@string/enablequickreply"
-        android:summary="@string/enablequickreplydesc"
-        ></SwitchPreference>-->
-    </PreferenceCategory>
-    <PreferenceCategory android:title="@string/awakesettings">
-      <SwitchPreference
-        android:defaultValue="false"
-        android:key="enableawake?"
-        android:title="@string/enableawake">
-      </SwitchPreference>
-      <Preference
-        android:key="inactivetimesettings"
-        android:title="@string/inactivetimesettings"
-        android:summary="@string/inactivetimesettingsdesc">
-      </Preference>
-      <SwitchPreference
-      android:key="turnonnewnotification?"
-      android:title="@string/turnonnewnotification"
-      android:summary="@string/turnonnewnotification_desc">
-      </SwitchPreference>
-      <SwitchPreference
-        android:key="turnonusermovement?"
-        android:title="@string/turnonusermovement">
-      </SwitchPreference>
-      <ListPreference
-        android:defaultValue="0"
-        android:key="doubletapontoppactionbehavior"
-        android:title="@string/doubletaptopaction"
-        android:summary="@string/doubletaptopactiondesc"
-        android:entries="@array/listentrieschangedoubletapbehavior"
-        android:entryValues="@array/listvalueschangedoubletapbehavior">
-      </ListPreference>
-      <ListPreference
-        android:defaultValue="0"
-        android:key="startlockscreendelaytime"
-        android:title="@string/lockdelay"
-        android:summary="@string/lockdelay_desc"
-        android:entries="@array/listentriesstartlock"
-        android:entryValues="@array/listvaluesstartlock">
-      </ListPreference>
-      <ListPreference
-        android:defaultValue="5000"
-        android:key="turnoffscreendelaytime"
-        android:title="@string/turnoffdelay"
-        android:summary="@string/turnoffdelay_desc"
-        android:entries="@array/listentriesturnoff"
-        android:entryValues="@array/listvaluesturnoff">
-      </ListPreference>
-    </PreferenceCategory>
-  </PreferenceScreen>
-  <!--This is the third preference screen-->
-  <PreferenceScreen android:title="@string/about"
-                    android:icon="@drawable/ic_info_white_24dp">
-    <PreferenceCategory android:title="@string/about">
-      <Preference
-        android:title="@string/about"
-        android:summary="@string/aboutinfo"
-        android:persistent="false"
-        android:selectable="false">
-      </Preference>
-     <Preference
-      android:title="@string/version"
-      android:summary="@string/versionnumber"
-      android:selectable="false"
-      android:persistent="false">
-    </Preference>
-      <Preference
-        android:key="contributetoproject"
-        android:title="@string/githubproject"
-        android:summary="@string/contributetoprojectdesc"
-        android:selectable="true"
-        android:persistent="false">
-      </Preference>
-  </PreferenceCategory>
-    <PreferenceCategory android:title="@string/translations">
-      <Preference
-        android:title="@string/eng"
-        android:summary="@string/me"
-        android:persistent="false"
-        android:selectable="false">
-      </Preference>
-      <Preference
-        android:title="@string/esp"
-        android:summary="@string/me"
-        android:persistent="false"
-        android:selectable="false">
-      </Preference>
-      <Preference
-      android:title="@string/askfortranslations"
-      android:summary="@string/contactme"
-      android:selectable="true"
-      android:persistent="false">
-        <intent
-          android:action="android.intent.action.VIEW"
-          android:data="mailto:carlosalt5126@hotmail.es">
-          <extra
-            android:name="android.intent.extra.SUBJECT"
-            android:value="Transalations for LiveDisplay">
-          </extra>
-          <extra
-            android:name="android.intent.extra.TEXT"
-            android:value="Hello there, I want to help with translations for [Language you want to translate]">
-          </extra>
-        </intent>
-      </Preference>
-    </PreferenceCategory>
-    <PreferenceCategory android:title="@string/acknowledgments">
-      <Preference
-        android:title="@string/yasujizr"
-        android:summary="@string/yasujizr_ty"
-        android:persistent="false"
-        android:selectable="false">
-      </Preference>
-      <Preference
-        android:title="@string/achep"
-        android:summary="@string/achep_ty"
-        android:persistent="false"
-        android:selectable="false"
-        ></Preference>
-    </PreferenceCategory>
-  </PreferenceScreen>
+  <Preference
+        android:fragment="LockScreenSettingsFragment"
+          android:title="@string/lockscreensettings"
+          android:icon="@drawable/ic_lockscreen_24dp" />
+  <Preference
+        android:fragment="NotificationSettingsFragment"
+          android:title="@string/notificationsettings"
+          android:icon="@drawable/ic_notifications_white_24dp" />
+  <Preference
+        android:fragment="AwakeSettingsFragment"
+          android:title="@string/awakesettings"
+          android:icon="@drawable/ic_awake_24dp" />
+  <Preference
+        android:fragment="MusicWidgetSettingsFragment"
+          android:title="@string/musicwidget"
+          android:icon="@drawable/ic_music_widget_24dp" />
+  <Preference
+        android:fragment="WeatherSettingsActivity"
+          android:title="@string/weather"
+          android:icon="@drawable/ic_cloud_white_24dp" />
+  <Preference
+        android:fragment="AboutFragment"
+          android:title="@string/about"
+          android:icon="@drawable/ic_info_white_24dp" />
 </PreferenceScreen>
