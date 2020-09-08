@@ -81,17 +81,19 @@ namespace LiveDisplay.Fragments
             openNotification = e.OpenNotification;
             if (e.ShouldCauseWakeUp)
                 AwakeHelper.TurnOnScreen();
-
-            if (e.OpenNotification.RepresentsMediaPlaying())
+            if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetMethod, "0") == "1") //1:"Use a notification to spawn the Music Widget"
             {
-                MusicController.StartPlayback(e.OpenNotification.GetMediaSessionToken());
-                
-                maincontainer.Visibility = ViewStates.Invisible;
-                WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "NotificationFragment" });
+                if (e.OpenNotification.RepresentsMediaPlaying())
+                {
+                    MusicController.StartPlayback(e.OpenNotification.GetMediaSessionToken());
 
-                //Also start the Widget to control the playback.
-                WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = true, WidgetName = "MusicFragment", Active= true });
-                return; 
+                    maincontainer.Visibility = ViewStates.Invisible;
+                    WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "NotificationFragment" });
+
+                    //Also start the Widget to control the playback.
+                    WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = true, WidgetName = "MusicFragment", Active = true });
+                    return;
+                }
             }
 
 
@@ -115,7 +117,7 @@ namespace LiveDisplay.Fragments
             {
                 Activity?.RunOnUiThread(() =>
                 {
-                    //if updates a previous notification, let's see if first of all the notification
+                    //if updates a previous notification, first of all let's see if the notification
                     //to be updated is the same that's currently being displayed in the Notification Widget.
                     if ((string)maincontainer.GetTag(Resource.String.defaulttag) == openNotification.GetCustomId())
                     {
@@ -197,11 +199,18 @@ namespace LiveDisplay.Fragments
         {
             Activity?.RunOnUiThread(() =>
             {
-                if (e.OpenNotification.RepresentsMediaPlaying())
+                if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetMethod, "0") == "1")
                 {
-                    MusicController.StopPlayback(e.OpenNotification.GetMediaSessionToken());
-                    WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "MusicFragment", Active= false });
+                    if (e.OpenNotification.RepresentsMediaPlaying())
+                    {
+                        if (MusicController.StopPlayback(e.OpenNotification.GetMediaSessionToken())) //Returns true if the Playback was stopped succesfully
+                        {
+                            //In that case, order MusicWidget to stop.
+                            WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "MusicFragment", Active = false });
+                        }
+                    }
                 }
+                
                 WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "NotificationFragment" });
 
                 maincontainer.Visibility = ViewStates.Gone;

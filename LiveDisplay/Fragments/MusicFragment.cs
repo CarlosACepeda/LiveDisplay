@@ -428,10 +428,10 @@ namespace LiveDisplay.Fragments
             Activity?.RunOnUiThread(() =>
             {
                 activityIntent = e.ActivityIntent;
-                tvTitle.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyTitle);
-                tvAlbum.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyAlbum);
-                tvArtist.Text = e.MediaMetadata.GetString(MediaMetadata.MetadataKeyArtist);
-                skbSeekSongTime.Max = (int)e.MediaMetadata.GetLong(MediaMetadata.MetadataKeyDuration);
+                tvTitle.Text = e.MediaMetadata?.GetString(MediaMetadata.MetadataKeyTitle);
+                tvAlbum.Text = e.MediaMetadata?.GetString(MediaMetadata.MetadataKeyAlbum);
+                tvArtist.Text = e.MediaMetadata?.GetString(MediaMetadata.MetadataKeyArtist);
+                skbSeekSongTime.Max = (int)e.MediaMetadata?.GetLong(MediaMetadata.MetadataKeyDuration);
                 if (e.AppName != string.Empty)
                 {
                     sourceApp.Text = string.Format(Resources.GetString(Resource.String.playing_from_template), e.AppName);
@@ -440,7 +440,7 @@ namespace LiveDisplay.Fragments
 
                 ThreadPool.QueueUserWorkItem(m =>
                 {
-                    var albumart = e.MediaMetadata.GetBitmap(MediaMetadata.MetadataKeyAlbumArt);
+                    var albumart = e.MediaMetadata?.GetBitmap(MediaMetadata.MetadataKeyAlbumArt);
                     var wallpaper = new BitmapDrawable(Activity.Resources, albumart);
                     int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtOpacityLevel, ConfigurationParameters.DefaultAlbumartOpacityLevel);
                     int blurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtBlurLevel, ConfigurationParameters.DefaultAlbumartBlurLevel);
@@ -451,7 +451,7 @@ namespace LiveDisplay.Fragments
                         {
                             Wallpaper = wallpaper,
                             OpacityLevel = (short)opacitylevel,
-                            BlurLevel = (short) blurLevel, //Causes a crash That currently I cant debug, damn, thats why is 0. (No blur) and ignoring the value the used have setted.
+                            BlurLevel = (short) blurLevel,
                             WallpaperPoster = WallpaperPoster.MusicPlayer //We must nutify WallpaperPublisher who is posting the wallpaper, otherwise it'll be ignored.
                         });
                 });

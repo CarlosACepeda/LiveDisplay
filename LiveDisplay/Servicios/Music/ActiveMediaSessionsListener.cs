@@ -30,7 +30,7 @@ namespace LiveDisplay.Servicios.Music
                             }
                             catch
                             {
-                                MusicController.StopPlayback();
+                                MusicController.StopPlayback(mediacontroller?.SessionToken);
                             }
                             break;
                         }

@@ -77,6 +77,7 @@ namespace LiveDisplay.Servicios.Music
 
                     _currentMediaController = new MediaController(Application.Context, token);
                     _currentToken = token;
+                    LoadMediaControllerData(_currentMediaController);
                     return StartMediaPlayback();
                 }
                 else 
@@ -94,6 +95,11 @@ namespace LiveDisplay.Servicios.Music
         }
         private MusicController(MediaController controller)
         {
+            LoadMediaControllerData(controller);
+            Jukebox.MediaEvent += Jukebox_MediaEvent;
+        }
+        private static void LoadMediaControllerData(MediaController controller)
+        {
             if (controller != null)
             {
                 _transportControls = controller.GetTransportControls();
@@ -101,8 +107,11 @@ namespace LiveDisplay.Servicios.Music
                 _playbackState = controller.PlaybackState;
                 _activityIntent = controller.SessionActivity;
                 _appname = PackageUtils.GetTheAppName(controller.PackageName);
+                //Invoke MediaMetadata and MediaPlayback changed events, so all listeners will get notified of
+                //the new Loaded mediacontroller.
+                instance?.OnMetadataChanged(controller.Metadata);
+                instance?.OnPlaybackStateChanged(controller.PlaybackState);
             }
-            Jukebox.MediaEvent += Jukebox_MediaEvent;
         }
 
         private void Jukebox_MediaEvent(object sender, MediaActionEventArgs e)

@@ -22,7 +22,7 @@
     <ListPreference
             android:selectable="false"
           android:enabled="false"
-          android:defaultValue="0"
+          android:defaultValue="1"
           android:key="musicwidgetcontrolmethod"
           android:title="@string/musicwidgetcontrolmethod"
           android:summary="@string/m_widgetcontrolmethodsession"
