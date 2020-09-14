@@ -116,9 +116,27 @@
             LoadConfiguration();
 
             WallpaperPublisher.CurrentWallpaperCleared += WallpaperPublisher_CurrentWallpaperCleared;
+            WidgetStatusPublisher.OnWidgetStatusChanged += WidgetStatusPublisher_OnWidgetStatusChanged;
         }
 
-       
+        private void WidgetStatusPublisher_OnWidgetStatusChanged(object sender, WidgetStatusEventArgs e)
+        {
+            if (e.Show && e.WidgetName != "ClockFragment")
+            {
+                using (var miniclock = FindViewById<TextClock>(Resource.Id.miniclock))
+                {
+                    miniclock.Visibility = ViewStates.Visible;
+                }
+            }
+            else
+            {
+                using (var miniclock = FindViewById<TextClock>(Resource.Id.miniclock))
+                {
+                    miniclock.Visibility = ViewStates.Invisible;
+                }
+
+            }
+        }
 
         private void WallpaperPublisher_CurrentWallpaperCleared(object sender, CurrentWallpaperClearedEventArgs e)
         {
@@ -305,6 +323,7 @@
             clearAll.Click -= BtnClearAll_Click;
             WallpaperPublisher.NewWallpaperIssued -= Wallpaper_NewWallpaperIssued;
             CatcherHelper.NotificationListSizeChanged -= CatcherHelper_NotificationListSizeChanged;
+            WidgetStatusPublisher.OnWidgetStatusChanged += WidgetStatusPublisher_OnWidgetStatusChanged;
             lockscreen.Touch -= Lockscreen_Touch;
 
             watchDog.Stop();
