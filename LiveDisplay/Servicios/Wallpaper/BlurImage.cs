@@ -28,6 +28,8 @@ namespace LiveDisplay.Servicios.Wallpaper
         {
             if (intensity < Max_Radius && intensity > 0)
                 this.intensity = intensity;
+            else if (intensity == 0 || intensity < 0)
+                this.intensity = 0;
             else
                 this.intensity = Max_Radius;
             return this;
@@ -63,6 +65,11 @@ namespace LiveDisplay.Servicios.Wallpaper
             {
                 return image;
             }
+            if (intensity == 0)
+            {
+                return image; //No need to blur the image.
+            }
+
             Bitmap input;
             if (image.Width > deviceWidth || image.Height > deviceHeight)
             {

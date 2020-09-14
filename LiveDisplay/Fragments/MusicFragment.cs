@@ -31,7 +31,6 @@ namespace LiveDisplay.Fragments
         private PendingIntent activityIntent; //A Pending intent if available to start the activity associated with this music fragent.
         private BitmapDrawable CurrentAlbumArt;
         private OpenNotification openNotification; //Used if the button launch Notification is used.
-
         private Timer timer;
         private ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
 
@@ -144,6 +143,10 @@ namespace LiveDisplay.Fragments
         }
         public override void OnResume()
         {
+            if(WidgetStatusPublisher.CurrentActiveWidget == "MusicFragment" && initForFirstTime==true)
+            {
+                WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = true, WidgetName = "MusicFragment", Active = true });
+            }
             base.OnResume();
         }
 
@@ -164,9 +167,11 @@ namespace LiveDisplay.Fragments
             tvTitle = null;
             skbSeekSongTime = null;
             timer.Dispose();
-            WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "MusicFragment", Active = false });
+            bool isWidgetActive = WidgetStatusPublisher.CurrentActiveWidget == "MusicFragment";
+            WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "MusicFragment", Active = isWidgetActive });
             WidgetStatusPublisher.OnWidgetStatusChanged -= WidgetStatusPublisher_OnWidgetStatusChanged;
             //UnbindViews();
+            initForFirstTime = false;
             base.OnDestroy();
         }
 

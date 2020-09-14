@@ -84,10 +84,13 @@
 
         public override void OnResume()
         {
-            if (ConfigurationParameters.StartingWidget == "clock" && initForFirstTime == false)
+            if (WidgetStatusPublisher.CurrentActiveWidget == string.Empty || WidgetStatusPublisher.CurrentActiveWidget == "ClockFragment")
             {
-                maincontainer.Visibility = ViewStates.Visible;
-                initForFirstTime = true;
+                if (ConfigurationParameters.StartingWidget == "clock" && initForFirstTime == false)
+                {
+                    maincontainer.Visibility = ViewStates.Visible;
+                    initForFirstTime = true;
+                }
             }
             LoadWeather();
             GrabWeatherJob.WeatherUpdated += GrabWeatherJob_WeatherUpdated;

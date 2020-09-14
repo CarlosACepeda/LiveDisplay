@@ -74,10 +74,7 @@
                     );
                 }
             });
-
-            //Views
-            //wallpaperView = FindViewById<ImageView>(Resource.Id.wallpaper);
-            //unlocker = FindViewById<ImageView>(Resource.Id.unlocker);
+            
             startCamera = FindViewById<Button>(Resource.Id.btnStartCamera);
             startDialer = FindViewById<Button>(Resource.Id.btnStartPhone);
             clearAll = FindViewById<Button>(Resource.Id.btnClearAllNotifications);
@@ -90,7 +87,6 @@
             fadeoutanimation.AnimationEnd += Fadeoutanimation_AnimationEnd;
 
             clearAll.Click += BtnClearAll_Click;
-            //unlocker.Touch += Unlocker_Touch;
             startCamera.Click += StartCamera_Click;
             startDialer.Click += StartDialer_Click;
             lockscreen.Touch += Lockscreen_Touch;
@@ -116,15 +112,6 @@
                     recycler.SetAdapter(CatcherHelper.notificationAdapter);
                 }
             }
-            //using (filteredRecyclerView = FindViewById<RecyclerView>(Resource.Id.FltNotificationListRecyclerView))
-            //{
-            //    using (layoutManager = new LinearLayoutManager(Application.Context))
-            //    {
-            //        recycler.SetLayoutManager(layoutManager);
-            //        recycler.SetAdapter(CatcherHelper.notificationAdapter);
-            //    }
-            //}
-
             LoadAllFragments();
             LoadConfiguration();
 
@@ -163,7 +150,11 @@
                 }
                 if (configurationManager.RetrieveAValue(ConfigurationParameters.DisableWallpaperChangeAnim) == false) //If the animation is not disabled.
                 {
-                    Window.DecorView.Animate().SetDuration(100).Alpha(0.5f);
+                    if (ActivityLifecycleHelper.GetInstance().GetActivityState(typeof(LockScreenActivity)) == ActivityStates.Resumed)
+                    {
+                        //Animate only when the activity is visible to the user.
+                        Window.DecorView.Animate().SetDuration(100).Alpha(0.5f);
+                    }
                 }
 
                 if (e.Wallpaper == null)
@@ -395,40 +386,6 @@
                 notificationSlave.CancelAll();
             }
         }
-
-        private void Unlocker_Touch(object sender, View.TouchEventArgs e)
-        {
-            //Log.Info("LiveDisplay", "Y pos:" + lockscreen.GetY());
-            //lockscreen.SetY(lockscreen.GetY()-25);
-
-            //lockscreen.SetY(lockscreen.GetY() - e.Event.RawY);
-
-            float startPoint = 0;
-            float finalPoint = 0;
-            if (e.Event.Action == MotionEventActions.Down)
-            {
-                Log.Info("Down", e.Event.GetY().ToString());
-                startPoint = e.Event.GetY();
-            }
-            if (e.Event.Action == MotionEventActions.Up)
-            {
-                Log.Info("Up", e.Event.GetY().ToString());
-                finalPoint = e.Event.GetY();
-            }
-            if (startPoint > finalPoint && finalPoint < 0)
-            {
-                Log.Info("Swipe", "Up");
-
-                Finish();
-                //using (Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(TransparentActivity))))
-                //{
-                //    intent.AddFlags(ActivityFlags.NewTask| ActivityFlags.TaskOnHome);
-                //    StartActivity(intent);
-                //}
-                OverridePendingTransition(Resource.Animation.slidetounlockanim, Resource.Animation.slidetounlockanim);
-            }
-        }
-
         private void StartCamera_Click(object sender, EventArgs e)
         {
             using (Intent intent = new Intent(MediaStore.IntentActionStillImageCamera))
@@ -579,22 +536,6 @@
                 view.SystemUiVisibility = (StatusBarVisibility)newUiOptions;
                 Window.AddFlags(WindowManagerFlags.DismissKeyguard);
                 Window.AddFlags(WindowManagerFlags.ShowWhenLocked);
-            }
-        }
-
-        private void StopFloatingNotificationService()
-        {
-            using (Intent intent = new Intent(Application.Context, typeof(FloatingNotification)))
-            {
-                StopService(intent);
-            }
-        }
-
-        private void StartFloatingNotificationService()
-        {
-            using (Intent intent = new Intent(Application.Context, typeof(FloatingNotification)))
-            {
-                StartService(intent);
             }
         }
     }

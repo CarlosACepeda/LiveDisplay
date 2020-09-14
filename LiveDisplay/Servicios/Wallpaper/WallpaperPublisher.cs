@@ -44,7 +44,7 @@ namespace LiveDisplay.Servicios.Wallpaper
                     }
                     );
             }
-            if (e.BlurLevel > 0 && e.BlurLevel <= 25)
+            if (e.BlurLevel >= 0 && e.BlurLevel <= 25)
             {
                 if (e.Wallpaper?.Bitmap != null)
                 {

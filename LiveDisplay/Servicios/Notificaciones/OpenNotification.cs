@@ -44,11 +44,6 @@ namespace LiveDisplay.Servicios.Notificaciones
             if (IsRemovable())
                 using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())
                 {
-                    ////If this notification has a mediacontroller callback registered we unregister it, to avoid leaks.
-                    //if (mediaController != null)
-                    //{
-                    //    mediaController.UnregisterCallback(MusicController.StartPlayback());
-                    //}
                     if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
                     {
                         slave.CancelNotification(GetPackageName(), GetTag(), GetId());
@@ -267,7 +262,12 @@ namespace LiveDisplay.Servicios.Notificaciones
 #pragma warning restore CS0618 // El tipo o el miembro están obsoletos
             return statusbarnotification.Notification.LargeIcon;
         }
+        //internal Bitmap GetPersonAvatar()
+        //{
+        //    if (Style() != "android.app.Notification$MessagingStyle" || Build.VERSION.SdkInt < BuildVersionCodes.P)
+        //        return null;
 
+        //}
         internal NotificationPriority GetNotificationPriority()
         {
             try
