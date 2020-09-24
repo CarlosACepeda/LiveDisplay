@@ -472,7 +472,12 @@ namespace LiveDisplay.Fragments
                     case PlaybackStateCode.Paused:
                         btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
                         playbackState = PlaybackStateCode.Paused;
-                        StartTimeout(true);
+                        //Start timeout to hide the MusicFragment (but only if the music method chosen is 'Pick a MediaSession' (0)                        
+                        //Otherwise, the Music Widget can only disappear when the notification is removed. (which is the correct behavior)
+                        if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetMethod, "1") == "0")
+                        {
+                            StartTimeout(true); 
+                        }
                         MoveSeekbar(false);
 
                         break;

@@ -6,10 +6,12 @@ using Android.OS;
 using Android.Preferences;
 using Android.Runtime;
 using Android.Util;
+using Android.Widget;
 using LiveDisplay.BroadcastReceivers;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Awake;
 using System;
+using System.Threading;
 
 namespace LiveDisplay.Servicios
 {
@@ -22,11 +24,15 @@ namespace LiveDisplay.Servicios
         private Sensor proximitySensor;
         public static bool isLaidDown = false;
         public static bool isInPocket;
+        private static bool isSensorBlocked;
         public static bool isRunning;
+        private long layDownTime; //Timestamp indicating at which moment the device is laid down.
+        private long wakeUpWaitTime = 500000000; //Half a second in nanoseconds.
+        private long sleepTime = 1000000000; //1 Seconds in nanoseconds.
+        private long phoneInVerticalTime; //Timestamp indicating at which moment the device is vertical.
+        private long proxSensorBlockedTime; //Timestamp indicating at which moment the proximity sensor is being blocked;
 
         
-
-        public static event EventHandler<EventArgs> DeviceIsActive;
 
 
         public override IBinder OnBind(Intent intent)
@@ -56,38 +62,67 @@ namespace LiveDisplay.Servicios
             switch (e.Sensor.Type)
             {
                 case SensorType.Accelerometer:
+                    
                     //Detect phone on plain surface:
                     //Z axis must have the following value:
                     //>10 m/s2;
                     //Y axis must be less than 3m/s2 so, the device can be slightly tilted and still being
                     //in a Plain surface.
 
-                    if (e.Values[2] > 10 && e.Values[1] < 3)
+                    if (e.Values[2] > 9 && e.Values[1] < 3)
                     {
-                        isLaidDown = true;
-                    }
-                    //after, use this value to decide if wake up or not the screen.
-                    //We don't want to turn on the screen if the device is already vertical for some reason.
-
-                    //Put a timer of 3 seconds, and if the device is still with these values,
-                    //the phone is left in a plain surface.
-                    //New feature? Don't awake phone on new Notification while phone is left alone
-                    //To avoid Unnecesary awake if the user won't see it.
-
-                    //Detect if User has grabbed the phone back up:
-                    //Z axis must be less than 10 m/s2("Example: 9.5") it means that Z  axis is not being
-                    //Accelerated and
-                    //Y axis must be greater than 3m/s20
-                    else if (ScreenOnOffReceiver.IsScreenOn == false && isLaidDown == true)
-                    {
-                        if (e.Values[2] < 9.6f && e.Values[1] > 3)
+                        if (layDownTime == 0)
                         {
-                            DeviceIsActive?.Invoke(null, null);
-                            isLaidDown = false;
+                            layDownTime = e.Timestamp;
                         }
-                        else
+
+
+                        if (e.Timestamp > (sleepTime + layDownTime))
                         {
                             isLaidDown = true;
+                            Log.Info("SENSOR", "Is Laid down");
+                            if (isSensorBlocked)
+                            {
+                                isInPocket = true;
+                                Log.Info("SENSOR", "Is in Pocket (horizontal)");
+                            }
+                            else
+                            {
+                                Log.Info("SENSOR", "Is not in Pocket (horizontal)");
+
+                                isInPocket = false;
+                            }
+                        }
+                        phoneInVerticalTime = 0;                            
+                        
+                    }
+                    if (e.Values[1] > 3 && isInPocket == false)
+                    {
+                        if (isLaidDown == true)
+                        {
+                            if (phoneInVerticalTime == 0)
+                            {
+                                phoneInVerticalTime = e.Timestamp;
+                            }
+                            if (e.Timestamp > (wakeUpWaitTime + phoneInVerticalTime))
+                            {
+                                if (ScreenOnOffReceiver.IsScreenOn == false)
+                                {
+                                    Log.Info("SENSOR", "Should turn on screen");
+                                    if (configurationManager.RetrieveAValue(ConfigurationParameters.TurnOnUserMovement))
+                                    {
+                                        AwakeHelper.TurnOnScreen();
+                                    }
+                                }
+                                isLaidDown = false;
+                                layDownTime = 0;
+                            }
+                        }
+                        else if (isLaidDown == false && e.Timestamp > (phoneInVerticalTime + sleepTime) && isSensorBlocked)
+                        {
+                            isInPocket = true;
+                            Log.Info("SENSOR", "Is In Pocket (vertical) I guess");
+
                         }
                     }
 
@@ -102,22 +137,17 @@ namespace LiveDisplay.Servicios
                     Log.Info("Livedisplay", "value 1 " + e.Values[0]);
                     if (e.Values[0] == 0)
                     {
-                        //Phone is in front of something or something is blocking the sensor.
-                        if (isLaidDown == false) //We need to check if the phone is vertical enough and the proximity sensor covered
-                                                 //To assume is in a pocket.
-                            isInPocket = true;
-                        else
-                        {
-                            isInPocket = false; //Nothing is blocking the sensor, and I bet there arent ghost pockets without tangible
-                            //boundaries so the Proximity sensor does not detect anything. xD
-                        }
+                        proxSensorBlockedTime = e.Timestamp;
+                        isSensorBlocked = true;
                     }
-                    else //The sensor value is a different value but I will just assume the phone prox. Sensor is not being blocked.
+                    else
                     {
-                        isInPocket = false;
+                        proxSensorBlockedTime = 0;
+                        isSensorBlocked = false;
                     }
 
                     break;
+
 
                 default:
                     break;
@@ -130,13 +160,14 @@ namespace LiveDisplay.Servicios
             //because it recognizes is vertical and also it isn't inside a pocket
             //TODO: Fix this behavior
 
-            if (isInPocket == false && isLaidDown == false && ScreenOnOffReceiver.ScreenTurnedOffWhileInVertical==false)
-            {
-                if (configurationManager.RetrieveAValue(ConfigurationParameters.TurnOnUserMovement) == true)
-                {
-                    AwakeHelper.TurnOnScreen();
-                }
-            }
+
+            //if (isInPocket == false && isLaidDown == false && ScreenOnOffReceiver.ScreenTurnedOffWhileInVertical==false)
+            //{
+            //    if (configurationManager.RetrieveAValue(ConfigurationParameters.TurnOnUserMovement) == true)
+            //    {
+            //        AwakeHelper.TurnOnScreen();
+            //    }
+            //}
         }
 
         public override void OnDestroy()

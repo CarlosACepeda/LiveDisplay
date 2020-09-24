@@ -82,6 +82,7 @@
             viewPropertyAnimator = Window.DecorView.Animate();
             viewPropertyAnimator.SetListener(new LockScreenAnimationHelper(Window));
             livedisplayinfo = FindViewById<TextView>(Resource.Id.livedisplayinfo);
+            livedisplayinfo.Visibility = ViewStates.Gone;  //You won't be seeing this anymore.
 
             fadeoutanimation = AnimationUtils.LoadAnimation(Application.Context, Resource.Animation.abc_fade_out);
             fadeoutanimation.AnimationEnd += Fadeoutanimation_AnimationEnd;
