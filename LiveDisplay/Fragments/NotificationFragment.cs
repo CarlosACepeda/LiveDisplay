@@ -79,8 +79,9 @@ namespace LiveDisplay.Fragments
         private void CatcherHelper_NotificationPosted(object sender, NotificationPostedEventArgs e)
         {
             openNotification = e.OpenNotification;
-            if (e.ShouldCauseWakeUp)
+            if (e.ShouldCauseWakeUp && configurationManager.RetrieveAValue(ConfigurationParameters.TurnOnUserMovement))
                 AwakeHelper.TurnOnScreen();
+
             if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetMethod, "0") == "1") //1:"Use a notification to spawn the Music Widget"
             {
                 if (e.OpenNotification.RepresentsMediaPlaying())

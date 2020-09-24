@@ -86,6 +86,11 @@ namespace LiveDisplay.Fragments.Preferences
             {
                 turnonusermovement.Enabled = enableItems;
                 turnonusermovement.Selectable = enableItems;
+                if (enableItems == false)
+                {
+                    //User disabled Device Motion, so the service should be stopped as well.
+                    AwakeHelper.ToggleStartStopAwakeService(false);
+                }
             }
             doubletapontopactionbehavior.Enabled = enableItems;
             doubletapontopactionbehavior.Selectable = enableItems;

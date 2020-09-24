@@ -240,13 +240,14 @@
 
             enableDeviceAdmin = FindViewById<TextView>(Resource.Id.enableDeviceAccess);
             enableNotificationAccess = FindViewById<TextView>(Resource.Id.enableNotificationAccess);
-            if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1)
-            {
-                enableDrawOverAccessContainer = FindViewById<RelativeLayout>(Resource.Id.drawOverlaysCheckboxContainer);
-                enableDrawOverAccessContainer.Visibility = ViewStates.Visible;
-                enableDrawOverAccess = FindViewById<TextView>(Resource.Id.enableFloatingPermission);
-                enableDrawOverAccess.Click += EnableDrawOverAccess_Click;
-            }
+            //if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1)
+            //{
+            //    enableDrawOverAccessContainer = FindViewById<RelativeLayout>(Resource.Id.drawOverlaysCheckboxContainer);
+            //    enableDrawOverAccessContainer.Visibility = ViewStates.Visible;
+            //    enableDrawOverAccess = FindViewById<TextView>(Resource.Id.enableFloatingPermission);
+            //    enableDrawOverAccess.Click += EnableDrawOverAccess_Click;
+            //}            //You won't be needing the permission for now.
+
             enableNotificationAccess.Click += EnableNotificationAccess_Click;
             enableDeviceAdmin.Click += EnableDeviceAdmin_Click;
         }
