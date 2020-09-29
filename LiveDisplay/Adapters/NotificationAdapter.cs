@@ -1,5 +1,6 @@
 ﻿namespace LiveDisplay.Adapters
 {
+    using Android.OS;
     using Android.Service.Notification;
     using Android.Util;
     using Android.Views;
@@ -28,7 +29,17 @@
             {
                 //Cast
                 NotificationAdapterViewHolder viewHolder = holder as NotificationAdapterViewHolder;
-                viewHolder.Icono.Background = IconFactory.ReturnIconDrawable(notifications[position].Notification.Icon, notifications[position].PackageName);
+                if (Build.VERSION.SdkInt > BuildVersionCodes.M)
+                {
+                    viewHolder.Icono.Background = IconFactory.ReturnIconDrawable(notifications[position].Notification.SmallIcon, notifications[position].PackageName);
+
+                }
+                else
+                {
+#pragma warning disable CS0618
+                    viewHolder.Icono.Background = IconFactory.ReturnIconDrawable(notifications[position].Notification.Icon, notifications[position].PackageName);
+#pragma warning restore CS0618 
+                }
                 if (selectedItem == position)
                 {
                     viewHolder.Icono.Alpha = 0.5f;
