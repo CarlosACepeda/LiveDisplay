@@ -53,16 +53,19 @@
         {
             using (var adminGivenImageView = FindViewById<ImageView>(Resource.Id.deviceAccessCheckbox))
             {
-                switch (e)
+                RunOnUiThread(()=>
                 {
-                    case true:
-                        adminGivenImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
-                        break;
+                    switch (e)
+                    {
+                        case true:
+                            adminGivenImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
+                            break;
 
-                    case false:
-                        adminGivenImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
-                        break;
-                }
+                        case false:
+                            adminGivenImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
+                            break;
+                    }
+                });
                 ThreadPool.QueueUserWorkItem(m =>
                 {
                     Thread.Sleep(500);
