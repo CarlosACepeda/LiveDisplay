@@ -112,20 +112,19 @@ namespace LiveDisplay.Fragments.Preferences
 
         private void Inactivehourssettingspreference_PreferenceClick(object sender, Preference.PreferenceClickEventArgs e)
         {
-            if (isSleepstarttimesetted == false)
-            {
-                startTimeDialog = new TimePickerDialog(Activity, PreferencesFragmentCompat_starttimepicked, DateTime.Now.Hour, DateTime.Now.Minute, false);
-                if (AwakeHelper.UserHasSetAwakeHours())
-                {
-                    int start = int.Parse(new ConfigurationManager(AppPreferences.Default).RetrieveAValue(ConfigurationParameters.StartSleepTime, "-1"));
-                    startTimeDialog.SetMessage("Start hour: "); //here it goes the set start hour, (but in a user readable way)
+            
+           startTimeDialog = new TimePickerDialog(Activity, PreferencesFragmentCompat_starttimepicked, DateTime.Now.Hour, DateTime.Now.Minute, false);
+           if (AwakeHelper.UserHasSetAwakeHours())
+           {
+               int start = int.Parse(new ConfigurationManager(AppPreferences.Default).RetrieveAValue(ConfigurationParameters.StartSleepTime, "-1"));
+               startTimeDialog.SetMessage("Start hour: "); //here it goes the set start hour, (but in a user readable way)
 
-                }
-                else {
-                    startTimeDialog.SetMessage("Start hour:");
-                }
-                startTimeDialog.Show();
-            }
+           }
+           else {
+               startTimeDialog.SetMessage("Start hour:");
+           }
+           startTimeDialog.Show();
+            
         }
 
         private void PreferencesFragmentCompat_starttimepicked(object sender, TimePickerDialog.TimeSetEventArgs e)
@@ -136,15 +135,15 @@ namespace LiveDisplay.Fragments.Preferences
             configurationManager.SaveAValue(ConfigurationParameters.StartSleepTime, string.Concat(e.HourOfDay.ToString() + e.Minute.ToString()));
 
             int end = int.Parse(new ConfigurationManager(AppPreferences.Default).RetrieveAValue(ConfigurationParameters.FinishSleepTime, "-1"));
+            finishTimeDialog = new TimePickerDialog(Activity, PreferencesFragmentCompat_finishtimepicked, DateTime.Now.Hour, DateTime.Now.Minute, false);
             if (AwakeHelper.UserHasSetAwakeHours())
             {
-                finishTimeDialog = new TimePickerDialog(Activity, PreferencesFragmentCompat_finishtimepicked, DateTime.Now.Hour, DateTime.Now.Minute, false);
                 finishTimeDialog.SetMessage("Finish hour: "); //here it goes the set finish hour, (but in a user readable way)
 
             }
             else
             {
-                finishTimeDialog.SetMessage("Finish hour:" + end);
+                finishTimeDialog.SetMessage("Finish hour:" );
             }
             finishTimeDialog.Show();
 
