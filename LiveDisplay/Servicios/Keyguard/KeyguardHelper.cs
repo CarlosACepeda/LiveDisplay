@@ -23,7 +23,7 @@ namespace LiveDisplay.Servicios.Keyguard
         }
         public static bool IsFingerprintSet()
         {
-            FingerprintManager myFM= (FingerprintManager)Application.Context.GetSystemService(Context.KeyguardService);
+            FingerprintManager myFM= (FingerprintManager)Application.Context.GetSystemService(Context.FingerprintService);
             if (myFM.IsHardwareDetected == false) return false;
 
             return myFM.HasEnrolledFingerprints;
