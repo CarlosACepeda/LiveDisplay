@@ -1,6 +1,8 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.Hardware.Fingerprints;
+using AndroidX.Fragment.App;
+using System;
 
 namespace LiveDisplay.Servicios.Keyguard
 {
@@ -15,8 +17,7 @@ namespace LiveDisplay.Servicios.Keyguard
             return false;
         }
         public static bool IsDeviceCurrentlyLocked()
-        {
-            KeyguardManager myKM = (KeyguardManager)Application.Context.GetSystemService(Context.KeyguardService);
+        {           
             if (myKM.IsKeyguardLocked)
                 return true;
             return false;
@@ -27,6 +28,11 @@ namespace LiveDisplay.Servicios.Keyguard
             if (myFM.IsHardwareDetected == false) return false;
 
             return myFM.HasEnrolledFingerprints;
+        }
+
+        internal static void RequestDismissKeyguard(Activity activity)
+        {
+            myKM.RequestDismissKeyguard(activity, null);
         }
     }
 }

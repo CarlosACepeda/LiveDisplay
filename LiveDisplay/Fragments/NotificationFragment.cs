@@ -7,6 +7,7 @@ using LiveDisplay.Adapters;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
 using LiveDisplay.Servicios.Awake;
+using LiveDisplay.Servicios.Keyguard;
 using LiveDisplay.Servicios.Music;
 using LiveDisplay.Servicios.Notificaciones;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
@@ -227,6 +228,11 @@ namespace LiveDisplay.Fragments
             {
                 try
                 {
+                    if(Build.VERSION.SdkInt>= BuildVersionCodes.O)
+                    if (KeyguardHelper.IsDeviceCurrentlyLocked())
+                    {
+                        KeyguardHelper.RequestDismissKeyguard(Activity);
+                    }
                     Activity?.RunOnUiThread(() => openNotification.ClickNotification());
                     if (openNotification.IsAutoCancellable())
                     {
