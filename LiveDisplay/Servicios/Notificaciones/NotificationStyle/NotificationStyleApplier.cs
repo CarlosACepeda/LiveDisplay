@@ -69,6 +69,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
             this.notificationView = notificationView;
             this.notificationFragment = notificationFragment;
             this.notificationViewType = notificationViewType;
+            resources = notificationFragment.Resources;
             notificationActions = notificationView.FindViewById<LinearLayout>(Resource.Id.notificationActions);
             title = notificationView.FindViewById<TextView>(Resource.Id.tvTitle);
             text = notificationView.FindViewById<TextView>(Resource.Id.tvText);
@@ -159,7 +160,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
 
                     if (notificationViewType == NotificationViewType.OnLockscreen)
                     {
-                        var notificationBigPicture = new BitmapDrawable(notification.BigPicture());
+                        var notificationBigPicture = new BitmapDrawable(resources,notification.BigPicture());
                         WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
                         {
                             BlurLevel = 1,

@@ -25,14 +25,14 @@
                 a:paddingLeft="15dp" 
                 a:paddingTop="3dp" 
                 a:fontFamily="sans-serif-condensed-light" />
-         <TextClock 
+            <TextClock
                 a:visibility="invisible"
                 a:alpha="0.7"
                 a:fontFamily="sans-serif-condensed-light"
                 a:background="@android:color/transparent"
-                a:id="@+id/miniclock" 
-                a:layout_centerInParent="true" 
-                a:layout_width="wrap_content" 
+                a:id="@+id/miniclock"
+                a:layout_centerInParent="true"
+                a:layout_width="wrap_content"
                 a:layout_height="wrap_content" />
          <Button 
                 a:background="?android:selectableItemBackground" 

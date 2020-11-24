@@ -446,7 +446,7 @@ namespace LiveDisplay.Fragments
                 ThreadPool.QueueUserWorkItem(m =>
                 {
                     var albumart = e.MediaMetadata?.GetBitmap(MediaMetadata.MetadataKeyAlbumArt);
-                    var wallpaper = new BitmapDrawable(Activity.Resources, albumart);
+                    var wallpaper = new BitmapDrawable(Resources, albumart);
                     int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtOpacityLevel, ConfigurationParameters.DefaultAlbumartOpacityLevel);
                     int blurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtBlurLevel, ConfigurationParameters.DefaultAlbumartBlurLevel);
                     CurrentAlbumArt = wallpaper;
