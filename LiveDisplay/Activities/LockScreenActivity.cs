@@ -221,6 +221,11 @@
                                 //    intent.AddFlags(ActivityFlags.NewTask | ActivityFlags.);
                                 //    StartActivity(intent);
                                 //}
+                                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                                    if (KeyguardHelper.IsDeviceCurrentlyLocked())
+                                    {
+                                        KeyguardHelper.RequestDismissKeyguard(this);
+                                    }
                                 MoveTaskToBack(true);
                             }
                         }
@@ -235,6 +240,11 @@
                                 //    intent.AddFlags(ActivityFlags.NewTask | ActivityFlags.MultipleTask);
                                 //    StartActivity(intent);
                                 //}
+                                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                                    if (KeyguardHelper.IsDeviceCurrentlyLocked())
+                                    {
+                                        KeyguardHelper.RequestDismissKeyguard(this);
+                                    }
                                 MoveTaskToBack(true);
                             }
                             else
