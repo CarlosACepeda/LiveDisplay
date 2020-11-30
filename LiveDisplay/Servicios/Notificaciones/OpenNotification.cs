@@ -200,7 +200,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             {
                 try
                 {
-                    MusicController.StartPlayback(mediaSessionToken);
+                    MusicController.StartPlayback(mediaSessionToken, this);
                     Log.Info("LiveDisplay", "Callback registered Successfully");
                     return true;
                 }

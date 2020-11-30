@@ -10,6 +10,7 @@
     using LiveDisplay.BroadcastReceivers;
     using LiveDisplay.Misc;
     using LiveDisplay.Servicios;
+    using LiveDisplay.Servicios.Keyguard;
     using LiveDisplay.Servicios.Weather;
     using LiveDisplay.Servicios.Widget;
     using System;
@@ -217,6 +218,11 @@
         {
             using (Intent intent = new Intent(AlarmClock.ActionShowAlarms))
             {
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                    if (KeyguardHelper.IsDeviceCurrentlyLocked())
+                    {
+                        KeyguardHelper.RequestDismissKeyguard(Activity);
+                    }
                 StartActivity(intent);
             }
         }

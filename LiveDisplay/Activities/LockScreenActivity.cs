@@ -428,6 +428,11 @@
         {
             using (Intent intent = new Intent(Intent.ActionDial))
             {
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                    if (KeyguardHelper.IsDeviceCurrentlyLocked())
+                    {
+                        KeyguardHelper.RequestDismissKeyguard(this);
+                    }
                 StartActivity(intent);
             }
         }
@@ -496,7 +501,7 @@
                             BlurImage blurImage = new BlurImage(Application.Context);
                             blurImage.Load(bitmap).Intensity(savedblurlevel);
                             Drawable drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
-                            WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = new BitmapDrawable(bitmap), OpacityLevel = (short)savedOpacitylevel, BlurLevel = (short)savedblurlevel, WallpaperPoster = WallpaperPoster.Lockscreen });
+                            WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = new BitmapDrawable(Resources, bitmap), OpacityLevel = (short)savedOpacitylevel, BlurLevel = (short)savedblurlevel, WallpaperPoster = WallpaperPoster.Lockscreen });
                         });
                     }
                     break;
