@@ -269,7 +269,7 @@ namespace LiveDisplay.Fragments
             if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
             {
                 //When user stop dragging then seek to the position previously saved in ProgressChangedEvent
-                Jukebox.SeekTo(e.SeekBar.Progress);
+                Jukebox.SeekTo(e.SeekBar.Progress* 1000);
                 if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1)
                 {
                     skbSeekSongTime.SetProgress(e.SeekBar.Progress, true);
@@ -588,10 +588,11 @@ namespace LiveDisplay.Fragments
         {
             if (Build.VERSION.SdkInt > BuildVersionCodes.M)
             {
-                skbSeekSongTime.SetProgress(skbSeekSongTime.Progress + 1, true);
+                skbSeekSongTime?.SetProgress(skbSeekSongTime.Progress + 1, true);
             }
             else
             {
+                if(skbSeekSongTime!= null)
                 skbSeekSongTime.Progress += 1;
             }
             handler.PostDelayed(runnable, 1000);

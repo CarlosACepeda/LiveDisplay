@@ -29,16 +29,14 @@
             {
                 //Cast
                 NotificationAdapterViewHolder viewHolder = holder as NotificationAdapterViewHolder;
-                if (Build.VERSION.SdkInt > BuildVersionCodes.M)
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
                 {
                     viewHolder.Icono.Background = IconFactory.ReturnIconDrawable(notifications[position].Notification.SmallIcon, notifications[position].PackageName);
 
                 }
                 else
                 {
-#pragma warning disable CS0618
                     viewHolder.Icono.Background = IconFactory.ReturnIconDrawable(notifications[position].Notification.Icon, notifications[position].PackageName);
-#pragma warning restore CS0618 
                 }
                 if (selectedItem == position)
                 {
