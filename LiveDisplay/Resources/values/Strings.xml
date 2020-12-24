@@ -14,6 +14,8 @@
   <string name="allowweatherchangewallpaper">Change wallpaper briefly after a update</string>
   <string name="app_name">LiveDisplay</string>
   <string name="askfortranslations">Want to help with translations?</string>
+  <string name="awakecausesblackwall">Keep screen black</string>
+  <string name="awakecausesblackwall_desc">Causes the lockscreen to not show any wallpaper</string>
   <string name="awakesettings">Awake</string>
   <string name="blacklist">Blacklist</string>
   <string name="blacklistdesc">Don\'t show notifications from the apps selected.</string>
@@ -62,6 +64,7 @@
   <string name="help">Help</string>
   <string name="helptext">To remove this app go to Settings&gt; Device Administrators, then Uncheck LiveDisplay, now you should be able to uninstall normally</string>
   <string name="hidden">Sghr hr mns sgd rdbqds xnt zqd knnjhmf enq</string>
+  <string name="hidenotifwhenmediaplayingdesc">Hide the notification from the list</string>
   <string name="hideshortcutswhenkeyguardsafe">Hide Shortcuts</string>
   <string name="hideshortcutswhenkeyguardsafedesc">Hide shortcuts when a screen lock is present</string>
   <string name="hidesystemicons">Do not show system icons</string>
@@ -70,6 +73,8 @@
   <string name="immediately">Immediately</string>
   <string name="inactivetimesettings">Inactive hours</string>
   <string name="inactivetimesettingsdesc">Disable Awake at certain hours</string>
+  <string name="launchnotification">Launch notification</string>
+  <string name="launchnotification_desc">Go to app instead of showing the notification</string>
   <string name="listenfordevicemotion">Listen for device motion</string>
   <string name="lockdelay">Automatic lock</string>
   <string name="lockdelay_desc">Lock the screen in the given time</string>
@@ -122,7 +127,7 @@
   <string name="updateweathereach">Update weather each:</string>
   <string name="useimperialunits">Use Imperial units</string>
   <string name="version">Version</string>
-  <string name="versionnumber">0.9.2-beta2</string>
+  <string name="versionnumber">0.9.3-beta1</string>
   <string name="wallpaperblur">Blur</string>
   <string name="wallpaperopacity">Opacity</string>
   <string name="wallpapersettingappliestoalbumart">Current setting also affects album artwork</string>
@@ -132,6 +137,4 @@
   <string name="weatherwidgetenabled">Enable Weather Widget</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
-  <string name="awakecausesblackwall">Keep screen black</string>
-  <string name="awakecausesblackwall_desc">Causes the lockscreen to not show any wallpaper</string>
 </resources>

@@ -46,7 +46,6 @@ namespace LiveDisplay.Fragments.Preferences
             {
                 case ConfigurationParameters.MusicWidgetMethod:
                     Preference musiccontrolmethod = FindPreference("musicwidgetcontrolmethod");
-                    Preference hidenotifwhenmediaplaying = FindPreference("hidenotificationwhenmediaplaying?");
                     switch (sharedPreferences.GetString(ConfigurationParameters.MusicWidgetMethod, "0"))
                     {
                         case "0":
@@ -61,6 +60,17 @@ namespace LiveDisplay.Fragments.Preferences
                             //hidenotifwhenmediaplaying.Enabled = true;
                             break;
                     }
+                    break;
+                case ConfigurationParameters.HideNotificationWhenItsMediaPlaying:
+                    switch (sharedPreferences.GetBoolean(ConfigurationParameters.HideNotificationWhenItsMediaPlaying, false))
+                    {
+                        case true:
+                            SwitchPreference launchnotification = (SwitchPreference)FindPreference("launchnotification?");
+
+                            launchnotification.Checked = false;
+                            break;
+                    }
+
                     break;
             }
         }

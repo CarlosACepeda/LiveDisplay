@@ -2,6 +2,8 @@
 <resources>
   <string name="advanced">Avansat</string>
   <string name="allowweatherchangewallpaper">Schimbați tapetul scurt după o actualizare</string>
+  <string name="awakecausesblackwall">Ecranul rămâne negru</string>
+  <string name="awakecausesblackwall_desc">Ecranul nu arăta nici unul tapet</string>
   <string name="blacklist">Listă Neagră</string>
   <string name="blackwallpaper">Negru</string>
   <string name="changewallpaper">Schimbă fundalul ecranului</string>
@@ -16,7 +18,10 @@
   <string name="hideshortcutswhenkeyguardsafe">Ascundeți comenzile rapide</string>
   <string name="idk">¯\\_(ツ)_/¯</string>
   <string name="inactivetimesettings">Ore de inactivitate</string>
+  <string name="launchnotification">Merge la notificare</string>
+  <string name="launchnotification_desc">Merge la app in loc de arata notificare</string>
   <string name="lockonboot">Blocați ecranul la pornire</string>
+  <string name="m_widgethidenotificationwhenmediaplaying">Ascundeti o notificare</string>
   <string name="musiccontrolledfrommediasession">Alegeți cea mai bună sesiune multimedia</string>
   <string name="musiccontrolledfromnotification">Folosiți cea mai recentă notificare care reprezintă redarea multimedia</string>
   <string name="musicwidgetcontrolmethod">Metoda de control a Muzicii</string>
@@ -26,19 +31,23 @@
   <string name="now_playing">Acum Jucăm:</string>
   <string name="onehour">1 oră</string>
   <string name="opciones">Opțiuni</string>
+  <string name="partiallyblocked">Numai la app</string>
   <string name="playing_from_template">Din {0}</string>
   <string name="saveweathersettings">Salvați</string>
+  <string name="searchappedittexthint">Numele app lui</string>
+  <string name="searchapptitle">Cautati o app</string>
   <string name="showalbumart">Arată coperta albumului</string>
   <string name="sixhours">6 ore</string>
+  <string name="tenseconds">10 secunde</string>
   <string name="testnotificationtext">Es Ține apăsat pe o notificare din listă o presiona X pentru a o elimina</string>
   <string name="thirtyminutes">30 Minute</string>
   <string name="turnonnewnotification">Aprinde ecranul</string>
   <string name="twelvehours">12 ore</string>
   <string name="updateweathereach">Actualizare climă fiecare</string>
+  <string name="version">Versiune</string>
   <string name="wallpaperblur">Blurare</string>
   <string name="wallpaperopacity">Opacitate</string>
+  <string name="weather">Clima</string>
   <string name="weatherwidget">Widget de Climă</string>
   <string name="weatherwidgetenabled">Activează Widget de Climă</string>
-  <string name="awakecausesblackwall">Ecranul rămâne negru</string>
-  <string name="awakecausesblackwall_desc">Ecranul nu arăta nici unul tapet</string>
 </resources>

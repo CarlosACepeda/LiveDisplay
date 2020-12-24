@@ -13,6 +13,11 @@
             Drawable icon = ContextCompat.GetDrawable(remotePackageContext, iconInt);
             return icon;
         }
+        public static Drawable ReturnIconDrawable(Icon icon, string paquete)
+        {
+            Context remotePackageContext = Application.Context.CreatePackageContext(paquete, 0);
+            return icon.LoadDrawable(remotePackageContext);
+        }
 
         public static Drawable ReturnActionIconDrawable(Icon icon, string paquete)
         {
@@ -21,12 +26,11 @@
         }
 
         //Overload for Retrieving Action Buttons in Lollipop and less.
+        [System.Obsolete]
         public static Drawable ReturnActionIconDrawable(int icon, string paquete)
         {
             Context remotePackageContext = Application.Context.CreatePackageContext(paquete, 0);
-#pragma warning disable CS0618 // El tipo o el miembro están obsoletos
             return remotePackageContext.Resources.GetDrawable(icon);
-#pragma warning restore CS0618 // El tipo o el miembro están obsoletos
         }
     }
 }

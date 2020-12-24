@@ -46,6 +46,7 @@
         public const string MusicWidgetMethod = "musicwidgetcontrolmethod"; //Grab a session from the notification or from the media sessions listener.
         public const string HideNotificationWhenItsMediaPlaying = "hidenotificationwhenmediaplaying?"; //If the media session used belongs to a notification then hide this notification in the lockscreen.
         public const string HideShortcutsWhenKeyguardSafe = "hideshortcutswhenkeyguardsafe?";
+        public const string LaunchNotification = "launchnotification?";
 
         //Misc.
         //It serves the purpose of enabling certain messages to be shown in a Toast Message useful for the developer.
@@ -56,6 +57,7 @@
 
         //Never used by the user: Which widget should be shown first when starting the lockscreen.
         //By default it is the clock. (possible values: "clock", "music", "notification")
+        //When there's not an active widget.
         public const string StartingWidget = "clock";
 
 

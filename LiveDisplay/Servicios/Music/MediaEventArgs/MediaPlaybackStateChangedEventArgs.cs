@@ -10,6 +10,6 @@ namespace LiveDisplay.Servicios.Music.MediaEventArgs
         /// </summary>
         public PlaybackStateCode PlaybackState { get; set; }
 
-        public long CurrentTime { get; set; }
+        public long CurrentTime { get; set; } //current time in ms
     }
 }

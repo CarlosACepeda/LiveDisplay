@@ -14,16 +14,16 @@ using LiveDisplay.Servicios.Widget;
 using System;
 
 namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
-{
-    /// <summary>
-    /// Self explaining, this will apply the notification styles.
-    /// But, I will interpret them differently as android does, to be adapted to my lockscreen.
-    /// </summary>
+{    
     public enum NotificationViewType
     {
         OnLockscreen,
         Floating
     }
+    /// <summary>
+    /// Self explaining, this will apply the notification styles.
+    /// But, I will interpret them differently as android does, to be adapted to my lockscreen.
+    /// </summary>
     internal class NotificationStyleApplier : Java.Lang.Object
     {
         private const string BigPictureStyle = "android.app.Notification$BigPictureStyle";
@@ -69,6 +69,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
             this.notificationView = notificationView;
             this.notificationFragment = notificationFragment;
             this.notificationViewType = notificationViewType;
+            resources = notificationFragment.Resources;
             notificationActions = notificationView.FindViewById<LinearLayout>(Resource.Id.notificationActions);
             title = notificationView.FindViewById<TextView>(Resource.Id.tvTitle);
             text = notificationView.FindViewById<TextView>(Resource.Id.tvText);
@@ -105,7 +106,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                 case BuildVersionCodes.O:
                 case BuildVersionCodes.OMr1:
                 case BuildVersionCodes.P:
-                case (BuildVersionCodes)29: //API 29, Android Q (Early support) TODO
+                case BuildVersionCodes.Q:
                     actionButtonsGravity = GravityFlags.Left | GravityFlags.CenterVertical;
                     actionButtonsContainerGravity = GravityFlags.Left;
                     actionTextsAreinCapitalLetters = true;
@@ -159,10 +160,10 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
 
                     if (notificationViewType == NotificationViewType.OnLockscreen)
                     {
-                        var notificationBigPicture = new BitmapDrawable(notification.BigPicture());
+                        var notificationBigPicture = new BitmapDrawable(resources,notification.BigPicture());
                         WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
                         {
-                            BlurLevel = 0,
+                            BlurLevel = 1,
                             OpacityLevel = 125,
                             SecondsOfAttention = 5,
                             Wallpaper = notificationBigPicture,
@@ -190,7 +191,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                         var notificationMediaArtwork = new BitmapDrawable(Application.Context.Resources, notification.MediaArtwork());
                         WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
                         {
-                            BlurLevel = 0,
+                            BlurLevel = 1,
                             OpacityLevel = 125,
                             SecondsOfAttention = 5,
                             Wallpaper = notificationMediaArtwork,
@@ -200,8 +201,6 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                     break;
 
                 case MessagingStyle:
-                    //Theres still things to do, this style has several stuff in Pie and Q versions.
-                    //TODO
                     break;
 
                 case DecoratedCustomViewStyle:

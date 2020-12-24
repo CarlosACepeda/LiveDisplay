@@ -13,6 +13,8 @@
   <string name="allowweatherchangewallpaper">Cambiar wallpaper brevemente después de una actualización</string>
   <string name="app_name">LiveDisplay</string>
   <string name="askfortranslations">Quieres ayudar con las traducciones?</string>
+  <string name="awakecausesblackwall">La pantalla permanece negra</string>
+  <string name="awakecausesblackwall_desc">La pantalla no muestra ningún fondo de pantalla</string>
   <string name="awakesettings">Awake</string>
   <string name="blacklist">Lista Negra</string>
   <string name="blacklistdesc">No mostrar notificaciones de las apps seleccionadas</string>
@@ -60,6 +62,7 @@
   <string name="help">Ayuda</string>
   <string name="helptext">Para remover esta app dirígete a \'Administradores de Dispositivos\' en los ajustes de tu dispositivo, desactiva LiveDisplay y luego deinstala normalmente</string>
   <string name="hidden">Drsd mn dr dk rdbqdsn ptd drsár atrbzmcn</string>
+  <string name="hidenotifwhenmediaplayingdesc">Esconde la notificación de la lista</string>
   <string name="hideshortcutswhenkeyguardsafe">Esconder Atajos</string>
   <string name="hideshortcutswhenkeyguardsafedesc">Esconder atajos cuando hay un bloqueo de pantalla activo</string>
   <string name="hidesystemicons">No mostrar iconos del sistema</string>
@@ -68,6 +71,8 @@
   <string name="immediately">De inmediato</string>
   <string name="inactivetimesettings">Horas inactivas</string>
   <string name="inactivetimesettingsdesc">Desactivar Awake en ciertas horas</string>
+  <string name="launchnotification">Ir a notificación </string>
+  <string name="launchnotification_desc">Ir a la app en lugar de mostrar la notificación</string>
   <string name="listenfordevicemotion">Detectar los movimientos del dispotivo</string>
   <string name="lockdelay">Bloquear automaticamente</string>
   <string name="lockdelay_desc">Bloquear la pantalla después del tiempo dado</string>
@@ -126,6 +131,4 @@
   <string name="weatherwidgetenabled">Activar el Widget del Clima</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">Diseño del icono de esta app!</string>
-  <string name="awakecausesblackwall">La pantalla permanece negra</string>
-  <string name="awakecausesblackwall_desc">La pantalla no muestra ningún fondo de pantalla</string>
 </resources>

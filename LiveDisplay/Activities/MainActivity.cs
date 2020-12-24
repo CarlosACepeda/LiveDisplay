@@ -53,16 +53,19 @@
         {
             using (var adminGivenImageView = FindViewById<ImageView>(Resource.Id.deviceAccessCheckbox))
             {
-                switch (e)
+                RunOnUiThread(()=>
                 {
-                    case true:
-                        adminGivenImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
-                        break;
+                    switch (e)
+                    {
+                        case true:
+                            adminGivenImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
+                            break;
 
-                    case false:
-                        adminGivenImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
-                        break;
-                }
+                        case false:
+                            adminGivenImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
+                            break;
+                    }
+                });
                 ThreadPool.QueueUserWorkItem(m =>
                 {
                     Thread.Sleep(500);
@@ -240,13 +243,14 @@
 
             enableDeviceAdmin = FindViewById<TextView>(Resource.Id.enableDeviceAccess);
             enableNotificationAccess = FindViewById<TextView>(Resource.Id.enableNotificationAccess);
-            if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1)
-            {
-                enableDrawOverAccessContainer = FindViewById<RelativeLayout>(Resource.Id.drawOverlaysCheckboxContainer);
-                enableDrawOverAccessContainer.Visibility = ViewStates.Visible;
-                enableDrawOverAccess = FindViewById<TextView>(Resource.Id.enableFloatingPermission);
-                enableDrawOverAccess.Click += EnableDrawOverAccess_Click;
-            }
+            //if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1)
+            //{
+            //    enableDrawOverAccessContainer = FindViewById<RelativeLayout>(Resource.Id.drawOverlaysCheckboxContainer);
+            //    enableDrawOverAccessContainer.Visibility = ViewStates.Visible;
+            //    enableDrawOverAccess = FindViewById<TextView>(Resource.Id.enableFloatingPermission);
+            //    enableDrawOverAccess.Click += EnableDrawOverAccess_Click;
+            //}            //You won't be needing the permission for now.
+
             enableNotificationAccess.Click += EnableNotificationAccess_Click;
             enableDeviceAdmin.Click += EnableDeviceAdmin_Click;
         }

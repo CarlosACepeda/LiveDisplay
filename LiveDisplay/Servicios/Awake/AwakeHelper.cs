@@ -20,33 +20,21 @@ namespace LiveDisplay.Servicios.Awake
         {
             CatcherHelper.NotificationPosted += CatcherHelper_NotificationPosted;
             CatcherHelper.NotificationListSizeChanged += CatcherHelper_NotificationListSizeChanged;
-            AwakeService.DeviceIsActive += AwakeService_DeviceIsActive;
-        }
-
-        private void AwakeService_DeviceIsActive(object sender, EventArgs e)
-        {
-            TurnOnScreen();
         }
 
         public static void TurnOnScreen()
         {
-            if (configurationManager.RetrieveAValue(ConfigurationParameters.TurnOnNewNotification) == true)
+            PowerManager pm = ((PowerManager)Application.Context.GetSystemService(Context.PowerService));
+            var screenLock = pm.NewWakeLock(WakeLockFlags.ScreenDim | WakeLockFlags.AcquireCausesWakeup, "Turn On Screen");
+            screenLock.Acquire();
+            ThreadPool.QueueUserWorkItem(o =>
             {
-                if (AwakeService.isInPocket == false || ScreenOnOffReceiver.IsScreenOn) //Dont wake up is the phone is inside a pocket, or if the screen is already on
+                Thread.Sleep(500);
+                if (screenLock.IsHeld == true)
                 {
-                    PowerManager pm = ((PowerManager)Application.Context.GetSystemService(Context.PowerService));
-                    var screenLock = pm.NewWakeLock(WakeLockFlags.ScreenDim | WakeLockFlags.AcquireCausesWakeup, "Turn On Screen");
-                    screenLock.Acquire();
-                    ThreadPool.QueueUserWorkItem(o =>
-                    {
-                        Thread.Sleep(500);
-                        if (screenLock.IsHeld == true)
-                        {
-                            screenLock.Release();
-                        }
-                    });
+                    screenLock.Release();
                 }
-            }
+            });
         }
 
         public static void TurnOffScreen()

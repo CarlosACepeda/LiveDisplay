@@ -1,6 +1,7 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.Graphics;
+using Android.OS;
 using Android.Renderscripts;
 using Android.Views;
 using System.Threading;
@@ -26,10 +27,15 @@ namespace LiveDisplay.Servicios.Wallpaper
 
         public BlurImage Intensity(float intensity)
         {
+
             if (intensity < Max_Radius && intensity > 0)
                 this.intensity = intensity;
+            else if (intensity == 0 || intensity < 0)
+                this.intensity = 0;
             else
                 this.intensity = Max_Radius;
+
+            
             return this;
         }
 
@@ -59,31 +65,50 @@ namespace LiveDisplay.Servicios.Wallpaper
 
         private Bitmap Blur()
         {
+            //Workaround Android Q: IT causes SIGSEV in Android 10 for some reason. XOM related maybe
+            if (Build.VERSION.SdkInt == BuildVersionCodes.Q)
+            {
+                return image;
+            }
             if (image == null)
             {
                 return image;
             }
+            if (intensity == 0)
+            {
+                return image; //No need to blur the image.
+            }
+
             Bitmap input;
             if (image.Width > deviceWidth || image.Height > deviceHeight)
             {
                 input = Bitmap.CreateScaledBitmap(image, deviceWidth, deviceHeight, false);
             }
-            else { input = image; }
+            else 
+            {
+                input = Bitmap.CreateScaledBitmap(image, image.Width, image.Height, false);
+            }
+            try
+            {
+                Bitmap output = Bitmap.CreateBitmap(input);
 
-            Bitmap output = Bitmap.CreateBitmap(input);
+                RenderScript rs = RenderScript.Create(context);
+                ScriptIntrinsicBlur intrinsicBlur = ScriptIntrinsicBlur.Create(rs, Element.U8_4(rs));
 
-            RenderScript rs = RenderScript.Create(context);
-            ScriptIntrinsicBlur intrinsicBlur = ScriptIntrinsicBlur.Create(rs, Element.U8_4(rs));
+                Allocation inputallocation = Allocation.CreateFromBitmap(rs, input);
+                Allocation outputallocation = Allocation.CreateFromBitmap(rs, output);
+                intrinsicBlur.SetRadius(intensity);
+                intrinsicBlur.SetInput(inputallocation);
+                intrinsicBlur.ForEach(outputallocation);
 
-            Allocation inputallocation = Allocation.CreateFromBitmap(rs, input);
-            Allocation outputallocation = Allocation.CreateFromBitmap(rs, output);
-            intrinsicBlur.SetRadius(intensity);
-            intrinsicBlur.SetInput(inputallocation);
-            intrinsicBlur.ForEach(outputallocation);
+                outputallocation.CopyTo(output);
 
-            outputallocation.CopyTo(output);
-
-            return output;
+                return output;
+            }
+            catch
+            {
+                return input;
+            }
         }
 
         public BlurImage Async(bool async)

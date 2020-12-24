@@ -86,7 +86,7 @@ namespace LiveDisplay.Servicios
         public override void OnNotificationPosted(StatusBarNotification sbn)
         {
             lastPostedNotification = sbn;
-            catcherHelper.OnNotificationPosted(sbn);
+            catcherHelper.OnNotificationPosted(new OpenNotification(sbn));
 
             //var test6 = sbn.Notification.Extras.Get(Notification.ExtraMediaSession) as MediaSession.Token;
 
@@ -115,7 +115,7 @@ namespace LiveDisplay.Servicios
 
         public override void OnNotificationRemoved(StatusBarNotification sbn)
         {
-            catcherHelper.OnNotificationRemoved(sbn);
+            catcherHelper.OnNotificationRemoved(new OpenNotification(sbn));
         }
 
         public override void OnListenerDisconnected()
@@ -170,7 +170,12 @@ namespace LiveDisplay.Servicios
                 //var test5 = notification.Notification.Extras.GetCharSequenceArray(Notification.ExtraTextLines);
                 //var test6 = notification.Notification.Extras.Get("android.wearable.EXTENSIONS");
                 //var test7 = notification.Notification.Extras.KeySet();
-                if(notification.Notification.Flags.HasFlag(NotificationFlags.GroupSummary)==false) //Don't grab summary notifications yet. hotfix.
+                //var test8 = notification.Notification.Extras.Get("android.people.list");
+                //var test10= notification.Notification.Extras.Get("android.messagingUser");
+                //var test11= notification.Notification.Extras.Get("android.messagingStyleUser");
+                //var test12= notification.Notification.Extras.Get("android.messages");
+
+                if (notification.Notification.Flags.HasFlag(NotificationFlags.GroupSummary)==false) //Don't grab summary notifications yet. hotfix.
                 if ((notification.IsOngoing == false || notification.Notification.Flags.HasFlag(NotificationFlags.NoClear)) && notification.IsClearable == true)
                 {
                     statusBarNotifications.Add(notification);

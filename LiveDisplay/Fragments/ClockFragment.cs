@@ -10,6 +10,7 @@
     using LiveDisplay.BroadcastReceivers;
     using LiveDisplay.Misc;
     using LiveDisplay.Servicios;
+    using LiveDisplay.Servicios.Keyguard;
     using LiveDisplay.Servicios.Weather;
     using LiveDisplay.Servicios.Widget;
     using System;
@@ -84,10 +85,13 @@
 
         public override void OnResume()
         {
-            if (ConfigurationParameters.StartingWidget == "clock" && initForFirstTime == false)
+            if (WidgetStatusPublisher.CurrentActiveWidget == string.Empty || WidgetStatusPublisher.CurrentActiveWidget == "ClockFragment")
             {
-                maincontainer.Visibility = ViewStates.Visible;
-                initForFirstTime = true;
+                if (ConfigurationParameters.StartingWidget == "clock" && initForFirstTime == false)
+                {
+                    maincontainer.Visibility = ViewStates.Visible;
+                    initForFirstTime = true;
+                }
             }
             LoadWeather();
             GrabWeatherJob.WeatherUpdated += GrabWeatherJob_WeatherUpdated;
@@ -214,6 +218,11 @@
         {
             using (Intent intent = new Intent(AlarmClock.ActionShowAlarms))
             {
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                    if (KeyguardHelper.IsDeviceCurrentlyLocked())
+                    {
+                        KeyguardHelper.RequestDismissKeyguard(Activity);
+                    }
                 StartActivity(intent);
             }
         }

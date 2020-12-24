@@ -31,11 +31,19 @@
           app:iconSpaceReserved="false" />
     <SwitchPreference
       android:defaultValue="false"
-      android:selectable="false"
-      android:enabled="false"
+      android:selectable="true"
+      android:enabled="true"
       android:key="hidenotificationwhenmediaplaying?"
-      android:summary="@string/notavailableyet"
+      android:summary="@string/hidenotifwhenmediaplayingdesc"
       android:title="@string/m_widgethidenotificationwhenmediaplaying"
+      app:iconSpaceReserved="false" />
+    <SwitchPreference
+      android:defaultValue="false"
+      android:selectable="true"
+      android:enabled="true"
+      android:key="launchnotification?"
+      android:summary="@string/launchnotification_desc"
+      android:title="@string/launchnotification"
       app:iconSpaceReserved="false" />
   </PreferenceCategory>
 </PreferenceScreen>

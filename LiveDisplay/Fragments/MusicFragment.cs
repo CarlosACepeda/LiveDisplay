@@ -6,8 +6,10 @@ using Android.OS;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using Java.Util;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
+using LiveDisplay.Servicios.Keyguard;
 using LiveDisplay.Servicios.Music;
 using LiveDisplay.Servicios.Music.MediaEventArgs;
 using LiveDisplay.Servicios.Notificaciones;
@@ -15,9 +17,9 @@ using LiveDisplay.Servicios.Wallpaper;
 using LiveDisplay.Servicios.Widget;
 using System;
 using System.Threading;
-using System.Timers;
 using Fragment = AndroidX.Fragment.App.Fragment;
-using Timer = System.Timers.Timer;
+using Java.Lang;
+using LiveDisplay.Servicios.Awake;
 
 namespace LiveDisplay.Fragments
 {
@@ -30,24 +32,19 @@ namespace LiveDisplay.Fragments
         private PlaybackStateCode playbackState;
         private PendingIntent activityIntent; //A Pending intent if available to start the activity associated with this music fragent.
         private BitmapDrawable CurrentAlbumArt;
-        private OpenNotification openNotification; //Used if the button launch Notification is used.
-
-        private Timer timer;
+        private string openNotificationId; //Used if the button launch Notification is used.
         private ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
 
         private bool timeoutStarted = false;
         private bool initForFirstTime= true;
+        private Handler handler;
+        private Runnable runnable;
         #region Fragment Lifecycle
 
         public override void OnCreate(Bundle savedInstanceState)
         {
-
-            timer = new Timer
-            {
-                Interval = 1000 //1 second.
-            };
-            timer.Elapsed += Timer_Elapsed;
-            timer.Enabled = true;
+             handler = new Handler();
+             runnable = new Runnable(MoveSeekbar);
 
             WallpaperPublisher.CurrentWallpaperCleared += WallpaperPublisher_CurrentWallpaperHasBeenCleared;
             WidgetStatusPublisher.OnWidgetStatusChanged += WidgetStatusPublisher_OnWidgetStatusChanged;
@@ -125,7 +122,6 @@ namespace LiveDisplay.Fragments
             BindViews(view);
             BindViewEvents();
             BindMusicControllerEvents();
-            timer.Elapsed += Timer_Elapsed;
             
             return view;
         }
@@ -133,7 +129,7 @@ namespace LiveDisplay.Fragments
         {
             UnbindMusicControllerEvents();
             WallpaperPublisher.ReleaseWallpaper();
-            timer.Elapsed -= Timer_Elapsed;
+            
             UnbindViewEvents();
 
             base.OnDestroyView();
@@ -144,6 +140,10 @@ namespace LiveDisplay.Fragments
         }
         public override void OnResume()
         {
+            if(WidgetStatusPublisher.CurrentActiveWidget == "MusicFragment" && initForFirstTime==true)
+            {
+                WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = true, WidgetName = "MusicFragment", Active = true });
+            }
             base.OnResume();
         }
 
@@ -163,10 +163,11 @@ namespace LiveDisplay.Fragments
             tvArtist = null;
             tvTitle = null;
             skbSeekSongTime = null;
-            timer.Dispose();
-            WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "MusicFragment", Active = false });
+            bool isWidgetActive = WidgetStatusPublisher.CurrentActiveWidget == "MusicFragment";
+            WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "MusicFragment", Active = isWidgetActive });
             WidgetStatusPublisher.OnWidgetStatusChanged -= WidgetStatusPublisher_OnWidgetStatusChanged;
             //UnbindViews();
+            initForFirstTime = false;
             base.OnDestroy();
         }
 
@@ -193,6 +194,7 @@ namespace LiveDisplay.Fragments
             btnPlayPause.Click += BtnPlayPause_Click;
             btnSkipNext.Click += BtnSkipNext_Click;
             btnSkipNext.LongClick += BtnSkipNext_LongClick;
+            btnLaunchNotification.Click += BtnLaunchNotification_Click;
             skbSeekSongTime.ProgressChanged += SkbSeekSongTime_ProgressChanged;
             skbSeekSongTime.StopTrackingTouch += SkbSeekSongTime_StopTrackingTouch;
             maincontainer.LongClick += MusicPlayerContainer_LongClick;
@@ -200,8 +202,37 @@ namespace LiveDisplay.Fragments
             
         }
 
+        private void BtnLaunchNotification_Click(object sender, EventArgs e)
+        {
+            if (configurationManager.RetrieveAValue(ConfigurationParameters.LaunchNotification))
+            {
+                KeyguardHelper.RequestDismissKeyguard(Activity);
+                CatcherHelper.GetOpenNotification(openNotificationId)?.ClickNotification();
+            }
+            else
+            {
+                if (MusicController.MediaSessionAssociatedWThisNotification(openNotificationId))
+                {
+                    WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs
+                    {
+                        Active = false,
+                        Show = true,
+                        WidgetName = "NotificationFragment",
+                        WidgetAskingForShowing = "MusicFragment",
+                        AdditionalInfo = openNotificationId
+                    });
+                }
+            }
+        }
+
         private void MusicPlayerContainer_Click(object sender, EventArgs e)
         {
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                if (KeyguardHelper.IsDeviceCurrentlyLocked())
+                {
+                    KeyguardHelper.RequestDismissKeyguard(Activity);
+                }
+
             try { activityIntent.Send(); }
             catch { Log.Info("LiveDisplay", "Failed to send the Music pending intent"); }
         }
@@ -249,7 +280,7 @@ namespace LiveDisplay.Fragments
             if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
             {
                 //When user stop dragging then seek to the position previously saved in ProgressChangedEvent
-                Jukebox.SeekTo(e.SeekBar.Progress);
+                Jukebox.SeekTo(e.SeekBar.Progress* 1000);
                 if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1)
                 {
                     skbSeekSongTime.SetProgress(e.SeekBar.Progress, true);
@@ -383,7 +414,6 @@ namespace LiveDisplay.Fragments
                         btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_pause_white_24dp, 0, 0);
                         playbackState = PlaybackStateCode.Playing;
                         MoveSeekbar(true);
-
                         break;
 
                     case RemoteControlPlayState.Stopped:
@@ -395,6 +425,7 @@ namespace LiveDisplay.Fragments
                     default:
                         break;
                 }
+
             });
         }
 
@@ -431,7 +462,8 @@ namespace LiveDisplay.Fragments
                 tvTitle.Text = e.MediaMetadata?.GetString(MediaMetadata.MetadataKeyTitle);
                 tvAlbum.Text = e.MediaMetadata?.GetString(MediaMetadata.MetadataKeyAlbum);
                 tvArtist.Text = e.MediaMetadata?.GetString(MediaMetadata.MetadataKeyArtist);
-                skbSeekSongTime.Max = (int)e.MediaMetadata?.GetLong(MediaMetadata.MetadataKeyDuration);
+                skbSeekSongTime.Max = (int)e.MediaMetadata?.GetLong(MediaMetadata.MetadataKeyDuration)/1000;
+                openNotificationId = e.OpenNotificationId;
                 if (e.AppName != string.Empty)
                 {
                     sourceApp.Text = string.Format(Resources.GetString(Resource.String.playing_from_template), e.AppName);
@@ -441,7 +473,7 @@ namespace LiveDisplay.Fragments
                 ThreadPool.QueueUserWorkItem(m =>
                 {
                     var albumart = e.MediaMetadata?.GetBitmap(MediaMetadata.MetadataKeyAlbumArt);
-                    var wallpaper = new BitmapDrawable(Activity.Resources, albumart);
+                    var wallpaper = new BitmapDrawable(Resources, albumart);
                     int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtOpacityLevel, ConfigurationParameters.DefaultAlbumartOpacityLevel);
                     int blurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtBlurLevel, ConfigurationParameters.DefaultAlbumartBlurLevel);
                     CurrentAlbumArt = wallpaper;
@@ -467,7 +499,12 @@ namespace LiveDisplay.Fragments
                     case PlaybackStateCode.Paused:
                         btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
                         playbackState = PlaybackStateCode.Paused;
-                        StartTimeout(true);
+                        //Start timeout to hide the MusicFragment (but only if the music method chosen is 'Pick a MediaSession' (0)                        
+                        //Otherwise, the Music Widget can only disappear when the notification is removed. (which is the correct behavior)
+                        if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetMethod, "1") == "0")
+                        {
+                            StartTimeout(true); 
+                        }
                         MoveSeekbar(false);
 
                         break;
@@ -490,7 +527,7 @@ namespace LiveDisplay.Fragments
                     default:
                         break;
                 }
-                skbSeekSongTime.SetProgress((int)e.CurrentTime, true);
+                skbSeekSongTime.SetProgress((int)e.CurrentTime/1000, true);
             });
         }
 
@@ -546,26 +583,30 @@ namespace LiveDisplay.Fragments
 
         private void MoveSeekbar(bool move)
         {
-            if (move == true)
+            //Start
+            if (move)
             {
-                timer.Start();
+                handler.RemoveCallbacks(runnable);
+                handler.PostDelayed(runnable, 1000);
             }
             else
             {
-                timer.Stop();
+                handler.RemoveCallbacks(runnable);
             }
         }
 
-        private void Timer_Elapsed(object sender, ElapsedEventArgs e)
+        private void MoveSeekbar()
         {
             if (Build.VERSION.SdkInt > BuildVersionCodes.M)
             {
-                skbSeekSongTime.SetProgress(skbSeekSongTime.Progress + 1000, true);
+                skbSeekSongTime?.SetProgress(skbSeekSongTime.Progress + 1, true);
             }
             else
             {
-                skbSeekSongTime.Progress += 1000;
+                if(skbSeekSongTime!= null)
+                skbSeekSongTime.Progress += 1;
             }
+            handler.PostDelayed(runnable, 1000);
         }
 
         private void StartTimeout(bool start)

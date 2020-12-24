@@ -37,9 +37,11 @@ namespace LiveDisplay.Servicios.Widget
     }
     public class WidgetStatusEventArgs : EventArgs
     {
+        public object AdditionalInfo { get; set; } //An aditional object if the widget  being shown needs it to show correctly.
         public string WidgetName { get; set; }
         public bool Show { get; set; }
         public bool Active { get; set; } //It means that if a widget says it is active then 
         //any other widget replacing this one should disappear asap and call RequestShow(CurrentActiveWidget), so the active widget regains control.
+        public string WidgetAskingForShowing { get; set; } //Which widget asked the Widget to show
     }
 }

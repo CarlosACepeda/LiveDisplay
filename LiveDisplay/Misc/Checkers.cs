@@ -27,6 +27,10 @@ namespace LiveDisplay.Misc
 
             ComponentName componentName = new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(AdminReceiver)));
 
+#if DEBUG
+            return true;
+#endif
+
             return devicePolicyManager.IsAdminActive(componentName);
         }
 
