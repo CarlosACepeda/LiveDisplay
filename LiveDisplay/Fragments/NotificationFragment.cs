@@ -14,7 +14,7 @@ using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
 using LiveDisplay.Servicios.Notificaciones.NotificationStyle;
 using LiveDisplay.Servicios.Widget;
 using System;
-
+using System.Threading;
 using Fragment = AndroidX.Fragment.App.Fragment;
 
 namespace LiveDisplay.Fragments
@@ -88,7 +88,7 @@ namespace LiveDisplay.Fragments
             {
                 if (e.OpenNotification.RepresentsMediaPlaying())
                 {
-                    MusicController.StartPlayback(e.OpenNotification.GetMediaSessionToken(), _openNotification);
+                    MusicController.StartPlayback(e.OpenNotification.GetMediaSessionToken(), _openNotification.GetCustomId());
 
                     maincontainer.Visibility = ViewStates.Invisible;
                     WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "NotificationFragment" });
@@ -134,7 +134,7 @@ namespace LiveDisplay.Fragments
             }
             if(e.WidgetName== "NotificationFragment" && e.WidgetAskingForShowing=="MusicFragment" && e.AdditionalInfo!= null)
             {
-                ShowNotification((OpenNotification)e.AdditionalInfo);
+                ShowNotification(CatcherHelper.GetOpenNotification((string)e.AdditionalInfo));
             }
         }
 
@@ -150,7 +150,9 @@ namespace LiveDisplay.Fragments
                 {
                     if (e.OpenNotification.RepresentsMediaPlaying())
                     {
-                        MusicController.StopPlayback(e.OpenNotification.GetMediaSessionToken()); //Returns true if the Playback was stopped succesfully (Sometimes it wont work)
+                        ThreadPool.QueueUserWorkItem(m => { 
+                            MusicController.StopPlayback(e.OpenNotification.GetMediaSessionToken());} //Returns true if the Playback was stopped succesfully (Sometimes it wont work)
+                        );
                         
                         //In any case, order MusicWidget to stop.
                         WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "MusicFragment", Active = false });
@@ -194,14 +196,14 @@ namespace LiveDisplay.Fragments
 
         private void ItemLongClicked(object sender, NotificationItemClickedEventArgs e)
         {
-            new OpenNotification(e.StatusBarNotification).Cancel();
+          e.StatusBarNotification.Cancel();
             WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "NotificationFragment" });
             maincontainer.Visibility = ViewStates.Invisible;
         }
 
         private void ItemClicked(object sender, NotificationItemClickedEventArgs e)
         {
-            ShowNotification(new OpenNotification(e.StatusBarNotification));
+            ShowNotification(e.StatusBarNotification);
 
         }
         public void ShowNotification(OpenNotification openNotification)

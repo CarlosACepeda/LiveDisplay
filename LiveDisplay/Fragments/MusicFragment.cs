@@ -19,6 +19,7 @@ using System;
 using System.Threading;
 using Fragment = AndroidX.Fragment.App.Fragment;
 using Java.Lang;
+using LiveDisplay.Servicios.Awake;
 
 namespace LiveDisplay.Fragments
 {
@@ -31,7 +32,7 @@ namespace LiveDisplay.Fragments
         private PlaybackStateCode playbackState;
         private PendingIntent activityIntent; //A Pending intent if available to start the activity associated with this music fragent.
         private BitmapDrawable CurrentAlbumArt;
-        private OpenNotification openNotification; //Used if the button launch Notification is used.
+        private string openNotificationId; //Used if the button launch Notification is used.
         private ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
 
         private bool timeoutStarted = false;
@@ -120,7 +121,7 @@ namespace LiveDisplay.Fragments
 
             BindViews(view);
             BindViewEvents();
-            BindMusicControllerEvents();            
+            BindMusicControllerEvents();
             
             return view;
         }
@@ -203,14 +204,24 @@ namespace LiveDisplay.Fragments
 
         private void BtnLaunchNotification_Click(object sender, EventArgs e)
         {
-            if (MusicController.MediaActivatedWithThisToken(openNotification.GetMediaSessionToken()))
+            if (configurationManager.RetrieveAValue(ConfigurationParameters.LaunchNotification))
             {
-                WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs 
-                { Active = false, 
-                    Show = true,
-                    WidgetName = "NotificationFragment", 
-                    WidgetAskingForShowing= "MusicFragment", 
-                    AdditionalInfo= openNotification});
+                KeyguardHelper.RequestDismissKeyguard(Activity);
+                CatcherHelper.GetOpenNotification(openNotificationId)?.ClickNotification();
+            }
+            else
+            {
+                if (MusicController.MediaSessionAssociatedWThisNotification(openNotificationId))
+                {
+                    WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs
+                    {
+                        Active = false,
+                        Show = true,
+                        WidgetName = "NotificationFragment",
+                        WidgetAskingForShowing = "MusicFragment",
+                        AdditionalInfo = openNotificationId
+                    });
+                }
             }
         }
 
@@ -403,7 +414,6 @@ namespace LiveDisplay.Fragments
                         btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_pause_white_24dp, 0, 0);
                         playbackState = PlaybackStateCode.Playing;
                         MoveSeekbar(true);
-
                         break;
 
                     case RemoteControlPlayState.Stopped:
@@ -415,6 +425,7 @@ namespace LiveDisplay.Fragments
                     default:
                         break;
                 }
+
             });
         }
 
@@ -452,7 +463,7 @@ namespace LiveDisplay.Fragments
                 tvAlbum.Text = e.MediaMetadata?.GetString(MediaMetadata.MetadataKeyAlbum);
                 tvArtist.Text = e.MediaMetadata?.GetString(MediaMetadata.MetadataKeyArtist);
                 skbSeekSongTime.Max = (int)e.MediaMetadata?.GetLong(MediaMetadata.MetadataKeyDuration)/1000;
-                openNotification = e.OpenNotification;
+                openNotificationId = e.OpenNotificationId;
                 if (e.AppName != string.Empty)
                 {
                     sourceApp.Text = string.Format(Resources.GetString(Resource.String.playing_from_template), e.AppName);

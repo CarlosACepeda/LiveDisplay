@@ -7,6 +7,9 @@
     using Android.Widget;
     using AndroidX.RecyclerView.Widget;
     using LiveDisplay.Factories;
+    using LiveDisplay.Misc;
+    using LiveDisplay.Servicios;
+    using LiveDisplay.Servicios.Music;
     using LiveDisplay.Servicios.Notificaciones;
     using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
     using System;
@@ -15,10 +18,10 @@
     public class NotificationAdapter : RecyclerView.Adapter
     {
         public static int selectedItem = -1;
-        public List<StatusBarNotification> notifications = new List<StatusBarNotification>();
+        public List<OpenNotification> notifications = new List<OpenNotification>();
         public override int ItemCount => notifications.Count;
 
-        public NotificationAdapter(List<StatusBarNotification> notificaciones)
+        public NotificationAdapter(List<OpenNotification> notificaciones)
         {
             this.notifications = notificaciones;
         }
@@ -27,25 +30,35 @@
         {
             if (position != RecyclerView.NoPosition)
             {
-                //Cast
-                NotificationAdapterViewHolder viewHolder = holder as NotificationAdapterViewHolder;
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
-                {
-                    viewHolder.Icono.Background = IconFactory.ReturnIconDrawable(notifications[position].Notification.SmallIcon, notifications[position].PackageName);
+                    if (MusicController.MediaSessionAssociatedWThisNotification(notifications[position].GetCustomId())
+                        && new ConfigurationManager(AppPreferences.Default).RetrieveAValue(ConfigurationParameters.HideNotificationWhenItsMediaPlaying)
+                        && Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+                    {
+                        holder.ItemView.Visibility = ViewStates.Gone;
+                        holder.ItemView.LayoutParameters=new RecyclerView.LayoutParams(0, 0);
+                    }
+                    else
+                    {
+                        //Cast
+                        NotificationAdapterViewHolder viewHolder = holder as NotificationAdapterViewHolder;
+                        if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
+                        {
+                            viewHolder.Icono.Background = IconFactory.ReturnIconDrawable(notifications[position].GetSmallIcon(), notifications[position].GetPackage());
 
-                }
-                else
-                {
-                    viewHolder.Icono.Background = IconFactory.ReturnIconDrawable(notifications[position].Notification.Icon, notifications[position].PackageName);
-                }
-                if (selectedItem == position)
-                {
-                    viewHolder.Icono.Alpha = 0.5f;
-                }
-                else
-                {
-                    viewHolder.Icono.Alpha = 1;
-                }
+                        }
+                        else
+                        {
+                            viewHolder.Icono.Background = IconFactory.ReturnIconDrawable(notifications[position].GetIconInt(), notifications[position].GetPackage());
+                        }
+                        if (selectedItem == position)
+                        {
+                            viewHolder.Icono.Alpha = 0.5f;
+                        }
+                        else
+                        {
+                            viewHolder.Icono.Alpha = 1;
+                        }
+                    }
             }
             else
             {
@@ -102,7 +115,7 @@
             //}
         }
 
-        private void OnItemClicked(int position, StatusBarNotification sbn)
+        private void OnItemClicked(int position, OpenNotification sbn)
         {
             ItemClicked?.Invoke(this, new NotificationItemClickedEventArgs
             {
@@ -111,7 +124,7 @@
             });
         }
 
-        private void OnItemLongClicked(int position, StatusBarNotification sbn)
+        private void OnItemLongClicked(int position, OpenNotification sbn)
         {
             ItemLongClicked?.Invoke(this, new NotificationItemClickedEventArgs
             {

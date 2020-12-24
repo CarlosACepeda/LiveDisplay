@@ -86,7 +86,7 @@ namespace LiveDisplay.Servicios
         public override void OnNotificationPosted(StatusBarNotification sbn)
         {
             lastPostedNotification = sbn;
-            catcherHelper.OnNotificationPosted(sbn);
+            catcherHelper.OnNotificationPosted(new OpenNotification(sbn));
 
             //var test6 = sbn.Notification.Extras.Get(Notification.ExtraMediaSession) as MediaSession.Token;
 
@@ -115,7 +115,7 @@ namespace LiveDisplay.Servicios
 
         public override void OnNotificationRemoved(StatusBarNotification sbn)
         {
-            catcherHelper.OnNotificationRemoved(sbn);
+            catcherHelper.OnNotificationRemoved(new OpenNotification(sbn));
         }
 
         public override void OnListenerDisconnected()

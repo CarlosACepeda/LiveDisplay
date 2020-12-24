@@ -206,14 +206,14 @@ namespace LiveDisplay.Servicios.FloatingNotification
 
         private void NotificationAdapterViewHolder_ItemLongClicked(object sender, NotificationItemClickedEventArgs e)
         {
-            openNotification = new OpenNotification(e.StatusBarNotification);
+            openNotification = e.StatusBarNotification;
             openNotification.Cancel();
             floatingNotificationView.Visibility = ViewStates.Gone;
         }
 
         private void NotificationAdapterViewHolder_ItemClicked(object sender, NotificationItemClickedEventArgs e)
         {
-            openNotification = new OpenNotification(e.StatusBarNotification);
+            openNotification = e.StatusBarNotification;
 
             if (configurationManager.RetrieveAValue(ConfigurationParameters.TestEnabled))
             {

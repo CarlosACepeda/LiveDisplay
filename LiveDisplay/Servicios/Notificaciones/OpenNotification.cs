@@ -26,7 +26,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             statusbarnotification = sbn;
         }
 
-        private string GetKey()
+        public string GetKey()
         {
             if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
                 return statusbarnotification.Key;
@@ -34,7 +34,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             return string.Empty;
         }
 
-        private int GetId()
+        public int GetId()
         {
             return statusbarnotification.Id;
         }
@@ -59,7 +59,7 @@ namespace LiveDisplay.Servicios.Notificaciones
         //When-> Helps to really ensure is the same notification by checking also the time it was posted
         public string GetCustomId() => GetPackageName() + GetTag() + GetId() + When();
 
-        private string GetTag() => statusbarnotification.Tag;
+        public string GetTag() => statusbarnotification.Tag;
 
         private string GetPackageName() => statusbarnotification.PackageName;
 
@@ -200,7 +200,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             {
                 try
                 {
-                    MusicController.StartPlayback(mediaSessionToken, this);
+                    MusicController.StartPlayback(mediaSessionToken, GetCustomId());
                     Log.Info("LiveDisplay", "Callback registered Successfully");
                     return true;
                 }
@@ -397,6 +397,19 @@ namespace LiveDisplay.Servicios.Notificaciones
         internal int[] CompactViewActionsIndices()
         {
             return statusbarnotification.Notification.Extras.GetIntArray(Notification.ExtraCompactActions);
+        }
+        
+        public Icon GetSmallIcon()
+        {
+            return statusbarnotification.Notification.SmallIcon;
+        }
+        public int GetIconInt()
+        {
+            return statusbarnotification.Notification.Icon;
+        }
+        public string GetPackage()
+        {
+            return statusbarnotification.PackageName;
         }
     }
 

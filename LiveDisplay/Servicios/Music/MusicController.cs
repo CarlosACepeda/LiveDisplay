@@ -32,7 +32,7 @@ namespace LiveDisplay.Servicios.Music
         private static MediaSession.Token _currentToken;
         private static bool _playbackstarted;
         private static string _appname;
-        private static OpenNotification _openNotification;
+        private static string _openNotificationId;
 
         #region events
 
@@ -55,7 +55,7 @@ namespace LiveDisplay.Servicios.Music
         /// <param name="mediaController"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        public static bool StartPlayback(MediaSession.Token token, OpenNotification notification)
+        public static bool StartPlayback(MediaSession.Token token, string owningNotificationId)
         {
             if (instance == null)
             {
@@ -68,7 +68,7 @@ namespace LiveDisplay.Servicios.Music
                 {
                     throw new ArgumentException("Token can't be null!");
                 }
-                GetCurrentInstance(_currentMediaController, notification);
+                GetCurrentInstance(_currentMediaController, owningNotificationId);
                 return StartMediaPlayback();
             }
             else 
@@ -85,21 +85,26 @@ namespace LiveDisplay.Servicios.Music
                 }
                 else 
                 {
-                    //The mediaplayback is already started for this session in particular, do nothing.
+                    //The mediaplayback is already started for this session in particular.
+
+                    if (_openNotificationId != owningNotificationId) //It means that the session is the same, but the notification owning this session changed.
+                    {
+                        _openNotificationId = owningNotificationId; //Update the notification (taking its id) that way we can identify the notification that owns this media session.
+                    }
                     return false;
                 }
             }
         }
-        private static MusicController GetCurrentInstance(MediaController controller, OpenNotification notification)
+        private static MusicController GetCurrentInstance(MediaController controller, string owningNotificationId)
         {
             if (instance == null)
-                instance = new MusicController(controller, notification);
+                instance = new MusicController(controller, owningNotificationId);
             return instance;
         }
-        private MusicController(MediaController controller, OpenNotification notification)
+        private MusicController(MediaController controller, string notificationId)
         {
             LoadMediaControllerData(controller);
-            _openNotification = notification;
+            _openNotificationId = notificationId;
             Jukebox.MediaEvent += Jukebox_MediaEvent;
         }
         private static void LoadMediaControllerData(MediaController controller)
@@ -161,7 +166,7 @@ namespace LiveDisplay.Servicios.Music
                         MediaMetadata = _mediaMetadata,
                         ActivityIntent = _activityIntent,
                         AppName= _appname,
-                        OpenNotification = _openNotification
+                        OpenNotificationId = _openNotificationId
                     });
                     //Send Playbackstate of the media.
                     OnMediaPlaybackChanged(new MediaPlaybackStateChangedEventArgs
@@ -177,9 +182,9 @@ namespace LiveDisplay.Servicios.Music
             }
         }
 
-        internal static bool MediaActivatedWithThisToken(MediaSession.Token token)
+        internal static bool MediaSessionAssociatedWThisNotification(string openNotificationId)
         {
-            return token == _currentToken; //Useful to check which notification (In case a notification causes this MusicController to be ative) owns this MusicController
+            return _openNotificationId == openNotificationId; //Useful to check which notification (In case a notification causes this MusicController to be ative) owns this MusicController
         }
 
         public override void OnPlaybackStateChanged(PlaybackState state)
@@ -203,7 +208,7 @@ namespace LiveDisplay.Servicios.Music
                 ActivityIntent = _activityIntent,
                 MediaMetadata = _mediaMetadata,
                 AppName= _appname,
-                OpenNotification = _openNotification
+                OpenNotificationId = _openNotificationId
             });
             //Datos de la Media que se está reproduciendo.
 
@@ -277,14 +282,14 @@ namespace LiveDisplay.Servicios.Music
                 {
                     _currentMediaController.UnregisterCallback(instance);
                     _playbackstarted = false;
-                    _openNotification = null;
+                    _openNotificationId = null;
                     return true;
                 }
                 catch (Exception)
                 {
                     Log.Warn("LiveDisplay", "Failed MusicController#StopMediaCallback");
                     _playbackstarted = false;
-                    _openNotification = null;
+                    _openNotificationId = null;
                     return false;
                 }
             }
@@ -297,15 +302,6 @@ namespace LiveDisplay.Servicios.Music
                 return true;
             }
             return false;
-        }
-        public static bool NotificationOwnsMusicController(OpenNotification openNotification)
-        {
-            if (openNotification == null)
-                return false; //Probably it wasn't started by a notification.
-            if (openNotification.GetCustomId() == _openNotification.GetCustomId())
-                return true;
-            else
-                return false;
         }
         public override void OnSessionDestroyed()
         {
