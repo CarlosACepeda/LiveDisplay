@@ -266,7 +266,7 @@ namespace LiveDisplay.Servicios
 
         public void OnClientPlaybackStateUpdateSimple([GeneratedEnum] RemoteControlPlayState stateSimple)
         {
-            musicControllerKitkat.OnPlaybackStateChanged(stateSimple);
+            //musicControllerKitkat.OnPlaybackStateChanged(stateSimple);
         }
 
         public void OnClientPlaybackStateUpdate([GeneratedEnum] RemoteControlPlayState state, long stateChangeTimeMs, long currentPosMs, float speed)

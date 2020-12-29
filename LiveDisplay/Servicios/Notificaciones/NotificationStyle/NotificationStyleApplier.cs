@@ -125,35 +125,35 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
         }
         public void ApplyStyle(OpenNotification notification)
         {
-            //The progress thing does not require a Style to be applied.
-            if (notification.GetProgressMax() > 0)
-            {
-                notificationProgress.Visibility = ViewStates.Visible;
-                if (notification.IsProgressIndeterminate())
+                //The progress thing does not require a Style to be applied.
+                if (notification.GetProgressMax() > 0)
                 {
-                    notificationProgress.Indeterminate = true;
+                    notificationProgress.Visibility = ViewStates.Visible;
+                    if (notification.IsProgressIndeterminate())
+                    {
+                        notificationProgress.Indeterminate = true;
+                    }
+                    else
+                    {
+                        notificationProgress.Max = notification.GetProgressMax();
+                        notificationProgress.Progress = notification.GetProgress();
+                    }
                 }
                 else
                 {
-                    notificationProgress.Max = notification.GetProgressMax();
-                    notificationProgress.Progress = notification.GetProgress();
+                    notificationProgress.Visibility = ViewStates.Gone;
                 }
-            }
-            else
-            {
-                notificationProgress.Visibility = ViewStates.Gone;
-            }
 
-            title.Text = notification.Title();
-            text.Text = notification.Text();
-            applicationName.Text = notification.AppName();
-            subtext.Text = notification.SubText();
-            when.Text = notification.When();
-            closenotificationbutton.SetTag(DefaultActionIdentificator, notification);
-            closenotificationbutton.Visibility = notification.IsRemovable() ? ViewStates.Visible : ViewStates.Invisible;
-            notificationActions.Visibility = notification.HasActions() ? ViewStates.Visible : ViewStates.Gone;
-            inlineNotificationContainer.Visibility = ViewStates.Invisible;
-
+                title.Text = notification.Title();
+                text.Text = notification.Text();
+                applicationName.Text = notification.AppName();
+                subtext.Text = notification.SubText();
+                when.Text = notification.When();
+                closenotificationbutton.SetTag(DefaultActionIdentificator, notification);
+                closenotificationbutton.Visibility = notification.IsRemovable() ? ViewStates.Visible : ViewStates.Invisible;
+                notificationActions.Visibility = notification.HasActions() ? ViewStates.Visible : ViewStates.Gone;
+                inlineNotificationContainer.Visibility = ViewStates.Invisible;
+            
             switch (notification.Style())
             {
                 case BigPictureStyle:

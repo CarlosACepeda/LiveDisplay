@@ -1,6 +1,7 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.Hardware.Fingerprints;
+using Android.OS;
 using AndroidX.Fragment.App;
 using System;
 
@@ -32,6 +33,7 @@ namespace LiveDisplay.Servicios.Keyguard
 
         internal static void RequestDismissKeyguard(Activity activity)
         {
+            if(Build.VERSION.SdkInt >= BuildVersionCodes.O)
             myKM.RequestDismissKeyguard(activity, null);
         }
     }

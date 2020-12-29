@@ -436,7 +436,7 @@ namespace LiveDisplay.Fragments
                 tvTitle.Text = e.Title;
                 tvAlbum.Text = e.Album;
                 tvArtist.Text = e.Artist;
-                skbSeekSongTime.Max = (int)e.Duration;
+                skbSeekSongTime.Max = (int)e.Duration/1000;
 
                 int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtOpacityLevel, ConfigurationParameters.DefaultAlbumartOpacityLevel);
                 int blurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtBlurLevel, ConfigurationParameters.DefaultAlbumartBlurLevel);
@@ -597,15 +597,20 @@ namespace LiveDisplay.Fragments
 
         private void MoveSeekbar()
         {
-            if (Build.VERSION.SdkInt > BuildVersionCodes.M)
+            Activity?.RunOnUiThread(() =>
             {
-                skbSeekSongTime?.SetProgress(skbSeekSongTime.Progress + 1, true);
-            }
-            else
-            {
-                if(skbSeekSongTime!= null)
-                skbSeekSongTime.Progress += 1;
-            }
+                if (Build.VERSION.SdkInt > BuildVersionCodes.M)
+                {
+                    if (skbSeekSongTime != null)
+                        skbSeekSongTime?.SetProgress(skbSeekSongTime.Progress + 1, true);
+                }
+                else
+                {
+                    if (skbSeekSongTime != null)
+                        skbSeekSongTime.Progress += 1;
+                }
+
+            });
             handler.PostDelayed(runnable, 1000);
         }
 
@@ -636,7 +641,10 @@ namespace LiveDisplay.Fragments
         {
             if (maincontainer != null)
             {
-                maincontainer.Visibility = ViewStates.Gone;
+                Activity.RunOnUiThread(() =>
+                {
+                    maincontainer.Visibility = ViewStates.Gone;
+                });
                 timeoutStarted = false;
                 WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "MusicFragment", Active=false });
             }

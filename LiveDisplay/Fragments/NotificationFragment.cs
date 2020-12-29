@@ -210,27 +210,32 @@ namespace LiveDisplay.Fragments
         {
             _openNotification = openNotification;
 
-            if (configurationManager.RetrieveAValue(ConfigurationParameters.TestEnabled))
-            {
-                Toast.MakeText(Application.Context, "Progress Indeterminate?: " + _openNotification.IsProgressIndeterminate().ToString() + "\n"
-                    + "Current Progress: " + _openNotification.GetProgress().ToString() + "\n"
-                    + "Max Progress: " + _openNotification.GetProgressMax().ToString() + "\n"
-                    + _openNotification.GetGroupInfo()
-                    , ToastLength.Short).Show();
-            }
-            //Determine if the notification to show updates the current view,(in case there's a notification currently owning this Widget)
-            bool updating = _openNotification.GetCustomId() == openNotification.GetCustomId();
+            Activity.RunOnUiThread(() => {
 
-            styleApplier?.ApplyStyle(_openNotification);
-            StartTimeout(false);
-            
-            //Now we check if the current showing widget is this, if not, ask for us to be the current showing widget.
-            if (WidgetStatusPublisher.CurrentActiveWidget != "NotificationFragment")
-            {
-                WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = true, WidgetName = "NotificationFragment" });
-                maincontainer.Visibility = ViewStates.Visible; //we make ourselves visible when we are the current showing widget.
-            }
-            else if (maincontainer.Visibility != ViewStates.Visible) maincontainer.Visibility = ViewStates.Visible;
+                if (configurationManager.RetrieveAValue(ConfigurationParameters.TestEnabled))
+                {
+                    Toast.MakeText(Application.Context, "Progress Indeterminate?: " + _openNotification.IsProgressIndeterminate().ToString() + "\n"
+                        + "Current Progress: " + _openNotification.GetProgress().ToString() + "\n"
+                        + "Max Progress: " + _openNotification.GetProgressMax().ToString() + "\n"
+                        + _openNotification.GetGroupInfo()
+                        , ToastLength.Short).Show();
+                }
+                //Determine if the notification to show updates the current view,(in case there's a notification currently owning this Widget)
+                bool updating = _openNotification.GetCustomId() == openNotification.GetCustomId();
+
+                styleApplier?.ApplyStyle(_openNotification);
+                StartTimeout(false);
+
+                //Now we check if the current showing widget is this, if not, ask for us to be the current showing widget.
+                if (WidgetStatusPublisher.CurrentActiveWidget != "NotificationFragment")
+                {
+                    WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = true, WidgetName = "NotificationFragment" });
+                    maincontainer.Visibility = ViewStates.Visible; //we make ourselves visible when we are the current showing widget.
+                }
+                else if (maincontainer.Visibility != ViewStates.Visible) maincontainer.Visibility = ViewStates.Visible;
+
+            });
+
         }
 
         #endregion Events Implementation:

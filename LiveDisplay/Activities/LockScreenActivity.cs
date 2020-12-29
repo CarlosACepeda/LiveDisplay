@@ -176,7 +176,7 @@
                     }
                 }
 
-                if (e.Wallpaper == null)
+                if (e.Wallpaper?.Bitmap == null)
                 {
                     Window.DecorView.SetBackgroundColor(Color.Black);
                 }
