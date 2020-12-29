@@ -131,6 +131,7 @@ namespace LiveDisplay.Fragments
             WallpaperPublisher.ReleaseWallpaper();
             
             UnbindViewEvents();
+            UnbindViews();
 
             base.OnDestroyView();
         }
@@ -159,14 +160,13 @@ namespace LiveDisplay.Fragments
 
         public override void OnDestroy()
         {
+            WidgetStatusPublisher.OnWidgetStatusChanged -= WidgetStatusPublisher_OnWidgetStatusChanged;
             tvAlbum = null;
             tvArtist = null;
             tvTitle = null;
             skbSeekSongTime = null;
             bool isWidgetActive = WidgetStatusPublisher.CurrentActiveWidget == "MusicFragment";
             WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "MusicFragment", Active = isWidgetActive });
-            WidgetStatusPublisher.OnWidgetStatusChanged -= WidgetStatusPublisher_OnWidgetStatusChanged;
-            //UnbindViews();
             initForFirstTime = false;
             base.OnDestroy();
         }
