@@ -47,7 +47,7 @@
         public const string HideNotificationWhenItsMediaPlaying = "hidenotificationwhenmediaplaying?"; //If the media session used belongs to a notification then hide this notification in the lockscreen.
         public const string HideShortcutsWhenKeyguardSafe = "hideshortcutswhenkeyguardsafe?";
         public const string LaunchNotification = "launchnotification?";
-
+        public const string AppHasCustomImportanceRules = "apphascustomblockrules";
         //Misc.
         //It serves the purpose of enabling certain messages to be shown in a Toast Message useful for the developer.
         public const string TestEnabled = "testenabled?";

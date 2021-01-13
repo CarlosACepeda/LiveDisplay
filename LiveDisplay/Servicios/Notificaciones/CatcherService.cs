@@ -88,6 +88,28 @@ namespace LiveDisplay.Servicios
             lastPostedNotification = sbn;
             catcherHelper.OnNotificationPosted(new OpenNotification(sbn));
 
+            //var test1 = sbn.Notification.Extras.GetString(Notification.ExtraTemplate);
+            //var test2 = sbn.Notification.Extras;
+            //var test3 = sbn.Notification.Flags;
+            //var test4 = sbn.Notification.Extras.GetCharSequence(Notification.ExtraSummaryText);
+            //var test5 = sbn.Notification.Extras.GetCharSequenceArray(Notification.ExtraTextLines);
+            //var test6 = sbn.Notification.Extras.Get("android.wearable.EXTENSIONS");
+            //var test7 = sbn.Notification.Extras.KeySet();
+            //var test8 = sbn.Notification.Extras.Get("android.people.list");
+            //var test10 =sbn.Notification.Extras.Get("android.messagingUser");
+            //var test11 =sbn.Notification.Extras.Get("android.messagingStyleUser");
+            //var test12 = sbn.Notification.Extras.Get("android.messages");
+            //var test13 = sbn.Notification.Extras.GetParcelableArray("android.messages");
+            //foreach (Bundle item in test13)
+            //{
+            //   var test14= item.KeySet();
+            //    var moreExtras = item.Get("extras");
+            //    var sender_person = item.Get("sender_person");
+            //    var sender = item.Get("sender");
+            //    var text = item.Get("text");
+            //    var time = item.Get("time");
+            //}
+
             //var test6 = sbn.Notification.Extras.Get(Notification.ExtraMediaSession) as MediaSession.Token;
 
             //if (test6 != null)

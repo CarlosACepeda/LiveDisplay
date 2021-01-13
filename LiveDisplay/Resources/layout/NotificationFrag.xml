@@ -71,6 +71,14 @@
 			android:src="@drawable/baseline_close_white_18"
 			/>
     </LinearLayout>
+	<TextView
+		android:id="@+id/previousMessages"
+		android:visibility="gone"
+		android:textSize="19dp"
+        android:fontFamily="sans-serif-condensed"
+		android:textColor="@color/primary_text_default_material_dark"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
     <TextView
 		android:textSize="22dp"
 		android:text="One by One - Hunter Siegel Remix"

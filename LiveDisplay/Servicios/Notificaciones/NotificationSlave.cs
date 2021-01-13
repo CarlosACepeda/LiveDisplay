@@ -98,8 +98,10 @@ namespace LiveDisplay.Servicios
             notificationManager.Notify(notifid, builder.Build());
         }
 
-        public void SendDumbNotification()
+        public static void SendDumbNotification()
         {
+            NotificationManager notificationManager = (NotificationManager)Application.Context.GetSystemService("notification");
+
             Notification.Builder builder;
             if (Build.VERSION.SdkInt < BuildVersionCodes.NMr1)
             {
@@ -115,10 +117,25 @@ namespace LiveDisplay.Servicios
                 notificationManager.CreateNotificationChannel(notificationChannel);
                 builder = new Notification.Builder(Application.Context, "livedisplaynotificationchannel");
             }
-#pragma warning restore
+
+            RemoteInput remoteInput = new RemoteInput.Builder("test1").SetLabel("This is the place where you write").Build();
+
+            Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(MainActivity)));
+
+            PendingIntent pendingIntent = PendingIntent.GetActivity(Application.Context, 35, intent, PendingIntentFlags.UpdateCurrent);
+
+            Notification.Action.Builder action = new Notification.Action.Builder(Resource.Drawable.ic_stat_default_appicon, "Answer", pendingIntent).AddRemoteInput(remoteInput);
+
+
+
+            builder.SetStyle(new Notification.MessagingStyle("Su madre").AddMessage(new Notification.MessagingStyle.Message("hi", -1, "user1"))
+                .AddMessage(new Notification.MessagingStyle.Message("WhatsUp", 0, "user2"))
+                .AddMessage(new Notification.MessagingStyle.Message("How bout lunch?", 1, "user1")));
+            #pragma warning restore
             builder.SetContentTitle("");
             builder.SetContentText("");
             builder.SetAutoCancel(true);
+            builder.AddAction(action.Build());
 
             builder.SetSmallIcon(Resource.Drawable.ic_stat_default_appicon);
             notificationManager.Notify(2, builder.Build());

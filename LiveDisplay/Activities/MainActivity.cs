@@ -13,6 +13,7 @@
     using LiveDisplay.Misc;
     using LiveDisplay.Servicios;
     using LiveDisplay.Servicios.Awake;
+    using LiveDisplay.Servicios.Wallpaper;
 
     //for CI.
     using Microsoft.AppCenter;
@@ -35,6 +36,7 @@
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.Main);
+            WallpaperPublisher.NewWallpaperIssued += WallpaperPublisher_NewWallpaperIssued;
             BindViews();
             StartAppCenterMonotoring();
         }
@@ -45,8 +47,17 @@
             CheckDeviceAdminAccess();
             CheckDrawOverOtherAppsAccess();
             IsApplicationHealthy();
-            AdminReceiver.OnDeviceAdminEnabled += AdminReceiver_OnDeviceAdminEnabled;
             base.OnResume();
+        }
+
+        private void WallpaperPublisher_NewWallpaperIssued(object sender, WallpaperChangedEventArgs e)
+        {
+            if (e.Wallpaper?.Bitmap != null)
+            {
+                RunOnUiThread(() => {
+                    Window.DecorView.Background = e.Wallpaper;
+                });
+            }
         }
 
         private void AdminReceiver_OnDeviceAdminEnabled(object sender, bool e)
@@ -147,13 +158,13 @@
         {
             base.OnPause();
             AdminReceiver.OnDeviceAdminEnabled -= AdminReceiver_OnDeviceAdminEnabled;
-
         }
 
         protected override void OnDestroy()
         {
             enableNotificationAccess.Click -= EnableNotificationAccess_Click;
             enableDeviceAdmin.Click -= EnableDeviceAdmin_Click;
+            WallpaperPublisher.NewWallpaperIssued -= WallpaperPublisher_NewWallpaperIssued;
             enableNotificationAccess.Dispose();
             enableDeviceAdmin.Dispose();
             base.OnDestroy();
@@ -204,6 +215,7 @@
                             {
                                 slave.PostNotification(1, "LiveDisplay", notificationtext, true, NotificationPriority.Max);
                             }
+                            //NotificationSlave.SendDumbNotification();
                         }
                         using (Intent intent = new Intent(Application.Context, typeof(LockScreenActivity)))
                         {

@@ -4,12 +4,15 @@ using Android.OS;
 using Android.Views;
 using AndroidX.Preference;
 using LiveDisplay.Misc;
+using LiveDisplay.Servicios;
 
 namespace LiveDisplay.Fragments.Preferences
 {
     public class MusicWidgetSettingsFragment : PreferenceFragmentCompat, ISharedPreferencesOnSharedPreferenceChangeListener
     {
         private ISharedPreferences sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
+        private ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
+
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -26,6 +29,10 @@ namespace LiveDisplay.Fragments.Preferences
                 musiccontrolmethod.Selectable = true; 
                 musiccontrolmethod.Enabled = true;
             }
+            string interval = configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetMethod, "1"); //1 is the default value, music_widget_prefs.xml
+            ListPreference musicWidgetControl = FindPreference("musicwidgetcontrolmethod") as ListPreference;
+            musicWidgetControl.Value = interval;
+            musicWidgetControl.Summary = musicWidgetControl.Entry;
 
             sharedPreferences.RegisterOnSharedPreferenceChangeListener(this);
         }

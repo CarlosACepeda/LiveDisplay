@@ -8,6 +8,8 @@
   <string name="blackwallpaper">Negru</string>
   <string name="changewallpaper">Schimbă fundalul ecranului</string>
   <string name="changeweatherpreferences">Schimbă preferințele de climă</string>
+  <string name="city">Oras</string>
+  <string name="country">Tara</string>
   <string name="defaultwallpaper">Fundal default</string>
   <string name="defaultwallpaperappearance">Fundal</string>
   <string name="dialogallowbutton">Permite</string>
@@ -26,6 +28,7 @@
   <string name="musiccontrolledfromnotification">Folosiți cea mai recentă notificare care reprezintă redarea multimedia</string>
   <string name="musicwidgetcontrolmethod">Metoda de control a Muzicii</string>
   <string name="musicwidgetenabled">Activează Widget de Muzică</string>
+  <string name="notavailable">n/a</string>
   <string name="notavailableyet">Nu este disponibil încă ...</string>
   <string name="notificationsettings">Notificări</string>
   <string name="now_playing">Acum Jucăm:</string>
@@ -44,6 +47,7 @@
   <string name="turnonnewnotification">Aprinde ecranul</string>
   <string name="twelvehours">12 ore</string>
   <string name="updateweathereach">Actualizare climă fiecare</string>
+  <string name="updateweathereach_desc">Frecventa din actualizarea din clima</string>
   <string name="version">Versiune</string>
   <string name="wallpaperblur">Blurare</string>
   <string name="wallpaperopacity">Opacitate</string>
