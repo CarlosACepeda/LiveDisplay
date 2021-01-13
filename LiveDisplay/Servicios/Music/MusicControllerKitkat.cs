@@ -47,6 +47,7 @@ namespace LiveDisplay.Servicios.Music
         {
             JukeboxKitkat.MediaEvent += Jukebox_MediaEvent;
             TransportControls = remoteController;
+            MediaMetadata = remoteController.EditMetadata();
         }
 
         private void Jukebox_MediaEvent(object sender, MediaActionEventArgs e)

@@ -25,7 +25,6 @@ namespace LiveDisplay.Servicios.FloatingNotification
     [Service(Enabled = true)]
     internal class FloatingNotification : Service, View.IOnTouchListener
     {
-        private NotificationStyleApplier styleApplier;
 
         private IWindowManager windowManager;
         private LinearLayout floatingNotificationView;
@@ -111,9 +110,6 @@ namespace LiveDisplay.Servicios.FloatingNotification
             floatingNotificationActionsContainer = floatingNotificationView.FindViewById<LinearLayout>(Resource.Id.notificationActions);
 
 
-            styleApplier = new NotificationStyleApplier(ref floatingNotificationView, null, NotificationViewType.Floating);
-
-
 
             CatcherHelper.NotificationRemoved += CatcherHelper_NotificationRemoved;
             CatcherHelper.NotificationPosted += CatcherHelper_NotificationPosted;
@@ -176,7 +172,6 @@ namespace LiveDisplay.Servicios.FloatingNotification
             {
                 if ((string)floatingNotificationView.GetTag(Resource.String.defaulttag) == openNotification.GetCustomId())
                 {
-                    styleApplier?.ApplyStyle(openNotification);
 
                     floatingNotificationView.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
                 }
@@ -185,7 +180,6 @@ namespace LiveDisplay.Servicios.FloatingNotification
             {
                 //Is a new notification, so set a new tag.
                 floatingNotificationView.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
-                styleApplier?.ApplyStyle(openNotification);
 
                 if (floatingNotificationView.Visibility != ViewStates.Visible)
                 {
@@ -228,7 +222,6 @@ namespace LiveDisplay.Servicios.FloatingNotification
             //If it's the same then simply show it.
             if ((string)floatingNotificationView.GetTag(Resource.String.defaulttag) != openNotification.GetCustomId())
             {
-                styleApplier?.ApplyStyle(openNotification);
                 floatingNotificationView.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
             }
             if (floatingNotificationView.Visibility != ViewStates.Visible)

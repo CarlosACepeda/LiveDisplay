@@ -21,10 +21,18 @@ namespace LiveDisplay.Fragments
 {
     public class NotificationFragment : Fragment
     {
+
+        private const string BigPictureStyle = "android.app.Notification$BigPictureStyle";
+        private const string InboxStyle = "android.app.Notification$InboxStyle";
+        private const string MediaStyle = "android.app.Notification$MediaStyle";
+        public const string MessagingStyle = "android.app.Notification$MessagingStyle"; //Only available on API Level 24 and up.
+        private const string BigTextStyle = "android.app.Notification$BigTextStyle";
+        private const string DecoratedCustomViewStyle = "android.app.Notification$DecoratedCustomViewStyle";
+
+
         private OpenNotification _openNotification; //the current OpenNotification instance active.
         private LinearLayout maincontainer;
         private bool timeoutStarted = false;
-        private NotificationStyleApplier styleApplier;
         private ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
         #region Lifecycle events
 
@@ -41,13 +49,12 @@ namespace LiveDisplay.Fragments
         {
             View v = inflater.Inflate(Resource.Layout.NotificationFrag, container, false);
             maincontainer = v.FindViewById<LinearLayout>(Resource.Id.container);
-            styleApplier = new NotificationStyleApplier(ref maincontainer, this, NotificationViewType.OnLockscreen);
             maincontainer.Drag += Notification_Drag;
             maincontainer.Click += LlNotification_Click;
             NotificationAdapterViewHolder.ItemLongClicked += ItemLongClicked;
             CatcherHelper.NotificationPosted += CatcherHelper_NotificationPosted;
             CatcherHelper.NotificationRemoved += CatcherHelper_NotificationRemoved;
-            NotificationStyleApplier.SendInlineResponseAvailabityChanged += NotificationStyleApplier_SendInlineResponseAvailabityChanged;
+            NotificationStyle.SendInlineResponseAvailabityChanged += NotificationStyleApplier_SendInlineResponseAvailabityChanged;
 
             //if (openNotification == null) //We don't have a notification to show here, so...
             //{
@@ -106,7 +113,7 @@ namespace LiveDisplay.Fragments
             NotificationAdapterViewHolder.ItemLongClicked -= ItemLongClicked;
             CatcherHelper.NotificationRemoved -= CatcherHelper_NotificationRemoved;
             CatcherHelper.NotificationPosted -= CatcherHelper_NotificationPosted;
-            NotificationStyleApplier.SendInlineResponseAvailabityChanged -= NotificationStyleApplier_SendInlineResponseAvailabityChanged;
+            NotificationStyle.SendInlineResponseAvailabityChanged -= NotificationStyleApplier_SendInlineResponseAvailabityChanged;
 
             base.OnDestroyView();
         }
@@ -118,7 +125,6 @@ namespace LiveDisplay.Fragments
 
             NotificationAdapterViewHolder.ItemClicked -= ItemClicked;
             WidgetStatusPublisher.OnWidgetStatusChanged -= WidgetStatusPublisher_OnWidgetStatusChanged;
-            styleApplier = null;
             base.OnDestroy();
         }
 
@@ -210,27 +216,54 @@ namespace LiveDisplay.Fragments
         {
             _openNotification = openNotification;
 
-            if (configurationManager.RetrieveAValue(ConfigurationParameters.TestEnabled))
-            {
-                Toast.MakeText(Application.Context, "Progress Indeterminate?: " + _openNotification.IsProgressIndeterminate().ToString() + "\n"
-                    + "Current Progress: " + _openNotification.GetProgress().ToString() + "\n"
-                    + "Max Progress: " + _openNotification.GetProgressMax().ToString() + "\n"
-                    + _openNotification.GetGroupInfo()
-                    , ToastLength.Short).Show();
-            }
-            //Determine if the notification to show updates the current view,(in case there's a notification currently owning this Widget)
-            bool updating = _openNotification.GetCustomId() == openNotification.GetCustomId();
+            Activity.RunOnUiThread(() => {
 
-            styleApplier?.ApplyStyle(_openNotification);
-            StartTimeout(false);
-            
-            //Now we check if the current showing widget is this, if not, ask for us to be the current showing widget.
-            if (WidgetStatusPublisher.CurrentActiveWidget != "NotificationFragment")
-            {
-                WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = true, WidgetName = "NotificationFragment" });
-                maincontainer.Visibility = ViewStates.Visible; //we make ourselves visible when we are the current showing widget.
-            }
-            else if (maincontainer.Visibility != ViewStates.Visible) maincontainer.Visibility = ViewStates.Visible;
+                if (configurationManager.RetrieveAValue(ConfigurationParameters.TestEnabled))
+                {
+                    Toast.MakeText(Application.Context, "Progress Indeterminate?: " + _openNotification.IsProgressIndeterminate().ToString() + "\n"
+                        + "Current Progress: " + _openNotification.GetProgress().ToString() + "\n"
+                        + "Max Progress: " + _openNotification.GetProgressMax().ToString() + "\n"
+                        + _openNotification.GetGroupInfo()
+                        , ToastLength.Short).Show();
+                }
+                //Determine if the notification to show updates the current view,(in case there's a notification currently owning this Widget)
+                bool updating = _openNotification.GetId() == openNotification.GetId();
+
+                switch(_openNotification.Style())
+                {
+                    case BigPictureStyle:
+                        new BigPictureStyleNotification(_openNotification, ref maincontainer, this).ApplyStyle();
+                        break;
+                    case MessagingStyle:
+                        new MessagingStyleNotification(_openNotification, ref maincontainer, this).ApplyStyle();
+                        break;
+                    case InboxStyle:
+                        new InboxStyleNotification(_openNotification, ref maincontainer, this).ApplyStyle();
+                        break;
+                    case BigTextStyle:
+                        new BigTextStyleNotification(_openNotification, ref maincontainer, this).ApplyStyle();
+                        break;
+                    case MediaStyle:
+                        new MediaStyleNotification(_openNotification, ref maincontainer, this).ApplyStyle();
+                        break;
+                    default:
+                        new DefaultStyleNotification(_openNotification, ref maincontainer, this).ApplyStyle();
+                        break;
+
+                }
+
+                StartTimeout(false);
+
+                //Now we check if the current showing widget is this, if not, ask for us to be the current showing widget.
+                if (WidgetStatusPublisher.CurrentActiveWidget != "NotificationFragment")
+                {
+                    WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = true, WidgetName = "NotificationFragment" });
+                    maincontainer.Visibility = ViewStates.Visible; //we make ourselves visible when we are the current showing widget.
+                }
+                else if (maincontainer.Visibility != ViewStates.Visible) maincontainer.Visibility = ViewStates.Visible;
+
+            });
+
         }
 
         #endregion Events Implementation:

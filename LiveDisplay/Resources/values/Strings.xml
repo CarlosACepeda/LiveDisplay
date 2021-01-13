@@ -11,7 +11,7 @@
   <string name="advanced">Advanced</string>
   <string name="albumartappearancesetting">Album Artwork</string>
   <string name="alertnopermissions">You must allow the required permission!</string>
-  <string name="allowweatherchangewallpaper">Change wallpaper briefly after a update</string>
+  <string name="allowweatherchangewallpaper">Change wallpaper briefly after an update</string>
   <string name="app_name">LiveDisplay</string>
   <string name="askfortranslations">Want to help with translations?</string>
   <string name="awakecausesblackwall">Keep screen black</string>
@@ -25,9 +25,11 @@
   <string name="changewallpaperappearance">Wallpaper appearance</string>
   <string name="changewallpaperdesc">By default, current system wallpaper is used</string>
   <string name="changeweatherpreferences">Change weather preferences</string>
+  <string name="city">City</string>
   <string name="clearallnotifications">Clear all</string>
   <string name="contactme">Contact me</string>
   <string name="contributetoprojectdesc">LiveDisplay on Github</string>
+  <string name="country">Country</string>
   <string name="currentwallpaper">Current Wallpaper</string>
   <string name="defaulttag">idk</string>
   <string name="defaultwallpaper">Default wallpaper</string>
@@ -91,6 +93,7 @@
   <string name="musicwidgetenabled">Enable Music Widget</string>
   <string name="never">Never</string>
   <string name="nonallowedtoturnonscreen">Non allowed to turn on screen</string>
+  <string name="notavailable">n/a</string>
   <string name="notavailableyet">Not available... yet.</string>
   <string name="notificationsettings">Notifications</string>
   <string name="notificationviewvisibilitytime">After clicking the notification hide it after...</string>
@@ -125,9 +128,10 @@
   <string name="tutorialtext">Hi there! \n Double tap in the half bottom to unlock!, tap the half top to turn off the device \n Press anywhere to continue</string>
   <string name="twelvehours">12 Hours</string>
   <string name="updateweathereach">Update weather each:</string>
+  <string name="updateweathereach_desc">Weather update frequency</string>
   <string name="useimperialunits">Use Imperial units</string>
   <string name="version">Version</string>
-  <string name="versionnumber">0.9.3-beta1</string>
+  <string name="versionnumber">0.9.4-beta1</string>
   <string name="wallpaperblur">Blur</string>
   <string name="wallpaperopacity">Opacity</string>
   <string name="wallpapersettingappliestoalbumart">Current setting also affects album artwork</string>

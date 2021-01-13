@@ -5,11 +5,13 @@ using Android.Graphics.Drawables;
 using Android.Media.Session;
 using Android.OS;
 using Android.Service.Notification;
+using Android.Text;
 using Android.Util;
 using Java.Util;
 using LiveDisplay.Factories;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Music;
+using LiveDisplay.Servicios.Notificaciones.NotificationStyle;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -62,6 +64,33 @@ namespace LiveDisplay.Servicios.Notificaciones
         public string GetTag() => statusbarnotification.Tag;
 
         private string GetPackageName() => statusbarnotification.PackageName;
+
+        public string GetPreviousMessages()
+        {
+            string messages = string.Empty;
+            //Only Valid in MessagingStyle
+            if(Style()== "android.app.Notification$MessagingStyle")
+            {
+                var messageBundles= statusbarnotification.Notification.Extras?.GetParcelableArray("android.messages");
+                if(messageBundles.Length>0)
+                {
+                    for (int i=0; i<messageBundles.Length-1; i++)
+                    {
+                        //var test14 = item.KeySet();
+                        var moreExtras = ((Bundle)messageBundles[i]).Get("extras");
+                        var sender_person = ((Bundle)messageBundles[i]).Get("sender_person");
+                        var sender = ((Bundle)messageBundles[i]).Get("sender");
+                        var text = ((Bundle)messageBundles[i]).Get("text");
+                        var time = ((Bundle)messageBundles[i]).Get("time");
+
+                        messages += sender + "\n";
+                        messages += text + "\n" + "\n";
+                    }
+
+                }
+            }
+            return messages;
+        }
 
         public string Title()
         {
@@ -410,6 +439,10 @@ namespace LiveDisplay.Servicios.Notificaciones
         public string GetPackage()
         {
             return statusbarnotification.PackageName;
+        }
+        public NotificationRelevance GetRelevance()
+        {
+            return NotificationRelevance.DefaultRelevance;
         }
     }
 

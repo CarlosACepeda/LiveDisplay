@@ -1,0 +1,42 @@
+﻿<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                  xmlns:app="http://schemas.android.com/apk/res-auto"
+      android:title="@string/weather"
+      android:icon="@drawable/ic_cloud_white_24dp">
+  <PreferenceCategory
+    android:title="@string/weather"
+    app:iconSpaceReserved="false">
+    <EditTextPreference
+      android:key="weathercity"
+      android:defaultValue=""
+      android:title="@string/city"
+      android:summary="@string/entercityplaceholder"
+      app:iconSpaceReserved="false" />
+    <Preference
+      android:key="weathercountrycode"
+      android:title="@string/country"
+      android:summary="@string/notavailable"
+      android:enabled="false"
+      android:selectable="false"
+      android:defaultValue="a"
+      app:iconSpaceReserved="false" />
+    <SwitchPreference
+      android:defaultValue="false"
+      android:key="useimperialsystem?"
+      android:title="@string/useimperialunits"
+      app:iconSpaceReserved="false" />
+  <SwitchPreference
+      android:defaultValue="true"
+      android:key="weatherupdatechangeswallpaper?"
+      android:title="@string/allowweatherchangewallpaper"
+      app:iconSpaceReserved="false" />
+  <ListPreference
+      android:defaultValue="-1"
+      android:key="weatherupdatefrequency"
+      android:title="@string/updateweathereach"
+      android:summary="@string/updateweathereach_desc"
+      android:entries="@array/listentriesweatherupdatefrequency"
+      android:entryValues="@array/listvaluesweatherupdatefrequency"
+      app:iconSpaceReserved="false">
+  </ListPreference>
+    </PreferenceCategory>
+</PreferenceScreen>

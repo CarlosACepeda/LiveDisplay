@@ -45,9 +45,8 @@
     <AndroidCreatePackagePerAbi>false</AndroidCreatePackagePerAbi>
     <AndroidEnableMultiDex>false</AndroidEnableMultiDex>
     <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
-    <AndroidLinkTool>r8</AndroidLinkTool>
     <AndroidPackageFormat>apk</AndroidPackageFormat>
-    <AndroidDexTool>dx</AndroidDexTool>
+    <AndroidDexTool>d8</AndroidDexTool>
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -68,11 +67,11 @@
     <AndroidSupportedAbis>
     </AndroidSupportedAbis>
     <AndroidCreatePackagePerAbi>false</AndroidCreatePackagePerAbi>
-    <EnableProguard>false</EnableProguard>
     <AndroidEnableMultiDex>false</AndroidEnableMultiDex>
     <AndroidEnableSGenConcurrent>false</AndroidEnableSGenConcurrent>
     <Debugger>Native</Debugger>
     <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
+    <AndroidLinkTool>r8</AndroidLinkTool>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Java.Interop" />
@@ -87,12 +86,12 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Fragments\Preferences\WeatherSettingsFragment.cs" />
     <Compile Include="Servicios\ActivityEvents\ActivityLifecycleHelper.cs" />
     <Compile Include="Activities\BackgroundSettingsActivity.cs" />
     <Compile Include="Activities\BlacklistActivity.cs" />
     <Compile Include="Activities\SettingsActivity.cs" />
     <Compile Include="Activities\TransparentActivity.cs" />
-    <Compile Include="Activities\WeatherSettingsActivity.cs" />
     <Compile Include="Adapters\AppsToBeBlacklistedAdapter.cs" />
     <Compile Include="Adapters\FilteredNotificationAdapter.cs" />
     <Compile Include="Adapters\NotificationAdapter.cs" />
@@ -143,7 +142,13 @@
     <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationItemClickedEventArgs.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationListSizeChangedEventArgs.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationRemovedEventArgs.cs" />
-    <Compile Include="Servicios\Notificaciones\NotificationStyle\NotificationStyleApplier.cs" />
+    <Compile Include="Servicios\Notificaciones\NotificationStyle\BigPictureStyleNotification.cs" />
+    <Compile Include="Servicios\Notificaciones\NotificationStyle\MediaStyleNotification.cs" />
+    <Compile Include="Servicios\Notificaciones\NotificationStyle\DefaultStyleNotification.cs" />
+    <Compile Include="Servicios\Notificaciones\NotificationStyle\BigTextStyleNotification.cs" />
+    <Compile Include="Servicios\Notificaciones\NotificationStyle\InboxStyleNotification.cs" />
+    <Compile Include="Servicios\Notificaciones\NotificationStyle\MessagingStyleNotification.cs" />
+    <Compile Include="Servicios\Notificaciones\NotificationStyle\NotificationStyle.cs" />
     <Compile Include="Servicios\Notificaciones\OpenNotification.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationCancelledEventArgsKitkat.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationCancelledEventArgsLollipop.cs" />
@@ -393,10 +398,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\WeatherSettings.axml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
-    </AndroidResource>
     <AndroidResource Include="Resources\menu\menu_main.xml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
@@ -643,6 +644,12 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\cLock2.xml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\xml\weather_widget_prefs.xml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>

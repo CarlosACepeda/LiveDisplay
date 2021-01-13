@@ -161,6 +161,7 @@ namespace LiveDisplay.Servicios.Music
 
                 case MediaActionFlags.RetrieveMediaInformation:
                     //Send media information.
+                    if(_mediaMetadata!= null)
                     OnMediaMetadataChanged(new MediaMetadataChangedEventArgs
                     {
                         MediaMetadata = _mediaMetadata,
@@ -168,6 +169,8 @@ namespace LiveDisplay.Servicios.Music
                         AppName= _appname,
                         OpenNotificationId = _openNotificationId
                     });
+
+                    if(_playbackState!=  null)
                     //Send Playbackstate of the media.
                     OnMediaPlaybackChanged(new MediaPlaybackStateChangedEventArgs
                     {
@@ -184,6 +187,7 @@ namespace LiveDisplay.Servicios.Music
 
         internal static bool MediaSessionAssociatedWThisNotification(string openNotificationId)
         {
+            if (_openNotificationId == null) return false;
             return _openNotificationId == openNotificationId; //Useful to check which notification (In case a notification causes this MusicController to be ative) owns this MusicController
         }
 
@@ -239,6 +243,7 @@ namespace LiveDisplay.Servicios.Music
 
         protected virtual void OnMediaMetadataChanged(MediaMetadataChangedEventArgs e)
         {
+            if(e.MediaMetadata!= null) //Sometimes MediaMetadata is null, and it could cause a Crash later in MusicWidget
             ThreadPool.QueueUserWorkItem(m =>
             {
                 MediaMetadataChanged?.Invoke(this, e);

@@ -24,9 +24,11 @@
   <string name="changewallpaperappearance">Apariencia del papel tapiz</string>
   <string name="changewallpaperdesc">El fondo de pantalla actual se usa por defecto</string>
   <string name="changeweatherpreferences">Cambiar preferencias del clima</string>
+  <string name="city">Ciudad</string>
   <string name="clearallnotifications">Descartar todas</string>
   <string name="contactme">Contáctame</string>
   <string name="contributetoprojectdesc">LiveDisplay en Github</string>
+  <string name="country">Pais</string>
   <string name="currentwallpaper">Papel Tapiz Actual</string>
   <string name="defaultwallpaper">Papel tapiz por defecto</string>
   <string name="defaultwallpaperappearance">Papel Tapiz</string>
@@ -88,6 +90,7 @@
   <string name="musicwidgetenabled">Activar el Widget de Música</string>
   <string name="never">Nunca</string>
   <string name="nonallowedtoturnonscreen">No permitido para encender la pantalla</string>
+  <string name="notavailable">n/a</string>
   <string name="notavailableyet">No disponible...aún.</string>
   <string name="notificationsettings">Notificaciones</string>
   <string name="notificationviewvisibilitytime">Después de clicar la notificación esconderla después de...</string>
@@ -120,6 +123,7 @@
   <string name="turnonusermovement">Prender la pantalla al levantar el dispositivo</string>
   <string name="twelvehours">12 Horas</string>
   <string name="updateweathereach">Actualizar clima cada</string>
+  <string name="updateweathereach_desc">Frecuencia de actualización del clima</string>
   <string name="useimperialunits">Usar unidades imperiales</string>
   <string name="version">Versión</string>
   <string name="wallpaperblur">Difuminación</string>

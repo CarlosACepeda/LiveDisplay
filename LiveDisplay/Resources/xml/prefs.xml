@@ -16,7 +16,7 @@
           android:title="@string/musicwidget"
           android:icon="@drawable/ic_music_widget_24dp" />
   <Preference
-        android:fragment="WeatherSettingsActivity"
+        android:fragment="WeatherSettingsFragment"
           android:title="@string/weather"
           android:icon="@drawable/ic_cloud_white_24dp" />
   <Preference

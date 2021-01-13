@@ -277,7 +277,15 @@
 
                         ThreadPool.QueueUserWorkItem(m =>
                         {
-                            Bitmap bitmap = ((BitmapDrawable)Application.Context.GetDrawable(Resource.Drawable.album_artwork)).Bitmap;
+                            Bitmap bitmap= null;
+                            if(Build.VERSION.SdkInt>= BuildVersionCodes.Lollipop)
+                            {
+                                bitmap = ((BitmapDrawable)Application.Context.GetDrawable(Resource.Drawable.album_artwork)).Bitmap;
+                            }
+                            else
+                            {
+                                bitmap = ((BitmapDrawable)Application.Context.Resources.GetDrawable(Resource.Drawable.album_artwork)).Bitmap;
+                            }
                             BlurImage blurImage = new BlurImage(Application.Context);
                             blurImage.Load(bitmap).Intensity(albumArtBlurLevel);
                             Drawable drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
