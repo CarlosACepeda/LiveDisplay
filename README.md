@@ -17,7 +17,7 @@ This Application shows the list of current notifications on a beautiful and cust
 
 ### Screenshots
 
-<img src="https://i.imgur.com/Ykikt9d.png" width=33%><img src="https://i.imgur.com/Bbb5hbv.png" width=33%><img src="https://i.imgur.com/bXZ5pCc.png" width=33%>
+<img src="https://i.imgur.com/OWhWTSB.png" width=33%><img src="https://i.imgur.com/RQqF0jq.png" width=33%><img src="https://i.imgur.com/Jnmf50X.png" width=33%>
 
 
 ## Built With
