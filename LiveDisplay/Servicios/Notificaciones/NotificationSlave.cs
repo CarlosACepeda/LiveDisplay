@@ -15,6 +15,7 @@ namespace LiveDisplay.Servicios
         public event EventHandler<NotificationCancelledEventArgsKitkat> NotificationCancelled;
 
         public event EventHandler<NotificationCancelledEventArgsLollipop> NotificationCancelledLollipop;
+
         public event EventHandler ResendLastNotificationRequested;
 
         public event EventHandler AllNotificationsCancelled;
@@ -74,7 +75,7 @@ namespace LiveDisplay.Servicios
             notificationManager.Notify(notifid, builder.Build());
         }
 
-        public void PostNotification(int notifid,string title, string text, bool autoCancellable, NotificationImportance notificationImportance)
+        public void PostNotification(int notifid, string title, string text, bool autoCancellable, NotificationImportance notificationImportance)
         {
             NotificationChannel notificationChannel = new NotificationChannel("livedisplaynotificationchannel", "LiveDisplay", notificationImportance);
             notificationManager.CreateNotificationChannel(notificationChannel);
@@ -126,12 +127,10 @@ namespace LiveDisplay.Servicios
 
             Notification.Action.Builder action = new Notification.Action.Builder(Resource.Drawable.ic_stat_default_appicon, "Answer", pendingIntent).AddRemoteInput(remoteInput);
 
-
-
             builder.SetStyle(new Notification.MessagingStyle("Su madre").AddMessage(new Notification.MessagingStyle.Message("hi", -1, "user1"))
                 .AddMessage(new Notification.MessagingStyle.Message("WhatsUp", 0, "user2"))
                 .AddMessage(new Notification.MessagingStyle.Message("How bout lunch?", 1, "user1")));
-            #pragma warning restore
+#pragma warning restore
             builder.SetContentTitle("");
             builder.SetContentText("");
             builder.SetAutoCancel(true);

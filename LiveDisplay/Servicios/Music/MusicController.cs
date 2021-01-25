@@ -1,14 +1,10 @@
 ﻿using Android.App;
-using Android.Hardware.Camera2;
 using Android.Media;
 using Android.Media.Session;
 using Android.Util;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Music.MediaEventArgs;
-using LiveDisplay.Servicios.Notificaciones;
 using System;
-using System.Net;
-using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace LiveDisplay.Servicios.Music
@@ -23,9 +19,9 @@ namespace LiveDisplay.Servicios.Music
         #region Class members
 
         public static PlaybackStateCode MusicStatus { get; private set; }
-        static PlaybackState _playbackState;
-        static MediaController.TransportControls _transportControls;
-        static MediaMetadata _mediaMetadata;
+        private static PlaybackState _playbackState;
+        private static MediaController.TransportControls _transportControls;
+        private static MediaMetadata _mediaMetadata;
         private static MusicController instance;
         private static PendingIntent _activityIntent;
         private static MediaController _currentMediaController;
@@ -50,7 +46,7 @@ namespace LiveDisplay.Servicios.Music
 
         /// <summary>
         /// Pass a MediaSession.Token to create one MediaController.
-        /// 
+        ///
         /// </summary>
         /// <param name="mediaController"></param>
         /// <param name="token"></param>
@@ -71,19 +67,19 @@ namespace LiveDisplay.Servicios.Music
                 GetCurrentInstance(_currentMediaController, owningNotificationId);
                 return StartMediaPlayback();
             }
-            else 
+            else
             {
                 if (IsPlaybackStarted(token) == false)
                 {
                     StopPlayback(_currentToken); //the incoming token is different so I will stop the previous media callback before
-                                                                          //creating a new one.
+                                                 //creating a new one.
 
                     _currentMediaController = new MediaController(Application.Context, token);
                     _currentToken = token;
                     LoadMediaControllerData(_currentMediaController);
                     return StartMediaPlayback();
                 }
-                else 
+                else
                 {
                     //The mediaplayback is already started for this session in particular.
 
@@ -95,18 +91,21 @@ namespace LiveDisplay.Servicios.Music
                 }
             }
         }
+
         private static MusicController GetCurrentInstance(MediaController controller, string owningNotificationId)
         {
             if (instance == null)
                 instance = new MusicController(controller, owningNotificationId);
             return instance;
         }
+
         private MusicController(MediaController controller, string notificationId)
         {
             LoadMediaControllerData(controller);
             _openNotificationId = notificationId;
             Jukebox.MediaEvent += Jukebox_MediaEvent;
         }
+
         private static void LoadMediaControllerData(MediaController controller)
         {
             if (controller != null)
@@ -159,24 +158,29 @@ namespace LiveDisplay.Servicios.Music
                     _transportControls?.Stop();
                     break;
 
+                case MediaActionFlags.Replay:
+                    _transportControls?.Stop();
+                    _transportControls?.Play();
+                    break;
+
                 case MediaActionFlags.RetrieveMediaInformation:
                     //Send media information.
-                    if(_mediaMetadata!= null)
-                    OnMediaMetadataChanged(new MediaMetadataChangedEventArgs
-                    {
-                        MediaMetadata = _mediaMetadata,
-                        ActivityIntent = _activityIntent,
-                        AppName= _appname,
-                        OpenNotificationId = _openNotificationId
-                    });
+                    if (_mediaMetadata != null)
+                        OnMediaMetadataChanged(new MediaMetadataChangedEventArgs
+                        {
+                            MediaMetadata = _mediaMetadata,
+                            ActivityIntent = _activityIntent,
+                            AppName = _appname,
+                            OpenNotificationId = _openNotificationId
+                        });
 
-                    if(_playbackState!=  null)
-                    //Send Playbackstate of the media.
-                    OnMediaPlaybackChanged(new MediaPlaybackStateChangedEventArgs
-                    {
-                        PlaybackState = _playbackState.State,
-                        CurrentTime = _playbackState.Position
-                    });
+                    if (_playbackState != null)
+                        //Send Playbackstate of the media.
+                        OnMediaPlaybackChanged(new MediaPlaybackStateChangedEventArgs
+                        {
+                            PlaybackState = _playbackState.State,
+                            CurrentTime = _playbackState.Position
+                        });
 
                     break;
 
@@ -211,7 +215,7 @@ namespace LiveDisplay.Servicios.Music
             {
                 ActivityIntent = _activityIntent,
                 MediaMetadata = _mediaMetadata,
-                AppName= _appname,
+                AppName = _appname,
                 OpenNotificationId = _openNotificationId
             });
             //Datos de la Media que se está reproduciendo.
@@ -243,11 +247,11 @@ namespace LiveDisplay.Servicios.Music
 
         protected virtual void OnMediaMetadataChanged(MediaMetadataChangedEventArgs e)
         {
-            if(e.MediaMetadata!= null) //Sometimes MediaMetadata is null, and it could cause a Crash later in MusicWidget
-            ThreadPool.QueueUserWorkItem(m =>
-            {
-                MediaMetadataChanged?.Invoke(this, e);
-            });
+            if (e.MediaMetadata != null) //Sometimes MediaMetadata is null, and it could cause a Crash later in MusicWidget
+                ThreadPool.QueueUserWorkItem(m =>
+                {
+                    MediaMetadataChanged?.Invoke(this, e);
+                });
         }
 
         #endregion Raising events.
@@ -278,8 +282,9 @@ namespace LiveDisplay.Servicios.Music
                 return false;
             }
         }
+
         //if you don't pass any argument it'll effectively do nothing.
-        public static bool StopPlayback(MediaSession.Token token= null)
+        public static bool StopPlayback(MediaSession.Token token = null)
         {
             if (_currentToken == token) //Making sure we are stopping the same one we started.
             {
@@ -300,6 +305,7 @@ namespace LiveDisplay.Servicios.Music
             }
             return false;
         }
+
         private static bool IsPlaybackStarted(MediaSession.Token token)
         {
             if (_currentToken.Equals(token) && _playbackstarted == true)
@@ -308,6 +314,7 @@ namespace LiveDisplay.Servicios.Music
             }
             return false;
         }
+
         public override void OnSessionDestroyed()
         {
             StopPlayback(_currentToken); //Just in case... to avoid memory leaks.

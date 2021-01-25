@@ -1,21 +1,15 @@
 ﻿using Android.App;
-using Android.Content;
 using Android.Graphics.Drawables;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
 using Android.Widget;
 using LiveDisplay.Servicios.Wallpaper;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
 {
-    class MediaStyleNotification : NotificationStyle
+    internal class MediaStyleNotification : NotificationStyle
     {
         private bool ActionsCompacted { get; set; } = false; //Default value, though, this should be linked somehow with the current status of the view, to ensure robustness.
+
         public MediaStyleNotification(OpenNotification openNotification, ref LinearLayout notificationView, AndroidX.Fragment.App.Fragment notificationFragment)
       : base(openNotification, ref notificationView, notificationFragment)
         {
@@ -29,14 +23,17 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                 WallpaperPoster = WallpaperPoster.Notification,
             });
         }
+
         protected override void SetWhen()
         {
             When.Text = string.Empty;
         }
+
         protected override void SetActionText(Button action, string text)
         {
-            action.Text=string.Empty;
+            action.Text = string.Empty;
         }
+
         protected override void Collapse_Click(object sender, EventArgs e)
         {
             //It works, but I am not sure how this will improve user experience, tbh, so I commented it out.

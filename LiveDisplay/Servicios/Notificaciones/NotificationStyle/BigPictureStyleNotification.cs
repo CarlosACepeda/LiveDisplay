@@ -1,22 +1,13 @@
-﻿using Android.App;
-using Android.Content;
-using Android.Graphics.Drawables;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
+﻿using Android.Graphics.Drawables;
 using Android.Widget;
 using LiveDisplay.Servicios.Wallpaper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
 {
-    public class BigPictureStyleNotification: NotificationStyle
+    public class BigPictureStyleNotification : NotificationStyle
     {
         public BigPictureStyleNotification(OpenNotification openNotification, ref LinearLayout notificationView, AndroidX.Fragment.App.Fragment notificationFragment)
-    :   base(openNotification, ref notificationView, notificationFragment)
+    : base(openNotification, ref notificationView, notificationFragment)
         {
             var notificationBigPicture = new BitmapDrawable(Resources, OpenNotification.BigPicture());
             WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
@@ -28,6 +19,5 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                 WallpaperPoster = WallpaperPoster.Notification,
             });
         }
-
     }
 }

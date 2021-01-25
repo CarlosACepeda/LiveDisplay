@@ -8,7 +8,7 @@
         public const int DefaultBlurLevel = 1;
         public const int DefaultAlbumartBlurLevel = 16;
         public const string OpacityLevel = "opacitylevel";
-        public const int DefaultOpacityLevel =100;
+        public const int DefaultOpacityLevel = 100;
         public const int DefaultAlbumartOpacityLevel = 40;
         public const string AlbumArtBlurLevel = "albumartblurlevel";
         public const string AlbumArtOpacityLevel = "albumartopacitylevel";
@@ -48,6 +48,7 @@
         public const string HideShortcutsWhenKeyguardSafe = "hideshortcutswhenkeyguardsafe?";
         public const string LaunchNotification = "launchnotification?";
         public const string AppHasCustomImportanceRules = "apphascustomblockrules";
+
         //Misc.
         //It serves the purpose of enabling certain messages to be shown in a Toast Message useful for the developer.
         public const string TestEnabled = "testenabled?";
@@ -59,7 +60,5 @@
         //By default it is the clock. (possible values: "clock", "music", "notification")
         //When there's not an active widget.
         public const string StartingWidget = "clock";
-
-
     }
 }

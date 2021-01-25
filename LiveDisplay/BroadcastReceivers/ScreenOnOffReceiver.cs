@@ -24,6 +24,25 @@ namespace LiveDisplay.BroadcastReceivers
             }
             else if (intent.Action == Intent.ActionScreenOff)
             {
+                //try
+                //{
+                //    //Java.Lang.Runtime.GetRuntime().Exec("settings put global heads_up_notifications_enabled 0");
+                //    string command = "settings put global heads_up_notifications_enabled 0";
+                //    Java.Lang.Process p = Java.Lang.Runtime.GetRuntime().Exec(command);
+                //    var errorStream = p.ErrorStream;
+                //    InputStreamReader inputStreamReader = new InputStreamReader(errorStream);
+                //    BufferedReader bf = new BufferedReader(inputStreamReader);
+                //    string line;
+                //    while((line = bf.ReadLine())!= null)
+                //    {
+                //        Log.Debug("LiveDisplay", line);
+                //    }
+                //    //p.WaitFor();
+                //}
+                //catch (System.Exception)
+                //{
+                //    throw;
+                //}
                 //Start hidden in Darkness. :$
                 IsScreenOn = false;
 
@@ -31,7 +50,7 @@ namespace LiveDisplay.BroadcastReceivers
                 {
                     ScreenTurnedOffWhileInVertical = true;
                 }
-                else 
+                else
                 {
                     ScreenTurnedOffWhileInVertical = false;
                 }

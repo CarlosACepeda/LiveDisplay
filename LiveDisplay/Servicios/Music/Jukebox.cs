@@ -78,6 +78,14 @@ namespace LiveDisplay.Servicios.Music
             });
         }
 
+        internal static void Replay()
+        {
+            OnMediaEvent(new MediaActionEventArgs
+            {
+                MediaActionFlags = MediaActionFlags.Replay
+            });
+        }
+
         internal static void RetrieveMediaInformation()
         {
             OnMediaEvent(new MediaActionEventArgs

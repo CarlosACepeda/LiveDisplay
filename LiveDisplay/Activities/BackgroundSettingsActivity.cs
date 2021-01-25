@@ -188,7 +188,6 @@
 
                         if (pickwallpaper.Enabled == false) pickwallpaper.Enabled = true;
 
-
                         switch (configurationManager.RetrieveAValue(ConfigurationParameters.ChangeWallpaper, "0"))
                         {
                             case "0":
@@ -260,8 +259,8 @@
 
                         if (appliesToMusicWidget.Checked == true)
                         {
-                             //If the user tries to set the album artwork opacity and blur
-                                                                  //then this checkbox is not anymore valid.
+                            //If the user tries to set the album artwork opacity and blur
+                            //then this checkbox is not anymore valid.
                             blur.Enabled = false;                 //As well as the Seekbars for blur and opacity, because
                             opacity.Enabled = false;              //the Default wallpaper config. also applies to the AlbumArt config.
                                                                   //So the user can't slide the seekbars.
@@ -277,8 +276,8 @@
 
                         ThreadPool.QueueUserWorkItem(m =>
                         {
-                            Bitmap bitmap= null;
-                            if(Build.VERSION.SdkInt>= BuildVersionCodes.Lollipop)
+                            Bitmap bitmap = null;
+                            if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
                             {
                                 bitmap = ((BitmapDrawable)Application.Context.GetDrawable(Resource.Drawable.album_artwork)).Bitmap;
                             }
@@ -402,6 +401,7 @@
                         wallpaperManager.ForgetLoadedWallpaper();
                         wallpaper = ((BitmapDrawable)wallpaperManager.Drawable).Bitmap;
                         break;
+
                     case "2": //User picked a custom wallpaper.
                         var imagePath = configurationManager.RetrieveAValue(ConfigurationParameters.ImagePath, "");
                         wallpaper = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.ImagePath, imagePath));
@@ -444,12 +444,10 @@
                     }
                 });
 
-
                 configurationManager.SaveAValue(ConfigurationParameters.AlbumArtBlurLevel, e.SeekBar.Progress);
                 albumArtBlurLevel = e.SeekBar.Progress;
             }
 
-            
             GC.Collect(0);
         }
 

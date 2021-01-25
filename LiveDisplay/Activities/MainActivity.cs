@@ -32,6 +32,7 @@
         private TextView enableDrawOverAccess;
         private RelativeLayout enableDrawOverAccessContainer;
         private bool isApplicationHealthy;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -54,7 +55,8 @@
         {
             if (e.Wallpaper?.Bitmap != null)
             {
-                RunOnUiThread(() => {
+                RunOnUiThread(() =>
+                {
                     Window.DecorView.Background = e.Wallpaper;
                 });
             }
@@ -64,7 +66,7 @@
         {
             using (var adminGivenImageView = FindViewById<ImageView>(Resource.Id.deviceAccessCheckbox))
             {
-                RunOnUiThread(()=>
+                RunOnUiThread(() =>
                 {
                     switch (e)
                     {
@@ -209,7 +211,7 @@
                             var notificationtext = Resources.GetString(Resource.String.testnotificationtext);
                             if (Build.VERSION.SdkInt > BuildVersionCodes.NMr1)
                             {
-                                slave.PostNotification(1, "LiveDisplay", notificationtext, true, NotificationImportance.Max);
+                                slave.PostNotification(7, "LiveDisplay", notificationtext, true, NotificationImportance.Max);
                             }
                             else
                             {
@@ -271,7 +273,6 @@
         {
             using (var intent = new Intent(Settings.ActionManageOverlayPermission))
                 StartActivityForResult(intent, 25);
-            
         }
 
         private void EnableDeviceAdmin_Click(object sender, EventArgs e)

@@ -13,6 +13,7 @@
             Drawable icon = ContextCompat.GetDrawable(remotePackageContext, iconInt);
             return icon;
         }
+
         public static Drawable ReturnIconDrawable(Icon icon, string paquete)
         {
             Context remotePackageContext = Application.Context.CreatePackageContext(paquete, 0);

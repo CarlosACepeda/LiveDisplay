@@ -1,7 +1,6 @@
 ﻿namespace LiveDisplay.Adapters
 {
     using Android.OS;
-    using Android.Service.Notification;
     using Android.Util;
     using Android.Views;
     using Android.Widget;
@@ -30,35 +29,34 @@
         {
             if (position != RecyclerView.NoPosition)
             {
-                    if (MusicController.MediaSessionAssociatedWThisNotification(notifications[position].GetCustomId())
-                        && new ConfigurationManager(AppPreferences.Default).RetrieveAValue(ConfigurationParameters.HideNotificationWhenItsMediaPlaying)
-                        && Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+                if (MusicController.MediaSessionAssociatedWThisNotification(notifications[position].GetCustomId())
+                    && new ConfigurationManager(AppPreferences.Default).RetrieveAValue(ConfigurationParameters.HideNotificationWhenItsMediaPlaying)
+                    && Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+                {
+                    holder.ItemView.Visibility = ViewStates.Gone;
+                    holder.ItemView.LayoutParameters = new RecyclerView.LayoutParams(0, 0);
+                }
+                else
+                {
+                    //Cast
+                    NotificationAdapterViewHolder viewHolder = holder as NotificationAdapterViewHolder;
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
                     {
-                        holder.ItemView.Visibility = ViewStates.Gone;
-                        holder.ItemView.LayoutParameters=new RecyclerView.LayoutParams(0, 0);
+                        viewHolder.Icono.Background = IconFactory.ReturnIconDrawable(notifications[position].GetSmallIcon(), notifications[position].GetPackage());
                     }
                     else
                     {
-                        //Cast
-                        NotificationAdapterViewHolder viewHolder = holder as NotificationAdapterViewHolder;
-                        if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
-                        {
-                            viewHolder.Icono.Background = IconFactory.ReturnIconDrawable(notifications[position].GetSmallIcon(), notifications[position].GetPackage());
-
-                        }
-                        else
-                        {
-                            viewHolder.Icono.Background = IconFactory.ReturnIconDrawable(notifications[position].GetIconInt(), notifications[position].GetPackage());
-                        }
-                        if (selectedItem == position)
-                        {
-                            viewHolder.Icono.Alpha = 0.5f;
-                        }
-                        else
-                        {
-                            viewHolder.Icono.Alpha = 1;
-                        }
+                        viewHolder.Icono.Background = IconFactory.ReturnIconDrawable(notifications[position].GetIconInt(), notifications[position].GetPackage());
                     }
+                    if (selectedItem == position)
+                    {
+                        viewHolder.Icono.Alpha = 0.5f;
+                    }
+                    else
+                    {
+                        viewHolder.Icono.Alpha = 1;
+                    }
+                }
             }
             else
             {

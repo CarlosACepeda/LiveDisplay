@@ -21,18 +21,20 @@ namespace LiveDisplay.Servicios
                 case AppPreferences.Weather:
                     sharedPreferences = Application.Context.GetSharedPreferences("weatherpreferences", FileCreationMode.Private);
                     break;
+
                 case AppPreferences.Blacklist:
                     sharedPreferences = Application.Context.GetSharedPreferences("blacklistpreferences", FileCreationMode.Private);
                     break;
-
             }
             if (sharedPreferences == null) throw new InvalidOperationException("Shared preferences can't be null!");
             sharedPreferencesEditor = sharedPreferences.Edit();
         }
+
         public ISharedPreferences GetSharedPreferences()
         {
             return sharedPreferences;
         }
+
         public void SaveAValue(string key, bool value)
         {
             sharedPreferencesEditor.PutBoolean(key, value);

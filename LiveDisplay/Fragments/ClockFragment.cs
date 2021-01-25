@@ -37,9 +37,10 @@
 
         private TextView lastupdated;
         private TextView city;
+
         //private LinearLayout weatherinfo;
-        private bool initForFirstTime=false;
-        
+        private bool initForFirstTime = false;
+
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -73,7 +74,6 @@
             city = v.FindViewById<TextView>(Resource.Id.city);
             LoadDate();
             RegisterBatteryReceiver();
-
 
             //View Events
             clock.Click += Clock_Click;
@@ -117,15 +117,15 @@
                     }
                     else
                     {
-                        WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs 
-                        { 
-                            WidgetName= WidgetStatusPublisher.CurrentActiveWidget, 
-                            Active=true, //Having a Current Active Widget means it should be active by def.
-                            Show=true });
+                        WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs
+                        {
+                            WidgetName = WidgetStatusPublisher.CurrentActiveWidget,
+                            Active = true, //Having a Current Active Widget means it should be active by def.
+                            Show = true
+                        });
 
                         if (maincontainer != null)
                             maincontainer.Visibility = ViewStates.Invisible;
-
                     }
                 }
             }
@@ -150,6 +150,7 @@
 
             base.OnPause();
         }
+
         public override void OnDestroy()
         {
             WidgetStatusPublisher.OnWidgetStatusChanged -= WidgetStatusPublisher_OnWidgetStatusChanged;
@@ -173,28 +174,21 @@
             string weatherdescription = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherDescription, string.Empty);
             string weatherlastupdated = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherLastUpdated, string.Empty);
 
-            temperature.Text = currentweather+ temperatureunit;
-            city.Text = thecity;
-            //minimumTemperature.Text = minimumtemperature;
-            //maximumTemperature.Text = maximumtemperature;
-            //humidity.Text = weatherhumidity;
-            description.Text = weatherdescription;
-            lastupdated.Text = weatherlastupdated;
+            Activity.RunOnUiThread(() =>
+            {
+                temperature.Text = currentweather + temperatureunit;
+                city.Text = thecity;
+                //minimumTemperature.Text = minimumtemperature;
+                //maximumTemperature.Text = maximumtemperature;
+                //humidity.Text = weatherhumidity;
+                description.Text = weatherdescription;
+                lastupdated.Text = weatherlastupdated;
+            });
         }
 
         private void Weatherclockcontainer_Click(object sender, EventArgs e)
         {
             var view = sender as View;
-            //weatherinfo = view.FindViewById<LinearLayout>(Resource.Id.weatherinfo);
-            //if (weatherinfo.Visibility == ViewStates.Visible)
-            //{
-            //    weatherinfo.Visibility = ViewStates.Invisible;
-            //}
-            //else
-            //{
-            //    weatherinfo.Visibility = ViewStates.Visible;
-            //}
-            //weatherinfo.Dispose();
         }
 
         public override void OnDestroyView()
@@ -205,7 +199,6 @@
             Application.Context.UnregisterReceiver(batteryReceiver);
             clock.Click -= Clock_Click;
             BatteryReceiver.BatteryInfoChanged -= BatteryReceiver_BatteryInfoChanged;
-
         }
 
         private void BatteryReceiver_BatteryInfoChanged(object sender, Servicios.Battery.BatteryEventArgs.BatteryChangedEventArgs e)

@@ -2,7 +2,6 @@
 using Android.Content;
 using Android.OS;
 using Android.Views;
-using Android.Widget;
 using AndroidX.Preference;
 using LiveDisplay.Activities;
 using LiveDisplay.Misc;
@@ -12,29 +11,30 @@ using System;
 
 namespace LiveDisplay.Fragments.Preferences
 {
-    public class  AwakeSettingsFragment : PreferenceFragmentCompat, ISharedPreferencesOnSharedPreferenceChangeListener
+    public class AwakeSettingsFragment : PreferenceFragmentCompat, ISharedPreferencesOnSharedPreferenceChangeListener
     {
         private bool isSleepstarttimesetted = false;
         private ISharedPreferences sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
         private TimePickerDialog startTimeDialog;
         private TimePickerDialog finishTimeDialog;
 
-
-
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
         }
+
         public override void OnResume()
         {
             sharedPreferences.RegisterOnSharedPreferenceChangeListener(this);
             base.OnResume();
         }
+
         public override void OnPause()
         {
             sharedPreferences.UnregisterOnSharedPreferenceChangeListener(this);
             base.OnPause();
         }
+
         public override void OnCreatePreferences(Bundle savedInstanceState, string rootKey)
         {
             AddPreferencesFromResource(Resource.Xml.awake_prefs);
@@ -44,13 +44,13 @@ namespace LiveDisplay.Fragments.Preferences
             {
                 ToggleAwakeSettingsItems(false);
             }
-            else 
+            else
             {
                 ToggleAwakeSettingsItems(true);
             }
         }
 
-        void ToggleAwakeSettingsItems(bool enableItems)
+        private void ToggleAwakeSettingsItems(bool enableItems)
         {
             Preference listendevicemotion = FindPreference("listenfordevicemotion?");
             Preference turnonnewnotification = FindPreference("turnonnewnotification?");
@@ -60,7 +60,6 @@ namespace LiveDisplay.Fragments.Preferences
             Preference turnoffscreendelaytime = FindPreference("turnoffscreendelaytime");
             Preference awakecausesblackwallpaper = FindPreference("awakecausesblackwallpaper?");
             Preference inactivehourssettingspreference = FindPreference("inactivetimesettings");
-
 
             listendevicemotion.Enabled = enableItems;
             listendevicemotion.Selectable = enableItems;
@@ -75,7 +74,6 @@ namespace LiveDisplay.Fragments.Preferences
             awakecausesblackwallpaper.Selectable = enableItems;
 
             inactivehourssettingspreference.PreferenceClick += Inactivehourssettingspreference_PreferenceClick;
-
 
             if (new ConfigurationManager(AppPreferences.Default).RetrieveAValue(ConfigurationParameters.ListenForDeviceMotion) == false)
             {
@@ -100,8 +98,6 @@ namespace LiveDisplay.Fragments.Preferences
 
             turnoffscreendelaytime.Enabled = enableItems;
             turnoffscreendelaytime.Selectable = enableItems;
-
-
         }
 
         private void Blacklistpreference_PreferenceClick(object sender, Preference.PreferenceClickEventArgs e)
@@ -112,19 +108,17 @@ namespace LiveDisplay.Fragments.Preferences
 
         private void Inactivehourssettingspreference_PreferenceClick(object sender, Preference.PreferenceClickEventArgs e)
         {
-            
-           startTimeDialog = new TimePickerDialog(Activity, PreferencesFragmentCompat_starttimepicked, DateTime.Now.Hour, DateTime.Now.Minute, false);
-           if (AwakeHelper.UserHasSetAwakeHours())
-           {
-               int start = int.Parse(new ConfigurationManager(AppPreferences.Default).RetrieveAValue(ConfigurationParameters.StartSleepTime, "-1"));
-               startTimeDialog.SetMessage("Start hour: "); //here it goes the set start hour, (but in a user readable way)
-
-           }
-           else {
-               startTimeDialog.SetMessage("Start hour:");
-           }
-           startTimeDialog.Show();
-            
+            startTimeDialog = new TimePickerDialog(Activity, PreferencesFragmentCompat_starttimepicked, DateTime.Now.Hour, DateTime.Now.Minute, false);
+            if (AwakeHelper.UserHasSetAwakeHours())
+            {
+                int start = int.Parse(new ConfigurationManager(AppPreferences.Default).RetrieveAValue(ConfigurationParameters.StartSleepTime, "-1"));
+                startTimeDialog.SetMessage("Start hour: "); //here it goes the set start hour, (but in a user readable way)
+            }
+            else
+            {
+                startTimeDialog.SetMessage("Start hour:");
+            }
+            startTimeDialog.Show();
         }
 
         private void PreferencesFragmentCompat_starttimepicked(object sender, TimePickerDialog.TimeSetEventArgs e)
@@ -139,14 +133,12 @@ namespace LiveDisplay.Fragments.Preferences
             if (AwakeHelper.UserHasSetAwakeHours())
             {
                 finishTimeDialog.SetMessage("Finish hour: "); //here it goes the set finish hour, (but in a user readable way)
-
             }
             else
             {
-                finishTimeDialog.SetMessage("Finish hour:" );
+                finishTimeDialog.SetMessage("Finish hour:");
             }
             finishTimeDialog.Show();
-
         }
 
         private void PreferencesFragmentCompat_finishtimepicked(object sender, TimePickerDialog.TimeSetEventArgs e)
@@ -158,7 +150,6 @@ namespace LiveDisplay.Fragments.Preferences
                 isSleepstarttimesetted = true;
             }
         }
-
 
         public void OnSharedPreferenceChanged(ISharedPreferences sharedPreferences, string key)
         {
@@ -177,6 +168,7 @@ namespace LiveDisplay.Fragments.Preferences
                             break;
                     }
                     break;
+
                 case ConfigurationParameters.EnableAwakeService:
                     switch (sharedPreferences.GetBoolean(ConfigurationParameters.EnableAwakeService, false))
                     {
@@ -197,17 +189,18 @@ namespace LiveDisplay.Fragments.Preferences
                     }
 
                     break;
+
                 case ConfigurationParameters.ListenForDeviceMotion:
                     Preference turnonusermovement = FindPreference("turnonusermovement?");
                     switch (sharedPreferences.GetBoolean(ConfigurationParameters.ListenForDeviceMotion, false))
                     {
-
                         case true:
                             AwakeHelper.ToggleStartStopAwakeService(true);
                             turnonusermovement.Enabled = true;
                             turnonusermovement.Selectable = true;
 
                             break;
+
                         case false:
                             AwakeHelper.ToggleStartStopAwakeService(false);
                             turnonusermovement.Enabled = false;
@@ -218,6 +211,7 @@ namespace LiveDisplay.Fragments.Preferences
                     break;
             }
         }
+
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             return base.OnCreateView(inflater, container, savedInstanceState);

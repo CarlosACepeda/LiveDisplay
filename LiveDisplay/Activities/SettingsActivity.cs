@@ -1,7 +1,6 @@
 ﻿namespace LiveDisplay.Activities
 {
     using Android.App;
-    using Android.Content;
     using Android.OS;
     using Android.Widget;
     using AndroidX.AppCompat.App;
@@ -60,21 +59,27 @@
                     case "LockScreenSettingsFragment":
                         fragmentQualifiedName = Java.Lang.Class.FromType(typeof(LockScreenSettingsFragment)).Name;
                         break;
+
                     case "NotificationSettingsFragment":
                         fragmentQualifiedName = Java.Lang.Class.FromType(typeof(NotificationSettingsFragment)).Name;
                         break;
+
                     case "AwakeSettingsFragment":
                         fragmentQualifiedName = Java.Lang.Class.FromType(typeof(AwakeSettingsFragment)).Name;
                         break;
+
                     case "MusicWidgetSettingsFragment":
                         fragmentQualifiedName = Java.Lang.Class.FromType(typeof(MusicWidgetSettingsFragment)).Name;
                         break;
+
                     case "WeatherSettingsFragment":
                         fragmentQualifiedName = Java.Lang.Class.FromType(typeof(WeatherSettingsFragment)).Name;
-                        break; 
+                        break;
+
                     case "AboutFragment":
                         fragmentQualifiedName = Java.Lang.Class.FromType(typeof(AboutFragment)).Name;
                         break;
+
                     default:
                         break;
                 }
@@ -90,7 +95,7 @@
                         .Replace(Resource.Id.content, fragment)
                         .AddToBackStack(null)
                         .Commit();
-            }            
+            }
             return true;
         }
     }

@@ -11,7 +11,7 @@
     android:background="?android:selectableItemBackground"
     tools:visibility="visible"
     android:visibility="invisible">
-	
+
     <LinearLayout
 		android:weightSum="10"
         android:orientation="horizontal"
@@ -99,7 +99,7 @@
 		android:textSize="19dp"
         android:maxLines="6"
         android:minLines="0" />
-    <ProgressBar        
+    <ProgressBar
         android:visibility="gone"
         style="?android:attr/progressBarStyleHorizontal"
         android:id="@+id/notificationprogress"

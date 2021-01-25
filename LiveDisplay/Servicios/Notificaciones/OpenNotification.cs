@@ -5,13 +5,11 @@ using Android.Graphics.Drawables;
 using Android.Media.Session;
 using Android.OS;
 using Android.Service.Notification;
-using Android.Text;
 using Android.Util;
 using Java.Util;
 using LiveDisplay.Factories;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Music;
-using LiveDisplay.Servicios.Notificaciones.NotificationStyle;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -69,12 +67,12 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             string messages = string.Empty;
             //Only Valid in MessagingStyle
-            if(Style()== "android.app.Notification$MessagingStyle")
+            if (Style() == "android.app.Notification$MessagingStyle")
             {
-                var messageBundles= statusbarnotification.Notification.Extras?.GetParcelableArray("android.messages");
-                if(messageBundles.Length>0)
+                var messageBundles = statusbarnotification.Notification.Extras?.GetParcelableArray("android.messages");
+                if (messageBundles.Length > 0)
                 {
-                    for (int i=0; i<messageBundles.Length-1; i++)
+                    for (int i = 0; i < messageBundles.Length - 1; i++)
                     {
                         //var test14 = item.KeySet();
                         var moreExtras = ((Bundle)messageBundles[i]).Get("extras");
@@ -86,7 +84,6 @@ namespace LiveDisplay.Servicios.Notificaciones
                         messages += sender + "\n";
                         messages += text + "\n" + "\n";
                     }
-
                 }
             }
             return messages;
@@ -208,7 +205,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             return false;
         }
 
-        public  MediaSession.Token GetMediaSessionToken()
+        public MediaSession.Token GetMediaSessionToken()
         {
             try
             {
@@ -285,12 +282,13 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         internal Bitmap MediaArtwork()
         {
-            if(Build.VERSION.SdkInt< BuildVersionCodes.O)
+            if (Build.VERSION.SdkInt < BuildVersionCodes.O)
 #pragma warning disable CS0618 // El tipo o el miembro están obsoletos
                 return statusbarnotification.Notification.Extras.Get(Notification.ExtraLargeIcon) as Bitmap;
 #pragma warning restore CS0618 // El tipo o el miembro están obsoletos
             return statusbarnotification.Notification.LargeIcon;
         }
+
         //internal Bitmap GetPersonAvatar()
         //{
         //    if (Style() != "android.app.Notification$MessagingStyle" || Build.VERSION.SdkInt < BuildVersionCodes.P)
@@ -311,11 +309,11 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         internal NotificationImportance GetNotificationImportance()
         {
-            //TODO
+            //TODO (It depends on the notification channel this notification belongs to)
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
                 return (NotificationImportance)(-1);
 
-            return (NotificationImportance)(-1); //<-- try to return an appropiate value
+            return (NotificationImportance)(-1);
         }
 
         private NotificationChannel GetNotificationChannel()
@@ -323,7 +321,12 @@ namespace LiveDisplay.Servicios.Notificaciones
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
                 return null;
 
-            return null; //TODO.
+            return null; //TODO: Android broke the way to retrieve notification channels, there's a way to retrieve them, but,
+            //I have to be the NotificationAssistantService and that right is reserved to system apps only. (and it is too much overhead to be that
+            //Assistant, as I have to provide (among other stuff) the Smart suggestions in MessagingStyle notifications.
+            //On the other hand I can Register a Device Companion Service and in that way I can retrieve them, so,
+            //The task is to see if I can register a dummy device to such service 
+            //and trick Android into thinking I have a device and thus, the right to get the notification channels.
         }
 
         internal string Style()
@@ -427,19 +430,22 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             return statusbarnotification.Notification.Extras.GetIntArray(Notification.ExtraCompactActions);
         }
-        
+
         public Icon GetSmallIcon()
         {
             return statusbarnotification.Notification.SmallIcon;
         }
+
         public int GetIconInt()
         {
             return statusbarnotification.Notification.Icon;
         }
+
         public string GetPackage()
         {
             return statusbarnotification.PackageName;
         }
+
         public NotificationRelevance GetRelevance()
         {
             return NotificationRelevance.DefaultRelevance;
@@ -504,13 +510,13 @@ namespace LiveDisplay.Servicios.Notificaciones
         }
 
         public Drawable GetActionIcon(Color color)
-        {            
+        {
             Drawable actionIcon;
             try
             {
                 if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1)
                 {
-                    actionIcon= IconFactory.ReturnActionIconDrawable(action.Icon, action.ActionIntent.CreatorPackage);
+                    actionIcon = IconFactory.ReturnActionIconDrawable(action.Icon, action.ActionIntent.CreatorPackage);
                 }
                 else
                 {
@@ -521,7 +527,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             {
                 return null;
             }
-            if (color!= null)
+            if (color != null)
             {
                 actionIcon.SetColorFilter(color, PorterDuff.Mode.Multiply);
             }

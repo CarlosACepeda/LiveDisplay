@@ -9,12 +9,12 @@ namespace LiveDisplay.Servicios.Weather
 {
     public class GrabWeatherJob : Worker
     {
-        public static event EventHandler<bool> WeatherUpdated; 
+        public static event EventHandler<bool> WeatherUpdated;
 
         public GrabWeatherJob(Context context, WorkerParameters workerParameters) : base(context, workerParameters)
         {
-
         }
+
         public override Result DoWork()
         {
             if (AwakeHelper.GetAwakeStatus() == AwakeStatus.Sleeping || AwakeHelper.GetAwakeStatus() == AwakeStatus.SleepingWithDeviceMotionEnabled)
@@ -41,8 +41,6 @@ namespace LiveDisplay.Servicios.Weather
                 WeatherUpdated?.Invoke(null, false);
                 return Result.InvokeRetry();
             }
-            
-
         }
     }
 }

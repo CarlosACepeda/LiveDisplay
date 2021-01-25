@@ -69,7 +69,6 @@ namespace LiveDisplay.Servicios.Notificaciones
                     else
                         causesWakeUp = false;
 
-
                     int index = GetNotificationPosition(sbn); //Tries to get the index of a possible already existing notification in the list of notif.
                     if (index >= 0)
                     {
@@ -81,8 +80,7 @@ namespace LiveDisplay.Servicios.Notificaciones
                         using (var h = new Handler(Looper.MainLooper))
                             h.Post(() => { notificationAdapter.NotifyItemChanged(index); });
 
-                            OnNotificationPosted(false, sbn, true);
-                        
+                        OnNotificationPosted(false, sbn, true);
                     }
                     else
                     {
@@ -107,12 +105,10 @@ namespace LiveDisplay.Servicios.Notificaciones
                 }
             }
 
-
             OnNotificationListSizeChanged(new NotificationListSizeChangedEventArgs
             {
                 ThereAreNotifications = StatusBarNotifications.Count > 0
-            }) ;
-            
+            });
         }
 
         public void OnNotificationRemoved(OpenNotification sbn)
@@ -128,7 +124,7 @@ namespace LiveDisplay.Servicios.Notificaciones
 
             if (position >= 0)
             {
-                //if found, then use the Notification to be removed instead. 
+                //if found, then use the Notification to be removed instead.
                 //the reason is that the 'sbn' coming from this method has less data.
                 //then it makes data that I need from the notification unavailable.
                 notificationToBeRemoved = StatusBarNotifications[position];
@@ -137,15 +133,15 @@ namespace LiveDisplay.Servicios.Notificaciones
                 using (var h = new Handler(Looper.MainLooper))
                     h.Post(() =>
                     {
-                            //When removing a summary notification it causes a IndexOutOfBoundsException...
-                            //notificationAdapter.NotifyItemRemoved(position);
-                            //This has to be fixed, anyway, because this change makes the adapter to lose  the animations when removing a item
-                            notificationAdapter.NotifyDataSetChanged();
+                        //When removing a summary notification it causes a IndexOutOfBoundsException...
+                        //notificationAdapter.NotifyItemRemoved(position);
+                        //This has to be fixed, anyway, because this change makes the adapter to lose  the animations when removing a item
+                        notificationAdapter.NotifyDataSetChanged();
                     });
             }
             OnNotificationListSizeChanged(new NotificationListSizeChangedEventArgs
             {
-                ThereAreNotifications = !(StatusBarNotifications.Where(n => n.IsRemovable()).ToList().Count==0)
+                ThereAreNotifications = !(StatusBarNotifications.Where(n => n.IsRemovable()).ToList().Count == 0)
             });
             NotificationRemoved?.Invoke(this, new NotificationRemovedEventArgs()
             {
@@ -161,7 +157,7 @@ namespace LiveDisplay.Servicios.Notificaciones
         private static int GetNotificationPosition(OpenNotification sbn)
         {
             return StatusBarNotifications.IndexOf(StatusBarNotifications.FirstOrDefault
-                (o => o.GetId() == sbn.GetId() && o.GetPackage() == sbn.GetPackage() && o.GetTag()== sbn.GetTag() &&
+                (o => o.GetId() == sbn.GetId() && o.GetPackage() == sbn.GetPackage() && o.GetTag() == sbn.GetTag() &&
             o.IsSummary() == sbn.IsSummary()));
         }
 
