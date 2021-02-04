@@ -14,6 +14,8 @@
   <string name="defaultwallpaperappearance">Fundal</string>
   <string name="dialogallowbutton">Permite</string>
   <string name="dialogcancelbutton">închide</string>
+  <string name="disableartworkupdateonsamealbum">Deactiveaza actualitatie din poza albumlui</string>
+  <string name="disableartworkupdateonsamealbum_desc">Daca muzica se schimba, daca album e la fel, atunci nu sa schimba albumlui poza (pentru ca e la fel album)</string>
   <string name="doubletaptosleep">Dublă apăsare pentru închidere</string>
   <string name="enabletestsetting">Activează \&lt;test\&gt; opțiuni</string>
   <string name="fifteenminutes">15 Minute</string>

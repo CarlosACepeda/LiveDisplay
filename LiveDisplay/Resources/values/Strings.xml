@@ -38,6 +38,8 @@
   <string name="dialogcancelbutton">Cancel</string>
   <string name="dialogcancelledclick">Ok, you can change this setting later in Notifications section!</string>
   <string name="dialogfordeviceaccessdescription">Permissions required:  \nLock screen: Control how and when to lock the screen</string>
+  <string name="disableartworkupdateonsamealbum">Disable Artwork update</string>
+  <string name="disableartworkupdateonsamealbum_desc">If media track is changed and the album is the same, ignore that song\'s album artwork (because is the same)</string>
   <string name="disablewallpapertransitionanim">Disable Wallpaper animation</string>
   <string name="disablewallpapertransitionanimdesc">Improves performance</string>
   <string name="doubletapinvertedbehavior">Inverted</string>

@@ -465,19 +465,16 @@ namespace LiveDisplay.Fragments
 
         private void MusicController_MediaMetadataChanged(object sender, MediaMetadataChangedEventArgs e)
         {
-            Activity?.RunOnUiThread(() =>
-            {
-                activityIntent = e.ActivityIntent;
-                tvTitle.Text = e.MediaMetadata?.GetString(MediaMetadata.MetadataKeyTitle);
-                tvAlbum.Text = e.MediaMetadata?.GetString(MediaMetadata.MetadataKeyAlbum);
-                tvArtist.Text = e.MediaMetadata?.GetString(MediaMetadata.MetadataKeyArtist);
-                skbSeekSongTime.Max = (int)e.MediaMetadata?.GetLong(MediaMetadata.MetadataKeyDuration) / 1000;
-                openNotificationId = e.OpenNotificationId;
-                if (e.AppName != string.Empty)
-                {
-                    sourceApp.Text = string.Format(Resources.GetString(Resource.String.playing_from_template), e.AppName);
-                }
+            bool shouldChangeArtwork = true;
 
+            if (configurationManager.RetrieveAValue(ConfigurationParameters.DisableArtworkUpdateOnSameAlbum)
+                && (tvAlbum?.Text != null && tvAlbum?.Text == e.MediaMetadata?.GetString(MediaMetadata.MetadataKeyAlbum)))
+            {
+                shouldChangeArtwork = false;
+            }
+
+            if (shouldChangeArtwork)
+            {
                 ThreadPool.QueueUserWorkItem(m =>
                 {
                     var albumart = e.MediaMetadata?.GetBitmap(MediaMetadata.MetadataKeyAlbumArt);
@@ -494,10 +491,24 @@ namespace LiveDisplay.Fragments
                             BlurLevel = (short)blurLevel,
                             WallpaperPoster = WallpaperPoster.MusicPlayer //We must nutify WallpaperPublisher who is posting the wallpaper, otherwise it'll be ignored.
                         });
+                    Log.Debug("LiveDisplay", "thrown from MusicFragment");
                 });
+            }
+
+            Activity?.RunOnUiThread(() =>
+            {
+                activityIntent = e.ActivityIntent;
+                tvTitle.Text = e.MediaMetadata?.GetString(MediaMetadata.MetadataKeyTitle);
+                tvAlbum.Text = e.MediaMetadata?.GetString(MediaMetadata.MetadataKeyAlbum);
+                tvArtist.Text = e.MediaMetadata?.GetString(MediaMetadata.MetadataKeyArtist);
+                skbSeekSongTime.Max = (int)e.MediaMetadata?.GetLong(MediaMetadata.MetadataKeyDuration) / 1000;
+                openNotificationId = e.OpenNotificationId;
+                if (e.AppName != string.Empty)
+                {
+                    sourceApp.Text = string.Format(Resources.GetString(Resource.String.playing_from_template), e.AppName);
+                }
             });
         }
-
         private void MusicController_MediaPlaybackChanged(object sender, MediaPlaybackStateChangedEventArgs e)
         {
             Activity?.RunOnUiThread(() =>

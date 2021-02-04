@@ -62,7 +62,7 @@ namespace LiveDisplay.Servicios.Wallpaper
         private Bitmap Blur()
         {
             //Workaround Android Q: IT causes SIGSEV in Android 10 for some reason. XOM related maybe
-            if (Build.VERSION.SdkInt == BuildVersionCodes.Q)
+            if (Build.VERSION.SdkInt > BuildVersionCodes.Q)
             {
                 return image;
             }

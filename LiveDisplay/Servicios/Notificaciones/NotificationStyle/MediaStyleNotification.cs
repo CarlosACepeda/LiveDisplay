@@ -1,6 +1,8 @@
 ﻿using Android.App;
 using Android.Graphics.Drawables;
 using Android.Widget;
+using AndroidX.AppCompat.Widget;
+using LiveDisplay.Servicios.Music;
 using LiveDisplay.Servicios.Wallpaper;
 using System;
 
@@ -14,14 +16,19 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
       : base(openNotification, ref notificationView, notificationFragment)
         {
             var notificationMediaArtwork = new BitmapDrawable(Application.Context.Resources, OpenNotification.MediaArtwork());
-            WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
+            //Only post the Artwork if this notification isn't the one that keeps the Music Widget Active (because in that case it will cause redundancy, the Music Widget 
+            //will be already showing the Artwork)
+            if (MusicController.MediaSessionAssociatedWThisNotification(openNotification.GetCustomId()) == false)
             {
-                BlurLevel = 1,
-                OpacityLevel = 125,
-                SecondsOfAttention = 5,
-                Wallpaper = notificationMediaArtwork,
-                WallpaperPoster = WallpaperPoster.Notification,
-            });
+                WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
+                {
+                    BlurLevel = 1,
+                    OpacityLevel = 125,
+                    SecondsOfAttention = 5,
+                    Wallpaper = notificationMediaArtwork,
+                    WallpaperPoster = WallpaperPoster.Notification,
+                });
+            }
         }
 
         protected override void SetWhen()
