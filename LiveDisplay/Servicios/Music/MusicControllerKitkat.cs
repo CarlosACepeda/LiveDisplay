@@ -94,6 +94,14 @@ namespace LiveDisplay.Servicios.Music
 
                     break;
 
+                case MediaActionFlags.Replay:
+                    TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Down, Keycode.MediaStop));
+                    TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Up, Keycode.MediaStop));
+                    TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Down, Keycode.MediaPlay));
+                    TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Up, Keycode.MediaPlay));
+
+                    break;
+
                 case MediaActionFlags.RetrieveMediaInformation:
                     //Send media information.
                     OnMediaMetadataChanged(new MediaMetadataChangedKitkatEventArgs
@@ -132,7 +140,7 @@ namespace LiveDisplay.Servicios.Music
                 case RemoteControlPlayState.Playing:
                     if (requestedWidgetStart == false)
                     {
-                        WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = true, WidgetName = "MusicFragment", Active=true });
+                        WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = true, WidgetName = "MusicFragment", Active = true });
                         requestedWidgetStart = true;
                     }
                     MusicPlaying?.Invoke(null, EventArgs.Empty);
@@ -154,7 +162,7 @@ namespace LiveDisplay.Servicios.Music
                 Album = mediaMetadata.GetString((MediaMetadataEditKey)MetadataKey.Album, ""),
                 AlbumArt = mediaMetadata.GetBitmap(MediaMetadataEditKey.BitmapKeyArtwork, null),
                 Duration = mediaMetadata.GetLong((MediaMetadataEditKey)MetadataKey.Duration, 0)
-            });            
+            });
         }
 
         #region Raising events.

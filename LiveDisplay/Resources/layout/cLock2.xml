@@ -1,4 +1,3 @@
-
 <LinearLayout xmlns:a="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
     a:layout_width="match_parent"
@@ -21,7 +20,7 @@
 		a:orientation="horizontal"
 		a:id="@+id/maintemperatureinfo"
 		>
-	
+
 	<TextView
 		tools:text="Bogotá"
 		a:fontFamily="sans-serif-condensed-light"
@@ -43,7 +42,7 @@
 		a:layout_height="wrap_content"
 		a:minWidth="25px"
 		a:minHeight="25px"
-		a:id="@+id/weatherdescription" />	
+		a:id="@+id/weatherdescription" />
 	</LinearLayout>
 	<LinearLayout
 		a:layout_below="@id/maintemperatureinfo"
@@ -91,7 +90,7 @@
         tools:text="8:45pm"
         a:fontFamily="sans-serif-condensed-light"
         tools:visibility="visible"
-        />		
+        />
 	<TextView
 		tools:text="3 de Septiembre"
         a:layout_width="match_parent"
@@ -116,7 +115,7 @@
         a:id="@+id/batteryLevel"
 		a:fontFamily="sans-serif-condensed-light"
         a:layout_width="wrap_content"
-        a:layout_height="wrap_content" 
+        a:layout_height="wrap_content"
 		a:textSize="18dp"/>
 	</LinearLayout>
 	<LinearLayout

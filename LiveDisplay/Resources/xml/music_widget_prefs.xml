@@ -45,5 +45,13 @@
       android:summary="@string/launchnotification_desc"
       android:title="@string/launchnotification"
       app:iconSpaceReserved="false" />
+    <SwitchPreference
+      android:defaultValue="true"
+      android:selectable="true"
+      android:enabled="true"
+      android:key="disableartworkupdateonsamealbum"
+      android:title="@string/disableartworkupdateonsamealbum"
+      android:summary="@string/disableartworkupdateonsamealbum_desc"
+      app:iconSpaceReserved="false" />
   </PreferenceCategory>
 </PreferenceScreen>

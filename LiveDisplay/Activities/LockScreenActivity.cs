@@ -7,8 +7,6 @@
     using Android.Content.Res;
     using Android.Graphics;
     using Android.Graphics.Drawables;
-    using Android.Media;
-    using Android.Media.Session;
     using Android.OS;
     using Android.Provider;
     using Android.Util;
@@ -17,14 +15,11 @@
     using Android.Widget;
     using AndroidX.AppCompat.App;
     using AndroidX.RecyclerView.Widget;
-    using LiveDisplay.Adapters;
     using LiveDisplay.Fragments;
     using LiveDisplay.Misc;
     using LiveDisplay.Servicios;
     using LiveDisplay.Servicios.Awake;
-    using LiveDisplay.Servicios.FloatingNotification;
     using LiveDisplay.Servicios.Keyguard;
-    using LiveDisplay.Servicios.Music;
     using LiveDisplay.Servicios.Notificaciones;
     using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
     using LiveDisplay.Servicios.Wallpaper;
@@ -35,7 +30,6 @@
     [Activity(Label = "LockScreen", Theme = "@style/LiveDisplayThemeDark.NoActionBar", ScreenOrientation = ScreenOrientation.Portrait, MainLauncher = false, TaskAffinity = "livedisplay.lockscreen", LaunchMode = LaunchMode.SingleInstance, ExcludeFromRecents = true)]
     public class LockScreenActivity : AppCompatActivity
     {
-
         private AndroidX.Fragment.App.Fragment clockFragment, musicFragment, notificationFragment;
 
         private RecyclerView recycler/*, filteredRecyclerView*/;
@@ -58,6 +52,7 @@
         private ViewPropertyAnimator viewPropertyAnimator;
         private TextView welcome;
         private ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -74,7 +69,7 @@
                     );
                 }
             });
-            
+
             startCamera = FindViewById<Button>(Resource.Id.btnStartCamera);
             startDialer = FindViewById<Button>(Resource.Id.btnStartPhone);
             clearAll = FindViewById<Button>(Resource.Id.btnClearAllNotifications);
@@ -135,7 +130,6 @@
                 {
                     miniclock.Visibility = ViewStates.Invisible;
                 }
-
             }
         }
 
@@ -158,6 +152,7 @@
             if (ActivityLifecycleHelper.GetInstance().GetActivityState(typeof(LockScreenActivity)) == ActivityStates.Resumed)
                 AwakeHelper.TurnOffScreen();
         }
+
         private void Wallpaper_NewWallpaperIssued(object sender, WallpaperChangedEventArgs e)
         {
             RunOnUiThread(() =>
@@ -185,7 +180,6 @@
                     Window.DecorView.Background = e.Wallpaper;
                 }
             });
-            GC.Collect();
         }
 
         private void Lockscreen_Touch(object sender, View.TouchEventArgs e)
@@ -215,12 +209,6 @@
                             }
                             else
                             {
-                                //Finish();
-                                //using (Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(TransparentActivity))))
-                                //{
-                                //    intent.AddFlags(ActivityFlags.NewTask | ActivityFlags.);
-                                //    StartActivity(intent);
-                                //}
                                 if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                                     if (KeyguardHelper.IsDeviceCurrentlyLocked())
                                     {
@@ -234,12 +222,6 @@
                         {
                             if (e.Event.RawY < halfscreenheight)
                             {
-                                //Finish();
-                                //using (Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(TransparentActivity))))
-                                //{
-                                //    intent.AddFlags(ActivityFlags.NewTask | ActivityFlags.MultipleTask);
-                                //    StartActivity(intent);
-                                //}
                                 if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                                     if (KeyguardHelper.IsDeviceCurrentlyLocked())
                                     {
@@ -274,7 +256,7 @@
                 welcome.Text = Resources.GetString(Resource.String.tutorialtext);
                 welcome.Visibility = ViewStates.Visible;
                 welcome.Touch += Welcome_Touch;
-            }            
+            }
             //Check if Awake is enabled.
             //Refactor
             switch (AwakeHelper.GetAwakeStatus())
@@ -282,28 +264,36 @@
                 case AwakeStatus.None:
                     livedisplayinfo.Text = Resources.GetString(Resource.String.idk);
                     break;
+
                 case AwakeStatus.CompletelyDisabled:
                     livedisplayinfo.Text = "Completely disabled";
                     break;
+
                 case AwakeStatus.Up:
                     livedisplayinfo.Text = "Awake is active";
                     break;
+
                 case AwakeStatus.Sleeping:
                     livedisplayinfo.Text = "Awake is Sleeping";
                     break;
+
                 case AwakeStatus.UpWithDeviceMotionDisabled:
                     livedisplayinfo.Text = "Awake is active but not listening orientation changes";
                     break;
+
                 case AwakeStatus.SleepingWithDeviceMotionEnabled:
                     livedisplayinfo.Text = "Awake is sleeping but listening orientation changes";
                     break;
+
                 case AwakeStatus.DisabledbyUser:
                     livedisplayinfo.Text = "Awake is disabled by the user.";
                     break;
+
                 default:
                     break;
             }
         }
+
         private void Welcome_Touch(object sender, View.TouchEventArgs e)
         {
             configurationManager.SaveAValue(ConfigurationParameters.TutorialRead, true);
@@ -313,7 +303,6 @@
                 welcome.Touch -= Welcome_Touch;
             }
         }
-        
 
         protected override void OnPause()
         {
@@ -401,7 +390,7 @@
                     }
                     if (configurationManager.RetrieveAValue(ConfigurationParameters.TurnOffScreenAfterLastNotificationCleared)
                     &&
-                    ActivityLifecycleHelper.GetInstance().GetActivityState(typeof(LockScreenActivity))== ActivityStates.Resumed)
+                    ActivityLifecycleHelper.GetInstance().GetActivityState(typeof(LockScreenActivity)) == ActivityStates.Resumed)
                     {
                         AwakeHelper.TurnOffScreen();
                     }
@@ -416,6 +405,7 @@
                 notificationSlave.CancelAll();
             }
         }
+
         private void StartCamera_Click(object sender, EventArgs e)
         {
             using (Intent intent = new Intent(MediaStore.IntentActionStillImageCamera))
@@ -447,13 +437,13 @@
             doubletapbehavior = configurationManager.RetrieveAValue(ConfigurationParameters.DoubleTapOnTopActionBehavior, "0");
             if (configurationManager.RetrieveAValue(ConfigurationParameters.HideShortcutsWhenKeyguardSafe))
             {
-                if(KeyguardHelper.IsSystemSecured())
-                using (var shortcuts = FindViewById<FrameLayout>(Resource.Id.shortcutcontainer))
-                {
-                    shortcuts.Visibility = ViewStates.Invisible;
-                }
+                if (KeyguardHelper.IsSystemSecured())
+                    using (var shortcuts = FindViewById<FrameLayout>(Resource.Id.shortcutcontainer))
+                    {
+                        shortcuts.Visibility = ViewStates.Invisible;
+                    }
             }
-            else 
+            else
             {
                 using (var shortcuts = FindViewById<FrameLayout>(Resource.Id.shortcutcontainer))
                 {
@@ -519,8 +509,8 @@
             transaction.Add(Resource.Id.WidgetPlaceholder, CreateFragment("notification_fragment"), "notification_fragment");
             transaction.Add(Resource.Id.WidgetPlaceholder, CreateFragment("music_fragment"), "music_fragment");
             transaction.Commit();
-
         }
+
         private AndroidX.Fragment.App.Fragment CreateFragment(string tag)
         {
             AndroidX.Fragment.App.Fragment result = null;
@@ -534,6 +524,7 @@
                     }
                     result = clockFragment;
                     break;
+
                 case "notification_fragment":
                     if (notificationFragment == null)
                     {
@@ -541,6 +532,7 @@
                     }
                     result = notificationFragment;
                     break;
+
                 case "music_fragment":
                     if (musicFragment == null)
                     {
@@ -584,21 +576,12 @@
             lockScreenWindow = window;
         }
 
-        public void OnAnimationCancel(Animator animation)
-        {
-        }
-
+        public void OnAnimationCancel(Animator animation) { }
         public void OnAnimationEnd(Animator animation)
         {
             lockScreenWindow.DecorView.Animate().SetDuration(100).Alpha(1f);
         }
-
-        public void OnAnimationRepeat(Animator animation)
-        {
-        }
-
-        public void OnAnimationStart(Animator animation)
-        {
-        }
+        public void OnAnimationRepeat(Animator animation) { }
+        public void OnAnimationStart(Animator animation) { }
     }
 }

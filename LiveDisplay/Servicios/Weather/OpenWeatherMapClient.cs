@@ -1,14 +1,10 @@
 ﻿using Android.App;
 using Android.Graphics.Drawables;
-using Android.OS.Storage;
-using Android.Util;
 using Android.Widget;
-using Javax.Security.Auth;
 using LiveDisplay.DataRepository;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Wallpaper;
 using System;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using static Newtonsoft.Json.JsonConvert;
@@ -53,6 +49,7 @@ namespace LiveDisplay.Servicios.Weather
                         case MeasurementUnits.Celsius:
                             unitsuffix = "°C";
                             break;
+
                         case MeasurementUnits.Kelvin:
                             unitsuffix = "°K";
                             break;
@@ -79,10 +76,9 @@ namespace LiveDisplay.Servicios.Weather
                             }
                         }
                         catch
-                        {                            
+                        {
                             Toast.MakeText(Application.Context, "FAILED TO DOWNLOAD IMAGE", ToastLength.Long).Show();
                         }
-
                     }
 
                     return weatherRoot;

@@ -36,6 +36,9 @@
   <string name="dialogcancelbutton">Cancelar</string>
   <string name="dialogcancelledclick">Muy bien, puedes cambiar esta opción después en la sección \'Notificaciones\'</string>
   <string name="dialogfordeviceaccessdescription">Permisos requeridos: \nBloquear la pantalla: \nControlar cómo y cuando se apaga la pantalla</string>
+  <string name="disable">Desactivar</string>
+  <string name="disableartworkupdateonsamealbum">Desactivar actualización del artwork</string>
+  <string name="disableartworkupdateonsamealbum_desc">Si la pista cambia y la siguiente pista es del mismo album, ignorar el artwork, ya que es el mismo album</string>
   <string name="disablewallpapertransitionanim">Deshabilitar la animación del Papel Tapiz</string>
   <string name="disablewallpapertransitionanimdesc">Mejora el rendimiento</string>
   <string name="doubletapinvertedbehavior">Invertido</string>
@@ -45,6 +48,7 @@
   <string name="doubletaptopactioninverteddesc">Tocar dos veces la mitad superior de la pantalla de bloqueo desbloquea el dispositivo</string>
   <string name="doubletaptosleep">Doble pulsación para suspender</string>
   <string name="doubletaptosleepdesc">Pulsa dos veces en la pantalla de bloqueo para apagar la pantalla</string>
+  <string name="enable">Activar</string>
   <string name="enableawake">Activar servicio Awake</string>
   <string name="enabledeviceaccess">Acceso al Dispositivo</string>
   <string name="enablefloatingpermission">Mostrar sobre otras aplicaciones</string>
@@ -130,6 +134,7 @@
   <string name="wallpaperopacity">Opacidad</string>
   <string name="wallpapersettingappliestoalbumart">La configuración actual también afecta las carátulas de album</string>
   <string name="wallpapersettings">Configuracion del Papel Tapiz</string>
+  <string name="warningblurandroid10">Advertencia: dispositivos con Android 10 y en adelante, Difuminación no funcionará porque hará que la aplicación se bloquee, estoy trabajando en una solución hasta entonces, aquí hay un botón para habilitar la configuración nuevamente, pero, si la aplicación falla, puedes presionar de nuevo para deshabilitarlo</string>
   <string name="weather">Clima</string>
   <string name="weatherwidget">Widget del Clima</string>
   <string name="weatherwidgetenabled">Activar el Widget del Clima</string>

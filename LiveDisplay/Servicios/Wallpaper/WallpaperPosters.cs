@@ -7,6 +7,6 @@
         Lockscreen = 1,
         MusicPlayer = 2,
         Notification = 3,
-        Weather = 4 
+        Weather = 4
     }
 }

@@ -1,42 +1,46 @@
 ﻿using Android.App;
-using Android.Content;
 using Android.Graphics.Drawables;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
 using Android.Widget;
+using AndroidX.AppCompat.Widget;
+using LiveDisplay.Servicios.Music;
 using LiveDisplay.Servicios.Wallpaper;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
 {
-    class MediaStyleNotification : NotificationStyle
+    internal class MediaStyleNotification : NotificationStyle
     {
         private bool ActionsCompacted { get; set; } = false; //Default value, though, this should be linked somehow with the current status of the view, to ensure robustness.
+
         public MediaStyleNotification(OpenNotification openNotification, ref LinearLayout notificationView, AndroidX.Fragment.App.Fragment notificationFragment)
       : base(openNotification, ref notificationView, notificationFragment)
         {
             var notificationMediaArtwork = new BitmapDrawable(Application.Context.Resources, OpenNotification.MediaArtwork());
-            WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
+            //Only post the Artwork if this notification isn't the one that keeps the Music Widget Active (because in that case it will cause redundancy, the Music Widget 
+            //will be already showing the Artwork)
+            if (MusicController.MediaSessionAssociatedWThisNotification(openNotification.GetCustomId()) == false)
             {
-                BlurLevel = 1,
-                OpacityLevel = 125,
-                SecondsOfAttention = 5,
-                Wallpaper = notificationMediaArtwork,
-                WallpaperPoster = WallpaperPoster.Notification,
-            });
+                WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
+                {
+                    BlurLevel = 1,
+                    OpacityLevel = 125,
+                    SecondsOfAttention = 5,
+                    Wallpaper = notificationMediaArtwork,
+                    WallpaperPoster = WallpaperPoster.Notification,
+                });
+            }
         }
+
         protected override void SetWhen()
         {
             When.Text = string.Empty;
         }
+
         protected override void SetActionText(Button action, string text)
         {
-            action.Text=string.Empty;
+            action.Text = string.Empty;
         }
+
         protected override void Collapse_Click(object sender, EventArgs e)
         {
             //It works, but I am not sure how this will improve user experience, tbh, so I commented it out.

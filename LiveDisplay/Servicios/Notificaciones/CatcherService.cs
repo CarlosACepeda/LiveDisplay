@@ -96,13 +96,14 @@ namespace LiveDisplay.Servicios
             //var test6 = sbn.Notification.Extras.Get("android.wearable.EXTENSIONS");
             //var test7 = sbn.Notification.Extras.KeySet();
             //var test8 = sbn.Notification.Extras.Get("android.people.list");
-            //var test10 =sbn.Notification.Extras.Get("android.messagingUser");
-            //var test11 =sbn.Notification.Extras.Get("android.messagingStyleUser");
+            //var test10 = sbn.Notification.Extras.Get("android.messagingUser");
+            //var test11 = sbn.Notification.Extras.Get("android.messagingStyleUser");
             //var test12 = sbn.Notification.Extras.Get("android.messages");
             //var test13 = sbn.Notification.Extras.GetParcelableArray("android.messages");
+            //var test15 = (NotificationPriority)sbn.Notification.Priority;
             //foreach (Bundle item in test13)
             //{
-            //   var test14= item.KeySet();
+            //    var test14 = item.KeySet();
             //    var moreExtras = item.Get("extras");
             //    var sender_person = item.Get("sender_person");
             //    var sender = item.Get("sender");
@@ -110,29 +111,6 @@ namespace LiveDisplay.Servicios
             //    var time = item.Get("time");
             //}
 
-            //var test6 = sbn.Notification.Extras.Get(Notification.ExtraMediaSession) as MediaSession.Token;
-
-            //if (test6 != null)
-            //{
-            //    try
-            //    {
-            //        MediaController mediaController = new MediaController(this, test6);
-
-            //        var musicController = MusicController.GetInstance();
-            //        mediaController.RegisterCallback(musicController);
-            //        //Retrieve the controls to control the media, duh.
-            //        musicController.TransportControls = mediaController.GetTransportControls();
-            //        musicController.MediaMetadata = mediaController.Metadata;
-            //        musicController.PlaybackState = mediaController.PlaybackState;
-            //    }
-            //    catch
-            //    {
-            //        //mediaController?.UnregisterCallback(musicController);
-            //        //musicController.Dispose();
-            //    }
-
-            //    //mediaController.RegisterCallback(MusicController.GetInstance());
-            //}
         }
 
         public override void OnNotificationRemoved(StatusBarNotification sbn)
@@ -196,13 +174,27 @@ namespace LiveDisplay.Servicios
                 //var test10= notification.Notification.Extras.Get("android.messagingUser");
                 //var test11= notification.Notification.Extras.Get("android.messagingStyleUser");
                 //var test12= notification.Notification.Extras.Get("android.messages");
+                //var test13 = notification.Notification.Extras.GetParcelableArray("android.messages");
+                //if(test13 != null)
+                //foreach (Bundle item in test13)
+                //{
+                //    var test14 = item.KeySet();
+                //    var moreExtras = item.Get("extras");
+                //    var sender_person = item.Get("sender_person");
+                //    var sender = item.Get("sender");
+                //    var text = item.Get("text");
+                //    var time = item.Get("time");
+                //        var uri = item.Get("uri");
+                //        var type = item.Get("type");
+                //}
 
-                if (notification.Notification.Flags.HasFlag(NotificationFlags.GroupSummary)==false) //Don't grab summary notifications yet. hotfix.
-                if ((notification.IsOngoing == false || notification.Notification.Flags.HasFlag(NotificationFlags.NoClear)) && notification.IsClearable == true)
-                {
-                    statusBarNotifications.Add(notification);
+
+                if (notification.Notification.Flags.HasFlag(NotificationFlags.GroupSummary) == false) //Don't grab summary notifications yet. hotfix.
+                    if ((notification.IsOngoing == false || notification.Notification.Flags.HasFlag(NotificationFlags.NoClear)) && notification.IsClearable == true)
+                    {
+                        statusBarNotifications.Add(notification);
                         lastPostedNotification = notification;
-                }
+                    }
             }
 
             catcherHelper = new CatcherHelper(statusBarNotifications);
@@ -216,7 +208,6 @@ namespace LiveDisplay.Servicios
             notificationSlave.NotificationCancelled += NotificationSlave_NotificationCancelled;
             notificationSlave.NotificationCancelledLollipop += NotificationSlave_NotificationCancelledLollipop;
             notificationSlave.ResendLastNotificationRequested += NotificationSlave_ResendLastNotificationRequested;
-            
         }
 
         private void NotificationSlave_ResendLastNotificationRequested(object sender, EventArgs e)

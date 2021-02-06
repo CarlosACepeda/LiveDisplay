@@ -1,14 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 
 namespace LiveDisplay.Servicios
 {
@@ -17,6 +8,7 @@ namespace LiveDisplay.Servicios
         private List<Tuple<Type, ActivityStates>> Activities;
 
         private static ActivityLifecycleHelper instance;
+
         //Activities should invoke this to let know other entities about its state.
         public event EventHandler<ActivityStateChangedEventArgs> ActivityStateChanged;
 
@@ -28,10 +20,12 @@ namespace LiveDisplay.Servicios
             }
             return instance;
         }
+
         private ActivityLifecycleHelper()
         {
             Activities = new List<Tuple<Type, ActivityStates>>();
         }
+
         public void NotifyActivityStateChange(Type activity, ActivityStates activityState)
         {
             //Perform a search, and remove.
@@ -45,12 +39,13 @@ namespace LiveDisplay.Servicios
             }
 
             Activities.Add(new Tuple<Type, ActivityStates>(activity, activityState));
-            ActivityStateChanged?.Invoke(this, new ActivityStateChangedEventArgs 
+            ActivityStateChanged?.Invoke(this, new ActivityStateChangedEventArgs
             {
-                Activity= activity,
-                State= activityState
+                Activity = activity,
+                State = activityState
             });
         }
+
         public ActivityStates GetActivityState(Type activity)
         {
             foreach (var item in Activities)
@@ -64,18 +59,17 @@ namespace LiveDisplay.Servicios
         }
     }
 
-
     public class ActivityStateChangedEventArgs : EventArgs
     {
         public Type Activity { get; set; }
         public ActivityStates State { get; set; }
     }
+
     public enum ActivityStates
     {
-        Unknown=-1,
+        Unknown = -1,
         Paused = 0,
         Resumed = 1,
         Destroyed = 2,
     }
-
 }

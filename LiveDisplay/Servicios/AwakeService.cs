@@ -1,17 +1,12 @@
 ﻿using Android.App;
 using Android.Content;
-using Android.Content.Res;
 using Android.Hardware;
 using Android.OS;
-using Android.Preferences;
 using Android.Runtime;
 using Android.Util;
-using Android.Widget;
 using LiveDisplay.BroadcastReceivers;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Awake;
-using System;
-using System.Threading;
 
 namespace LiveDisplay.Servicios
 {
@@ -31,9 +26,6 @@ namespace LiveDisplay.Servicios
         private long sleepTime = 1000000000; //1 Seconds in nanoseconds.
         private long phoneInVerticalTime; //Timestamp indicating at which moment the device is vertical.
         private long proxSensorBlockedTime; //Timestamp indicating at which moment the proximity sensor is being blocked;
-
-        
-
 
         public override IBinder OnBind(Intent intent)
         {
@@ -62,7 +54,7 @@ namespace LiveDisplay.Servicios
             switch (e.Sensor.Type)
             {
                 case SensorType.Accelerometer:
-                    
+
                     //Detect phone on plain surface:
                     //Z axis must have the following value:
                     //>10 m/s2;
@@ -75,7 +67,6 @@ namespace LiveDisplay.Servicios
                         {
                             layDownTime = e.Timestamp;
                         }
-
 
                         if (e.Timestamp > (sleepTime + layDownTime))
                         {
@@ -93,8 +84,7 @@ namespace LiveDisplay.Servicios
                                 isInPocket = false;
                             }
                         }
-                        phoneInVerticalTime = 0;                            
-                        
+                        phoneInVerticalTime = 0;
                     }
                     if (e.Values[1] > 3 && isInPocket == false)
                     {
@@ -122,7 +112,6 @@ namespace LiveDisplay.Servicios
                         {
                             isInPocket = true;
                             Log.Info("SENSOR", "Is In Pocket (vertical) I guess");
-
                         }
                     }
 
@@ -148,7 +137,6 @@ namespace LiveDisplay.Servicios
 
                     break;
 
-
                 default:
                     break;
             }
@@ -159,7 +147,6 @@ namespace LiveDisplay.Servicios
             //if I remove the third argument then when I turn off the Screen it will immediately turn on the screen
             //because it recognizes is vertical and also it isn't inside a pocket
             //TODO: Fix this behavior
-
 
             //if (isInPocket == false && isLaidDown == false && ScreenOnOffReceiver.ScreenTurnedOffWhileInVertical==false)
             //{

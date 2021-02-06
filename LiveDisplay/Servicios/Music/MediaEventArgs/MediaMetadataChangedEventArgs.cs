@@ -1,7 +1,5 @@
 ﻿using Android.App;
 using Android.Media;
-using Android.Net.Wifi.Aware;
-using LiveDisplay.Servicios.Notificaciones;
 using System;
 
 namespace LiveDisplay.Servicios.Music.MediaEventArgs

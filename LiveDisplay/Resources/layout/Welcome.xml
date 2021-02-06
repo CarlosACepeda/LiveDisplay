@@ -7,6 +7,7 @@
     a:background="@android:color/black"
     a:alpha="0.9"
     tools:text="Double tap in the half top to unlock!, tap the half bottom to turn off the device \n Press anywhere to continue"
+    a:text="@string/tutorialtext"
     a:fontFamily="sans-serif-condensed"
     a:textSize="16dp"
     a:layout_width="match_parent"

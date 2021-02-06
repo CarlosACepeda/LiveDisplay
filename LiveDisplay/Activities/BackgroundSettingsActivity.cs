@@ -21,7 +21,8 @@
     [Activity(Label = "@string/wallpapersettings", Theme = "@style/LiveDisplayThemeDark.NoActionBar")]
     public class BackgroundSettingsActivity : AppCompatActivity
     {
-        private Button pickwallpaper;
+        private Button pickwallpaper, enableblurandroid10;
+        private TextView enableblurandroid10warning;
         private AndroidX.AppCompat.Widget.Toolbar toolbar;
         private AppCompatImageView wallpaperPreview;
         private SeekBar blur;
@@ -60,6 +61,24 @@
             opacity = FindViewById<SeekBar>(Resource.Id.opacity);
             wallpaperbeingsetted = FindViewById<Spinner>(Resource.Id.wallpaperbeingsetted);
             appliesToMusicWidget = FindViewById<CheckBox>(Resource.Id.appliesToMusicWidget);
+            if(Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+            {
+                enableblurandroid10 = FindViewById<Button>(Resource.Id.enableblurandroid10);
+                enableblurandroid10warning = FindViewById<TextView>(Resource.Id.warningblurandroid10);
+                if (configurationManager.RetrieveAValue(ConfigurationParameters.BlurEnabledForAndroid10))
+                {
+                    if (enableblurandroid10 != null)
+                        enableblurandroid10.Text = Resources.GetString(Resource.String.disable);
+                }
+                else
+                {
+                    if (enableblurandroid10 != null)
+                        enableblurandroid10.Text = Resources.GetString(Resource.String.enable);
+                }
+                enableblurandroid10warning.Visibility = Android.Views.ViewStates.Visible;
+                enableblurandroid10.Visibility = Android.Views.ViewStates.Visible;
+                enableblurandroid10.Click += Enableblurandroid10_Click;
+            }
             var spinnerAdapter = ArrayAdapter<string>.CreateFromResource(this, Resource.Array.listentriescurrentwallpapersetting, Android.Resource.Layout.SimpleSpinnerDropDownItem);
             wallpaperbeingsetted.Adapter = spinnerAdapter;
 
@@ -82,6 +101,22 @@
             else
             {
                 LoadConfiguration();
+            }
+        }
+
+        private void Enableblurandroid10_Click(object sender, EventArgs e)
+        {
+            if(configurationManager.RetrieveAValue(ConfigurationParameters.BlurEnabledForAndroid10)== false)
+            {
+                configurationManager.SaveAValue(ConfigurationParameters.BlurEnabledForAndroid10, true);
+                if (enableblurandroid10 != null)
+                    enableblurandroid10.Text = Resources.GetString(Resource.String.disable);
+            }
+            else
+            {
+                configurationManager.SaveAValue(ConfigurationParameters.BlurEnabledForAndroid10, false);
+                if (enableblurandroid10 != null)
+                    enableblurandroid10.Text = Resources.GetString(Resource.String.enable);
             }
         }
 
@@ -188,7 +223,6 @@
 
                         if (pickwallpaper.Enabled == false) pickwallpaper.Enabled = true;
 
-
                         switch (configurationManager.RetrieveAValue(ConfigurationParameters.ChangeWallpaper, "0"))
                         {
                             case "0":
@@ -260,8 +294,8 @@
 
                         if (appliesToMusicWidget.Checked == true)
                         {
-                             //If the user tries to set the album artwork opacity and blur
-                                                                  //then this checkbox is not anymore valid.
+                            //If the user tries to set the album artwork opacity and blur
+                            //then this checkbox is not anymore valid.
                             blur.Enabled = false;                 //As well as the Seekbars for blur and opacity, because
                             opacity.Enabled = false;              //the Default wallpaper config. also applies to the AlbumArt config.
                                                                   //So the user can't slide the seekbars.
@@ -277,8 +311,8 @@
 
                         ThreadPool.QueueUserWorkItem(m =>
                         {
-                            Bitmap bitmap= null;
-                            if(Build.VERSION.SdkInt>= BuildVersionCodes.Lollipop)
+                            Bitmap bitmap = null;
+                            if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
                             {
                                 bitmap = ((BitmapDrawable)Application.Context.GetDrawable(Resource.Drawable.album_artwork)).Bitmap;
                             }
@@ -359,10 +393,9 @@
                         }
                     });
 
+
                     break;
             }
-
-            GC.Collect(0); //Helping the gc, We are manipulating bitmaps.
         }
 
         private void Opacity_StopTrackingTouch(object sender, SeekBar.StopTrackingTouchEventArgs e)
@@ -402,6 +435,7 @@
                         wallpaperManager.ForgetLoadedWallpaper();
                         wallpaper = ((BitmapDrawable)wallpaperManager.Drawable).Bitmap;
                         break;
+
                     case "2": //User picked a custom wallpaper.
                         var imagePath = configurationManager.RetrieveAValue(ConfigurationParameters.ImagePath, "");
                         wallpaper = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.ImagePath, imagePath));
@@ -444,13 +478,10 @@
                     }
                 });
 
-
                 configurationManager.SaveAValue(ConfigurationParameters.AlbumArtBlurLevel, e.SeekBar.Progress);
                 albumArtBlurLevel = e.SeekBar.Progress;
             }
 
-            
-            GC.Collect(0);
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)

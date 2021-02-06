@@ -1,6 +1,5 @@
 ﻿using Android.App;
 using Android.Content;
-using Android.Preferences;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
 

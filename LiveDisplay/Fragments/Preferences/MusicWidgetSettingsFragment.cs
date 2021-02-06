@@ -23,10 +23,10 @@ namespace LiveDisplay.Fragments.Preferences
             AddPreferencesFromResource(Resource.Xml.music_widget_prefs);
             PreferenceManager.SetDefaultValues(Application.Context, Resource.Xml.music_widget_prefs, true);
             if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch) //In kitkat you can only use the RemoteController
-                //thats why you can't choose a music widget control method.
+                                                                      //thats why you can't choose a music widget control method.
             {
                 Preference musiccontrolmethod = FindPreference("musicwidgetcontrolmethod"); //Preference that's disabled by default.
-                musiccontrolmethod.Selectable = true; 
+                musiccontrolmethod.Selectable = true;
                 musiccontrolmethod.Enabled = true;
             }
             string interval = configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetMethod, "1"); //1 is the default value, music_widget_prefs.xml
@@ -36,11 +36,13 @@ namespace LiveDisplay.Fragments.Preferences
 
             sharedPreferences.RegisterOnSharedPreferenceChangeListener(this);
         }
+
         public override void OnResume()
         {
             sharedPreferences.RegisterOnSharedPreferenceChangeListener(this);
             base.OnResume();
         }
+
         public override void OnPause()
         {
             sharedPreferences.UnregisterOnSharedPreferenceChangeListener(this);
@@ -68,6 +70,7 @@ namespace LiveDisplay.Fragments.Preferences
                             break;
                     }
                     break;
+
                 case ConfigurationParameters.HideNotificationWhenItsMediaPlaying:
                     switch (sharedPreferences.GetBoolean(ConfigurationParameters.HideNotificationWhenItsMediaPlaying, false))
                     {
@@ -81,6 +84,7 @@ namespace LiveDisplay.Fragments.Preferences
                     break;
             }
         }
+
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             return base.OnCreateView(inflater, container, savedInstanceState);

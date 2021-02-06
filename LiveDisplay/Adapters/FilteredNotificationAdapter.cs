@@ -1,17 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using Android.Views;
-using Android.Widget;
+﻿using Android.Views;
 using AndroidX.RecyclerView.Widget;
 using LiveDisplay.Servicios.Notificaciones;
+using System;
+using System.Collections.Generic;
 
 namespace LiveDisplay.Adapters
 {
-    class FilteredNotificationAdapter : RecyclerView.Adapter
+    internal class FilteredNotificationAdapter : RecyclerView.Adapter
     {
         public event EventHandler<FilteredNotificationAdapterClickEventArgs> ItemClick;
+
         public event EventHandler<FilteredNotificationAdapterClickEventArgs> ItemLongClick;
-        List<OpenNotification> filteredOpenNotifications;
+
+        private List<OpenNotification> filteredOpenNotifications;
 
         public FilteredNotificationAdapter(List<OpenNotification> filteredOpenNotifications)
         {
@@ -21,7 +22,6 @@ namespace LiveDisplay.Adapters
         // Create new views (invoked by the layout manager)
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
         {
-
             //Setup your layout here
             View itemView = null;
             //var id = Resource.Layout.__YOUR_ITEM_HERE;
@@ -44,15 +44,14 @@ namespace LiveDisplay.Adapters
 
         public override int ItemCount => filteredOpenNotifications.Count;
 
-        void OnClick(FilteredNotificationAdapterClickEventArgs args) => ItemClick?.Invoke(this, args);
-        void OnLongClick(FilteredNotificationAdapterClickEventArgs args) => ItemLongClick?.Invoke(this, args);
+        private void OnClick(FilteredNotificationAdapterClickEventArgs args) => ItemClick?.Invoke(this, args);
 
+        private void OnLongClick(FilteredNotificationAdapterClickEventArgs args) => ItemLongClick?.Invoke(this, args);
     }
 
     public class FilteredNotificationAdapterViewHolder : RecyclerView.ViewHolder
     {
         //public TextView TextView { get; set; }
-
 
         public FilteredNotificationAdapterViewHolder(View itemView, Action<FilteredNotificationAdapterClickEventArgs> clickListener,
                             Action<FilteredNotificationAdapterClickEventArgs> longClickListener) : base(itemView)

@@ -6,14 +6,11 @@ using Android.Runtime;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
-using AndroidX.RecyclerView.Widget;
-using LiveDisplay.Activities;
 using LiveDisplay.Adapters;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Awake;
 using LiveDisplay.Servicios.Notificaciones;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
-using LiveDisplay.Servicios.Notificaciones.NotificationStyle;
 using System;
 
 namespace LiveDisplay.Servicios.FloatingNotification
@@ -25,7 +22,6 @@ namespace LiveDisplay.Servicios.FloatingNotification
     [Service(Enabled = true)]
     internal class FloatingNotification : Service, View.IOnTouchListener
     {
-
         private IWindowManager windowManager;
         private LinearLayout floatingNotificationView;
         private TextView floatingNotificationTitle;
@@ -84,16 +80,14 @@ namespace LiveDisplay.Servicios.FloatingNotification
             //newUiOptions |= (int)SystemUiFlags.ImmersiveSticky;
             //floatingList.SystemUiVisibility = (StatusBarVisibility)newUiOptions;
 
-
-
             WindowManagerLayoutParams layoutParams = new WindowManagerLayoutParams
             {
                 Width = (int)floatingNotificationWidth,
                 Height = ViewGroup.LayoutParams.WrapContent,
                 Type = layoutType,
-                Flags = 
-                WindowManagerFlags.NotFocusable 
-                | WindowManagerFlags.WatchOutsideTouch 
+                Flags =
+                WindowManagerFlags.NotFocusable
+                | WindowManagerFlags.WatchOutsideTouch
                 | WindowManagerFlags.ShowWhenLocked,
                 Format = Format.Translucent,
                 Gravity = GravityFlags.CenterHorizontal | GravityFlags.CenterVertical
@@ -108,8 +102,6 @@ namespace LiveDisplay.Servicios.FloatingNotification
             floatingNotificationTitle = floatingNotificationView.FindViewById<TextView>(Resource.Id.tvTitle);
             floatingNotificationText = floatingNotificationView.FindViewById<TextView>(Resource.Id.tvText);
             floatingNotificationActionsContainer = floatingNotificationView.FindViewById<LinearLayout>(Resource.Id.notificationActions);
-
-
 
             CatcherHelper.NotificationRemoved += CatcherHelper_NotificationRemoved;
             CatcherHelper.NotificationPosted += CatcherHelper_NotificationPosted;
@@ -151,7 +143,6 @@ namespace LiveDisplay.Servicios.FloatingNotification
             if (e.ShouldCauseWakeUp)
                 AwakeHelper.TurnOnScreen();
 
-
             //if the current floating notification widget does not have a tag, let's set it.
 
             if (floatingNotificationView.GetTag(Resource.String.defaulttag) == null)
@@ -172,7 +163,6 @@ namespace LiveDisplay.Servicios.FloatingNotification
             {
                 if ((string)floatingNotificationView.GetTag(Resource.String.defaulttag) == openNotification.GetCustomId())
                 {
-
                     floatingNotificationView.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
                 }
             }

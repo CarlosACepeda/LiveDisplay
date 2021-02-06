@@ -3,7 +3,6 @@ using Android.App.Admin;
 using Android.Content;
 using Android.OS;
 using Android.Util;
-using LiveDisplay.BroadcastReceivers;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Keyguard;
 using LiveDisplay.Servicios.Notificaciones;
@@ -65,7 +64,7 @@ namespace LiveDisplay.Servicios.Awake
                     try
                     {
                         //Special workaround that still makes harm but not as much as it would without the workaround.
-                        //So, if the next line of code gets triggered 'policy.LockNow()' it would lock the device, but, if 
+                        //So, if the next line of code gets triggered 'policy.LockNow()' it would lock the device, but, if
                         //the device has been locked when the user has set a fingerprint and also if the lockscreen is still present
                         //then after unlocking by using the fingerprint the user has to write
                         //the pattern, aaand also double tap to exit LiveDisplay, lol.
@@ -74,7 +73,8 @@ namespace LiveDisplay.Servicios.Awake
                         //neither the automatic screen off. (I don't know how to solve that yet) it is the lesser of two evils.
                         //However it doesn't work sometimes, I guess it is better to simply warn the user about it.
                         //And disable the turn off screen capabilities of LiveDisplay while a fingerprint lock is active.
-                        if (KeyguardHelper.IsDeviceCurrentlyLocked() && KeyguardHelper.IsFingerprintSet()){
+                        if (KeyguardHelper.IsDeviceCurrentlyLocked() && KeyguardHelper.IsFingerprintSet())
+                        {
                             //Do nothing.
                         }
                         else
@@ -96,12 +96,13 @@ namespace LiveDisplay.Servicios.Awake
                 Intent awake = new Intent(Application.Context, typeof(AwakeService));
                 Application.Context.StartService(awake);
             }
-            else 
+            else
             {
                 Intent awake = new Intent(Application.Context, typeof(AwakeService));
                 Application.Context.StopService(awake);
             }
         }
+
         public static AwakeStatus GetAwakeStatus()
         {
             if (UserHasEnabledAwake() == false && UserHasSetAwakeHours() == false)
@@ -112,13 +113,14 @@ namespace LiveDisplay.Servicios.Awake
                 return AwakeStatus.Up;
             if (UserHasEnabledAwake() && IsAwakeUp() && AwakeService.isRunning == false)
                 return AwakeStatus.UpWithDeviceMotionDisabled;
-            if (UserHasEnabledAwake() && IsAwakeUp()== false && AwakeService.isRunning)
+            if (UserHasEnabledAwake() && IsAwakeUp() == false && AwakeService.isRunning)
                 return AwakeStatus.SleepingWithDeviceMotionEnabled;
             if (UserHasEnabledAwake() && IsAwakeUp() == false && AwakeService.isRunning == false)
                 return AwakeStatus.Sleeping;
 
             return AwakeStatus.None;
         }
+
         private static bool IsAwakeUp()
         {
             //Check the current time and only react if the time this method is called is within the allowed hours.
@@ -127,7 +129,6 @@ namespace LiveDisplay.Servicios.Awake
             //Generates the hour as a 4 characters number in 24 hours for example: 2210 (10:10pm)
             var now = int.Parse(string.Concat(DateTime.Now.Hour.ToString("00"), DateTime.Now.Minute.ToString("00")));
             Log.Info("LiveDisplay", now.ToString());
-
 
             if (start <= end) //The times are in the same day.
             {
@@ -156,6 +157,7 @@ namespace LiveDisplay.Servicios.Awake
                 }
             }
         }
+
         private static bool UserHasEnabledAwake()
         {
             //Check if the user has enabled it in the first place
@@ -165,18 +167,19 @@ namespace LiveDisplay.Servicios.Awake
             }
             return true;
         }
+
         public static bool UserHasSetAwakeHours()
         {
             //Check if the user has set  hours in which the Awake functionality isn't working!
-            int start = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.StartSleepTime, "-1")); 
+            int start = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.StartSleepTime, "-1"));
             int end = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.FinishSleepTime, "-1"));
             if (start == -1 || end == -1)
             {
                 return false;
             }
             return true;
-
         }
+
         private void CatcherHelper_NotificationListSizeChanged(object sender, Notificaciones.NotificationEventArgs.NotificationListSizeChangedEventArgs e)
         {
             if (configurationManager.RetrieveAValue(ConfigurationParameters.TurnOffScreenAfterLastNotificationCleared) == true)
@@ -204,13 +207,15 @@ namespace LiveDisplay.Servicios.Awake
     [Flags]
     public enum AwakeStatus
     {
-        None= -1, //Shrug.
-        CompletelyDisabled= 0, //Not even enabled by the user yet.
+        None = -1, //Shrug.
+        CompletelyDisabled = 0, //Not even enabled by the user yet.
         Up = 1,
         Sleeping = 2, //Enabled but currently inactive! (Inactive hours)
         UpWithDeviceMotionDisabled = 4, //It can turn on the screen but not when grabbing the phone from a flat surface.
-                                       //Maybe because the Service that listens for the device motion is not running.
-        SleepingWithDeviceMotionEnabled= 8,
-        DisabledbyUser= 64
+
+                                        //Maybe because the Service that listens for the device motion is not running.
+        SleepingWithDeviceMotionEnabled = 8,
+
+        DisabledbyUser = 64
     }
 }

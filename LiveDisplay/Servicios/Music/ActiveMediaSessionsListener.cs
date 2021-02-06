@@ -25,8 +25,7 @@ namespace LiveDisplay.Servicios.Music
                             try
                             {
                                 MusicController.StartPlayback(mediacontroller.SessionToken, null);
-                                WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = true, WidgetName = "MusicFragment", Active=true });
-                                
+                                WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = true, WidgetName = "MusicFragment", Active = true });
                             }
                             catch
                             {

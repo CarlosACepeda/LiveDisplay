@@ -10,6 +10,7 @@
         FastFoward = 6,
         Rewind = 7,
         Stop = 8,
-        RetrieveMediaInformation = 9
+        RetrieveMediaInformation = 9,
+        Replay = 10
     }
 }
