@@ -180,7 +180,6 @@
                     Window.DecorView.Background = e.Wallpaper;
                 }
             });
-            GC.Collect();
         }
 
         private void Lockscreen_Touch(object sender, View.TouchEventArgs e)
@@ -210,12 +209,6 @@
                             }
                             else
                             {
-                                //Finish();
-                                //using (Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(TransparentActivity))))
-                                //{
-                                //    intent.AddFlags(ActivityFlags.NewTask | ActivityFlags.);
-                                //    StartActivity(intent);
-                                //}
                                 if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                                     if (KeyguardHelper.IsDeviceCurrentlyLocked())
                                     {
@@ -229,12 +222,6 @@
                         {
                             if (e.Event.RawY < halfscreenheight)
                             {
-                                //Finish();
-                                //using (Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(TransparentActivity))))
-                                //{
-                                //    intent.AddFlags(ActivityFlags.NewTask | ActivityFlags.MultipleTask);
-                                //    StartActivity(intent);
-                                //}
                                 if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                                     if (KeyguardHelper.IsDeviceCurrentlyLocked())
                                     {
@@ -589,21 +576,12 @@
             lockScreenWindow = window;
         }
 
-        public void OnAnimationCancel(Animator animation)
-        {
-        }
-
+        public void OnAnimationCancel(Animator animation) { }
         public void OnAnimationEnd(Animator animation)
         {
             lockScreenWindow.DecorView.Animate().SetDuration(100).Alpha(1f);
         }
-
-        public void OnAnimationRepeat(Animator animation)
-        {
-        }
-
-        public void OnAnimationStart(Animator animation)
-        {
-        }
+        public void OnAnimationRepeat(Animator animation) { }
+        public void OnAnimationStart(Animator animation) { }
     }
 }

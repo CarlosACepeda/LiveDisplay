@@ -141,18 +141,21 @@
         {
             using (var accessestext = FindViewById<TextView>(Resource.Id.health))
             {
-                if (Checkers.IsNotificationListenerEnabled() && Checkers.IsThisAppADeviceAdministrator())
+                RunOnUiThread(() =>
                 {
-                    accessestext.SetText(Resource.String.accessesstatusenabled);
-                    accessestext.SetTextColor(Android.Graphics.Color.Green);
-                    isApplicationHealthy = true;
-                }
-                else
-                {
-                    accessestext.SetText(Resource.String.accessesstatusdisabled);
-                    accessestext.SetTextColor(Android.Graphics.Color.Red);
-                    isApplicationHealthy = false;
-                }
+                    if (Checkers.IsNotificationListenerEnabled() && Checkers.IsThisAppADeviceAdministrator())
+                    {
+                        accessestext.SetText(Resource.String.accessesstatusenabled);
+                        accessestext.SetTextColor(Android.Graphics.Color.Green);
+                        isApplicationHealthy = true;
+                    }
+                    else
+                    {
+                        accessestext.SetText(Resource.String.accessesstatusdisabled);
+                        accessestext.SetTextColor(Android.Graphics.Color.Red);
+                        isApplicationHealthy = false;
+                    }
+                });
             }
         }
 

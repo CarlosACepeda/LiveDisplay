@@ -491,7 +491,6 @@ namespace LiveDisplay.Fragments
                             BlurLevel = (short)blurLevel,
                             WallpaperPoster = WallpaperPoster.MusicPlayer //We must nutify WallpaperPublisher who is posting the wallpaper, otherwise it'll be ignored.
                         });
-                    Log.Debug("LiveDisplay", "thrown from MusicFragment");
                 });
             }
 
