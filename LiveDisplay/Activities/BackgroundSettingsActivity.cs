@@ -21,7 +21,8 @@
     [Activity(Label = "@string/wallpapersettings", Theme = "@style/LiveDisplayThemeDark.NoActionBar")]
     public class BackgroundSettingsActivity : AppCompatActivity
     {
-        private Button pickwallpaper;
+        private Button pickwallpaper, enableblurandroid10;
+        private TextView enableblurandroid10warning;
         private AndroidX.AppCompat.Widget.Toolbar toolbar;
         private AppCompatImageView wallpaperPreview;
         private SeekBar blur;
@@ -60,6 +61,24 @@
             opacity = FindViewById<SeekBar>(Resource.Id.opacity);
             wallpaperbeingsetted = FindViewById<Spinner>(Resource.Id.wallpaperbeingsetted);
             appliesToMusicWidget = FindViewById<CheckBox>(Resource.Id.appliesToMusicWidget);
+            if(Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+            {
+                enableblurandroid10 = FindViewById<Button>(Resource.Id.enableblurandroid10);
+                enableblurandroid10warning = FindViewById<TextView>(Resource.Id.warningblurandroid10);
+                if (configurationManager.RetrieveAValue(ConfigurationParameters.BlurEnabledForAndroid10))
+                {
+                    if (enableblurandroid10 != null)
+                        enableblurandroid10.Text = Resources.GetString(Resource.String.disable);
+                }
+                else
+                {
+                    if (enableblurandroid10 != null)
+                        enableblurandroid10.Text = Resources.GetString(Resource.String.enable);
+                }
+                enableblurandroid10warning.Visibility = Android.Views.ViewStates.Visible;
+                enableblurandroid10.Visibility = Android.Views.ViewStates.Visible;
+                enableblurandroid10.Click += Enableblurandroid10_Click;
+            }
             var spinnerAdapter = ArrayAdapter<string>.CreateFromResource(this, Resource.Array.listentriescurrentwallpapersetting, Android.Resource.Layout.SimpleSpinnerDropDownItem);
             wallpaperbeingsetted.Adapter = spinnerAdapter;
 
@@ -82,6 +101,22 @@
             else
             {
                 LoadConfiguration();
+            }
+        }
+
+        private void Enableblurandroid10_Click(object sender, EventArgs e)
+        {
+            if(configurationManager.RetrieveAValue(ConfigurationParameters.BlurEnabledForAndroid10)== false)
+            {
+                configurationManager.SaveAValue(ConfigurationParameters.BlurEnabledForAndroid10, true);
+                if (enableblurandroid10 != null)
+                    enableblurandroid10.Text = Resources.GetString(Resource.String.disable);
+            }
+            else
+            {
+                configurationManager.SaveAValue(ConfigurationParameters.BlurEnabledForAndroid10, false);
+                if (enableblurandroid10 != null)
+                    enableblurandroid10.Text = Resources.GetString(Resource.String.enable);
             }
         }
 
@@ -358,10 +393,9 @@
                         }
                     });
 
+
                     break;
             }
-
-            GC.Collect(0); //Helping the gc, We are manipulating bitmaps.
         }
 
         private void Opacity_StopTrackingTouch(object sender, SeekBar.StopTrackingTouchEventArgs e)
@@ -448,7 +482,6 @@
                 albumArtBlurLevel = e.SeekBar.Progress;
             }
 
-            GC.Collect(0);
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)

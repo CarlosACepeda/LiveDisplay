@@ -38,6 +38,7 @@
   <string name="dialogcancelbutton">Cancel</string>
   <string name="dialogcancelledclick">Ok, you can change this setting later in Notifications section!</string>
   <string name="dialogfordeviceaccessdescription">Permissions required:  \nLock screen: Control how and when to lock the screen</string>
+  <string name="disable">Disable</string>
   <string name="disableartworkupdateonsamealbum">Disable Artwork update</string>
   <string name="disableartworkupdateonsamealbum_desc">If media track is changed and the album is the same, ignore that song\'s album artwork (because is the same)</string>
   <string name="disablewallpapertransitionanim">Disable Wallpaper animation</string>
@@ -49,6 +50,7 @@
   <string name="doubletaptopactioninverteddesc">Double tapping on the half top of the lockscreen unlocks the device</string>
   <string name="doubletaptosleep">Double tap to sleep</string>
   <string name="doubletaptosleepdesc">Touch twice anywhere on the lock screen to turn off the screen</string>
+  <string name="enable">Enable</string>
   <string name="enableawake">Enable Awake service</string>
   <string name="enabledeviceaccess">Enable device Access</string>
   <string name="enablefloatingpermission">Display over other apps</string>
@@ -133,11 +135,12 @@
   <string name="updateweathereach_desc">Weather update frequency</string>
   <string name="useimperialunits">Use Imperial units</string>
   <string name="version">Version</string>
-  <string name="versionnumber">0.9.4-beta1</string>
+  <string name="versionnumber">0.9.4-beta3</string>
   <string name="wallpaperblur">Blur</string>
   <string name="wallpaperopacity">Opacity</string>
   <string name="wallpapersettingappliestoalbumart">Current setting also affects album artwork</string>
   <string name="wallpapersettings">Wallpaper Settings</string>
+  <string name="warningblurandroid10">Warning: devices with Android 10 and on, Blur will not work because it will cause the app to crash, I am working on a fix until then, here is a button to enable the setting again, but, if the app crashes you can press it again to disable it</string>
   <string name="weather">Weather</string>
   <string name="weatherwidget">Weather Widget</string>
   <string name="weatherwidgetenabled">Enable Weather Widget</string>
