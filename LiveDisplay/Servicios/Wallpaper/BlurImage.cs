@@ -2,6 +2,7 @@
 using Android.Graphics;
 using Android.OS;
 using Android.Renderscripts;
+using LiveDisplay.Misc;
 using System.Threading;
 
 namespace LiveDisplay.Servicios.Wallpaper
@@ -61,10 +62,14 @@ namespace LiveDisplay.Servicios.Wallpaper
 
         private Bitmap Blur()
         {
-            //Workaround Android Q: IT causes SIGSEV in Android 10 for some reason. XOM related maybe
-            if (Build.VERSION.SdkInt > BuildVersionCodes.Q)
+            //Now I am letting the user to risk by letting them to choose to blur the image when the device runs android 10 and beyond
+            if (new ConfigurationManager(AppPreferences.Default).RetrieveAValue(ConfigurationParameters.BlurEnabledForAndroid10) == false)
             {
-                return image;
+                //Workaround Android Q: IT causes SIGSEV in Android 10 for some reason. XOM related maybe
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+                {
+                    return image;
+                }
             }
             if (image == null)
             {
@@ -82,7 +87,7 @@ namespace LiveDisplay.Servicios.Wallpaper
             }
             else
             {
-                input = Bitmap.CreateScaledBitmap(image, image.Width, image.Height, false);
+                input = Bitmap.CreateScaledBitmap(image, deviceWidth, deviceHeight, true);
             }
             try
             {

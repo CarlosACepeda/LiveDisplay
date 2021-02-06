@@ -49,6 +49,7 @@
         public const string LaunchNotification = "launchnotification?";
         public const string AppHasCustomImportanceRules = "apphascustomblockrules";
         public const string DisableArtworkUpdateOnSameAlbum = "disableartworkupdateonsamealbum"; //related to mediasession metadata changed.
+        public const string BlurEnabledForAndroid10 = "blurenabledforandroid10?"; //Experimental setting I decided to include, to allow the user to enable unstable blur in android 10 and beyond.
 
         //Misc.
         //It serves the purpose of enabling certain messages to be shown in a Toast Message useful for the developer.
