@@ -12,7 +12,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
             var notificationBigPicture = new BitmapDrawable(Resources, OpenNotification.BigPicture());
             WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
             {
-                BlurLevel = 1,
+                BlurLevel = 5,
                 OpacityLevel = 125,
                 SecondsOfAttention = 5,
                 Wallpaper = notificationBigPicture,
