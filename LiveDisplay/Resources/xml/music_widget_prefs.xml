@@ -46,7 +46,7 @@
       android:title="@string/launchnotification"
       app:iconSpaceReserved="false" />
     <SwitchPreference
-      android:defaultValue="false"
+      android:defaultValue="true"
       android:selectable="true"
       android:enabled="true"
       android:key="disableartworkupdateonsamealbum"
