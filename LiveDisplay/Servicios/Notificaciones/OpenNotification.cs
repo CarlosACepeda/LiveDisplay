@@ -368,6 +368,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             else
                 result += " It does not have Style!";
 
+            if(Build.VERSION.SdkInt>= BuildVersionCodes.N)
             if (statusbarnotification.IsGroup)
                 result += " Is Group";
             else
