@@ -21,7 +21,6 @@ namespace LiveDisplay.Fragments.Preferences
         public override void OnCreatePreferences(Bundle savedInstanceState, string rootKey)
         {
             AddPreferencesFromResource(Resource.Xml.music_widget_prefs);
-            PreferenceManager.SetDefaultValues(Application.Context, Resource.Xml.music_widget_prefs, true);
             if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch) //In kitkat you can only use the RemoteController
                                                                       //thats why you can't choose a music widget control method.
             {

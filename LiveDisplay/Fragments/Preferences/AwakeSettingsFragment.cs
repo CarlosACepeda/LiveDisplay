@@ -2,6 +2,7 @@
 using Android.Content;
 using Android.OS;
 using Android.Views;
+using Android.Widget;
 using AndroidX.Preference;
 using LiveDisplay.Activities;
 using LiveDisplay.Misc;
@@ -17,6 +18,7 @@ namespace LiveDisplay.Fragments.Preferences
         private ISharedPreferences sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
         private TimePickerDialog startTimeDialog;
         private TimePickerDialog finishTimeDialog;
+        private string digitalWellbeingPackageName = "com.google.android.apps.wellbeing";
 
         public override void OnCreate(Bundle savedInstanceState)
         {
@@ -38,9 +40,8 @@ namespace LiveDisplay.Fragments.Preferences
         public override void OnCreatePreferences(Bundle savedInstanceState, string rootKey)
         {
             AddPreferencesFromResource(Resource.Xml.awake_prefs);
-            PreferenceManager.SetDefaultValues(Application.Context, Resource.Xml.awake_prefs, false);
-            SwitchPreference enableawake = FindPreference("enableawake?") as SwitchPreference;
-            if (enableawake.Checked == false)
+            SwitchPreference listenfordevicemotion = FindPreference("listenfordevicemotion?") as SwitchPreference;
+            if (listenfordevicemotion.Checked == false)
             {
                 ToggleAwakeSettingsItems(false);
             }
@@ -52,26 +53,19 @@ namespace LiveDisplay.Fragments.Preferences
 
         private void ToggleAwakeSettingsItems(bool enableItems)
         {
-            Preference listendevicemotion = FindPreference("listenfordevicemotion?");
-            Preference turnonnewnotification = FindPreference("turnonnewnotification?");
             Preference turnonusermovement = FindPreference("turnonusermovement?");
-            Preference doubletapontopactionbehavior = FindPreference("doubletapontoppactionbehavior");
-            Preference startlockscreendelaytime = FindPreference("startlockscreendelaytime");
-            Preference turnoffscreendelaytime = FindPreference("turnoffscreendelaytime");
             Preference awakecausesblackwallpaper = FindPreference("awakecausesblackwallpaper?");
             Preference inactivehourssettingspreference = FindPreference("inactivetimesettings");
-
-            listendevicemotion.Enabled = enableItems;
-            listendevicemotion.Selectable = enableItems;
+            //Preference syncwithdigitalwellbeing = FindPreference("syncwithdigitalwellbeing?");
 
             inactivehourssettingspreference.Enabled = enableItems;
             inactivehourssettingspreference.Selectable = enableItems;
 
-            turnonnewnotification.Enabled = enableItems;
-            turnonnewnotification.Selectable = enableItems;
-
             awakecausesblackwallpaper.Enabled = enableItems;
             awakecausesblackwallpaper.Selectable = enableItems;
+
+            //syncwithdigitalwellbeing.Enabled = enableItems;
+            //syncwithdigitalwellbeing.Selectable = enableItems;
 
             inactivehourssettingspreference.PreferenceClick += Inactivehourssettingspreference_PreferenceClick;
 
@@ -90,14 +84,6 @@ namespace LiveDisplay.Fragments.Preferences
                     AwakeHelper.ToggleStartStopAwakeService(false);
                 }
             }
-            doubletapontopactionbehavior.Enabled = enableItems;
-            doubletapontopactionbehavior.Selectable = enableItems;
-
-            startlockscreendelaytime.Enabled = enableItems;
-            startlockscreendelaytime.Selectable = enableItems;
-
-            turnoffscreendelaytime.Enabled = enableItems;
-            turnoffscreendelaytime.Selectable = enableItems;
         }
 
         private void Blacklistpreference_PreferenceClick(object sender, Preference.PreferenceClickEventArgs e)
@@ -169,33 +155,13 @@ namespace LiveDisplay.Fragments.Preferences
                     }
                     break;
 
-                case ConfigurationParameters.EnableAwakeService:
-                    switch (sharedPreferences.GetBoolean(ConfigurationParameters.EnableAwakeService, false))
-                    {
-                        case true:
-                            if (AwakeHelper.GetAwakeStatus() == AwakeStatus.CompletelyDisabled)
-                            {
-                                //What should go here
-                            }
-                            else
-                            {
-                                ToggleAwakeSettingsItems(true);
-                            }
-                            break;
-
-                        case false:
-                            ToggleAwakeSettingsItems(false);
-                            break;
-                    }
-
-                    break;
-
                 case ConfigurationParameters.ListenForDeviceMotion:
                     Preference turnonusermovement = FindPreference("turnonusermovement?");
                     switch (sharedPreferences.GetBoolean(ConfigurationParameters.ListenForDeviceMotion, false))
                     {
                         case true:
                             AwakeHelper.ToggleStartStopAwakeService(true);
+                            ToggleAwakeSettingsItems(true);
                             turnonusermovement.Enabled = true;
                             turnonusermovement.Selectable = true;
 
@@ -203,11 +169,25 @@ namespace LiveDisplay.Fragments.Preferences
 
                         case false:
                             AwakeHelper.ToggleStartStopAwakeService(false);
+                            ToggleAwakeSettingsItems(false);
                             turnonusermovement.Enabled = false;
                             turnonusermovement.Selectable = false;
                             break;
                     }
+                    break;
+                case ConfigurationParameters.SyncWithDigitalWellbeing:
+                    if(PackageUtils.GetTheAppName(digitalWellbeingPackageName)== null)
+                    {
+                        Activity.RunOnUiThread(() => Toast.MakeText(Activity, Resource.String.youneeddigitalwellbeingapp, ToastLength.Long).Show());
+                    }
 
+                    if (Checkers.IsNotificationListenerEnabled()==false)
+                    {
+                        SwitchPreference syncwithdigitalwellbeing = FindPreference("syncwithdigitalwellbeing?") as SwitchPreference;
+                        //new ConfigurationManager(AppPreferences.Default).SaveAValue(ConfigurationParameters.SyncWithDigitalWellbeing, false);
+                        syncwithdigitalwellbeing.Checked = false;
+                        Activity.RunOnUiThread(() => Toast.MakeText(Activity, Resource.String.unabletoenablesyncwbedmode, ToastLength.Long).Show());
+                    }
                     break;
             }
         }

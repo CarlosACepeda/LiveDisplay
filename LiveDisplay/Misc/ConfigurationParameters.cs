@@ -33,7 +33,6 @@
         public const string WeatherUpdateFrequency = "weatherupdatefrequency";
         public const string WeatherUpdateChangesWallpaper = "weatherupdatechangeswallpaper?";
         public const string EnableQuickReply = "enablequickreply?";
-        public const string EnableAwakeService = "enableawake?";
         public const string ListenForDeviceMotion = "listenfordevicemotion?";
         public const string TurnOnNewNotification = "turnonnewnotification?";
         public const string AwakeCausesBlackWallpaper = "awakecausesblackwallpaper?";
@@ -50,6 +49,7 @@
         public const string AppHasCustomImportanceRules = "apphascustomblockrules";
         public const string DisableArtworkUpdateOnSameAlbum = "disableartworkupdateonsamealbum"; //related to mediasession metadata changed.
         public const string BlurEnabledForAndroid10 = "blurenabledforandroid10?"; //Experimental setting I decided to include, to allow the user to enable unstable blur in android 10 and beyond.
+        public const string SyncWithDigitalWellbeing = "syncwithdigitalwellbeing?";
 
         //Misc.
         //It serves the purpose of enabling certain messages to be shown in a Toast Message useful for the developer.

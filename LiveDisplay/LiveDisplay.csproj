@@ -46,6 +46,7 @@
     <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
     <AndroidPackageFormat>apk</AndroidPackageFormat>
     <PlatformTarget>AnyCPU</PlatformTarget>
+    <AndroidUseAapt2>true</AndroidUseAapt2>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -122,7 +123,6 @@
     <Compile Include="Servicios\FloatingNotification\FloatingNotification.cs" />
     <Compile Include="Servicios\Keyguard\KeyguardHelper.cs" />
     <Compile Include="Servicios\Music\Jukebox.cs" />
-    <Compile Include="Servicios\Music\JukeboxKitkat.cs" />
     <Compile Include="Servicios\Music\MediaEventArgs\MediaActionEventArgs.cs" />
     <Compile Include="Servicios\Music\MediaEventArgs\MediaMetadataChangedEventArgs.cs" />
     <Compile Include="Servicios\Music\MediaEventArgs\MediaMetadataChangedKitkatEventArgs.cs" />
@@ -445,7 +445,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Assets\" />
     <Folder Include="Resources\drawable\" />
   </ItemGroup>
   <ItemGroup>

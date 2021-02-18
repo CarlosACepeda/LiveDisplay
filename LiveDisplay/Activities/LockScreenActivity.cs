@@ -319,7 +319,6 @@
             ActivityLifecycleHelper.GetInstance().NotifyActivityStateChange(typeof(LockScreenActivity), ActivityStates.Destroyed);
             //Unbind events
 
-            //unlocker.Touch -= Unlocker_Touch;
             clearAll.Click -= BtnClearAll_Click;
             WallpaperPublisher.NewWallpaperIssued -= Wallpaper_NewWallpaperIssued;
             CatcherHelper.NotificationListSizeChanged -= CatcherHelper_NotificationListSizeChanged;
@@ -332,16 +331,11 @@
             //Dispose Views
             //Views
             recycler.Dispose();
-            //unlocker.Dispose();
             clearAll.Dispose();
             lockscreen.Dispose();
-            //wallpaperView.Background?.Dispose();
-            //wallpaperView = null;
 
             viewPropertyAnimator.Dispose();
 
-            //Dispose Fragments
-            livedisplayinfo?.Dispose();
         }
 
         public override void OnBackPressed()
