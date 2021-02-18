@@ -12,7 +12,14 @@ namespace LiveDisplay.Misc
             if (package == null) return string.Empty;
 
             ApplicationInfo applicationInfo = packageManager.GetApplicationInfo(package, 0); //Zero means: No specific PackageInfoFlags specified.
-            package = packageManager.GetApplicationLabel(applicationInfo);
+            try
+            {
+                package = packageManager.GetApplicationLabel(applicationInfo);
+            }
+            catch
+            {
+                package = null;
+            }
             return package;
         }
     }

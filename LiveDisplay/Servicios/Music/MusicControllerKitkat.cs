@@ -1,8 +1,10 @@
 ﻿using Android.Media;
 using Android.Util;
 using Android.Views;
+using LiveDisplay.Adapters;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Music.MediaEventArgs;
+using LiveDisplay.Servicios.Notificaciones;
 using LiveDisplay.Servicios.Widget;
 using System;
 
@@ -29,11 +31,6 @@ namespace LiveDisplay.Servicios.Music
         public static event EventHandler<MediaPlaybackStateChangedKitkatEventArgs> MediaPlaybackChanged;
 
         public static event EventHandler<MediaMetadataChangedKitkatEventArgs> MediaMetadataChanged;
-
-        public static event EventHandler MusicPlaying;
-
-        public static event EventHandler MusicPaused;
-
         internal static MusicControllerKitkat GetInstance(RemoteController remoteController)
         {
             if (instance == null)
@@ -45,9 +42,17 @@ namespace LiveDisplay.Servicios.Music
 
         private MusicControllerKitkat(RemoteController remoteController)
         {
-            JukeboxKitkat.MediaEvent += Jukebox_MediaEvent;
+            Jukebox.MediaEvent += Jukebox_MediaEvent;
             TransportControls = remoteController;
             MediaMetadata = remoteController.EditMetadata();
+            ArtificiallyAttachOpenNotification();
+        }
+
+        private void ArtificiallyAttachOpenNotification()
+        {
+            //This method will try to attach an OpenNotification instance to this RemoteController, (by default it is impossible)
+            //I will be using a series of assumptions.
+            //1. Let's find a Notification that has the same Track name and Album name, that should do the trick.
         }
 
         private void Jukebox_MediaEvent(object sender, MediaActionEventArgs e)
@@ -62,6 +67,9 @@ namespace LiveDisplay.Servicios.Music
                 case MediaActionFlags.Pause:
                     TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Down, Keycode.MediaPause));
                     TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Up, Keycode.MediaPause));
+                    OnPlaybackStateChanged(RemoteControlPlayState.Paused); //Workaround: Manually Notifying that the media has been paused.
+                    //because Android is mediocre and won't do this, so my app won't know if the media was paused. //This could lead to some fun bugs, but
+                    //It's the best approach I have found.
                     break;
 
                 case MediaActionFlags.SkipToNext:
@@ -143,11 +151,9 @@ namespace LiveDisplay.Servicios.Music
                         WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = true, WidgetName = "MusicFragment", Active = true });
                         requestedWidgetStart = true;
                     }
-                    MusicPlaying?.Invoke(null, EventArgs.Empty);
                     break;
 
                 case RemoteControlPlayState.Paused:
-                    MusicPaused?.Invoke(null, EventArgs.Empty);
                     break;
             }
         }

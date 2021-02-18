@@ -85,6 +85,7 @@
   <string name="lockdelay">Automatic lock</string>
   <string name="lockdelay_desc">Lock the screen in the given time</string>
   <string name="lockonboot">Lock the screen on device boot up</string>
+  <string name="lockscreenbehaviors">Lock screen behaviors</string>
   <string name="lockscreensettings">Lockscreen</string>
   <string name="m_widgetcontrolmethodnotification">Use the Notification that represents media playing</string>
   <string name="m_widgetcontrolmethodsession">Grab automatically the best Media Session from a list of current Media Sessions on the device.</string>
@@ -99,6 +100,7 @@
   <string name="nonallowedtoturnonscreen">Non allowed to turn on screen</string>
   <string name="notavailable">n/a</string>
   <string name="notavailableyet">Not available... yet.</string>
+  <string name="notificationbehaviors">Notification behaviors</string>
   <string name="notificationsettings">Notifications</string>
   <string name="notificationviewvisibilitytime">After clicking the notification hide it after...</string>
   <string name="now_playing">Now Playing:</string>
@@ -119,6 +121,8 @@
   <string name="settings">Settings</string>
   <string name="showalbumart">Show media cover art</string>
   <string name="sixhours">6 Hours</string>
+  <string name="syncwithdigitalwellbeing">Sync with Bed time</string>
+  <string name="syncwithdigitalwellbeing_desc">Service gets turned off when Digital Wellbeing\'s bed time starts, and it turns back on when it finishes</string>
   <string name="tenseconds">10 seconds</string>
   <string name="testnotificationtext">Long press a notification from the list or press the X button to clear it</string>
   <string name="thirtyminutes">30 Minutes</string>
@@ -131,11 +135,12 @@
   <string name="turnonusermovement">Turn on screen on device pick up</string>
   <string name="tutorialtext">Hi there! \n Double tap in the half bottom to unlock!, tap the half top to turn off the device \n Press anywhere to continue</string>
   <string name="twelvehours">12 Hours</string>
+  <string name="unabletoenablesyncwbedmode">Notification Access is required for this setting to work, please enable it!</string>
   <string name="updateweathereach">Update weather each:</string>
   <string name="updateweathereach_desc">Weather update frequency</string>
   <string name="useimperialunits">Use Imperial units</string>
   <string name="version">Version</string>
-  <string name="versionnumber">0.9.4-beta3</string>
+  <string name="versionnumber">0.9.5</string>
   <string name="wallpaperblur">Blur</string>
   <string name="wallpaperopacity">Opacity</string>
   <string name="wallpapersettingappliestoalbumart">Current setting also affects album artwork</string>
@@ -146,4 +151,5 @@
   <string name="weatherwidgetenabled">Enable Weather Widget</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
+  <string name="youneeddigitalwellbeingapp">You need the Digital Wellbeing app</string>
 </resources>

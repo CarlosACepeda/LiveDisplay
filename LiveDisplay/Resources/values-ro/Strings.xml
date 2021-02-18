@@ -45,6 +45,7 @@
   <string name="searchapptitle">Cautati o app</string>
   <string name="showalbumart">Arată coperta albumului</string>
   <string name="sixhours">6 ore</string>
+  <string name="syncwithdigitalwellbeing">Sincronieaza cu modul ora de culcare</string>
   <string name="tenseconds">10 secunde</string>
   <string name="testnotificationtext">Es Ține apăsat pe o notificare din listă o presiona X pentru a o elimina</string>
   <string name="thirtyminutes">30 Minute</string>
@@ -58,4 +59,5 @@
   <string name="weather">Clima</string>
   <string name="weatherwidget">Widget de Climă</string>
   <string name="weatherwidgetenabled">Activează Widget de Climă</string>
+  <string name="youneeddigitalwellbeingapp">Ai nevoie din aplicatia Bunastara Digitala</string>
 </resources>

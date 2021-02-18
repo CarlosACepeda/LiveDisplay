@@ -161,7 +161,7 @@ namespace LiveDisplay.Servicios.Awake
         private static bool UserHasEnabledAwake()
         {
             //Check if the user has enabled it in the first place
-            if (configurationManager.RetrieveAValue(ConfigurationParameters.EnableAwakeService) == false)
+            if (configurationManager.RetrieveAValue(ConfigurationParameters.ListenForDeviceMotion) == false)
             {
                 return false;
             }

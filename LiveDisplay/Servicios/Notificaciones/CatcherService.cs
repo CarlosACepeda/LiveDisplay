@@ -190,11 +190,10 @@ namespace LiveDisplay.Servicios
 
 
                 if (notification.Notification.Flags.HasFlag(NotificationFlags.GroupSummary) == false) //Don't grab summary notifications yet. hotfix.
-                    if ((notification.IsOngoing == false || notification.Notification.Flags.HasFlag(NotificationFlags.NoClear)) && notification.IsClearable == true)
-                    {
-                        statusBarNotifications.Add(notification);
-                        lastPostedNotification = notification;
-                    }
+                {
+                    statusBarNotifications.Add(notification);
+                    lastPostedNotification = notification;
+                }
             }
 
             catcherHelper = new CatcherHelper(statusBarNotifications);

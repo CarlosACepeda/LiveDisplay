@@ -185,12 +185,6 @@
                 lastupdated.Text = weatherlastupdated;
             });
         }
-
-        private void Weatherclockcontainer_Click(object sender, EventArgs e)
-        {
-            var view = sender as View;
-        }
-
         public override void OnDestroyView()
         {
             base.OnDestroyView();

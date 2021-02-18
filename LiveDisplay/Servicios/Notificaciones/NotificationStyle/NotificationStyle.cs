@@ -69,7 +69,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
         {
             ImageButton closenotificationbutton = sender as ImageButton;
             OpenNotification openNotification = closenotificationbutton.GetTag(DefaultActionIdentificator) as OpenNotification;
-            openNotification.Cancel();
+            openNotification?.Cancel();
             NotificationView.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
             WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "NotificationFragment" });
             NotificationView.Visibility = ViewStates.Invisible;
@@ -289,7 +289,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
             View view = NotificationFragment?.Activity?.CurrentFocus;
             if (view != null)
             {
-                InputMethodManager imm = (InputMethodManager)NotificationFragment.Activity.GetSystemService(Context.InputMethodService);
+                InputMethodManager imm = (InputMethodManager)NotificationFragment.Activity.GetSystemService(Context.InputMethodService);                
                 imm.HideSoftInputFromInputMethod(view.WindowToken, 0);
             }
             SendInlineResponseAvailabityChanged?.Invoke(null, false);

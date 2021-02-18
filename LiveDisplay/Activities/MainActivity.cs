@@ -9,6 +9,7 @@
     using Android.Views;
     using Android.Widget;
     using AndroidX.AppCompat.App;
+    using AndroidX.Preference;
     using LiveDisplay.BroadcastReceivers;
     using LiveDisplay.Misc;
     using LiveDisplay.Servicios;
@@ -48,7 +49,17 @@
             CheckDeviceAdminAccess();
             CheckDrawOverOtherAppsAccess();
             IsApplicationHealthy();
+            LoadDefaultSettings();
             base.OnResume();
+        }
+
+        private void LoadDefaultSettings()
+        {
+            PreferenceManager.SetDefaultValues(Application.Context, Resource.Xml.awake_prefs, true);
+            PreferenceManager.SetDefaultValues(Application.Context, Resource.Xml.lockscreen_prefs, true);
+            PreferenceManager.SetDefaultValues(Application.Context, Resource.Xml.music_widget_prefs, true);
+            PreferenceManager.SetDefaultValues(Application.Context, Resource.Xml.notification_prefs, true);
+            PreferenceManager.SetDefaultValues(Application.Context, "weatherpreferences", (int)FileCreationMode.Private, Resource.Xml.weather_widget_prefs, true);
         }
 
         private void WallpaperPublisher_NewWallpaperIssued(object sender, WallpaperChangedEventArgs e)

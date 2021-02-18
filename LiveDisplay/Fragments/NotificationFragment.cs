@@ -87,16 +87,23 @@ namespace LiveDisplay.Fragments
 
         private void CatcherHelper_NotificationPosted(object sender, NotificationPostedEventArgs e)
         {
-            ShowNotification(e.OpenNotification);
+            //if the incoming notification updates a previous notification, then verify if the current notification SHOWING is the same as the one
+            //we are trying to update, because if this check is not done, the updated notification will show even if the user is seeing another notification.
+            //the other case is simply when the notification is a new one.
+            if(e.UpdatesPreviousNotification && e.OpenNotification.GetCustomId()== _openNotification?.GetCustomId()
+                || e.UpdatesPreviousNotification== false)
+            {
+                ShowNotification(e.OpenNotification);
+            }
 
-            if (e.ShouldCauseWakeUp && configurationManager.RetrieveAValue(ConfigurationParameters.TurnOnUserMovement))
+            if (e.ShouldCauseWakeUp && configurationManager.RetrieveAValue(ConfigurationParameters.TurnOnNewNotification))
                 AwakeHelper.TurnOnScreen();
 
             if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetMethod, "0") == "1") //1:"Use a notification to spawn the Music Widget"
             {
                 if (e.OpenNotification.RepresentsMediaPlaying())
                 {
-                    MusicController.StartPlayback(e.OpenNotification.GetMediaSessionToken(), _openNotification.GetCustomId());
+                    MusicController.StartPlayback(e.OpenNotification.GetMediaSessionToken(), e.OpenNotification.GetCustomId());
 
                     maincontainer.Visibility = ViewStates.Invisible;
                     WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "NotificationFragment" });
@@ -228,9 +235,6 @@ namespace LiveDisplay.Fragments
                         + _openNotification.GetGroupInfo()
                         , ToastLength.Short).Show();
                 }
-                //Determine if the notification to show updates the current view,(in case there's a notification currently owning this Widget)
-                bool updating = _openNotification.GetId() == openNotification.GetId();
-
                 switch (_openNotification.Style())
                 {
                     case BigPictureStyle:

@@ -27,7 +27,6 @@ namespace LiveDisplay.Fragments.Preferences
             PreferenceManager.SharedPreferencesName = "weatherpreferences";
             PreferenceManager.SharedPreferencesMode = (int)FileCreationMode.Private;
             AddPreferencesFromResource(Resource.Xml.weather_widget_prefs);
-            PreferenceManager.SetDefaultValues(Application.Context, "weatherpreferences", (int)FileCreationMode.Private, Resource.Xml.weather_widget_prefs, true);
             string city = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherCity, string.Empty);
             if (city != string.Empty)
             {

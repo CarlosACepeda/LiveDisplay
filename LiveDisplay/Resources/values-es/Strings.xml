@@ -83,6 +83,7 @@
   <string name="lockdelay">Bloquear automaticamente</string>
   <string name="lockdelay_desc">Bloquear la pantalla después del tiempo dado</string>
   <string name="lockonboot">Bloquear la pantalla al iniciar</string>
+  <string name="lockscreenbehaviors">Comportamientos de la pantalla de bloqueo</string>
   <string name="lockscreensettings">Lockscreen</string>
   <string name="m_widgetcontrolmethodnotification">Usar la notificación que representa reproducción de medios</string>
   <string name="m_widgetcontrolmethodsession">Elegir automaticamente la mejor sesión de Medios del listado de medios del dispositivo</string>
@@ -96,6 +97,7 @@
   <string name="nonallowedtoturnonscreen">No permitido para encender la pantalla</string>
   <string name="notavailable">n/a</string>
   <string name="notavailableyet">No disponible...aún.</string>
+  <string name="notificationbehaviors">Comportamientos de las notificaciones</string>
   <string name="notificationsettings">Notificaciones</string>
   <string name="notificationviewvisibilitytime">Después de clicar la notificación esconderla después de...</string>
   <string name="now_playing">Reproduciendo Ahora:</string>
@@ -115,6 +117,8 @@
   <string name="settings">Ajustes</string>
   <string name="showalbumart">Mostrar portada del álbum</string>
   <string name="sixhours">6 Horas</string>
+  <string name="syncwithdigitalwellbeing">Sincronizar con Modo Descanso</string>
+  <string name="syncwithdigitalwellbeing_desc">El servicio se detiene cuando el modo descanso de Bienestar Digital comienza, y se enciende cuando el modo descanso termina</string>
   <string name="tenseconds">10 segundos</string>
   <string name="testnotificationtext">Manten presionado una notificación de la lista o presiona X para quitarla</string>
   <string name="thirtyminutes">30 Minutos</string>
@@ -126,6 +130,7 @@
   <string name="turnonnewnotification_desc">Prender la pantalla si una nueva notificacion llega</string>
   <string name="turnonusermovement">Prender la pantalla al levantar el dispositivo</string>
   <string name="twelvehours">12 Horas</string>
+  <string name="unabletoenablesyncwbedmode">El acceso a las notificaciones es requerido para que esto funcione</string>
   <string name="updateweathereach">Actualizar clima cada</string>
   <string name="updateweathereach_desc">Frecuencia de actualización del clima</string>
   <string name="useimperialunits">Usar unidades imperiales</string>
@@ -140,4 +145,5 @@
   <string name="weatherwidgetenabled">Activar el Widget del Clima</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">Diseño del icono de esta app!</string>
+  <string name="youneeddigitalwellbeingapp">Necesitas la app de Bienestar Digital</string>
 </resources>
