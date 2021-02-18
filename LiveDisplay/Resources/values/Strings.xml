@@ -140,7 +140,7 @@
   <string name="updateweathereach_desc">Weather update frequency</string>
   <string name="useimperialunits">Use Imperial units</string>
   <string name="version">Version</string>
-  <string name="versionnumber">0.9.4-beta3</string>
+  <string name="versionnumber">0.9.5</string>
   <string name="wallpaperblur">Blur</string>
   <string name="wallpaperopacity">Opacity</string>
   <string name="wallpapersettingappliestoalbumart">Current setting also affects album artwork</string>
