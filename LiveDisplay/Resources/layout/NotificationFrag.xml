@@ -160,7 +160,8 @@
 			>
 			<EditText
 				android:textSize="15dp"
-                android:inputType="text"
+				android:maxLines="1"
+                android:inputType="textNoSuggestions"
                 android:fontFamily="sans-serif-condensed"
 				android:id="@+id/tvInlineText"
 				android:layout_width="0dp"
