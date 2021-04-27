@@ -10,6 +10,7 @@
     android:minHeight="70dp"
     android:background="?android:selectableItemBackground"
     tools:visibility="visible"
+	android:paddingLeft="5dp"
     android:visibility="invisible">
 
     <LinearLayout
