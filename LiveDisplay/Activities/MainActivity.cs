@@ -3,6 +3,7 @@
     using Android.App;
     using Android.App.Admin;
     using Android.Content;
+    using Android.Content.PM;
     using Android.OS;
     using Android.Provider;
     using Android.Runtime;
@@ -28,10 +29,13 @@
     [Activity(Label = "@string/app_name", Theme = "@style/LiveDisplayThemeDark.NoActionBar", TaskAffinity = "livedisplay.main", MainLauncher = true)]
     internal class MainActivity : AppCompatActivity
     {
+        private int REQUEST_CODE_READ_STORAGE_PERMISSION = 1;
+
         private Toolbar toolbar;
         private TextView enableNotificationAccess, enableDeviceAdmin;
-        private TextView enableDrawOverAccess;
+        private TextView enableDrawOverAccess, enableStoragePermission;
         private RelativeLayout enableDrawOverAccessContainer;
+        private RelativeLayout enableStorageAccessContainer;
         private bool isApplicationHealthy;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -48,6 +52,7 @@
             CheckNotificationAccess();
             CheckDeviceAdminAccess();
             CheckDrawOverOtherAppsAccess();
+            CheckStorageAccess();
             IsApplicationHealthy();
             LoadDefaultSettings();
             base.OnResume();
@@ -147,6 +152,20 @@
                 }
             }
         }
+        private void CheckStorageAccess()
+        {
+            using (var readStorageAccessImageView = FindViewById<ImageView>(Resource.Id.readStorageAccessCheckbox))
+            {
+                if (Checkers.ThisAppHasReadStoragePermission())
+                {
+                    readStorageAccessImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
+                }
+                else
+                {
+                    readStorageAccessImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
+                }
+            }
+        }
 
         private void IsApplicationHealthy()
         {
@@ -154,7 +173,7 @@
             {
                 RunOnUiThread(() =>
                 {
-                    if (Checkers.IsNotificationListenerEnabled() && Checkers.IsThisAppADeviceAdministrator())
+                    if (Checkers.IsNotificationListenerEnabled() && Checkers.IsThisAppADeviceAdministrator() && Checkers.ThisAppHasReadStoragePermission())
                     {
                         accessestext.SetText(Resource.String.accessesstatusenabled);
                         accessestext.SetTextColor(Android.Graphics.Color.Green);
@@ -193,6 +212,22 @@
             {
                 CheckDrawOverOtherAppsAccess();
             }
+        }
+        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
+        {
+            base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+            using (var readStorageAccessImageView = FindViewById<ImageView>(Resource.Id.readStorageAccessCheckbox))
+            {
+                if (requestCode == REQUEST_CODE_READ_STORAGE_PERMISSION && grantResults[0] == Permission.Granted)
+                {
+                    readStorageAccessImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
+                }
+                else
+                {
+                    readStorageAccessImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
+                }
+            }
+
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
@@ -278,15 +313,28 @@
             //    enableDrawOverAccess = FindViewById<TextView>(Resource.Id.enableFloatingPermission);
             //    enableDrawOverAccess.Click += EnableDrawOverAccess_Click;
             //}            //You won't be needing the permission for now.
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
+            {
+                enableStorageAccessContainer = FindViewById<RelativeLayout>(Resource.Id.readPhoneStorageContainer);
+                enableStorageAccessContainer.Visibility = ViewStates.Visible;
+                enableStoragePermission = FindViewById<TextView>(Resource.Id.enableStoragePermission);
+                enableStoragePermission.Click += EnableStoragePermission_Click;
+            }
+
 
             enableNotificationAccess.Click += EnableNotificationAccess_Click;
             enableDeviceAdmin.Click += EnableDeviceAdmin_Click;
+            
         }
 
         private void EnableDrawOverAccess_Click(object sender, EventArgs e)
         {
             using (var intent = new Intent(Settings.ActionManageOverlayPermission))
                 StartActivityForResult(intent, 25);
+        }
+        private void EnableStoragePermission_Click(object sender, EventArgs e)
+        {
+            RequestPermissions(new string[1] { "android.permission.READ_EXTERNAL_STORAGE" }, REQUEST_CODE_READ_STORAGE_PERMISSION);
         }
 
         private void EnableDeviceAdmin_Click(object sender, EventArgs e)

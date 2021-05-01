@@ -146,4 +146,5 @@
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">Diseño del icono de esta app!</string>
   <string name="youneeddigitalwellbeingapp">Necesitas la app de Bienestar Digital</string>
+  <string name="enablestorageaccess">Activar el acceso al almacenamiento</string>
 </resources>

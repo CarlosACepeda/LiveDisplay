@@ -60,4 +60,5 @@
   <string name="weatherwidget">Widget de Climă</string>
   <string name="weatherwidgetenabled">Activează Widget de Climă</string>
   <string name="youneeddigitalwellbeingapp">Ai nevoie din aplicatia Bunastara Digitala</string>
+  <string name="enablestorageaccess">Activeaza accesul storage dispozitivul</string>
 </resources>

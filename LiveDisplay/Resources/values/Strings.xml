@@ -17,6 +17,7 @@
   <string name="awakecausesblackwall">Keep screen black</string>
   <string name="awakecausesblackwall_desc">Causes the lockscreen to not show any wallpaper</string>
   <string name="awakesettings">Awake</string>
+  <string name="beta">beta</string>
   <string name="blacklist">Blacklist</string>
   <string name="blacklistdesc">Don\'t show notifications from the apps selected.</string>
   <string name="blacklisted">Blacklisted</string>
@@ -152,4 +153,5 @@
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
   <string name="youneeddigitalwellbeingapp">You need the Digital Wellbeing app</string>
+  <string name="enablestorageaccess">Enable Storage Access</string>
 </resources>
