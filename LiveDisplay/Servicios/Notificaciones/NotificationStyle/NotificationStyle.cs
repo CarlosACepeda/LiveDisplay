@@ -16,6 +16,9 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
     //Provides a basic way to show a notification on the lockscreen.
     public abstract class NotificationStyle
     {
+
+        protected const string MediaStyle = "android.app.Notification$MediaStyle";
+
         public static event EventHandler<bool> SendInlineResponseAvailabityChanged;
 
         protected const int DefaultActionIdentificator = Resource.String.defaulttag;
@@ -30,7 +33,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
         protected ProgressBar NotificationProgress { get; private set; }
         protected ImageButton CloseNotification { get; private set; }
         protected LinearLayout InlineResponseNotificationContainer { get; private set; }
-        protected TextView PreviousMessages { get; private set; }
+        //protected TextView PreviousMessages { get; private set; }
         protected ImageButton Collapse { get; private set; }
         protected EditText InlineResponse { get; private set; }
         protected ImageButton SendInlineResponse { get; private set; }
@@ -43,19 +46,19 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
             NotificationView = notificationView;
             NotificationFragment = notificationFragment;
             Resources = NotificationFragment.Resources;
-            NotificationActions = FindView<LinearLayout>(Resource.Id.notificationActions);
-            Title = FindView<TextView>(Resource.Id.tvTitle);
-            Text = FindView<TextView>(Resource.Id.tvText);
-            ApplicationName = FindView<TextView>(Resource.Id.tvAppName);
-            When = FindView<TextView>(Resource.Id.tvWhen);
-            Subtext = FindView<TextView>(Resource.Id.tvnotifSubtext);
-            NotificationProgress = FindView<ProgressBar>(Resource.Id.notificationprogress);
-            CloseNotification = FindView<ImageButton>(Resource.Id.closenotificationbutton);
-            InlineResponseNotificationContainer = FindView<LinearLayout>(Resource.Id.inlineNotificationContainer);
-            PreviousMessages = FindView<TextView>(Resource.Id.previousMessages);
-            Collapse = FindView<ImageButton>(Resource.Id.toggleCollapse);
-            InlineResponse = FindView<EditText>(Resource.Id.tvInlineText);
-            SendInlineResponse = FindView<ImageButton>(Resource.Id.sendInlineResponseButton);
+            NotificationActions = FindView<LinearLayout>(Resource.Id.actions);
+            Title = FindView<TextView>(Resource.Id.notification_title);
+            Text = FindView<TextView>(Resource.Id.notification_text);
+            ApplicationName = FindView<TextView>(Resource.Id.app_name);
+            When = FindView<TextView>(Resource.Id.when);
+            Subtext = FindView<TextView>(Resource.Id.subtext);
+            NotificationProgress = FindView<ProgressBar>(Resource.Id.progress);
+            CloseNotification = FindView<ImageButton>(Resource.Id.close_notification);
+            InlineResponseNotificationContainer = FindView<LinearLayout>(Resource.Id.inline_notification_container);
+            //PreviousMessages = FindView<TextView>(Resource.Id.previousMessages);
+            Collapse = FindView<ImageButton>(Resource.Id.toggle_collapse);
+            InlineResponse = FindView<EditText>(Resource.Id.inline_text);
+            SendInlineResponse = FindView<ImageButton>(Resource.Id.send_response);
             CloseNotification.Click += CloseNotification_Click;
             Collapse.Click += Collapse_Click;
         }
@@ -71,7 +74,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
             OpenNotification openNotification = closenotificationbutton.GetTag(DefaultActionIdentificator) as OpenNotification;
             openNotification?.Cancel();
             NotificationView.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
-            WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "NotificationFragment" });
+            WidgetStatusPublisher.GetInstance().SetWidgetVisibility(new ShowParameters { Show = false, WidgetName = Constants.NOTIFICATION_FRAGMENT });
             NotificationView.Visibility = ViewStates.Invisible;
         }
 
@@ -94,12 +97,12 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
 
         protected virtual void SetTitle()
         {
-            Title.Text = OpenNotification.Title();
+            Title.Text = OpenNotification.Title;
         }
 
         protected virtual void SetText()
         {
-            Text.Text = OpenNotification.Text();
+            Text.Text = OpenNotification.Text;
         }
 
         protected virtual void SetTextMaxLines()
@@ -109,22 +112,22 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
 
         protected virtual void SetApplicationName()
         {
-            ApplicationName.Text = OpenNotification.AppName();
+            ApplicationName.Text = OpenNotification.ApplicationOwnerName;
         }
 
         protected virtual void SetWhen()
         {
-            When.Text = OpenNotification.When();
+            When.Text = OpenNotification.When;
         }
 
         protected virtual void SetProgress()
         {
-            if (OpenNotification.GetProgressMax() > 0)
+            if (OpenNotification.MaximumProgress > 0)
             {
                 NotificationProgress.Visibility = ViewStates.Visible;
-                NotificationProgress.Indeterminate = OpenNotification.IsProgressIndeterminate();
-                NotificationProgress.Max = OpenNotification.GetProgressMax();
-                NotificationProgress.Progress = OpenNotification.GetProgress();
+                NotificationProgress.Indeterminate = OpenNotification.ProgressIndeterminate;
+                NotificationProgress.Max = OpenNotification.MaximumProgress;
+                NotificationProgress.Progress = OpenNotification.Progress;
             }
             else
             {
@@ -134,7 +137,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
 
         protected virtual void SetSubtext()
         {
-            Subtext.Text = OpenNotification.SubText();
+            Subtext.Text = OpenNotification.SubText;
         }
 
         protected virtual void SetCloseButtonVisibility()
@@ -159,8 +162,8 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
 
         protected virtual void SetNotificationPreviousMessageVisibility()
         {
-            PreviousMessages.Text = string.Empty; //If a Messaging Style notification sets text here, then we clear it here when another instance of NotificationStyle is created.
-            PreviousMessages.Visibility = ViewStates.Gone;
+            //PreviousMessages.Text = string.Empty; //If a Messaging Style notification sets text here, then we clear it here when another instance of NotificationStyle is created.
+            //PreviousMessages.Visibility = ViewStates.Gone;
         }
 
         public virtual void ApplyActionsStyle()
@@ -168,7 +171,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
             NotificationActions?.RemoveAllViews();
             if (OpenNotification.HasActions())
             {
-                var actions = OpenNotification.RetrieveActions();
+                var actions = OpenNotification.Actions;
                 for (int i = 0; i <= actions.Count - 1; i++)
                 {
                     var action = actions[i];
@@ -258,7 +261,9 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
 
         protected virtual void SetActionIcon(Button action, OpenAction openAction)
         {
-            action.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction.GetActionIcon(Android.Graphics.Color.White), null, null, null);
+            //In versions beyond Nougat the only notification that has icons is the MediaStyle one.
+            if (Build.VERSION.SdkInt<= BuildVersionCodes.N  || OpenNotification.Style == MediaStyle)
+                action.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction.GetActionIcon(Color.White), null, null, null);
         }
 
         protected void AddActionToActionsView(Button button, int position)

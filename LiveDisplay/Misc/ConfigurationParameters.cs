@@ -62,5 +62,6 @@
         //By default it is the clock. (possible values: "clock", "music", "notification")
         //When there's not an active widget.
         public const string StartingWidget = "clock";
+        public const string LastActiveWidget = "lastactivewidget";
     }
 }

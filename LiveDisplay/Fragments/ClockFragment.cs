@@ -44,7 +44,7 @@
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            WidgetStatusPublisher.OnWidgetStatusChanged += WidgetStatusPublisher_OnWidgetStatusChanged;
+            WidgetStatusPublisher.GetInstance().OnWidgetStatusChanged += WidgetStatusPublisher_OnWidgetStatusChanged;
         }
 
         private void RegisterBatteryReceiver()
@@ -85,14 +85,6 @@
 
         public override void OnResume()
         {
-            if (WidgetStatusPublisher.CurrentActiveWidget == string.Empty || WidgetStatusPublisher.CurrentActiveWidget == "ClockFragment")
-            {
-                if (ConfigurationParameters.StartingWidget == "clock" && initForFirstTime == false)
-                {
-                    maincontainer.Visibility = ViewStates.Visible;
-                    initForFirstTime = true;
-                }
-            }
             LoadWeather();
             GrabWeatherJob.WeatherUpdated += GrabWeatherJob_WeatherUpdated;
 
@@ -101,46 +93,25 @@
 
         private void WidgetStatusPublisher_OnWidgetStatusChanged(object sender, WidgetStatusEventArgs e)
         {
-            if (e.WidgetName == "NotificationFragment")
+            if (e.WidgetName == Constants.CLOCK_FRAGMENT)
             {
                 if (e.Show)
                 {
-                    if (maincontainer != null)
-                        maincontainer.Visibility = ViewStates.Invisible;
+                    ToggleWidgetVisibility(true);
                 }
                 else
-                {
-                    if (WidgetStatusPublisher.CurrentActiveWidget == string.Empty) //If clock has a chance to show itself!
-                    {
-                        if (maincontainer != null)
-                            maincontainer.Visibility = ViewStates.Visible;
-                    }
-                    else
-                    {
-                        WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs
-                        {
-                            WidgetName = WidgetStatusPublisher.CurrentActiveWidget,
-                            Active = true, //Having a Current Active Widget means it should be active by def.
-                            Show = true
-                        });
-
-                        if (maincontainer != null)
-                            maincontainer.Visibility = ViewStates.Invisible;
-                    }
-                }
+                    ToggleWidgetVisibility(false);
             }
-            else if (e.WidgetName == "MusicFragment")
+            else ToggleWidgetVisibility(false);
+        }
+        private void ToggleWidgetVisibility(bool visible)
+        {
+            if (maincontainer != null)
             {
-                if (e.Show)
-                {
-                    if (maincontainer != null)
-                        maincontainer.Visibility = ViewStates.Invisible;
-                }
+                if(visible)
+                    maincontainer.Visibility = ViewStates.Visible;
                 else
-                {
-                    if (maincontainer != null)
-                        maincontainer.Visibility = ViewStates.Visible;
-                }
+                    maincontainer.Visibility = ViewStates.Gone;
             }
         }
 
@@ -153,7 +124,8 @@
 
         public override void OnDestroy()
         {
-            WidgetStatusPublisher.OnWidgetStatusChanged -= WidgetStatusPublisher_OnWidgetStatusChanged;
+            WidgetStatusPublisher.GetInstance().OnWidgetStatusChanged -= WidgetStatusPublisher_OnWidgetStatusChanged;
+            ToggleWidgetVisibility(false);
             initForFirstTime = false;
             base.OnDestroy();
         }

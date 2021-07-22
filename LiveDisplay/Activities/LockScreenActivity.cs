@@ -9,7 +9,6 @@
     using Android.Graphics.Drawables;
     using Android.OS;
     using Android.Provider;
-    using Android.Util;
     using Android.Views;
     using Android.Views.Animations;
     using Android.Widget;
@@ -24,6 +23,7 @@
     using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
     using LiveDisplay.Servicios.Wallpaper;
     using LiveDisplay.Servicios.Widget;
+    using LiveDisplay.Misc;
     using System;
     using System.Threading;
 
@@ -36,15 +36,17 @@
         private RecyclerView.LayoutManager layoutManager;
 
         //private ImageView unlocker;
-        private Button clearAll;
+        //private Button clearAll;
 
-        private TextView livedisplayinfo;
+        //private TextView livedisplayinfo;
         private Button startCamera;
         private Button startDialer;
-        private LinearLayout lockscreen; //The root linear layout, used to implement double tap to sleep.
+        private FrameLayout lockscreen; //The root linear layout, used to implement double tap to sleep.
         private float firstTouchTime = -1;
         private float finalTouchTime;
         private readonly float threshold = 1000; //1 second of threshold.(used to implement the double tap.)
+        private readonly bool REVERSE_LAYOUT_FALSE= false;
+
         private int halfscreenheight; //To decide the behavior of the double tap.
         private System.Timers.Timer watchDog; //the watchdog simply will start counting down until it gets resetted by OnUserInteraction() override.
         private Animation fadeoutanimation;
@@ -56,7 +58,7 @@
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.LockScreen2);
+            SetContentView(Resource.Layout.test_lck);
             ThreadPool.QueueUserWorkItem(isApphealthy =>
             {
                 if (Checkers.IsNotificationListenerEnabled() == false || Checkers.IsThisAppADeviceAdministrator() == false)
@@ -70,21 +72,19 @@
                 }
             });
 
-            startCamera = FindViewById<Button>(Resource.Id.btnStartCamera);
-            startDialer = FindViewById<Button>(Resource.Id.btnStartPhone);
-            clearAll = FindViewById<Button>(Resource.Id.btnClearAllNotifications);
-            lockscreen = FindViewById<LinearLayout>(Resource.Id.contenedorPrincipal);
+            //startCamera = FindViewById<Button>(Resource.Id.btnStartCamera);
+            //startDialer = FindViewById<Button>(Resource.Id.btnStartPhone);
+            //clearAll = FindViewById<Button>(Resource.Id.btnClearAllNotifications);
+            lockscreen = FindViewById<FrameLayout>(Resource.Id.main_container);
             viewPropertyAnimator = Window.DecorView.Animate();
             viewPropertyAnimator.SetListener(new LockScreenAnimationHelper(Window));
-            livedisplayinfo = FindViewById<TextView>(Resource.Id.livedisplayinfo);
-            livedisplayinfo.Visibility = ViewStates.Gone;  //You won't be seeing this anymore.
 
             fadeoutanimation = AnimationUtils.LoadAnimation(Application.Context, Resource.Animation.abc_fade_out);
             fadeoutanimation.AnimationEnd += Fadeoutanimation_AnimationEnd;
 
-            clearAll.Click += BtnClearAll_Click;
-            startCamera.Click += StartCamera_Click;
-            startDialer.Click += StartDialer_Click;
+            //clearAll.Click += BtnClearAll_Click;
+            //startCamera.Click += StartCamera_Click;
+            //startDialer.Click += StartDialer_Click;
             lockscreen.Touch += Lockscreen_Touch;
 
             watchDog = new System.Timers.Timer
@@ -100,24 +100,31 @@
             //CatcherHelper events
             CatcherHelper.NotificationListSizeChanged += CatcherHelper_NotificationListSizeChanged;
 
-            using (recycler = FindViewById<RecyclerView>(Resource.Id.NotificationListRecyclerView))
+            using (recycler = FindViewById<RecyclerView>(Resource.Id.notification_list))
             {
-                using (layoutManager = new LinearLayoutManager(Application.Context))
+                using (layoutManager = new LinearLayoutManager(Application.Context, RecyclerView.Horizontal, REVERSE_LAYOUT_FALSE))
                 {
                     recycler.SetLayoutManager(layoutManager);
-                    recycler.SetAdapter(CatcherHelper.notificationAdapter);
+                    recycler.SetAdapter(CatcherHelper.NotificationAdapter);
                 }
             }
             LoadAllFragments();
             LoadConfiguration();
 
             WallpaperPublisher.CurrentWallpaperCleared += WallpaperPublisher_CurrentWallpaperCleared;
-            WidgetStatusPublisher.OnWidgetStatusChanged += WidgetStatusPublisher_OnWidgetStatusChanged;
+            WidgetStatusPublisher.GetInstance().OnWidgetStatusChanged += WidgetStatusPublisher_OnWidgetStatusChanged;
         }
+
+        private void LoadActiveFragment()
+        {
+            WidgetStatusPublisher.GetInstance().ShowActiveWidget();
+            
+        }
+
 
         private void WidgetStatusPublisher_OnWidgetStatusChanged(object sender, WidgetStatusEventArgs e)
         {
-            if (e.Show && e.WidgetName != "ClockFragment")
+            if (e.Show && e.WidgetName != Constants.CLOCK_FRAGMENT)
             {
                 using (var miniclock = FindViewById<TextClock>(Resource.Id.miniclock))
                 {
@@ -242,6 +249,11 @@
             }
         }
 
+        protected override void OnStart()
+        {
+            base.OnStart(); 
+            LoadActiveFragment(); //by this time fragments are ready to react to this call.
+        }
         protected override void OnResume()
         {
             base.OnResume();
@@ -259,39 +271,39 @@
             }
             //Check if Awake is enabled.
             //Refactor
-            switch (AwakeHelper.GetAwakeStatus())
-            {
-                case AwakeStatus.None:
-                    livedisplayinfo.Text = Resources.GetString(Resource.String.idk);
-                    break;
+            //switch (AwakeHelper.GetAwakeStatus())
+            //{
+            //    case AwakeStatus.None:
+            //        livedisplayinfo.Text = Resources.GetString(Resource.String.idk);
+            //        break;
 
-                case AwakeStatus.CompletelyDisabled:
-                    livedisplayinfo.Text = "Completely disabled";
-                    break;
+            //    case AwakeStatus.CompletelyDisabled:
+            //        livedisplayinfo.Text = "Completely disabled";
+            //        break;
 
-                case AwakeStatus.Up:
-                    livedisplayinfo.Text = "Awake is active";
-                    break;
+            //    case AwakeStatus.Up:
+            //        livedisplayinfo.Text = "Awake is active";
+            //        break;
 
-                case AwakeStatus.Sleeping:
-                    livedisplayinfo.Text = "Awake is Sleeping";
-                    break;
+            //    case AwakeStatus.Sleeping:
+            //        livedisplayinfo.Text = "Awake is Sleeping";
+            //        break;
 
-                case AwakeStatus.UpWithDeviceMotionDisabled:
-                    livedisplayinfo.Text = "Awake is active but not listening orientation changes";
-                    break;
+            //    case AwakeStatus.UpWithDeviceMotionDisabled:
+            //        livedisplayinfo.Text = "Awake is active but not listening orientation changes";
+            //        break;
 
-                case AwakeStatus.SleepingWithDeviceMotionEnabled:
-                    livedisplayinfo.Text = "Awake is sleeping but listening orientation changes";
-                    break;
+            //    case AwakeStatus.SleepingWithDeviceMotionEnabled:
+            //        livedisplayinfo.Text = "Awake is sleeping but listening orientation changes";
+            //        break;
 
-                case AwakeStatus.DisabledbyUser:
-                    livedisplayinfo.Text = "Awake is disabled by the user.";
-                    break;
+            //    case AwakeStatus.DisabledbyUser:
+            //        livedisplayinfo.Text = "Awake is disabled by the user.";
+            //        break;
 
-                default:
-                    break;
-            }
+            //    default:
+            //        break;
+            //}
         }
 
         private void Welcome_Touch(object sender, View.TouchEventArgs e)
@@ -319,10 +331,10 @@
             ActivityLifecycleHelper.GetInstance().NotifyActivityStateChange(typeof(LockScreenActivity), ActivityStates.Destroyed);
             //Unbind events
 
-            clearAll.Click -= BtnClearAll_Click;
+            //clearAll.Click -= BtnClearAll_Click;
             WallpaperPublisher.NewWallpaperIssued -= Wallpaper_NewWallpaperIssued;
             CatcherHelper.NotificationListSizeChanged -= CatcherHelper_NotificationListSizeChanged;
-            WidgetStatusPublisher.OnWidgetStatusChanged += WidgetStatusPublisher_OnWidgetStatusChanged;
+            WidgetStatusPublisher.GetInstance().OnWidgetStatusChanged += WidgetStatusPublisher_OnWidgetStatusChanged;
             lockscreen.Touch -= Lockscreen_Touch;
 
             watchDog.Stop();
@@ -331,7 +343,7 @@
             //Dispose Views
             //Views
             recycler.Dispose();
-            clearAll.Dispose();
+            //clearAll.Dispose();
             lockscreen.Dispose();
 
             viewPropertyAnimator.Dispose();
@@ -373,15 +385,15 @@
             {
                 if (e.ThereAreNotifications)
                 {
-                    if (clearAll != null)
-                        clearAll.Visibility = ViewStates.Visible;
+                    //if (clearAll != null)
+                    //    clearAll.Visibility = ViewStates.Visible;
                 }
                 else
                 {
-                    if (clearAll != null)
-                    {
-                        clearAll.Visibility = ViewStates.Invisible;
-                    }
+                    //if (clearAll != null)
+                    //{
+                    //    clearAll.Visibility = ViewStates.Invisible;
+                    //}
                     if (configurationManager.RetrieveAValue(ConfigurationParameters.TurnOffScreenAfterLastNotificationCleared)
                     &&
                     ActivityLifecycleHelper.GetInstance().GetActivityState(typeof(LockScreenActivity)) == ActivityStates.Resumed)
@@ -434,7 +446,7 @@
                 if (KeyguardHelper.IsSystemSecured())
                     using (var shortcuts = FindViewById<FrameLayout>(Resource.Id.shortcutcontainer))
                     {
-                        shortcuts.Visibility = ViewStates.Invisible;
+                        //shortcuts.Visibility = ViewStates.Invisible;
                     }
             }
             else
@@ -498,10 +510,10 @@
 
         private void LoadAllFragments()
         {
-            AndroidX.Fragment.App.FragmentTransaction transaction = SupportFragmentManager.BeginTransaction();
-            transaction.Add(Resource.Id.WidgetPlaceholder, CreateFragment("clock_fragment"), "clock_fragment");
-            transaction.Add(Resource.Id.WidgetPlaceholder, CreateFragment("notification_fragment"), "notification_fragment");
-            transaction.Add(Resource.Id.WidgetPlaceholder, CreateFragment("music_fragment"), "music_fragment");
+            var transaction = SupportFragmentManager.BeginTransaction();
+            transaction.Add(Resource.Id.fragment_container, CreateFragment(Constants.CLOCK_FRAGMENT), Constants.CLOCK_FRAGMENT);
+            transaction.Add(Resource.Id.fragment_container, CreateFragment(Constants.NOTIFICATION_FRAGMENT), Constants.NOTIFICATION_FRAGMENT);
+            transaction.Add(Resource.Id.fragment_container, CreateFragment(Constants.MUSIC_FRAGMENT), Constants.MUSIC_FRAGMENT);
             transaction.Commit();
         }
 
@@ -510,7 +522,7 @@
             AndroidX.Fragment.App.Fragment result = null;
             switch (tag)
             {
-                case "clock_fragment":
+                case Constants.CLOCK_FRAGMENT:
 
                     if (clockFragment == null)
                     {
@@ -519,7 +531,7 @@
                     result = clockFragment;
                     break;
 
-                case "notification_fragment":
+                case Constants.NOTIFICATION_FRAGMENT:
                     if (notificationFragment == null)
                     {
                         notificationFragment = new NotificationFragment();
@@ -527,7 +539,7 @@
                     result = notificationFragment;
                     break;
 
-                case "music_fragment":
+                case Constants.MUSIC_FRAGMENT:
                     if (musicFragment == null)
                     {
                         musicFragment = new MusicFragment();
@@ -535,7 +547,6 @@
                     result = musicFragment;
                     break;
             }
-            Log.Debug("LiveDisplay", "create: " + result.ToString());
             return result;
         }
 

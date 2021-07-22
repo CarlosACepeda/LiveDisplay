@@ -187,15 +187,9 @@ namespace LiveDisplay.Servicios
                 //        var uri = item.Get("uri");
                 //        var type = item.Get("type");
                 //}
-
-
-                if (notification.Notification.Flags.HasFlag(NotificationFlags.GroupSummary) == false) //Don't grab summary notifications yet. hotfix.
-                {
-                    statusBarNotifications.Add(notification);
-                    lastPostedNotification = notification;
-                }
+                statusBarNotifications.Add(notification);
+                lastPostedNotification = notification;
             }
-
             catcherHelper = new CatcherHelper(statusBarNotifications);
         }
 

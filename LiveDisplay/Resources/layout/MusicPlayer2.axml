@@ -2,8 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/container"
     android:animateLayoutChanges="true"
-    android:layout_gravity="bottom"
-    android:gravity="bottom"
+    android:gravity="bottom| center"
     android:orientation="vertical"
     android:visibility="invisible"
     android:layout_width="match_parent"
@@ -20,8 +19,9 @@
 		android:paddingRight="30dp"
 		android:textSize="25dp"
         android:fontFamily="sans-serif-condensed"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:id="@+id/tvSongName"
         android:textColor="@color/primary_text_default_material_dark"
         android:textStyle="normal" />
@@ -29,7 +29,7 @@
 		android:paddingRight="30dp"
 		android:textSize="19dp"
         android:fontFamily="sans-serif-condensed"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/tvArtistName"
         android:textColor="@color/primary_text_default_material_dark"
@@ -38,7 +38,7 @@
 		android:paddingRight="30dp"
 	    android:textSize="17dp"
         android:fontFamily="sans-serif-condensed"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/tvAlbumName"
         android:textStyle="italic"
@@ -58,8 +58,9 @@
         android:layout_height="wrap_content"/>
     <LinearLayout
         android:orientation="horizontal"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:id="@+id/mediaControls">
         <Button
             android:drawableTop="@drawable/ic_skip_previous_white_24dp"

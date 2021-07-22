@@ -9,7 +9,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
         public BigPictureStyleNotification(OpenNotification openNotification, ref LinearLayout notificationView, AndroidX.Fragment.App.Fragment notificationFragment)
     : base(openNotification, ref notificationView, notificationFragment)
         {
-            var notificationBigPicture = new BitmapDrawable(Resources, OpenNotification.BigPicture());
+            var notificationBigPicture = new BitmapDrawable(Resources, OpenNotification.BigPicture);
             WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
             {
                 BlurLevel = 5,

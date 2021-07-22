@@ -82,7 +82,9 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Fragments\NotificationListFragment.cs" />
     <Compile Include="Fragments\Preferences\WeatherSettingsFragment.cs" />
+    <Compile Include="Misc\Constants.cs" />
     <Compile Include="Servicios\ActivityEvents\ActivityLifecycleHelper.cs" />
     <Compile Include="Activities\BackgroundSettingsActivity.cs" />
     <Compile Include="Activities\BlacklistActivity.cs" />
@@ -119,7 +121,6 @@
     <Compile Include="Servicios\Battery\BatteryEventArgs\BatteryChangedEventArgs.cs" />
     <Compile Include="Servicios\Blacklist\Blacklist.cs" />
     <Compile Include="Servicios\ConfigurationManager.cs" />
-    <Compile Include="Servicios\FloatingNotification\FloatingNotification.cs" />
     <Compile Include="Servicios\Keyguard\KeyguardHelper.cs" />
     <Compile Include="Servicios\Music\Jukebox.cs" />
     <Compile Include="Servicios\Music\MediaEventArgs\MediaActionEventArgs.cs" />
@@ -142,11 +143,13 @@
     <Compile Include="Servicios\Notificaciones\NotificationStyle\InboxStyleNotification.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationStyle\MessagingStyleNotification.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationStyle\NotificationStyle.cs" />
+    <Compile Include="Servicios\Notificaciones\OpenMessage.cs" />
     <Compile Include="Servicios\Notificaciones\OpenNotification.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationCancelledEventArgsKitkat.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationCancelledEventArgsLollipop.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationPostedEventArgs.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationSlave.cs" />
+    <Compile Include="Servicios\Notificaciones\OpenPerson.cs" />
     <Compile Include="Servicios\Wallpaper\BlurImage.cs" />
     <Compile Include="Servicios\Wallpaper\CurrentWallpaperClearedEventArgs.cs" />
     <Compile Include="Servicios\Wallpaper\WallpaperChangedEventArgs.cs" />
@@ -444,7 +447,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Resources\drawable\" />
+    <AndroidResource Include="Resources\layout\test_group_notif_list.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-hdpi\baseline_phone_white_48.png" />
@@ -641,6 +646,25 @@
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-xxxhdpi\ic_replay_white_24dp.png" />
   </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\test_lck.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\test_rclv_notif_list.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\test_notif_view.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\circle.xml" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
 		Other similar extension points exist, see Microsoft.Common.targets.

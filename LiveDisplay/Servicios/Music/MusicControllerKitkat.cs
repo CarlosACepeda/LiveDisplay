@@ -148,7 +148,7 @@ namespace LiveDisplay.Servicios.Music
                 case RemoteControlPlayState.Playing:
                     if (requestedWidgetStart == false)
                     {
-                        WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = true, WidgetName = "MusicFragment", Active = true });
+                        WidgetStatusPublisher.GetInstance().SetWidgetVisibility(new ShowParameters { WidgetName = Constants.MUSIC_FRAGMENT});
                         requestedWidgetStart = true;
                     }
                     break;

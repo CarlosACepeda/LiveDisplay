@@ -20,24 +20,24 @@ namespace LiveDisplay.Servicios.Notificaciones
     {
         private StatusBarNotification statusbarnotification;
         private MediaController mediaController; //A media controller to be used with the  Media Session token provided by a MediaStyle notification.
+        public const int UNKNOWN_IMPORTANCE_OR_PRIORITY = -1;
+        public const int UNKNOWN = -1;
 
         public OpenNotification(StatusBarNotification sbn)
         {
             statusbarnotification = sbn;
         }
+        public string Key { get
+            {
+                if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
+                    return statusbarnotification.Key;
 
-        public string GetKey()
-        {
-            if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
-                return statusbarnotification.Key;
-
-            return string.Empty;
+                return string.Empty;
+            }
         }
 
-        public int GetId()
-        {
-            return statusbarnotification.Id;
-        }
+
+        public int Id => statusbarnotification.Id;
 
         public void Cancel()
         {
@@ -46,124 +46,148 @@ namespace LiveDisplay.Servicios.Notificaciones
                 {
                     if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
                     {
-                        slave.CancelNotification(GetPackageName(), GetTag(), GetId());
+                        slave.CancelNotification(PackageName, Tag, Id);
                     }
                     else
                     {
-                        slave.CancelNotification(GetKey());
+                        slave.CancelNotification(Key);
                     }
                 }
         }
 
         //I need to pinpoint this notification, this is the way.
         //When-> Helps to really ensure is the same notification by checking also the time it was posted
-        public string GetCustomId() => GetPackageName() + GetTag() + GetId() + When();
+        public string GetCustomId() => PackageName + Tag + Id + When;
 
-        public string GetTag() => statusbarnotification.Tag;
+        public string Tag => statusbarnotification.Tag;
 
-        private string GetPackageName() => statusbarnotification.PackageName;
+        private string PackageName => statusbarnotification.PackageName;
 
-        public string GetPreviousMessages()
+        public OpenMessage[] Messages
         {
-            string messages = string.Empty;
-            //Only Valid in MessagingStyle
-            if (Style() == "android.app.Notification$MessagingStyle")
-            {
-                var messageBundles = statusbarnotification.Notification.Extras?.GetParcelableArray("android.messages");
-                if (messageBundles.Length > 0)
+            get {
+                OpenMessage[] messages = null;
+                //Only Valid in MessagingStyle
+                if (Style == "android.app.Notification$MessagingStyle")
                 {
-                    for (int i = 0; i < messageBundles.Length - 1; i++)
+                    var messageBundles = statusbarnotification.Notification.Extras?.GetParcelableArray("android.messages");
+                    if (messageBundles.Length > 0)
                     {
-                        //var test14 = item.KeySet();
-                        var moreExtras = ((Bundle)messageBundles[i]).Get("extras");
-                        var sender_person = ((Bundle)messageBundles[i]).Get("sender_person");
-                        var sender = ((Bundle)messageBundles[i]).Get("sender");
-                        var text = ((Bundle)messageBundles[i]).Get("text");
-                        var time = ((Bundle)messageBundles[i]).Get("time");
+                        messages = new OpenMessage[messageBundles.Length];
 
-                        messages += sender + "\n";
-                        messages += text + "\n" + "\n";
+                        for (int i = 0; i < messageBundles.Length; i++)
+                        {
+                            Person sender_person = ((Bundle)messageBundles[i]).Get("sender_person") as Person;
+
+                            OpenMessage message = new OpenMessage
+                            {
+                                Sender = ((Bundle)messageBundles[i]).GetString("sender"),
+                                SenderPerson = new OpenPerson
+                                {
+                                    Icon = sender_person.Icon,
+                                    IsBot = sender_person.IsBot,
+                                    IsImportant = sender_person.IsImportant,
+                                    Key = sender_person.Key,
+                                    Name = sender_person.Name,
+                                    NameFormatted = sender_person.NameFormatted
+                                },
+                                Text = ((Bundle)messageBundles[i]).GetString("text"),
+                                Time = ((Bundle)messageBundles[i]).GetLong("time")
+                            };
+                            messages[i] = message;
+                        }
                     }
                 }
-            }
-            return messages;
-        }
-
-        public string Title()
-        {
-            try
-            {
-                return statusbarnotification.Notification.Extras.Get(Notification.ExtraTitle).ToString();
-            }
-            catch
-            {
-                return "";
+                return messages;
             }
         }
 
-        public string Text()
+        public string Title
         {
-            try
+            get
             {
-                return statusbarnotification.Notification.Extras.Get(Notification.ExtraText).ToString();
-            }
-            catch
-            {
-                return string.Empty;
-            }
-        }
-
-        public string GetSummaryText()
-        {
-            try
-            {
-                return statusbarnotification.Notification.Extras.Get(Notification.ExtraSummaryText).ToString();
-            }
-            catch
-            {
-                return string.Empty;
-            }
-        }
-
-        public string GetTextLines()
-        {
-            try
-            {
-                string textlinesformatted = string.Empty;
-                var textLines = statusbarnotification.Notification.Extras.GetCharSequenceArray(Notification.ExtraTextLines);
-                foreach (var line in textLines)
+                try
                 {
-                    textlinesformatted = textlinesformatted + line + " \n"; //Add new line.
+                    return statusbarnotification.Notification.Extras.Get(Notification.ExtraTitle).ToString();
                 }
-                return textlinesformatted;
+                catch
+                {
+                    return string.Empty;
+                }
             }
-            catch
+        }
+        public string Text
+        {
+            get
             {
-                return null;
+                try
+                {
+                    return statusbarnotification.Notification.Extras.Get(Notification.ExtraText).ToString();
+                }
+                catch
+                {
+                    return string.Empty;
+                }
+            }
+        }
+        public string SummaryText{
+            get
+            {
+                try
+                {
+                    return statusbarnotification.Notification.Extras.Get(Notification.ExtraSummaryText).ToString();
+                }
+                catch { return string.Empty; }
+            }
+        }
+        public string TextLines
+        {
+            get
+            {
+                try
+                {
+                    string textlinesformatted = string.Empty;
+                    var textLines = statusbarnotification.Notification.Extras.GetCharSequenceArray(Notification.ExtraTextLines);
+                    foreach (var line in textLines)
+                    {
+                        textlinesformatted = textlinesformatted + line + " \n"; //Add new line.
+                    }
+                    return textlinesformatted;
+                }
+                catch
+                {
+                    return null;
+                }
             }
         }
 
-        public string GetBigText()
+        public string BigText
         {
-            try
+            get
             {
-                return statusbarnotification.Notification.Extras.Get(Notification.ExtraBigText).ToString();
-            }
-            catch
-            {
-                return string.Empty;
+                try
+                {
+                    return statusbarnotification.Notification.Extras.Get(Notification.ExtraBigText).ToString();
+                }
+                catch
+                {
+                    return string.Empty;
+                }
             }
         }
 
-        public string SubText()
+        public string SubText
         {
-            try
+            get
             {
-                return statusbarnotification.Notification.Extras.GetCharSequence(Notification.ExtraSubText).ToString();
-            }
-            catch
-            {
-                return string.Empty;
+                try
+                {
+                    return statusbarnotification.Notification.Extras.GetCharSequence(Notification.ExtraSubText).ToString();
+                }
+                catch
+                {
+                    return string.Empty;
+                }
             }
         }
 
@@ -182,10 +206,8 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
         }
 
-        public List<Notification.Action> RetrieveActions()
-        {
-            return statusbarnotification.Notification.Actions?.ToList();
-        }
+        public List<Notification.Action> Actions => statusbarnotification.Notification.Actions?.ToList();
+        
 
         internal bool IsRemovable()
         {
@@ -205,88 +227,108 @@ namespace LiveDisplay.Servicios.Notificaciones
             return false;
         }
 
-        public MediaSession.Token GetMediaSessionToken()
+        public MediaSession.Token MediaSessionToken
         {
-            try
+            get
             {
-                return statusbarnotification.Notification.Extras.Get(Notification.ExtraMediaSession) as MediaSession.Token;
-            }
-            catch
-            {
-                return null;
+                try
+                {
+                    return statusbarnotification.Notification.Extras.Get(Notification.ExtraMediaSession) as MediaSession.Token;
+                }
+                catch
+                {
+                    return null;
+                }
             }
         }
 
         //<only for testing>
-        private bool StartMediaCallback()
+
+        public bool RepresentsMediaPlaying
         {
-            var mediaSessionToken = GetMediaSessionToken();
-            if (mediaSessionToken == null) return false;
-            else
+            get
+            {
+                if (MediaSessionToken == null) return false;
+                return true;
+            }
+        }
+
+        public bool ShowWhen
+        {
+            get
             {
                 try
                 {
-                    MusicController.StartPlayback(mediaSessionToken, GetCustomId());
-                    Log.Info("LiveDisplay", "Callback registered Successfully");
-                    return true;
+                    return statusbarnotification.Notification.Extras.GetBoolean(Notification.ExtraShowWhen);
                 }
-                catch (Exception ex)
+                catch
                 {
-                    Log.Info("LiveDisplay", "Callback failed Successfully: LOL" + ex.Message);
                     return false;
                 }
             }
         }
 
-        public bool RepresentsMediaPlaying()
+        public string When
         {
-            var mediaSessionToken = GetMediaSessionToken();
-            if (mediaSessionToken == null) return false;
-            return true;
-        }
-
-        internal string When()
-        {
-            try
+            get
             {
-                if (statusbarnotification.Notification.Extras.GetBoolean(Notification.ExtraShowWhen) == true)
+                try
                 {
-                    Calendar calendar = Calendar.Instance;
-                    calendar.TimeInMillis = statusbarnotification.Notification.When;
-                    return string.Format("{0:D2}:{1:D2} {2}", calendar.Get(CalendarField.Hour), calendar.Get(CalendarField.Minute), calendar.GetDisplayName((int)CalendarField.AmPm, (int)CalendarStyle.Short, Locale.Default));
+                    if (ShowWhen)
+                    {
+                        Calendar calendar = Calendar.Instance;
+                        calendar.TimeInMillis = statusbarnotification.Notification.When;
+                        return string.Format("{0:D2}:{1:D2} {2}", calendar.Get(CalendarField.Hour), calendar.Get(CalendarField.Minute), calendar.GetDisplayName((int)CalendarField.AmPm, (int)CalendarStyle.Short, Locale.Default));
+                    }
+                    return string.Empty;
                 }
-                return string.Empty;
-            }
-            catch
-            {
-                return string.Empty;
-            }
-        }
-
-        internal string AppName()
-        {
-            try
-            {
-                return PackageUtils.GetTheAppName(statusbarnotification.PackageName);
-            }
-            catch
-            {
-                return string.Empty;
+                catch
+                {
+                    return string.Empty;
+                }
             }
         }
 
-        internal Bitmap BigPicture()
+        public string ApplicationOwnerName
         {
-            return statusbarnotification.Notification.Extras.Get(Notification.ExtraPicture) as Bitmap;
+            get
+            {
+                try
+                {
+                    return PackageUtils.GetTheAppName(statusbarnotification.PackageName);
+                }
+                catch
+                {
+                    return string.Empty;
+                }
+            }
+        }
+        public string GroupKey
+        {
+            get
+            {
+                try
+                {
+                    return statusbarnotification.GroupKey;
+                }
+                catch
+                {
+                    return string.Empty;
+                }
+            }
         }
 
-        internal Bitmap MediaArtwork()
+        public Bitmap BigPicture=> statusbarnotification.Notification.Extras.Get(Notification.ExtraPicture) as Bitmap;
+
+        public Bitmap MediaArtwork
         {
-            if (Build.VERSION.SdkInt < BuildVersionCodes.O)
+           get{
+                if (Build.VERSION.SdkInt < BuildVersionCodes.O)
 #pragma warning disable CS0618 // El tipo o el miembro están obsoletos
-                return statusbarnotification.Notification.Extras.Get(Notification.ExtraLargeIcon) as Bitmap;
+                    return statusbarnotification.Notification.Extras.Get(Notification.ExtraLargeIcon) as Bitmap;
+                return statusbarnotification.Notification.LargeIcon;
 #pragma warning restore CS0618 // El tipo o el miembro están obsoletos
-            return statusbarnotification.Notification.LargeIcon;
+            }
         }
 
         //internal Bitmap GetPersonAvatar()
@@ -295,33 +337,42 @@ namespace LiveDisplay.Servicios.Notificaciones
         //        return null;
 
         //}
-        internal NotificationPriority GetNotificationPriority()
+        public NotificationPriority NotificationPriority
         {
-            try
+            get
             {
-                return (NotificationPriority)statusbarnotification.Notification.Priority;
-            }
-            catch
-            {
-                return (NotificationPriority)(-155);
+                try
+                {
+                    return (NotificationPriority)statusbarnotification.Notification.Priority;
+                }
+                catch
+                {
+                    return (NotificationPriority)UNKNOWN_IMPORTANCE_OR_PRIORITY;
+                }
             }
         }
 
-        internal NotificationImportance GetNotificationImportance()
+        public NotificationImportance NotificationImportance
         {
-            //TODO (It depends on the notification channel this notification belongs to)
-            if (Build.VERSION.SdkInt < BuildVersionCodes.O)
-                return (NotificationImportance)(-1);
+            get
+            {
+                //TODO (It depends on the notification channel this notification belongs to)
+                if (Build.VERSION.SdkInt < BuildVersionCodes.O)
+                    return (NotificationImportance)(UNKNOWN_IMPORTANCE_OR_PRIORITY);
 
-            return (NotificationImportance)(-1);
+                return (NotificationImportance)(UNKNOWN_IMPORTANCE_OR_PRIORITY);
+            }
         }
 
-        private NotificationChannel GetNotificationChannel()
+        public NotificationChannel NotificationChannel
         {
-            if (Build.VERSION.SdkInt < BuildVersionCodes.O)
+            get
+            {
+                if (Build.VERSION.SdkInt < BuildVersionCodes.O)
+                    return null;
+
                 return null;
-
-            return null; //TODO: Android broke the way to retrieve notification channels, there's a way to retrieve them, but,
+            }//TODO: Android broke the way to retrieve notification channels, there's a way to retrieve them, but,
             //I have to be the NotificationAssistantService and that right is reserved to system apps only. (and it is too much overhead to be that
             //Assistant, as I have to provide (among other stuff) the Smart suggestions in MessagingStyle notifications.
             //On the other hand I can Register a Device Companion Service and in that way I can retrieve them, so,
@@ -329,25 +380,31 @@ namespace LiveDisplay.Servicios.Notificaciones
             //and trick Android into thinking I have a device and thus, the right to get the notification channels.
         }
 
-        internal string Style()
+        public string Style
         {
-            try
+            get
             {
-                return statusbarnotification.Notification.Extras.GetString(Notification.ExtraTemplate);
-            }
-            catch
-            {
-                return string.Empty;
+                try
+                {
+                    return statusbarnotification.Notification.Extras.GetString(Notification.ExtraTemplate);
+                }
+                catch
+                {
+                    return string.Empty;
+                }
             }
         }
 
-        public bool IsAutoCancellable()
+        public bool IsAutoCancellable
         {
-            if (statusbarnotification.Notification.Flags.HasFlag(NotificationFlags.AutoCancel) == true)
+            get
             {
-                return true;
+                if (statusbarnotification.Notification.Flags.HasFlag(NotificationFlags.AutoCancel))
+                {
+                    return true;
+                }
+                return false;
             }
-            return false;
         }
 
         //<test only, check if this notification is part of a group or is a group summary or any info related with group notifications.>
@@ -363,8 +420,8 @@ namespace LiveDisplay.Servicios.Notificaciones
                 result += " This is NOT summary!";
             }
 
-            if (Style() != null)
-                result = result + "The Style is+ " + Style();
+            if (Style != null)
+                result = result + "The Style is+ " + Style;
             else
                 result += " It does not have Style!";
 
@@ -374,80 +431,116 @@ namespace LiveDisplay.Servicios.Notificaciones
             else
                 result += " Is not group";
 
-            result += "\n" + "Package: " + GetPackageName() + " Id: " + GetId() + " Tag :" + GetTag()
-                + " Importance: " + GetNotificationImportance() + " Priority: " + GetNotificationPriority();
+            result += "\n" + "Package: " + PackageName + " Id: " + Id + " Tag :" + Tag
+                + " Importance: " + NotificationImportance + " Priority: " + NotificationPriority;
             return result;
         }
 
-        public bool BelongsToGroup()
+        public bool BelongsToGroup
         {
-            if (Build.VERSION.SdkInt <= BuildVersionCodes.N) return false;
-            else return statusbarnotification.IsGroup;
-        }
-
-        public bool IsSummary()
-        {
-            if (Build.VERSION.SdkInt <= BuildVersionCodes.Kitkat) return false;
-            else return statusbarnotification.Notification.Flags.HasFlag(NotificationFlags.GroupSummary);
-        }
-
-        internal int GetProgress()
-        {
-            try
+            get
             {
-                return statusbarnotification.Notification.Extras.GetInt(Notification.ExtraProgress);
-            }
-            catch
-            {
-                return -2;
+                if (Build.VERSION.SdkInt <= BuildVersionCodes.N) return false;
+                else return statusbarnotification.IsGroup;
             }
         }
 
-        internal int GetProgressMax()
+        public bool IsSummary
         {
-            try
+            get
             {
-                return statusbarnotification.Notification.Extras.GetInt(Notification.ExtraProgressMax);
-            }
-            catch
-            {
-                return -2;
+                if (Build.VERSION.SdkInt <= BuildVersionCodes.Kitkat) return false;
+                else return statusbarnotification.Notification.Flags.HasFlag(NotificationFlags.GroupSummary);
             }
         }
-
-        internal bool IsProgressIndeterminate()
+        public bool IsStandalone
         {
-            try
+            get
             {
-                return statusbarnotification.Notification.Extras.GetBoolean(Notification.ExtraProgressIndeterminate);
-            }
-            catch
-            {
-                return false;
+                return !IsSummary && !BelongsToGroup;
             }
         }
 
-        internal int[] CompactViewActionsIndices()
+        public int Progress
         {
-            return statusbarnotification.Notification.Extras.GetIntArray(Notification.ExtraCompactActions);
+            get
+            {
+                try
+                {
+                    return statusbarnotification.Notification.Extras.GetInt(Notification.ExtraProgress);
+                }
+                catch
+                {
+                    return UNKNOWN;
+                }
+            }
         }
 
-        public Icon GetSmallIcon()
+        public int MaximumProgress
         {
-            return statusbarnotification.Notification.SmallIcon;
+            get
+            {
+                try
+                {
+                    return statusbarnotification.Notification.Extras.GetInt(Notification.ExtraProgressMax);
+                }
+                catch
+                {
+                    return UNKNOWN;
+                }
+            }
         }
 
-        public int GetIconInt()
+        public bool ProgressIndeterminate
         {
-            return statusbarnotification.Notification.Icon;
+            get
+            {
+                try
+                {
+                    return statusbarnotification.Notification.Extras.GetBoolean(Notification.ExtraProgressIndeterminate);
+                }
+                catch
+                {
+                    return false;
+                }
+            }
         }
 
-        public string GetPackage()
+        public int[] CompactViewActionsIndices
         {
-            return statusbarnotification.PackageName;
+            get{
+                return statusbarnotification.Notification.Extras.GetIntArray(Notification.ExtraCompactActions);
+            }
         }
 
-        public NotificationRelevance GetRelevance()
+        public Icon SmallIcon
+        {
+            get
+            {
+                try
+                {
+                    return statusbarnotification.Notification.SmallIcon;
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+        }
+
+        public int IconResourceInt
+        {
+            get
+            {
+                return statusbarnotification.Notification.Icon;
+            }
+        }
+
+        public string ApplicationPackage =>
+             statusbarnotification.PackageName;
+        
+
+        private NotificationRelevance GetRelevance()
         {
             return NotificationRelevance.DefaultRelevance;
         }

@@ -19,24 +19,24 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
 
         private void SetPreviousMessages()
         {
-            string previousMessages = OpenNotification.GetPreviousMessages();
-            if (previousMessages != string.Empty)
+            var previousMessages = OpenNotification.Messages;
+            if (previousMessages.Length>0)
             {
-                PreviousMessages.Visibility = ViewStates.Visible;
-                PreviousMessages.Text = previousMessages;
+                //PreviousMessages.Visibility = ViewStates.Visible;
+                //PreviousMessages.Text =string.Empty;
             }
             else
             {
-                PreviousMessages.Visibility = ViewStates.Gone;
+                //PreviousMessages.Visibility = ViewStates.Gone;
             }
         }
 
         protected override void Collapse_Click(object sender, EventArgs e)
         {
-            if (PreviousMessages.Text != string.Empty)
-                PreviousMessages.Visibility = PreviousMessages.Visibility == ViewStates.Visible ? ViewStates.Gone : ViewStates.Visible;
-            else
-                PreviousMessages.Visibility = ViewStates.Gone;
+            //if (PreviousMessages.Text != string.Empty)
+            //    PreviousMessages.Visibility = PreviousMessages.Visibility == ViewStates.Visible ? ViewStates.Gone : ViewStates.Visible;
+            //else
+            //    PreviousMessages.Visibility = ViewStates.Gone;
         }
     }
 }

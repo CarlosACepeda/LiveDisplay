@@ -11,14 +11,12 @@ namespace LiveDisplay.Servicios.Notificaciones
 {
     internal class CatcherHelper : Java.Lang.Object
     {
-        public static NotificationAdapter notificationAdapter;
+        public static NotificationAdapter NotificationAdapter { get; set; }
         public static List<OpenNotification> StatusBarNotifications { get; internal set; } = new List<OpenNotification>();
 
-        public static event EventHandler<NotificationRemovedEventArgs> NotificationRemoved;
-
-        public static event EventHandler<NotificationPostedEventArgs> NotificationPosted;
-
         public static event EventHandler<NotificationListSizeChangedEventArgs> NotificationListSizeChanged;
+        private const string ANDROID_TAG_FOR_FLOATING_LIVEDISPLAY = "com.android.server.wm.AlertWindowNotification - com.underground.livedisplay";
+        private const string ANDROID_APP_PACKAGE = "android";
 
         //So it can grab it from here.
 
@@ -34,7 +32,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             {
                 StatusBarNotifications.Add(new OpenNotification(sbn));
             }
-            notificationAdapter = new NotificationAdapter(StatusBarNotifications);
+            NotificationAdapter = new NotificationAdapter(StatusBarNotifications);
             if (statusBarNotifications.Count > 0)
             {
                 OnNotificationListSizeChanged(new NotificationListSizeChangedEventArgs
@@ -49,47 +47,23 @@ namespace LiveDisplay.Servicios.Notificaciones
             if (sbn == null) { return; }
             //This is the notification of 'LiveDisplay is showing above other apps'
             //Simply let's ignore it, because it's annoying. (Anyway, the user couldn't care less about this notification tbh)
-            if (sbn.GetPackage() == "android" && sbn.GetTag() == "com.android.server.wm.AlertWindowNotification - com.underground.livedisplay")
+            if (sbn.ApplicationPackage == ANDROID_APP_PACKAGE && sbn.Tag == ANDROID_TAG_FOR_FLOATING_LIVEDISPLAY)
                 return;
 
-            if (sbn.IsSummary())
-                return; //Ignore the summary notification. (it causes redundancy) anyway, In an ideal scenario I should hide this notification instead
-            //of ignoring it.
-
-            var blockingstatus = Blacklist.ReturnBlockLevel(sbn.GetPackage());
+            var blockingstatus = Blacklist.ReturnBlockLevel(sbn.ApplicationPackage);
 
             if (!blockingstatus.HasFlag(LevelsOfAppBlocking.Blacklisted))
             {
                 if (!blockingstatus.HasFlag(LevelsOfAppBlocking.BlockInAppOnly))
                 {
-                    bool causesWakeUp = false;
-                    if (sbn.GetNotificationPriority() >= (int)NotificationPriority.Default) //Solves a issue where non important notifications also turn on screen.
+                    bool causesWakeUp;
+                    if (sbn.NotificationPriority >= (int)NotificationPriority.Default) //Solves a issue where non important notifications also turn on screen.
                         //anyway this is a hotfix, a better method shoudl be used to improve the blacklist/the importance of notifications.
                         causesWakeUp = true;
                     else
                         causesWakeUp = false;
 
-                    int index = GetNotificationPosition(sbn); //Tries to get the index of a possible already existing notification in the list of notif.
-                    if (index >= 0)
-                    {
-                        //It exists within the list.
-                        //SO it should be updated.
-
-                        StatusBarNotifications.RemoveAt(index);
-                        StatusBarNotifications.Add(sbn);
-                        using (var h = new Handler(Looper.MainLooper))
-                            h.Post(() => { notificationAdapter.NotifyItemChanged(index); });
-
-                        OnNotificationPosted(false, sbn, true);
-                    }
-                    else
-                    {
-                        StatusBarNotifications.Add(sbn);
-
-                        using (var h = new Handler(Looper.MainLooper))
-                            h.Post(() => { notificationAdapter.NotifyItemInserted(StatusBarNotifications.Count); });
-                        OnNotificationPosted(causesWakeUp, sbn, false);
-                    }
+                    NotificationAdapter.InsertIntoList(sbn);
                 }
             }
             else
@@ -97,11 +71,11 @@ namespace LiveDisplay.Servicios.Notificaciones
                 var notificationSlave = NotificationSlave.NotificationSlaveInstance();
                 if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
                 {
-                    notificationSlave.CancelNotification(sbn.GetKey());
+                    notificationSlave.CancelNotification(sbn.Key);
                 }
                 else
                 {
-                    notificationSlave.CancelNotification(sbn.GetPackage(), sbn.GetTag(), sbn.GetId());
+                    notificationSlave.CancelNotification(sbn.ApplicationPackage, sbn.Tag, sbn.Id);
                 }
             }
 
@@ -113,67 +87,28 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         public void OnNotificationRemoved(OpenNotification sbn)
         {
-            if (sbn.GetPackage() == "android" && sbn.GetTag() == "com.android.server.wm.AlertWindowNotification - com.underground.livedisplay")
+            if (sbn.ApplicationPackage == ANDROID_APP_PACKAGE && sbn.Tag == ANDROID_TAG_FOR_FLOATING_LIVEDISPLAY)
                 return;
 
-            if (sbn.IsSummary())
-                return; //Ignore the summary notification.
 
-            int position = GetNotificationPosition(sbn);
-            OpenNotification notificationToBeRemoved = null;
+            NotificationAdapter.RemoveNotification(sbn);
+            
 
-            if (position >= 0)
-            {
-                //if found, then use the Notification to be removed instead.
-                //the reason is that the 'sbn' coming from this method has less data.
-                //then it makes data that I need from the notification unavailable.
-                notificationToBeRemoved = StatusBarNotifications[position];
-
-                StatusBarNotifications.RemoveAt(position);
-                using (var h = new Handler(Looper.MainLooper))
-                    h.Post(() =>
-                    {
-                        //When removing a summary notification it causes a IndexOutOfBoundsException...
-                        //notificationAdapter.NotifyItemRemoved(position);
-                        //This has to be fixed, anyway, because this change makes the adapter to lose  the animations when removing a item
-                        notificationAdapter.NotifyDataSetChanged();
-                    });
-            }
+            //TODO: move this to Adapter.
             OnNotificationListSizeChanged(new NotificationListSizeChangedEventArgs
             {
                 ThereAreNotifications = !(StatusBarNotifications.Where(n => n.IsRemovable()).ToList().Count == 0)
-            });
-            NotificationRemoved?.Invoke(this, new NotificationRemovedEventArgs()
-            {
-                OpenNotification = notificationToBeRemoved ?? sbn, //avoid nulls.
             });
         }
 
         public void CancelAllNotifications()
         {
-            notificationAdapter.NotifyDataSetChanged();
-        }
-
-        private static int GetNotificationPosition(OpenNotification sbn)
-        {
-            return StatusBarNotifications.IndexOf(StatusBarNotifications.FirstOrDefault
-                (o => o.GetId() == sbn.GetId() && o.GetPackage() == sbn.GetPackage() && o.GetTag() == sbn.GetTag() &&
-            o.IsSummary() == sbn.IsSummary()));
+            NotificationAdapter.NotifyDataSetChanged();
         }
 
         private void OnNotificationListSizeChanged(NotificationListSizeChangedEventArgs e)
         {
             NotificationListSizeChanged?.Invoke(this, e);
-        }
-
-        private void OnNotificationPosted(bool shouldCauseWakeup, OpenNotification sbn, bool updatesPreviousNotification)
-        {
-            NotificationPosted?.Invoke(this, new NotificationPostedEventArgs()
-            {
-                ShouldCauseWakeUp = shouldCauseWakeup,
-                OpenNotification = sbn,
-                UpdatesPreviousNotification = updatesPreviousNotification
-            });
         }
 
         public static OpenNotification GetOpenNotification(string customId)

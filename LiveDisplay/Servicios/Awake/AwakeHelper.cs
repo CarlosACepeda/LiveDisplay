@@ -3,6 +3,7 @@ using Android.App.Admin;
 using Android.Content;
 using Android.OS;
 using Android.Util;
+using LiveDisplay.Adapters;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Keyguard;
 using LiveDisplay.Servicios.Notificaciones;
@@ -17,7 +18,7 @@ namespace LiveDisplay.Servicios.Awake
 
         public AwakeHelper()
         {
-            CatcherHelper.NotificationPosted += CatcherHelper_NotificationPosted;
+            NotificationAdapter.NotificationPosted += CatcherHelper_NotificationPosted;
             CatcherHelper.NotificationListSizeChanged += CatcherHelper_NotificationListSizeChanged;
         }
 
@@ -197,7 +198,7 @@ namespace LiveDisplay.Servicios.Awake
 
         protected override void Dispose(bool disposing)
         {
-            CatcherHelper.NotificationPosted -= CatcherHelper_NotificationPosted;
+            NotificationAdapter.NotificationPosted -= CatcherHelper_NotificationPosted;
             CatcherHelper.NotificationListSizeChanged -= CatcherHelper_NotificationListSizeChanged;
             configurationManager.Dispose();
             base.Dispose(disposing);
