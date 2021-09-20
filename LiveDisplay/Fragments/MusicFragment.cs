@@ -9,13 +9,13 @@ using Android.Widget;
 using Java.Lang;
 using LiveDisplay.Adapters;
 using LiveDisplay.Misc;
-using LiveDisplay.Servicios;
-using LiveDisplay.Servicios.Keyguard;
-using LiveDisplay.Servicios.Music;
-using LiveDisplay.Servicios.Music.MediaEventArgs;
-using LiveDisplay.Servicios.Notificaciones;
-using LiveDisplay.Servicios.Wallpaper;
-using LiveDisplay.Servicios.Widget;
+using LiveDisplay.Services;
+using LiveDisplay.Services.Keyguard;
+using LiveDisplay.Services.Music;
+using LiveDisplay.Services.Music.MediaEventArgs;
+using LiveDisplay.Services.Notifications;
+using LiveDisplay.Services.Wallpaper;
+using LiveDisplay.Services.Widget;
 using System;
 using System.Threading;
 using Fragment = AndroidX.Fragment.App.Fragment;
@@ -48,12 +48,12 @@ namespace LiveDisplay.Fragments
             WallpaperPublisher.CurrentWallpaperCleared += WallpaperPublisher_CurrentWallpaperHasBeenCleared;
             WidgetStatusPublisher.GetInstance().OnWidgetStatusChanged += WidgetStatusPublisher_OnWidgetStatusChanged;
             NotificationAdapter.NotificationPosted += CatcherHelper_NotificationPosted;
-            NotificationAdapter.NotificationRemoved += CatcherHelper_NotificationRemoved; ;
+            NotificationAdapter.NotificationRemoved += CatcherHelper_NotificationRemoved;
 
             base.OnCreate(savedInstanceState);
         }
 
-        private void CatcherHelper_NotificationRemoved(object sender, Servicios.Notificaciones.NotificationEventArgs.NotificationRemovedEventArgs e)
+        private void CatcherHelper_NotificationRemoved(object sender, Services.Notifications.NotificationEventArgs.NotificationRemovedEventArgs e)
         {
             Activity?.RunOnUiThread(() =>
             {
@@ -75,7 +75,7 @@ namespace LiveDisplay.Fragments
             });
         }
 
-        private void CatcherHelper_NotificationPosted(object sender, Servicios.Notificaciones.NotificationEventArgs.NotificationPostedEventArgs e)
+        private void CatcherHelper_NotificationPosted(object sender, Services.Notifications.NotificationEventArgs.NotificationPostedEventArgs e)
         {
             if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetMethod, "0") == "1") //1:"Use a notification to spawn the Music Widget"
             {

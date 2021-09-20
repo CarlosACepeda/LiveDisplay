@@ -5,7 +5,7 @@ using Android.Renderscripts;
 using LiveDisplay.Misc;
 using System.Threading;
 
-namespace LiveDisplay.Servicios.Wallpaper
+namespace LiveDisplay.Services.Wallpaper
 {
     public class BlurImage
     {

@@ -8,10 +8,10 @@ using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
 using LiveDisplay.Misc;
-using LiveDisplay.Servicios.Widget;
+using LiveDisplay.Services.Widget;
 using System;
 
-namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
+namespace LiveDisplay.Services.Notifications.NotificationStyle
 {
     //Provides a basic way to show a notification on the lockscreen.
     public abstract class NotificationStyle

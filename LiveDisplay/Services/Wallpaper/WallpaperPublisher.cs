@@ -4,7 +4,7 @@ using Android.Util;
 using System;
 using System.Threading;
 
-namespace LiveDisplay.Servicios.Wallpaper
+namespace LiveDisplay.Services.Wallpaper
 {
     public class WallpaperPublisher
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace LiveDisplay.Servicios
+namespace LiveDisplay.Services
 {
     public class ActivityLifecycleHelper
     {

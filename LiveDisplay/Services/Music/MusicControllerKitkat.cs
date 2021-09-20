@@ -3,12 +3,12 @@ using Android.Util;
 using Android.Views;
 using LiveDisplay.Adapters;
 using LiveDisplay.Misc;
-using LiveDisplay.Servicios.Music.MediaEventArgs;
-using LiveDisplay.Servicios.Notificaciones;
-using LiveDisplay.Servicios.Widget;
+using LiveDisplay.Services.Music.MediaEventArgs;
+using LiveDisplay.Services.Notifications;
+using LiveDisplay.Services.Widget;
 using System;
 
-namespace LiveDisplay.Servicios.Music
+namespace LiveDisplay.Services.Music
 {
     /// <summary>
     /// This class receives Callbacks with Media metadata and other information about media playing.

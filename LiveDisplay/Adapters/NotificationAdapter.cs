@@ -9,10 +9,10 @@
     using Java.Nio.Channels;
     using LiveDisplay.Factories;
     using LiveDisplay.Misc;
-    using LiveDisplay.Servicios;
-    using LiveDisplay.Servicios.Music;
-    using LiveDisplay.Servicios.Notificaciones;
-    using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
+    using LiveDisplay.Services;
+    using LiveDisplay.Services.Music;
+    using LiveDisplay.Services.Notifications;
+    using LiveDisplay.Services.Notifications.NotificationEventArgs;
     using System;
     using System.Collections.Generic;
     using System.Linq;

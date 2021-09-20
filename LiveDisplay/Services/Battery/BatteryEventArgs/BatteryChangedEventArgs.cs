@@ -1,7 +1,7 @@
 ﻿using Android.Graphics.Drawables;
 using System;
 
-namespace LiveDisplay.Servicios.Battery.BatteryEventArgs
+namespace LiveDisplay.Services.Battery.BatteryEventArgs
 {
     public class BatteryChangedEventArgs : EventArgs
     {

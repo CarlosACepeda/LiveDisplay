@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LiveDisplay.Servicios.Notificaciones.NotificationEventArgs
+namespace LiveDisplay.Services.Notifications.NotificationEventArgs
 {
     internal class NotificationListSizeChangedEventArgs : EventArgs
     {

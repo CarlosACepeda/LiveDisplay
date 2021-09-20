@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace LiveDisplay.Servicios
+namespace LiveDisplay.Services
 {
     internal class Blacklist
     {

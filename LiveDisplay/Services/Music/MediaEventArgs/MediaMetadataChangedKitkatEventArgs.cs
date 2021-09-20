@@ -1,7 +1,7 @@
 ﻿using Android.Graphics;
 using System;
 
-namespace LiveDisplay.Servicios.Music.MediaEventArgs
+namespace LiveDisplay.Services.Music.MediaEventArgs
 {
     internal class MediaMetadataChangedKitkatEventArgs : EventArgs
     {

@@ -1,7 +1,7 @@
 ﻿using Android.Media.Session;
 using System;
 
-namespace LiveDisplay.Servicios.Music.MediaEventArgs
+namespace LiveDisplay.Services.Music.MediaEventArgs
 {
     internal class MediaPlaybackStateChangedEventArgs : EventArgs
     {

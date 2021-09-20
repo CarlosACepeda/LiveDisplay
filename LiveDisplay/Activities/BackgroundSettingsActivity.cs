@@ -13,8 +13,8 @@
     using AndroidX.AppCompat.Widget;
     using LiveDisplay.Factories;
     using LiveDisplay.Misc;
-    using LiveDisplay.Servicios;
-    using LiveDisplay.Servicios.Wallpaper;
+    using LiveDisplay.Services;
+    using LiveDisplay.Services.Wallpaper;
     using System;
     using System.Threading;
 
@@ -37,7 +37,7 @@
         private const int CustomWallpaperConfig = 2;
         private int defaultBlurLevel, defaultOpacityLevel, albumArtBlurLevel, albumArtOpacityLevel;
 
-        private int REQUEST_CODE_PICKWALLPAPER = 2;
+        private readonly int REQUEST_CODE_PICKWALLPAPER = 2;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -66,13 +66,11 @@
                 enableblurandroid10warning = FindViewById<TextView>(Resource.Id.warningblurandroid10);
                 if (configurationManager.RetrieveAValue(ConfigurationParameters.BlurEnabledForAndroid10))
                 {
-                    if (enableblurandroid10 != null)
-                        enableblurandroid10.Text = Resources.GetString(Resource.String.disable);
+                   enableblurandroid10.Text = Resources.GetString(Resource.String.disable);
                 }
                 else
                 {
-                    if (enableblurandroid10 != null)
-                        enableblurandroid10.Text = Resources.GetString(Resource.String.enable);
+                   enableblurandroid10.Text = Resources.GetString(Resource.String.enable);
                 }
                 enableblurandroid10warning.Visibility = Android.Views.ViewStates.Visible;
                 enableblurandroid10.Visibility = Android.Views.ViewStates.Visible;
@@ -93,7 +91,7 @@
             //Precondition: Background must be black so we can set the opacity correctly of the wallpaper when being set.
             Window.DecorView.SetBackgroundColor(Color.Black);
 
-            if (Checkers.ThisAppHasReadStoragePermission() == false)
+            if (!Checkers.ThisAppHasReadStoragePermission())
             {
                 Toast.MakeText(this, "You need the Storage permission", ToastLength.Long).Show();
                 StartActivity(new Intent(this, typeof(MainActivity)));
@@ -103,7 +101,7 @@
 
         private void Enableblurandroid10_Click(object sender, EventArgs e)
         {
-            if(configurationManager.RetrieveAValue(ConfigurationParameters.BlurEnabledForAndroid10)== false)
+            if(!configurationManager.RetrieveAValue(ConfigurationParameters.BlurEnabledForAndroid10))
             {
                 configurationManager.SaveAValue(ConfigurationParameters.BlurEnabledForAndroid10, true);
                 if (enableblurandroid10 != null)

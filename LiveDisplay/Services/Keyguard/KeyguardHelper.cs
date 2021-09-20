@@ -3,7 +3,7 @@ using Android.Content;
 using Android.Hardware.Fingerprints;
 using Android.OS;
 
-namespace LiveDisplay.Servicios.Keyguard
+namespace LiveDisplay.Services.Keyguard
 {
     public class KeyguardHelper
     {

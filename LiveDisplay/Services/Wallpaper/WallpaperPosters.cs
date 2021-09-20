@@ -1,4 +1,4 @@
-﻿namespace LiveDisplay.Servicios.Wallpaper
+﻿namespace LiveDisplay.Services.Wallpaper
 {
     //enumeration for a series of possible entities that can set wallpapers to the lockscreen
     public enum WallpaperPoster

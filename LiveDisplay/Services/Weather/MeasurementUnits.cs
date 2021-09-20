@@ -1,4 +1,4 @@
-﻿namespace LiveDisplay.Servicios.Weather
+﻿namespace LiveDisplay.Services.Weather
 {
     public class MeasurementUnits
     {

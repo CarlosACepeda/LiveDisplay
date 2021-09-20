@@ -1,4 +1,4 @@
-﻿namespace LiveDisplay.Servicios.Wallpaper
+﻿namespace LiveDisplay.Services.Wallpaper
 {
     public class CurrentWallpaperClearedEventArgs
     {

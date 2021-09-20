@@ -1,6 +1,6 @@
 ﻿using Android.Views;
 using AndroidX.RecyclerView.Widget;
-using LiveDisplay.Servicios.Notificaciones;
+using LiveDisplay.Services.Notifications;
 using System;
 using System.Collections.Generic;
 

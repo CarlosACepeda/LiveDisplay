@@ -7,15 +7,15 @@ using Android.Runtime;
 using Android.Service.Notification;
 using Android.Util;
 using LiveDisplay.BroadcastReceivers;
-using LiveDisplay.Servicios.Music;
-using LiveDisplay.Servicios.Notificaciones;
-using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
+using LiveDisplay.Services.Music;
+using LiveDisplay.Services.Notifications;
+using LiveDisplay.Services.Notifications.NotificationEventArgs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-namespace LiveDisplay.Servicios
+namespace LiveDisplay.Services
 {
     [Service(Label = "@string/app_name", Permission = "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE")]
     [IntentFilter(new[] { "android.service.notification.NotificationListenerService" })]

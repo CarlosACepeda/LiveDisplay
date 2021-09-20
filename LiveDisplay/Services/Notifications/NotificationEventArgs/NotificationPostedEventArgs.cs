@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace LiveDisplay.Servicios.Notificaciones.NotificationEventArgs
+namespace LiveDisplay.Services.Notifications.NotificationEventArgs
 {
     public class NotificationPostedEventArgs : EventArgs
     {

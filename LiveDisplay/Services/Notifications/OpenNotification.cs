@@ -9,12 +9,12 @@ using Android.Util;
 using Java.Util;
 using LiveDisplay.Factories;
 using LiveDisplay.Misc;
-using LiveDisplay.Servicios.Music;
+using LiveDisplay.Services.Music;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace LiveDisplay.Servicios.Notificaciones
+namespace LiveDisplay.Services.Notifications
 {
     public class OpenNotification : Java.Lang.Object
     {

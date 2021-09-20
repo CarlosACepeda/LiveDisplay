@@ -5,12 +5,12 @@ using Android.OS;
 using Android.Util;
 using LiveDisplay.Adapters;
 using LiveDisplay.Misc;
-using LiveDisplay.Servicios.Keyguard;
-using LiveDisplay.Servicios.Notificaciones;
+using LiveDisplay.Services.Keyguard;
+using LiveDisplay.Services.Notifications;
 using System;
 using System.Threading;
 
-namespace LiveDisplay.Servicios.Awake
+namespace LiveDisplay.Services.Awake
 {
     public class AwakeHelper : Java.Lang.Object
     {
@@ -181,7 +181,7 @@ namespace LiveDisplay.Servicios.Awake
             return true;
         }
 
-        private void CatcherHelper_NotificationListSizeChanged(object sender, Notificaciones.NotificationEventArgs.NotificationListSizeChangedEventArgs e)
+        private void CatcherHelper_NotificationListSizeChanged(object sender, Notifications.NotificationEventArgs.NotificationListSizeChangedEventArgs e)
         {
             if (configurationManager.RetrieveAValue(ConfigurationParameters.TurnOffScreenAfterLastNotificationCleared) == true)
             {
@@ -190,7 +190,7 @@ namespace LiveDisplay.Servicios.Awake
             }
         }
 
-        private void CatcherHelper_NotificationPosted(object sender, Notificaciones.NotificationEventArgs.NotificationPostedEventArgs e)
+        private void CatcherHelper_NotificationPosted(object sender, Notifications.NotificationEventArgs.NotificationPostedEventArgs e)
         {
             if (e.ShouldCauseWakeUp)
                 TurnOnScreen();

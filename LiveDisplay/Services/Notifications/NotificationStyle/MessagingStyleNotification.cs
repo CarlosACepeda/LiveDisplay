@@ -2,7 +2,7 @@
 using Android.Widget;
 using System;
 
-namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
+namespace LiveDisplay.Services.Notifications.NotificationStyle
 {
     internal class MessagingStyleNotification : NotificationStyle
     {

@@ -2,10 +2,10 @@
 using Android.Util;
 using AndroidX.Work;
 using LiveDisplay.Misc;
-using LiveDisplay.Servicios.Awake;
+using LiveDisplay.Services.Awake;
 using System;
 
-namespace LiveDisplay.Servicios.Weather
+namespace LiveDisplay.Services.Weather
 {
     public class GrabWeatherJob : Worker
     {

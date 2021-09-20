@@ -2,12 +2,12 @@
 using Android.OS;
 using Android.Service.Notification;
 using LiveDisplay.Adapters;
-using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
+using LiveDisplay.Services.Notifications.NotificationEventArgs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace LiveDisplay.Servicios.Notificaciones
+namespace LiveDisplay.Services.Notifications
 {
     internal class CatcherHelper : Java.Lang.Object
     {

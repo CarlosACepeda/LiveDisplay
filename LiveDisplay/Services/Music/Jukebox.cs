@@ -1,8 +1,8 @@
 ﻿using LiveDisplay.Misc;
-using LiveDisplay.Servicios.Music.MediaEventArgs;
+using LiveDisplay.Services.Music.MediaEventArgs;
 using System;
 
-namespace LiveDisplay.Servicios.Music
+namespace LiveDisplay.Services.Music
 {
     /// <summary>
     /// Nice name, isn't it?, this class is for controlling the Multimedia that is currently playing

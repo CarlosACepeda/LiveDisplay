@@ -2,11 +2,11 @@
 using Android.Graphics.Drawables;
 using Android.Widget;
 using AndroidX.AppCompat.Widget;
-using LiveDisplay.Servicios.Music;
-using LiveDisplay.Servicios.Wallpaper;
+using LiveDisplay.Services.Music;
+using LiveDisplay.Services.Wallpaper;
 using System;
 
-namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
+namespace LiveDisplay.Services.Notifications.NotificationStyle
 {
     internal class MediaStyleNotification : NotificationStyle
     {

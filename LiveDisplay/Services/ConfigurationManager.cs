@@ -2,7 +2,7 @@
 using Android.Content;
 using System;
 
-namespace LiveDisplay.Servicios
+namespace LiveDisplay.Services
 {
     internal class ConfigurationManager : Java.Lang.Object
     {

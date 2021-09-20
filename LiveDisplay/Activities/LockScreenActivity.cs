@@ -16,13 +16,13 @@
     using AndroidX.RecyclerView.Widget;
     using LiveDisplay.Fragments;
     using LiveDisplay.Misc;
-    using LiveDisplay.Servicios;
-    using LiveDisplay.Servicios.Awake;
-    using LiveDisplay.Servicios.Keyguard;
-    using LiveDisplay.Servicios.Notificaciones;
-    using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
-    using LiveDisplay.Servicios.Wallpaper;
-    using LiveDisplay.Servicios.Widget;
+    using LiveDisplay.Services;
+    using LiveDisplay.Services.Awake;
+    using LiveDisplay.Services.Keyguard;
+    using LiveDisplay.Services.Notifications;
+    using LiveDisplay.Services.Notifications.NotificationEventArgs;
+    using LiveDisplay.Services.Wallpaper;
+    using LiveDisplay.Services.Widget;
     using System;
     using System.Threading;
 

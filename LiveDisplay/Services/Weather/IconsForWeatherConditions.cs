@@ -1,4 +1,4 @@
-﻿namespace LiveDisplay.Servicios.Weather
+﻿namespace LiveDisplay.Services.Weather
 {
     /// <summary>
     /// This class holds constant values for image resources on the OpenWeatherMap website, it might change over time.

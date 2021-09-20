@@ -9,10 +9,10 @@
     using Java.Util;
     using LiveDisplay.BroadcastReceivers;
     using LiveDisplay.Misc;
-    using LiveDisplay.Servicios;
-    using LiveDisplay.Servicios.Keyguard;
-    using LiveDisplay.Servicios.Weather;
-    using LiveDisplay.Servicios.Widget;
+    using LiveDisplay.Services;
+    using LiveDisplay.Services.Keyguard;
+    using LiveDisplay.Services.Weather;
+    using LiveDisplay.Services.Widget;
     using System;
     using Fragment = AndroidX.Fragment.App.Fragment;
 
@@ -167,7 +167,7 @@
             BatteryReceiver.BatteryInfoChanged -= BatteryReceiver_BatteryInfoChanged;
         }
 
-        private void BatteryReceiver_BatteryInfoChanged(object sender, Servicios.Battery.BatteryEventArgs.BatteryChangedEventArgs e)
+        private void BatteryReceiver_BatteryInfoChanged(object sender, Services.Battery.BatteryEventArgs.BatteryChangedEventArgs e)
         {
             battery.Text = e.BatteryLevel.ToString() + "%";
             batteryIcon.Background = e.BatteryIcon;

@@ -2,10 +2,10 @@
 using Android.Content;
 using Android.OS;
 using LiveDisplay.Activities;
-using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
+using LiveDisplay.Services.Notifications.NotificationEventArgs;
 using System;
 
-namespace LiveDisplay.Servicios
+namespace LiveDisplay.Services
 {
     //Esta clase sirve para manipular las notificaciones, como quitarlas o agregarlas.
     internal class NotificationSlave : Java.Lang.Object

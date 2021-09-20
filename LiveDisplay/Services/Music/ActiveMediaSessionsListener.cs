@@ -1,9 +1,9 @@
 ﻿using Android.Media.Session;
 using LiveDisplay.Misc;
-using LiveDisplay.Servicios.Widget;
+using LiveDisplay.Services.Widget;
 using System.Collections.Generic;
 
-namespace LiveDisplay.Servicios.Music
+namespace LiveDisplay.Services.Music
 {
     /// <summary>
     /// This class acts a a Listener for MediaSessions being created

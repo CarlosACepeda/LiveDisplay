@@ -3,13 +3,13 @@ using Android.Graphics.Drawables;
 using Android.Widget;
 using LiveDisplay.DataRepository;
 using LiveDisplay.Misc;
-using LiveDisplay.Servicios.Wallpaper;
+using LiveDisplay.Services.Wallpaper;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using static Newtonsoft.Json.JsonConvert;
 
-namespace LiveDisplay.Servicios.Weather
+namespace LiveDisplay.Services.Weather
 {
     internal class OpenWeatherMapClient
     {

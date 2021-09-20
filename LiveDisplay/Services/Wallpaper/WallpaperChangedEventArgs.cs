@@ -1,7 +1,7 @@
 ﻿using Android.Graphics.Drawables;
 using System;
 
-namespace LiveDisplay.Servicios.Wallpaper
+namespace LiveDisplay.Services.Wallpaper
 {
     public class WallpaperChangedEventArgs : EventArgs
     {

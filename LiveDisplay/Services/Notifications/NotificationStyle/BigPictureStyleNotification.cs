@@ -1,8 +1,8 @@
 ﻿using Android.Graphics.Drawables;
 using Android.Widget;
-using LiveDisplay.Servicios.Wallpaper;
+using LiveDisplay.Services.Wallpaper;
 
-namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
+namespace LiveDisplay.Services.Notifications.NotificationStyle
 {
     public class BigPictureStyleNotification : NotificationStyle
     {

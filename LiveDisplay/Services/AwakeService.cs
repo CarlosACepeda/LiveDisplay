@@ -6,9 +6,9 @@ using Android.Runtime;
 using Android.Util;
 using LiveDisplay.BroadcastReceivers;
 using LiveDisplay.Misc;
-using LiveDisplay.Servicios.Awake;
+using LiveDisplay.Services.Awake;
 
-namespace LiveDisplay.Servicios
+namespace LiveDisplay.Services
 {
     [Service(Label = "MotionListener")]
     internal class AwakeService : Service, ISensorEventListener

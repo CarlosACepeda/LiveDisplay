@@ -3,11 +3,11 @@ using Android.Media;
 using Android.Media.Session;
 using Android.Util;
 using LiveDisplay.Misc;
-using LiveDisplay.Servicios.Music.MediaEventArgs;
+using LiveDisplay.Services.Music.MediaEventArgs;
 using System;
 using System.Threading;
 
-namespace LiveDisplay.Servicios.Music
+namespace LiveDisplay.Services.Music
 {
     /// <summary>
     /// This class acts as a media session, receives Callbacks with Media metadata and other information about media playing.

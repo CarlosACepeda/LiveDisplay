@@ -1,6 +1,6 @@
 ﻿using Android.Widget;
 
-namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
+namespace LiveDisplay.Services.Notifications.NotificationStyle
 {
     internal class InboxStyleNotification : NotificationStyle
     {

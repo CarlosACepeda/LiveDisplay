@@ -4,7 +4,7 @@ using Android.OS;
 using Android.Views;
 using AndroidX.Preference;
 using LiveDisplay.Misc;
-using LiveDisplay.Servicios;
+using LiveDisplay.Services;
 
 namespace LiveDisplay.Fragments.Preferences
 {

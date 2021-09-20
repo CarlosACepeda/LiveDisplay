@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace LiveDisplay.Servicios.Widget
+namespace LiveDisplay.Services.Widget
 {
     //Widgets (fragments) should invoke the event! always, the reason is that the widgets had to know the state of all the widgets.
     //in order to show/hide them.
