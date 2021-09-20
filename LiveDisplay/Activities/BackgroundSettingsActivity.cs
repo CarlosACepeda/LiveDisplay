@@ -37,7 +37,7 @@
         private const int CustomWallpaperConfig = 2;
         private int defaultBlurLevel, defaultOpacityLevel, albumArtBlurLevel, albumArtOpacityLevel;
 
-        private int REQUEST_CODE_PICKWALLPAPER = 2;
+        private readonly int REQUEST_CODE_PICKWALLPAPER = 2;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -347,7 +347,7 @@
             blur.Progress = defaultBlurLevel;
             opacity.Progress = defaultBlurLevel;
 
-            switch (configurationManager.RetrieveAValue(ConfigurationParameters.ChangeWallpaper, "0"))
+            switch (configurationManager.RetrieveAValue(ConfigurationParameters.ChangeWallpaper, "1"))
             {
                 case "0":
                     wallpaperPreview.SetBackgroundColor(Color.Black);
