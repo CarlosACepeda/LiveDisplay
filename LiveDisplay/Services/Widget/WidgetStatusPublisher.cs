@@ -84,7 +84,7 @@ namespace LiveDisplay.Servicios.Widget
 
             HandleActiveWidget(e);
 
-            OnWidgetStatusChanged?.Invoke(null, new WidgetStatusEventArgs
+            OnWidgetStatusChanged?.Invoke(this, new WidgetStatusEventArgs
             {
                 AdditionalInfo = e.AdditionalInfo,
                 Show = e.Show,
@@ -124,13 +124,10 @@ namespace LiveDisplay.Servicios.Widget
                         }
 
                         //now let's check if there's an already Active Widget.
-                        if (activeWidget != null)
+                        if (activeWidget != null && activeWidget.WidgetName == e.WidgetName)
                         {
-                            if (activeWidget.WidgetName == e.WidgetName)
-                            {
-                                //Removing Existent active widget
-                                currentActiveWidgets.Remove(activeWidget);
-                            }
+                            //Removing Existent active widget
+                            currentActiveWidgets.Remove(activeWidget);
                         }
                         currentActiveWidgets.Add(e);
 
@@ -154,8 +151,8 @@ namespace LiveDisplay.Servicios.Widget
         }
         void RemoveLastActiveWidget()
         {
-            if(currentActiveWidgets.Count()>0)
-                currentActiveWidgets.RemoveAt(currentActiveWidgets.Count()-1);
+            if(currentActiveWidgets.Any())
+                currentActiveWidgets.RemoveAt(currentActiveWidgets.Count-1);
         }
     }
     public class ShowParameters

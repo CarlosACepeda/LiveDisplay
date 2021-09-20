@@ -6,5 +6,6 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationEventArgs
     {
         public int Position { get; set; }
         public OpenNotification StatusBarNotification { get; set; }
+        public List<OpenNotification> ChildNotifications { get; set; }
     }
 }

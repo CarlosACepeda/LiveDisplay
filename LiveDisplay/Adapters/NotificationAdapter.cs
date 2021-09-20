@@ -60,7 +60,12 @@
         {
             if (position != RecyclerView.NoPosition)
             {
-                OpenNotification item = groupedNotifications[position];
+                OpenNotification item;
+
+                if (Build.VERSION.SdkInt < BuildVersionCodes.N)
+                    item = singleNotifications[position];
+                else
+                    item= groupedNotifications[position];
 
                 if (MusicController.MediaSessionAssociatedWThisNotification(item.GetCustomId())
                     && new ConfigurationManager(AppPreferences.Default).RetrieveAValue(ConfigurationParameters.HideNotificationWhenItsMediaPlaying)
@@ -131,7 +136,7 @@
                 groupedNotifications.Add(notification);
                 NotifyItemChanged(notificationPosition);
             }
-            else 
+            else
             {
                 groupedNotifications.Add(notification);
                 NotifyItemInserted(groupedNotifications.Count - 1);
@@ -267,7 +272,7 @@
         }
         int GetParentNotificationPosition(OpenNotification child)
         {
-            OpenNotification parent = groupedNotifications.Where(p => p.GroupKey == child.GroupKey && p.IsSummary).FirstOrDefault();
+            OpenNotification parent = groupedNotifications.FirstOrDefault(p => p.GroupKey == child.GroupKey && p.IsSummary);
             if (parent == null) return -1;
 
             return groupedNotifications.IndexOf(parent);
@@ -276,16 +281,12 @@
         string GetChildNotificationCount(OpenNotification openNotification)
         {
             if (openNotification.IsSummary)
-                return singleNotifications.Where(child => child.BelongsToGroup && child.GroupKey == openNotification.GroupKey).Count().ToString();
+                return singleNotifications.Count(child => child.BelongsToGroup && child.GroupKey == openNotification.GroupKey).ToString();
             else return string.Empty;
         }
-
-        OpenNotification GetOpenNotificationAtPos(int index, bool isGroupOrStandalone)
+        List<OpenNotification> GetChildNotifications(OpenNotification parent)
         {
-            if (isGroupOrStandalone)
-                return groupedNotifications[index];
-            else 
-                return singleNotifications[index];
+            return singleNotifications.Where(child => child.GroupKey == parent.GroupKey).ToList();
         }
 
         private int GetItemPosition(OpenNotification openNotification, bool searchInGroupedList)
@@ -299,18 +300,9 @@
                 (o => o.Id == openNotification.Id && o.ApplicationPackage == openNotification.ApplicationPackage && o.Tag == openNotification.Tag &&
             o.IsSummary == openNotification.IsSummary));
         }
-        private void OnNotificationPosted(bool shouldCauseWakeup, OpenNotification sbn, bool updatesPreviousNotification)
-        {
-            NotificationPosted?.Invoke(this, new NotificationPostedEventArgs()
-            {
-                ShouldCauseWakeUp = shouldCauseWakeup,
-                OpenNotification = sbn,
-                UpdatesPreviousNotification = updatesPreviousNotification
-            });
-        }
         private void OnNotificationRemoved(OpenNotification sbn)
         {
-            NotificationRemoved?.Invoke(this, new NotificationRemovedEventArgs
+            NotificationRemoved?.Invoke(null, new NotificationRemovedEventArgs
             {
                 OpenNotification= sbn
             });
@@ -341,19 +333,21 @@
         }
         private void OnItemClicked(int position, OpenNotification sbn)
         {
-            ItemClick?.Invoke(this, new NotificationItemClickedEventArgs
+            ItemClick?.Invoke(null, new NotificationItemClickedEventArgs
             {
                 Position = position,
-                StatusBarNotification = sbn
+                StatusBarNotification = sbn,
+                ChildNotifications = GetChildNotifications(sbn)
             });
         }
 
         private void OnItemLongClicked(int position, OpenNotification sbn)
         {
-            ItemLongClick?.Invoke(this, new NotificationItemClickedEventArgs
+            ItemLongClick?.Invoke(null, new NotificationItemClickedEventArgs
             {
                 Position = position,
-                StatusBarNotification = sbn
+                StatusBarNotification = sbn,
+                ChildNotifications = GetChildNotifications(sbn),
             }
             );
         }

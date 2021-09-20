@@ -10,9 +10,8 @@
     android:minHeight="70dp"
     android:background="?android:selectableItemBackground"
     tools:visibility="visible"
-	android:paddingLeft="5dp"
+	android:paddingHorizontal="5dp"
     android:visibility="invisible">
-
     <LinearLayout
 		android:weightSum="10"
         android:orientation="horizontal"
@@ -118,38 +117,6 @@
 		android:layout_height="wrap_content"
 		android:visibility="visible"
 		>
-<!--			<ImageButton
-				android:id="action1"
-				android:background="@android:color/transparent"
-                android:layout_width="0dp"
-				android:layout_weight="0.2"
-                android:layout_height="match_parent"/>
-			<ImageButton
-				android:id="action2"
-				android:background="@android:color/transparent"
-                android:layout_width="0dp"
-				android:layout_weight="0.2"
-                android:layout_height="match_parent"/>
-			<ImageButton
-				android:id="action3"
-				android:background="@android:color/transparent"
-                android:layout_width="0dp"
-				android:layout_weight="0.2"
-                android:layout_height="match_parent"/>
-			<ImageButton
-				android:id="action4"
-				android:background="@android:color/transparent"
-				android:visibility="invisible"
-                android:layout_width="0dp"
-				android:layout_weight="0.2"
-                android:layout_height="match_parent"/>
-			<ImageButton
-				android:id="action5"
-				android:background="@android:color/transparent"
-				android:visibility="invisible"
-                android:layout_width="0dp"
-				android:layout_weight="0.2"
-                android:layout_height="match_parent"/>-->
 		</LinearLayout>
 		<LinearLayout
 			android:id="@+id/inlineNotificationContainer"

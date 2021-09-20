@@ -14,26 +14,22 @@ using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
 using LiveDisplay.Servicios.Notificaciones.NotificationStyle;
 using LiveDisplay.Servicios.Widget;
 using System;
-using System.Threading;
+using System.Collections.Generic;
+using System.Linq;
 using Fragment = AndroidX.Fragment.App.Fragment;
 
 namespace LiveDisplay.Fragments
 {
     public class NotificationFragment : Fragment
-    {
-        private const string BigPictureStyle = "android.app.Notification$BigPictureStyle";
-        private const string InboxStyle = "android.app.Notification$InboxStyle";
-        private const string MediaStyle = "android.app.Notification$MediaStyle";
-        public const string MessagingStyle = "android.app.Notification$MessagingStyle"; //Only available on API Level 24 and up.
-        private const string BigTextStyle = "android.app.Notification$BigTextStyle";
-        private const string DecoratedCustomViewStyle = "android.app.Notification$DecoratedCustomViewStyle";
-
+    {        
         const int FIVE_SECONDS = 5;
 
         private OpenNotification _openNotification; //the current OpenNotification instance active.
         private LinearLayout maincontainer;
         private bool timeoutStarted = false;
         private ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
+
+        private List<OpenNotification> Notifications = new List<OpenNotification>();
 
         #region Lifecycle events
 
@@ -64,19 +60,9 @@ namespace LiveDisplay.Fragments
             return v;
         }
 
-        public override void OnPause()
-        {
-            base.OnPause();
-        }
-
-        public override void OnResume()
-        {
-            base.OnResume();
-        }
-
         private void NotificationStyleApplier_SendInlineResponseAvailabityChanged(object sender, bool e)
         {
-            if (e == true)
+            if (e)
             {
                 StartTimeout(true); //Tell the Timeout counter to stop because the SendInlineResponse is currently being showed.
             }
@@ -89,25 +75,23 @@ namespace LiveDisplay.Fragments
 
         private void CatcherHelper_NotificationPosted(object sender, NotificationPostedEventArgs e)
         {
+            Notifications = e.OpenNotifications;
+            OpenNotification openNotification = GetNotificationById(e.NotificationPostedId);
             //if the incoming notification updates a previous notification, then verify if the current notification SHOWING is the same as the one
             //we are trying to update, because if this check is not done, the updated notification will show even if the user is seeing another notification.
             //the other case is simply when the notification is a new one.
-            if(e.UpdatesPreviousNotification && e.OpenNotification.GetCustomId()== _openNotification?.GetCustomId()
+            if(e.UpdatesPreviousNotification && openNotification.GetCustomId()== _openNotification?.GetCustomId()
                 || e.UpdatesPreviousNotification== false)
             {
-                ShowNotification(e.OpenNotification);
+                ShowNotification(openNotification);
             }
 
             if (e.ShouldCauseWakeUp && configurationManager.RetrieveAValue(ConfigurationParameters.TurnOnNewNotification))
                 AwakeHelper.TurnOnScreen();
-
-            
         }
 
         public override void OnDestroyView()
         {
-            //maincontainer.Drag -= Notification_Drag;
-            //maincontainer.Click -= LlNotification_Click;
             NotificationAdapter.ItemLongClick -= ItemLongClicked;
             NotificationAdapter.NotificationRemoved -= CatcherHelper_NotificationRemoved;
             NotificationAdapter.NotificationPosted -= CatcherHelper_NotificationPosted;
@@ -217,23 +201,23 @@ namespace LiveDisplay.Fragments
                 }
                 switch (_openNotification.Style)
                 {
-                    case BigPictureStyle:
+                    case Constants.BIG_PICTURE_STYLE:
                         new BigPictureStyleNotification(_openNotification, ref maincontainer, this).ApplyStyle();
                         break;
 
-                    case MessagingStyle:
+                    case Constants.MESSAGING_STYLE:
                         new MessagingStyleNotification(_openNotification, ref maincontainer, this).ApplyStyle();
                         break;
 
-                    case InboxStyle:
+                    case Constants.INBOX_STYLE:
                         new InboxStyleNotification(_openNotification, ref maincontainer, this).ApplyStyle();
                         break;
 
-                    case BigTextStyle:
+                    case Constants.BIG_TEXT_STYLE:
                         new BigTextStyleNotification(_openNotification, ref maincontainer, this).ApplyStyle();
                         break;
 
-                    case MediaStyle:
+                    case Constants.MEDIA_STYLE:
                         new MediaStyleNotification(_openNotification, ref maincontainer, this).ApplyStyle();
                         break;
 
@@ -291,6 +275,21 @@ namespace LiveDisplay.Fragments
                 timeoutStarted = false;
                 WidgetStatusPublisher.GetInstance().SetWidgetVisibility(new ShowParameters { Show = false, WidgetName = Constants.NOTIFICATION_FRAGMENT });
             }
+        }
+
+        OpenNotification GetNotificationById(int id)
+        {
+            return Notifications.Where(o => o.Id == id).FirstOrDefault();
+        }
+        bool IsNotificationSummary(int id)
+        {
+            OpenNotification summaryNotification;
+            summaryNotification = Notifications.Where(o => o.Id == id).FirstOrDefault();
+
+            if (summaryNotification != null)
+                return summaryNotification.IsSummary;
+
+            return false;
         }
     }
 }

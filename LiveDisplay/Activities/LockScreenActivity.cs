@@ -23,7 +23,6 @@
     using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
     using LiveDisplay.Servicios.Wallpaper;
     using LiveDisplay.Servicios.Widget;
-    using LiveDisplay.Misc;
     using System;
     using System.Threading;
 
@@ -61,7 +60,7 @@
             SetContentView(Resource.Layout.test_lck);
             ThreadPool.QueueUserWorkItem(isApphealthy =>
             {
-                if (Checkers.IsNotificationListenerEnabled() == false || Checkers.IsThisAppADeviceAdministrator() == false)
+                if (!Checkers.IsNotificationListenerEnabled()|| !Checkers.IsThisAppADeviceAdministrator())
                 {
                     RunOnUiThread(() =>
                     {
@@ -120,8 +119,6 @@
             WidgetStatusPublisher.GetInstance().ShowActiveWidget();
             
         }
-
-
         private void WidgetStatusPublisher_OnWidgetStatusChanged(object sender, WidgetStatusEventArgs e)
         {
             if (e.Show && e.WidgetName != Constants.CLOCK_FRAGMENT)
