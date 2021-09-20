@@ -37,8 +37,7 @@
         private const int CustomWallpaperConfig = 2;
         private int defaultBlurLevel, defaultOpacityLevel, albumArtBlurLevel, albumArtOpacityLevel;
 
-        private int REQUEST_CODE_READ_STORAGE_PERMISSION = 1;
-        private int REQUEST_CODE_PICKWALLPAPER = 2;
+        private readonly int REQUEST_CODE_PICKWALLPAPER = 2;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -96,12 +95,10 @@
 
             if (Checkers.ThisAppHasReadStoragePermission() == false)
             {
-                RequestPermissions(new string[1] { "android.permission.READ_EXTERNAL_STORAGE" }, REQUEST_CODE_READ_STORAGE_PERMISSION);
+                Toast.MakeText(this, "You need the Storage permission", ToastLength.Long).Show();
+                StartActivity(new Intent(this, typeof(MainActivity)));
             }
-            else
-            {
-                LoadConfiguration();
-            }
+            LoadConfiguration();
         }
 
         private void Enableblurandroid10_Click(object sender, EventArgs e)
@@ -350,7 +347,7 @@
             blur.Progress = defaultBlurLevel;
             opacity.Progress = defaultBlurLevel;
 
-            switch (configurationManager.RetrieveAValue(ConfigurationParameters.ChangeWallpaper, "0"))
+            switch (configurationManager.RetrieveAValue(ConfigurationParameters.ChangeWallpaper, "1"))
             {
                 case "0":
                     wallpaperPreview.SetBackgroundColor(Color.Black);
@@ -482,22 +479,7 @@
                 albumArtBlurLevel = e.SeekBar.Progress;
             }
 
-        }
-
-        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
-        {
-            base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
-
-            if (requestCode == REQUEST_CODE_READ_STORAGE_PERMISSION && grantResults[0] == Permission.Denied)
-            {
-                Toast.MakeText(this, "You must allow LiveDisplay to read storage to retrieve images", ToastLength.Long).Show();
-                Finish();
-            }
-            else
-            {
-                LoadConfiguration();
-            }
-        }
+        }       
 
         protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
         {

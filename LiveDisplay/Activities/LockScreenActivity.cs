@@ -171,11 +171,7 @@
                     }
                 }
 
-                if (e.Wallpaper?.Bitmap == null)
-                {
-                    Window.DecorView.SetBackgroundColor(Color.Black);
-                }
-                else
+                if (e.Wallpaper?.Bitmap != null)
                 {
                     Window.DecorView.Background = e.Wallpaper;
                 }
@@ -310,7 +306,6 @@
             watchDog.Stop();
             watchDog.Elapsed -= WatchdogInterval_Elapsed;
             ActivityLifecycleHelper.GetInstance().NotifyActivityStateChange(typeof(LockScreenActivity), ActivityStates.Paused);
-            GC.Collect();
         }
 
         protected override void OnDestroy()
@@ -454,11 +449,16 @@
             int savedblurlevel = configurationManager.RetrieveAValue(ConfigurationParameters.BlurLevel, ConfigurationParameters.DefaultBlurLevel);
             int savedOpacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, ConfigurationParameters.DefaultOpacityLevel);
 
-            switch (configurationManager.RetrieveAValue(ConfigurationParameters.ChangeWallpaper, "0"))
+            switch (configurationManager.RetrieveAValue(ConfigurationParameters.ChangeWallpaper, "1"))
             {
                 case "0":
 
-                    WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = null, WallpaperPoster = WallpaperPoster.Lockscreen });
+                    if (Checkers.ThisAppHasReadStoragePermission())
+                    {
+                        WallpaperManager.GetInstance(Application.Context).ForgetLoadedWallpaper();
+                        var wallpaper = WallpaperManager.GetInstance(Application.Context).Drawable;
+                        WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = (BitmapDrawable)wallpaper, OpacityLevel = 0, BlurLevel = 0, WallpaperPoster = WallpaperPoster.Lockscreen });
+                    }
                     break;
 
                 case "1":
@@ -482,10 +482,8 @@
                         ThreadPool.QueueUserWorkItem(m =>
                         {
                             Bitmap bitmap = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.ImagePath, imagePath));
-                            BlurImage blurImage = new BlurImage(Application.Context);
-                            blurImage.Load(bitmap).Intensity(savedblurlevel);
-                            Drawable drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
-                            WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = new BitmapDrawable(Resources, bitmap), OpacityLevel = (short)savedOpacitylevel, BlurLevel = (short)savedblurlevel, WallpaperPoster = WallpaperPoster.Lockscreen });
+                            BitmapDrawable drawable = new BitmapDrawable(Resources, bitmap);
+                            WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = drawable, OpacityLevel = (short)savedOpacitylevel, BlurLevel = (short)savedblurlevel, WallpaperPoster = WallpaperPoster.Lockscreen });
                         });
                     }
                     break;
