@@ -279,12 +279,12 @@ namespace LiveDisplay.Fragments
 
         OpenNotification GetNotificationById(int id)
         {
-            return Notifications.Where(o => o.Id == id).FirstOrDefault();
+            return Notifications.FirstOrDefault(o => o.Id == id);
         }
         bool IsNotificationSummary(int id)
         {
             OpenNotification summaryNotification;
-            summaryNotification = Notifications.Where(o => o.Id == id).FirstOrDefault();
+            summaryNotification = Notifications.FirstOrDefault(o => o.Id == id);
 
             if (summaryNotification != null)
                 return summaryNotification.IsSummary;
