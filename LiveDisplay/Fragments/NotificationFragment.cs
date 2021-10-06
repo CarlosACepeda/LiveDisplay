@@ -27,7 +27,7 @@ namespace LiveDisplay.Fragments
         private OpenNotification _openNotification; //the current OpenNotification instance active.
         private LinearLayout maincontainer;
         private bool timeoutStarted = false;
-        private ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
+        private readonly ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
 
         private List<OpenNotification> Notifications = new List<OpenNotification>();
 

@@ -6,7 +6,6 @@
     using Android.Views;
     using Android.Widget;
     using AndroidX.RecyclerView.Widget;
-    using Java.Nio.Channels;
     using LiveDisplay.Factories;
     using LiveDisplay.Misc;
     using LiveDisplay.Services;
@@ -123,6 +122,8 @@
 
             if (openNotification.BelongsToGroup)
                 HandleChildNotification(openNotification);
+
+            OnNotificationPosted(openNotification);
 
         }
 
@@ -305,6 +306,18 @@
             NotificationRemoved?.Invoke(null, new NotificationRemovedEventArgs
             {
                 OpenNotification= sbn
+            });
+        }
+        private void OnNotificationPosted(OpenNotification sbn)
+        {
+            List<OpenNotification> openNotifications= groupedNotifications;
+
+            NotificationPosted?.Invoke(null, new NotificationPostedEventArgs
+            {
+                NotificationPostedId= sbn.Id,
+                OpenNotifications= openNotifications,
+                ShouldCauseWakeUp= true,
+                UpdatesPreviousNotification= true
             });
         }
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)

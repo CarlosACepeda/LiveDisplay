@@ -95,6 +95,7 @@
         android:textSize="20sp"
         android:fontFamily="sans-serif-condensed"
                 android:textColor="@color/white"
+        android:textAlignment="center"
         tools:text="2 Mensajes nuevos de 2 chats"/>
     <TextView
         android:id="@+id/notification_text"
@@ -102,9 +103,10 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:textSize="15sp"
+        android:textAlignment="center"
         android:fontFamily="sans-serif-condensed"
         android:textColor="@color/white"
-        tools:text="Hola parceritos"/>
+        tools:text="@string/testnotificationtext"/>
     <ProgressBar
         android:visibility="gone"
         style="?android:attr/progressBarStyleHorizontal"

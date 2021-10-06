@@ -17,6 +17,7 @@ using LiveDisplay.Services.Notifications;
 using LiveDisplay.Services.Wallpaper;
 using LiveDisplay.Services.Widget;
 using System;
+using System.Linq;
 using System.Threading;
 using Fragment = AndroidX.Fragment.App.Fragment;
 
@@ -77,18 +78,17 @@ namespace LiveDisplay.Fragments
 
         private void CatcherHelper_NotificationPosted(object sender, Services.Notifications.NotificationEventArgs.NotificationPostedEventArgs e)
         {
-            if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetMethod, "0") == "1") //1:"Use a notification to spawn the Music Widget"
-            {
-                if (e.OpenNotification.RepresentsMediaPlaying)
-                {
-                    MusicController.StartPlayback(e.OpenNotification.MediaSessionToken, e.OpenNotification.GetCustomId());
+            if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetMethod, "0") == "1" && //1:"Use a notification to spawn the Music Widget"
+            e.OpenNotifications.FirstOrDefault(n => n.Id == e.NotificationPostedId).RepresentsMediaPlaying)
+            { 
+                    MusicController.StartPlayback(e.OpenNotifications.FirstOrDefault(n => n.Id == e.NotificationPostedId).MediaSessionToken, 
+                        e.OpenNotifications.FirstOrDefault(n => n.Id == e.NotificationPostedId).GetCustomId());
 
                     //Also start the Widget to control the playback.
                     WidgetStatusPublisher.GetInstance().SetWidgetVisibility(
                         new ShowParameters 
                         { Show = true, WidgetName = Constants.MUSIC_FRAGMENT, Active= true, TimeToShow= ShowParameters.ACTIVE_PERMANENTLY });
-                    return;
-                }
+                
             }
         }
 
