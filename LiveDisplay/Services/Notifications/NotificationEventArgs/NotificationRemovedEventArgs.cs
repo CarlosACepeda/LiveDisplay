@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LiveDisplay.Models;
+using System;
 
 namespace LiveDisplay.Services.Notifications.NotificationEventArgs
 {

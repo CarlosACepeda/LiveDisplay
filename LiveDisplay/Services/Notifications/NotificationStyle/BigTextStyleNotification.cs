@@ -1,5 +1,6 @@
 ﻿using Android.Views;
 using Android.Widget;
+using LiveDisplay.Models;
 using System;
 
 namespace LiveDisplay.Services.Notifications.NotificationStyle

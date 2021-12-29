@@ -7,7 +7,9 @@ using Android.Util;
 using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
+using LiveDisplay.Enums;
 using LiveDisplay.Misc;
+using LiveDisplay.Models;
 using LiveDisplay.Services.Widget;
 using System;
 
@@ -16,8 +18,6 @@ namespace LiveDisplay.Services.Notifications.NotificationStyle
     //Provides a basic way to show a notification on the lockscreen.
     public abstract class NotificationStyle
     {
-
-        protected const string MediaStyle = "android.app.Notification$MediaStyle";
 
         public static event EventHandler<bool> SendInlineResponseAvailabityChanged;
 
@@ -37,6 +37,8 @@ namespace LiveDisplay.Services.Notifications.NotificationStyle
         protected ImageButton Collapse { get; private set; }
         protected EditText InlineResponse { get; private set; }
         protected ImageButton SendInlineResponse { get; private set; }
+        protected ImageButton PreviousNotificationButton { get; private set; }
+        protected ImageButton NextNotificationButton { get; private set; }
         protected OpenNotification OpenNotification { get; private set; }
         protected Resources Resources { get; private set; }
 
@@ -57,6 +59,9 @@ namespace LiveDisplay.Services.Notifications.NotificationStyle
             InlineResponseNotificationContainer = FindView<LinearLayout>(Resource.Id.inline_notification_container);
             //PreviousMessages = FindView<TextView>(Resource.Id.previousMessages);
             Collapse = FindView<ImageButton>(Resource.Id.toggle_collapse);
+            PreviousNotificationButton = FindView<ImageButton>(Resource.Id.previous_notification);
+            NextNotificationButton = FindView<ImageButton>(Resource.Id.next_notification);
+            
             InlineResponse = FindView<EditText>(Resource.Id.inline_text);
             SendInlineResponse = FindView<ImageButton>(Resource.Id.send_response);
             CloseNotification.Click += CloseNotification_Click;
@@ -72,9 +77,9 @@ namespace LiveDisplay.Services.Notifications.NotificationStyle
         {
             ImageButton closenotificationbutton = sender as ImageButton;
             OpenNotification openNotification = closenotificationbutton.GetTag(DefaultActionIdentificator) as OpenNotification;
-            openNotification?.Cancel();
-            NotificationView.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
-            WidgetStatusPublisher.GetInstance().SetWidgetVisibility(new ShowParameters { Show = false, WidgetName = Constants.NOTIFICATION_FRAGMENT });
+            NotificationHijackerWorker.RemoveNotification(openNotification);
+            NotificationView.SetTag(Resource.String.defaulttag, openNotification?.GetCustomId());
+            WidgetStatusPublisher.GetInstance().SetWidgetVisibility(new ShowParameters { Show = false, WidgetName = WidgetTypes.NOTIFICATION_FRAGMENT });
             NotificationView.Visibility = ViewStates.Invisible;
         }
 
@@ -92,7 +97,21 @@ namespace LiveDisplay.Services.Notifications.NotificationStyle
             SetNotificationActionsVisibility();
             SetNotificationInlineRespVisibility();
             SetNotificationPreviousMessageVisibility();
+            SetMoveBetweenSiblingNotificationsVisibility();
             ApplyActionsStyle();
+        }
+        protected virtual void SetMoveBetweenSiblingNotificationsVisibility() 
+        {
+            if(OpenNotification.BelongsToGroup)
+            {
+                PreviousNotificationButton.Visibility = ViewStates.Visible;
+                NextNotificationButton.Visibility = ViewStates.Visible;
+            }
+            else
+            {
+                PreviousNotificationButton.Visibility = ViewStates.Invisible;
+                NextNotificationButton.Visibility = ViewStates.Invisible;
+            }
         }
 
         protected virtual void SetTitle()
@@ -142,7 +161,7 @@ namespace LiveDisplay.Services.Notifications.NotificationStyle
 
         protected virtual void SetCloseButtonVisibility()
         {
-            CloseNotification.Visibility = OpenNotification.IsRemovable() ? ViewStates.Visible : ViewStates.Invisible;
+            CloseNotification.Visibility = OpenNotification.IsRemovable ? ViewStates.Visible : ViewStates.Invisible;
         }
 
         protected virtual void SetCloseButtonTag()
@@ -168,29 +187,42 @@ namespace LiveDisplay.Services.Notifications.NotificationStyle
 
         public virtual void ApplyActionsStyle()
         {
-            NotificationActions?.RemoveAllViews();
+            CleanActionViews();
             if (OpenNotification.HasActions())
             {
+                NotificationActions.Visibility = ViewStates.Visible;
                 var actions = OpenNotification.Actions;
                 for (int i = 0; i <= actions.Count - 1; i++)
                 {
                     var action = actions[i];
                     OpenAction openAction = new OpenAction(action);
-                    Button actionButton = new Button(Application.Context);
-                    float weight = 1f / actions.Count;
-                    actionButton.LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MatchParent, weight);
-                    SetActionTextColor(actionButton);
+                    Button actionButton = NotificationActions.GetChildAt(i) as Button;
+                    if (i > 2)
+                    {
+                        actionButton.Visibility = ViewStates.Visible;
+                    }
                     SetActionTag(actionButton, openAction);
                     actionButton.Click += ActionButton_Click;
-                    SetActionButtonGravity(actionButton);
-                    SetActionButtonTextMaxLines(actionButton);
-                    SetActionButtonTextTypeface(actionButton);
-                    SetActionButtonBackground(actionButton);
                     SetActionText(actionButton, openAction.Title());
-                    SetActionTextLowercase(actionButton);
                     SetActionIcon(actionButton, openAction);
-                    AddActionToActionsView(actionButton, i);
                 }
+            }
+            else
+            {
+                NotificationActions.Visibility = ViewStates.Gone;
+            }
+        }
+        void CleanActionViews()
+        {
+            for (int i = 0; i < NotificationActions.ChildCount-1; i++)
+            {
+                Button actionView= NotificationActions.GetChildAt(i) as Button;
+                if(i>2)
+                {
+                    actionView.Visibility = ViewStates.Gone; //Hide additional two action buttons.
+                }
+                SetActionText(actionView, null);
+                SetActionIcon(actionView, null);
             }
         }
 
@@ -261,9 +293,12 @@ namespace LiveDisplay.Services.Notifications.NotificationStyle
 
         protected virtual void SetActionIcon(Button action, OpenAction openAction)
         {
+            if(openAction==null)
+                action.SetCompoundDrawablesRelativeWithIntrinsicBounds(null, null, null, null);
+
             //In versions beyond Nougat the only notification that has icons is the MediaStyle one.
-            if (Build.VERSION.SdkInt<= BuildVersionCodes.N  || OpenNotification.Style == MediaStyle)
-                action.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction.GetActionIcon(Color.White), null, null, null);
+            if (Build.VERSION.SdkInt<= BuildVersionCodes.N  || OpenNotification.Style == NotificationStyles.MEDIA_STYLE)
+                action.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction?.GetActionIcon(Color.White), null, null, null);
         }
 
         protected void AddActionToActionsView(Button button, int position)

@@ -1,5 +1,6 @@
 ﻿using Android.Graphics.Drawables;
 using Android.Widget;
+using LiveDisplay.Models;
 using LiveDisplay.Services.Wallpaper;
 
 namespace LiveDisplay.Services.Notifications.NotificationStyle

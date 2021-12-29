@@ -19,7 +19,7 @@ namespace LiveDisplay.Services.Awake
         public AwakeHelper()
         {
             NotificationAdapter.NotificationPosted += CatcherHelper_NotificationPosted;
-            CatcherHelper.NotificationListSizeChanged += CatcherHelper_NotificationListSizeChanged;
+            NotificationHijackerWorker.NotificationListSizeChanged += CatcherHelper_NotificationListSizeChanged;
         }
 
         public static void TurnOnScreen()
@@ -199,7 +199,7 @@ namespace LiveDisplay.Services.Awake
         protected override void Dispose(bool disposing)
         {
             NotificationAdapter.NotificationPosted -= CatcherHelper_NotificationPosted;
-            CatcherHelper.NotificationListSizeChanged -= CatcherHelper_NotificationListSizeChanged;
+            NotificationHijackerWorker.NotificationListSizeChanged -= CatcherHelper_NotificationListSizeChanged;
             configurationManager.Dispose();
             base.Dispose(disposing);
         }

@@ -6,8 +6,8 @@ using Android.OS;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
-using Java.Lang;
 using LiveDisplay.Adapters;
+using LiveDisplay.Enums;
 using LiveDisplay.Misc;
 using LiveDisplay.Services;
 using LiveDisplay.Services.Keyguard;
@@ -17,7 +17,6 @@ using LiveDisplay.Services.Notifications;
 using LiveDisplay.Services.Wallpaper;
 using LiveDisplay.Services.Widget;
 using System;
-using System.Linq;
 using System.Threading;
 using Fragment = AndroidX.Fragment.App.Fragment;
 
@@ -36,22 +35,22 @@ namespace LiveDisplay.Fragments
         private readonly ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
 
         private bool timeoutStarted = false;
-        private Handler handler;
-        private Runnable runnable;
+        //private Handler handler;
+        //private Runnable runnable;
 
         #region Fragment Lifecycle
 
         public override void OnCreate(Bundle savedInstanceState)
         {
-            handler = new Handler();
-            runnable = new Runnable(MoveSeekbar);
+            //handler = new Handler();
+            //runnable = new Runnable(MoveSeekbar);
+            base.OnCreate(savedInstanceState);
 
-            WallpaperPublisher.CurrentWallpaperCleared += WallpaperPublisher_CurrentWallpaperHasBeenCleared;
             WidgetStatusPublisher.GetInstance().OnWidgetStatusChanged += WidgetStatusPublisher_OnWidgetStatusChanged;
+            WallpaperPublisher.CurrentWallpaperCleared += WallpaperPublisher_CurrentWallpaperHasBeenCleared;
             NotificationAdapter.NotificationPosted += CatcherHelper_NotificationPosted;
             NotificationAdapter.NotificationRemoved += CatcherHelper_NotificationRemoved;
 
-            base.OnCreate(savedInstanceState);
         }
 
         private void CatcherHelper_NotificationRemoved(object sender, Services.Notifications.NotificationEventArgs.NotificationRemovedEventArgs e)
@@ -71,7 +70,7 @@ namespace LiveDisplay.Fragments
                 }
                 WidgetStatusPublisher.GetInstance().SetWidgetVisibility(
                     new ShowParameters
-                    { Show = false, WidgetName = Constants.MUSIC_FRAGMENT });
+                    { Show = false, WidgetName = WidgetTypes.MUSIC_FRAGMENT });
 
             });
         }
@@ -79,41 +78,49 @@ namespace LiveDisplay.Fragments
         private void CatcherHelper_NotificationPosted(object sender, Services.Notifications.NotificationEventArgs.NotificationPostedEventArgs e)
         {
             if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetMethod, "0") == "1" && //1:"Use a notification to spawn the Music Widget"
-            e.OpenNotifications.FirstOrDefault(n => n.Id == e.NotificationPostedId).RepresentsMediaPlaying)
+            e.NotificationPosted.RepresentsMediaPlaying)
             { 
-                    MusicController.StartPlayback(e.OpenNotifications.FirstOrDefault(n => n.Id == e.NotificationPostedId).MediaSessionToken, 
-                        e.OpenNotifications.FirstOrDefault(n => n.Id == e.NotificationPostedId).GetCustomId());
+                    MusicController.StartPlayback(e.NotificationPosted.MediaSessionToken, 
+                        e.NotificationPosted.GetCustomId());
 
                     //Also start the Widget to control the playback.
                     WidgetStatusPublisher.GetInstance().SetWidgetVisibility(
                         new ShowParameters 
-                        { Show = true, WidgetName = Constants.MUSIC_FRAGMENT, Active= true, TimeToShow= ShowParameters.ACTIVE_PERMANENTLY });
+                        { Show = true, WidgetName = WidgetTypes.MUSIC_FRAGMENT, TimeToShow= ShowParameters.ACTIVE_PERMANENTLY });
                 
             }
         }
 
         private void WidgetStatusPublisher_OnWidgetStatusChanged(object sender, WidgetStatusEventArgs e)
         {
-            if (e.WidgetName == Constants.MUSIC_FRAGMENT)
+            Log.Info("MusicFragment", "DO SOMETHING" + e.WidgetName);
+            if (e.WidgetName == WidgetTypes.MUSIC_FRAGMENT)
             {
                 if (e.Show)
                 {
                     ToggleWidgetVisibility(true);
                 }
                 else
+                {
                     ToggleWidgetVisibility(false);
+                }
             }
-            else ToggleWidgetVisibility(false);
         }
         private void ToggleWidgetVisibility(bool visible)
         {
-            if (maincontainer != null)
-            {
-                if (visible)
-                    maincontainer.Visibility = ViewStates.Visible;
-                else
-                    maincontainer.Visibility = ViewStates.Gone;
-            }
+            Activity.RunOnUiThread(() => {
+                if (maincontainer != null)
+                {
+                    if (visible)
+                    {
+                        maincontainer.Visibility = ViewStates.Visible;
+                    }
+                    else
+                    {
+                        maincontainer.Visibility = ViewStates.Invisible;
+                    }
+                }
+            });
         }
 
         private void WallpaperPublisher_CurrentWallpaperHasBeenCleared(object sender, CurrentWallpaperClearedEventArgs e)
@@ -150,6 +157,9 @@ namespace LiveDisplay.Fragments
             UnbindMusicControllerEvents();
             WallpaperPublisher.ReleaseWallpaper();
             ToggleWidgetVisibility(false);
+            WidgetStatusPublisher.GetInstance().SetWidgetVisibility(
+                        new ShowParameters
+                        { Show = false, WidgetName = WidgetTypes.MUSIC_FRAGMENT });
 
             UnbindViewEvents();
             UnbindViews();
@@ -212,7 +222,7 @@ namespace LiveDisplay.Fragments
             if (configurationManager.RetrieveAValue(ConfigurationParameters.LaunchNotification))
             {
                 KeyguardHelper.RequestDismissKeyguard(Activity);
-                CatcherHelper.GetOpenNotification(openNotificationId)?.ClickNotification();
+                NotificationHijackerWorker.ClickNotification(NotificationHijackerWorker.GetOpenNotification(openNotificationId));
             }
             else
             {
@@ -221,7 +231,7 @@ namespace LiveDisplay.Fragments
                     WidgetStatusPublisher.GetInstance().SetWidgetVisibility(new ShowParameters
                     {
                         Show = true,
-                        WidgetName = Constants.NOTIFICATION_FRAGMENT,
+                        WidgetName = WidgetTypes.NOTIFICATION_FRAGMENT,
                         AdditionalInfo = openNotificationId
                     });
                 }
@@ -352,20 +362,20 @@ namespace LiveDisplay.Fragments
                     case RemoteControlPlayState.Paused:
                         btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
                         playbackState = PlaybackStateCode.Paused;
-                        MoveSeekbar(false);
+                        //MoveSeekbar(false);
 
                         break;
 
                     case RemoteControlPlayState.Playing:
                         btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_pause_white_24dp, 0, 0);
                         playbackState = PlaybackStateCode.Playing;
-                        MoveSeekbar(true);
+                        //MoveSeekbar(true);
                         break;
 
                     case RemoteControlPlayState.Stopped:
                         btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_replay_white_24dp, 0, 0);
                         playbackState = PlaybackStateCode.Stopped;
-                        MoveSeekbar(false);
+                        //MoveSeekbar(false);
                         break;
 
                     default:
@@ -395,7 +405,6 @@ namespace LiveDisplay.Fragments
                         BlurLevel = (short)blurLevel,
                         WallpaperPoster = WallpaperPoster.MusicPlayer //We must nutify WallpaperPublisher who is posting the wallpaper, otherwise it'll be ignored.
                     });
-                GC.Collect(0);
             });
         }
 
@@ -458,9 +467,9 @@ namespace LiveDisplay.Fragments
                         //Otherwise, the Music Widget can only disappear when the notification is removed. (which is the correct behavior)
                         if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetMethod, "1") == "0")
                         {
-                            StartTimeout(true);
+                            //StartTimeout(true); //TODO: make use of Widget publisher
                         }
-                        MoveSeekbar(false);
+                        //MoveSeekbar(false);
 
                         break;
 
@@ -468,8 +477,8 @@ namespace LiveDisplay.Fragments
                         SetMediaControlButtonsAvailability(true);
                         btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_pause_white_24dp, 0, 0);
                         playbackState = PlaybackStateCode.Playing;
-                        StartTimeout(false);
-                        MoveSeekbar(true);
+                        //StartTimeout(false);
+                        //MoveSeekbar(true);
 
                         break;
 
@@ -477,7 +486,7 @@ namespace LiveDisplay.Fragments
                         //HideMusicWidget();
                         btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_replay_white_24dp, 0, 0);
                         playbackState = PlaybackStateCode.Stopped;
-                        MoveSeekbar(false);
+                        //MoveSeekbar(false);
                         break;
 
                     case PlaybackStateCode.Buffering:
@@ -548,12 +557,12 @@ namespace LiveDisplay.Fragments
             //Start
             if (move)
             {
-                handler.RemoveCallbacks(runnable);
-                handler.PostDelayed(runnable, 1000);
+                //handler.RemoveCallbacks(runnable);
+                //handler.PostDelayed(runnable, 1000);
             }
             else
             {
-                handler.RemoveCallbacks(runnable);
+                //handler.RemoveCallbacks(runnable);
             }
         }
 
@@ -572,7 +581,7 @@ namespace LiveDisplay.Fragments
                         skbSeekSongTime.Progress += 1;
                 }
             });
-            handler.PostDelayed(runnable, 1000);
+            //handler.PostDelayed(runnable, 1000);
         }
 
         private void StartTimeout(bool start)
@@ -608,7 +617,7 @@ namespace LiveDisplay.Fragments
                     maincontainer.Visibility = ViewStates.Gone;
                 });
                 timeoutStarted = false;
-                WidgetStatusPublisher.GetInstance().SetWidgetVisibility(new ShowParameters { Show = false, WidgetName = Constants.MUSIC_FRAGMENT });
+                WidgetStatusPublisher.GetInstance().SetWidgetVisibility(new ShowParameters { Show = false, WidgetName = WidgetTypes.MUSIC_FRAGMENT });
             }
         }
     }

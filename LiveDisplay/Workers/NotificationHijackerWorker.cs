@@ -2,6 +2,7 @@
 using Android.OS;
 using Android.Service.Notification;
 using LiveDisplay.Adapters;
+using LiveDisplay.Models;
 using LiveDisplay.Services.Notifications.NotificationEventArgs;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Linq;
 
 namespace LiveDisplay.Services.Notifications
 {
-    internal class CatcherHelper : Java.Lang.Object
+    internal class NotificationHijackerWorker : Java.Lang.Object
     {
         public static NotificationAdapter NotificationAdapter { get; set; }
         public static List<OpenNotification> StatusBarNotifications { get; internal set; } = new List<OpenNotification>();
@@ -17,8 +18,7 @@ namespace LiveDisplay.Services.Notifications
         public static event EventHandler<NotificationListSizeChangedEventArgs> NotificationListSizeChanged;
         private const string ANDROID_TAG_FOR_FLOATING_LIVEDISPLAY = "com.android.server.wm.AlertWindowNotification - com.underground.livedisplay";
         private const string ANDROID_APP_PACKAGE = "android";
-
-        //So it can grab it from here.
+        private static NotificationHijackerWorker instance;
 
         /// <summary>
         /// Constructor of the Class
@@ -26,7 +26,14 @@ namespace LiveDisplay.Services.Notifications
         /// <param name="statusBarNotifications">This list is sent by Catcher, and is used to fill the Adapter
         /// that the RecyclerView will use, it is tighly coupled with that adapter.
         /// </param>
-        public CatcherHelper(List<StatusBarNotification> statusBarNotifications)
+
+        public static NotificationHijackerWorker GetInstance(List<StatusBarNotification> statusBarNotifications)
+        {
+            if (instance == null)
+                instance = new NotificationHijackerWorker(statusBarNotifications);
+            return instance;
+        }
+        private NotificationHijackerWorker(List<StatusBarNotification> statusBarNotifications)
         {
             foreach (var sbn in statusBarNotifications)
             {
@@ -97,7 +104,7 @@ namespace LiveDisplay.Services.Notifications
             //TODO: move this to Adapter.
             OnNotificationListSizeChanged(new NotificationListSizeChangedEventArgs
             {
-                ThereAreNotifications = !(StatusBarNotifications.Where(n => n.IsRemovable()).ToList().Count == 0)
+                ThereAreNotifications = StatusBarNotifications.Where(n => n.IsRemovable).ToList().Count > 0
             });
         }
 
@@ -114,6 +121,46 @@ namespace LiveDisplay.Services.Notifications
         public static OpenNotification GetOpenNotification(string customId)
         {
             return StatusBarNotifications.Where(o => o.GetCustomId() == customId).FirstOrDefault();
+        }
+        public static bool DeviceSupportsNotificationGrouping()
+        {
+            return (Build.VERSION.SdkInt >= BuildVersionCodes.N);
+        }
+        bool CanReadNotificationPriority()
+        {
+            return (Build.VERSION.SdkInt <= BuildVersionCodes.N); //Nougat and inferior versions can.
+        }
+        public static void RemoveNotification(OpenNotification openNotification)
+        {
+            //There's a really strange bug where removed Incoming Calls notifications never gets to OnNotificationRemoved method on the NotificationListener
+            //so the notification stays within our list. TODO: Find a way to remove a notification when this happens.
+
+            if (openNotification.IsRemovable)
+                using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())
+                {
+                    if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
+                    {
+                        slave.CancelNotification(openNotification.PackageName, openNotification.Tag, openNotification.Id);
+                    }
+                    else
+                    {
+                        slave.CancelNotification(openNotification.Key);
+                    }
+                }
+        }
+        public static void ClickNotification(OpenNotification openNotification)
+        {
+            try
+            {
+                openNotification.ContentIntent.Send();
+                //Android Docs: For NotificationListeners: When implementing a custom click for notification
+                //Cancel the notification after it was clicked when this notification is autocancellable.
+                RemoveNotification(openNotification);
+            }
+            catch
+            {
+                Console.WriteLine("Click Notification failed, fail in pending intent");
+            }
         }
     }
 }

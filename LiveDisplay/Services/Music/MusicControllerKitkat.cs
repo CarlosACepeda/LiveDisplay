@@ -1,7 +1,9 @@
-﻿using Android.Media;
+﻿using Android.Content.Res;
+using Android.Media;
 using Android.Util;
 using Android.Views;
 using LiveDisplay.Adapters;
+using LiveDisplay.Enums;
 using LiveDisplay.Misc;
 using LiveDisplay.Services.Music.MediaEventArgs;
 using LiveDisplay.Services.Notifications;
@@ -148,7 +150,7 @@ namespace LiveDisplay.Services.Music
                 case RemoteControlPlayState.Playing:
                     if (requestedWidgetStart == false)
                     {
-                        WidgetStatusPublisher.GetInstance().SetWidgetVisibility(new ShowParameters { WidgetName = Constants.MUSIC_FRAGMENT});
+                        WidgetStatusPublisher.GetInstance().SetWidgetVisibility(new ShowParameters { WidgetName = WidgetTypes.MUSIC_FRAGMENT});
                         requestedWidgetStart = true;
                     }
                     break;

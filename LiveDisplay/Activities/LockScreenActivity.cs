@@ -14,6 +14,7 @@
     using Android.Widget;
     using AndroidX.AppCompat.App;
     using AndroidX.RecyclerView.Widget;
+    using LiveDisplay.Enums;
     using LiveDisplay.Fragments;
     using LiveDisplay.Misc;
     using LiveDisplay.Services;
@@ -97,14 +98,14 @@
             WallpaperPublisher.NewWallpaperIssued += Wallpaper_NewWallpaperIssued;
 
             //CatcherHelper events
-            CatcherHelper.NotificationListSizeChanged += CatcherHelper_NotificationListSizeChanged;
+            NotificationHijackerWorker.NotificationListSizeChanged += CatcherHelper_NotificationListSizeChanged;
 
             using (recycler = FindViewById<RecyclerView>(Resource.Id.notification_list))
             {
                 using (layoutManager = new LinearLayoutManager(Application.Context, RecyclerView.Horizontal, REVERSE_LAYOUT_FALSE))
                 {
                     recycler.SetLayoutManager(layoutManager);
-                    recycler.SetAdapter(CatcherHelper.NotificationAdapter);
+                    recycler.SetAdapter(NotificationHijackerWorker.NotificationAdapter);
                 }
             }
             LoadAllFragments();
@@ -121,7 +122,7 @@
         }
         private void WidgetStatusPublisher_OnWidgetStatusChanged(object sender, WidgetStatusEventArgs e)
         {
-            if (e.Show && e.WidgetName != Constants.CLOCK_FRAGMENT)
+            if (e.Show && e.WidgetName != WidgetTypes.CLOCK_FRAGMENT)
             {
                 using (var miniclock = FindViewById<TextClock>(Resource.Id.miniclock))
                 {
@@ -330,7 +331,7 @@
 
             //clearAll.Click -= BtnClearAll_Click;
             WallpaperPublisher.NewWallpaperIssued -= Wallpaper_NewWallpaperIssued;
-            CatcherHelper.NotificationListSizeChanged -= CatcherHelper_NotificationListSizeChanged;
+            NotificationHijackerWorker.NotificationListSizeChanged -= CatcherHelper_NotificationListSizeChanged;
             WidgetStatusPublisher.GetInstance().OnWidgetStatusChanged += WidgetStatusPublisher_OnWidgetStatusChanged;
             lockscreen.Touch -= Lockscreen_Touch;
 
@@ -508,9 +509,9 @@
         private void LoadAllFragments()
         {
             var transaction = SupportFragmentManager.BeginTransaction();
-            transaction.Add(Resource.Id.fragment_container, CreateFragment(Constants.CLOCK_FRAGMENT), Constants.CLOCK_FRAGMENT);
-            transaction.Add(Resource.Id.fragment_container, CreateFragment(Constants.NOTIFICATION_FRAGMENT), Constants.NOTIFICATION_FRAGMENT);
-            transaction.Add(Resource.Id.fragment_container, CreateFragment(Constants.MUSIC_FRAGMENT), Constants.MUSIC_FRAGMENT);
+            transaction.Add(Resource.Id.fragment_container, CreateFragment(WidgetTypes.CLOCK_FRAGMENT), WidgetTypes.CLOCK_FRAGMENT);
+            transaction.Add(Resource.Id.fragment_container, CreateFragment(WidgetTypes.NOTIFICATION_FRAGMENT), WidgetTypes.NOTIFICATION_FRAGMENT);
+            transaction.Add(Resource.Id.fragment_container, CreateFragment(WidgetTypes.MUSIC_FRAGMENT), WidgetTypes.MUSIC_FRAGMENT);
             transaction.Commit();
         }
 
@@ -519,7 +520,7 @@
             AndroidX.Fragment.App.Fragment result = null;
             switch (tag)
             {
-                case Constants.CLOCK_FRAGMENT:
+                case WidgetTypes.CLOCK_FRAGMENT:
 
                     if (clockFragment == null)
                     {
@@ -528,7 +529,7 @@
                     result = clockFragment;
                     break;
 
-                case Constants.NOTIFICATION_FRAGMENT:
+                case WidgetTypes.NOTIFICATION_FRAGMENT:
                     if (notificationFragment == null)
                     {
                         notificationFragment = new NotificationFragment();
@@ -536,7 +537,7 @@
                     result = notificationFragment;
                     break;
 
-                case Constants.MUSIC_FRAGMENT:
+                case WidgetTypes.MUSIC_FRAGMENT:
                     if (musicFragment == null)
                     {
                         musicFragment = new MusicFragment();

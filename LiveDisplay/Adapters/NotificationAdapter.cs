@@ -8,6 +8,7 @@
     using AndroidX.RecyclerView.Widget;
     using LiveDisplay.Factories;
     using LiveDisplay.Misc;
+    using LiveDisplay.Models;
     using LiveDisplay.Services;
     using LiveDisplay.Services.Music;
     using LiveDisplay.Services.Notifications;
@@ -18,9 +19,9 @@
 
     public class NotificationAdapter : RecyclerView.Adapter
     {
-        public static int selectedItem = -1;
-        public List<OpenNotification> singleNotifications = new List<OpenNotification>();
-        public List<OpenNotification> groupedNotifications = new List<OpenNotification>();
+        public int selectedItem = -1;
+        List<OpenNotification> singleNotifications = new List<OpenNotification>();
+        List<OpenNotification> groupedNotifications = new List<OpenNotification>();
 
         public static event EventHandler<NotificationItemClickedEventArgs> ItemClick;
         public static event EventHandler<NotificationItemClickedEventArgs> ItemLongClick;
@@ -29,7 +30,14 @@
 
         public static event EventHandler<NotificationPostedEventArgs> NotificationPosted;
 
-        public override int ItemCount => groupedNotifications.Count;
+        public override int ItemCount
+        {
+            get
+            {
+                return Build.VERSION.SdkInt < BuildVersionCodes.N ? 
+                    singleNotifications.Count : groupedNotifications.Count;
+            }
+        }
 
         public NotificationAdapter(List<OpenNotification> notifications)
         {
@@ -37,9 +45,7 @@
         }
         public void GroupNotifications(List<OpenNotification> notifications)
         {
-            if (Build.VERSION.SdkInt < BuildVersionCodes.N)
-                singleNotifications = notifications; // no grouping made.
-            else
+            if (NotificationHijackerWorker.DeviceSupportsNotificationGrouping())
             {
                 foreach (var openNotification in notifications)
                 {
@@ -53,6 +59,11 @@
                         singleNotifications.Add(openNotification); //Is a standalone notification
                     }
                 }
+
+            }
+            else
+            {
+                singleNotifications = notifications; // no grouping made.
             }
         }
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
@@ -85,7 +96,7 @@
                     {
                         viewHolder.Icono.Background = IconFactory.ReturnIconDrawable(item.IconResourceInt, item.ApplicationPackage);
                     }
-                    if (GetChildNotificationCount(item) != string.Empty)
+                    if (GetChildNotificationCount(item)>0)
                     {
                         viewHolder.NotificationCount.Text = GetChildNotificationCount(item).ToString();
                         viewHolder.NotificationCount.Visibility = ViewStates.Visible;
@@ -94,14 +105,14 @@
                         viewHolder.NotificationCount.Visibility = ViewStates.Gone;
 
 
-                    if (selectedItem == position)
-                    {
-                        viewHolder.Icono.Alpha = 0.5f;
-                    }
-                    else
-                    {
-                        viewHolder.Icono.Alpha = 1;
-                    }
+                    //if (selectedItem == position)
+                    //{
+                    //    viewHolder.Icono.Alpha = 0.5f;
+                    //}
+                    //else
+                    //{
+                    //    viewHolder.Icono.Alpha = 1;
+                    //}
 
                 }
             }
@@ -263,14 +274,6 @@
             }
             OnNotificationRemoved(openNotification);
         }
-
-        void RemoveChildNotifications(OpenNotification summaryNotification)
-        {
-            foreach(var child in singleNotifications.Where(c=> c.GroupKey == summaryNotification.GroupKey))
-            {
-                singleNotifications.Remove(child);
-            }
-        }
         int GetParentNotificationPosition(OpenNotification child)
         {
             OpenNotification parent = groupedNotifications.FirstOrDefault(p => p.GroupKey == child.GroupKey && p.IsSummary);
@@ -279,11 +282,11 @@
             return groupedNotifications.IndexOf(parent);
         }
 
-        string GetChildNotificationCount(OpenNotification openNotification)
+        int GetChildNotificationCount(OpenNotification openNotification)
         {
             if (openNotification.IsSummary)
-                return singleNotifications.Count(child => child.BelongsToGroup && child.GroupKey == openNotification.GroupKey).ToString();
-            else return string.Empty;
+                return singleNotifications.Count(child => child.BelongsToGroup && child.GroupKey == openNotification.GroupKey);
+            else return 0;
         }
         List<OpenNotification> GetChildNotifications(OpenNotification parent)
         {
@@ -310,16 +313,14 @@
         }
         private void OnNotificationPosted(OpenNotification sbn)
         {
-            List<OpenNotification> openNotifications= groupedNotifications;
-
             NotificationPosted?.Invoke(null, new NotificationPostedEventArgs
             {
-                NotificationPostedId= sbn.Id,
-                OpenNotifications= openNotifications,
+                NotificationPosted= sbn,
                 ShouldCauseWakeUp= true,
                 UpdatesPreviousNotification= true
             });
         }
+
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
         {
             LayoutInflater layoutInflater = LayoutInflater.From(parent.Context);
@@ -332,8 +333,8 @@
             if (args.Position != RecyclerView.NoPosition)
             {
                 //Simply indicates which item was clicked and after that call NotifyDataSetChanged to changes take effect.
-                selectedItem = args.Position;
-                NotifyDataSetChanged();
+                //selectedItem = args.Position;
+                //NotifyDataSetChanged();
                 var statusBarNotification = groupedNotifications[args.Position];
                 OnItemClicked(args.Position, statusBarNotification);
             }
@@ -350,7 +351,6 @@
             {
                 Position = position,
                 StatusBarNotification = sbn,
-                ChildNotifications = GetChildNotifications(sbn)
             });
         }
 
@@ -360,7 +360,6 @@
             {
                 Position = position,
                 StatusBarNotification = sbn,
-                ChildNotifications = GetChildNotifications(sbn),
             }
             );
         }

@@ -7,14 +7,15 @@ using Android.OS;
 using Android.Service.Notification;
 using Android.Util;
 using Java.Util;
+using LiveDisplay.Enums;
 using LiveDisplay.Factories;
 using LiveDisplay.Misc;
-using LiveDisplay.Services.Music;
+using LiveDisplay.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace LiveDisplay.Services.Notifications
+namespace LiveDisplay.Models
 {
     public class OpenNotification : Java.Lang.Object
     {
@@ -39,36 +40,20 @@ namespace LiveDisplay.Services.Notifications
 
         public int Id => statusbarnotification.Id;
 
-        public void Cancel()
-        {
-            if (IsRemovable())
-                using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())
-                {
-                    if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
-                    {
-                        slave.CancelNotification(PackageName, Tag, Id);
-                    }
-                    else
-                    {
-                        slave.CancelNotification(Key);
-                    }
-                }
-        }
-
         //I need to pinpoint this notification, this is the way.
         //When-> Helps to really ensure is the same notification by checking also the time it was posted
         public string GetCustomId() => PackageName + Tag + Id + When;
 
         public string Tag => statusbarnotification.Tag;
 
-        private string PackageName => statusbarnotification.PackageName;
+        public string PackageName => statusbarnotification.PackageName;
 
         public OpenMessage[] Messages
         {
             get {
                 OpenMessage[] messages = null;
                 //Only Valid in MessagingStyle
-                if (Style == "android.app.Notification$MessagingStyle")
+                if (Style == NotificationStyles.MESSAGING_STYLE)
                 {
                     var messageBundles = statusbarnotification.Notification.Extras?.GetParcelableArray("android.messages");
                     if (messageBundles.Length > 0)
@@ -191,40 +176,28 @@ namespace LiveDisplay.Services.Notifications
             }
         }
 
-        public void ClickNotification()
-        {
-            try
-            {
-                statusbarnotification.Notification.ContentIntent.Send();
-                //Android Docs: For NotificationListeners: When implementing a custom click for notification
-                //Cancel the notification after it was clicked when this notification is autocancellable.
-                Cancel();
-            }
-            catch
-            {
-                Console.WriteLine("Click Notification failed, fail in pending intent");
-            }
-        }
-
         public List<Notification.Action> Actions => statusbarnotification.Notification.Actions?.ToList();
         
 
-        internal bool IsRemovable()
+        internal bool IsRemovable
         {
-            if (statusbarnotification.IsClearable == true)
-            {
-                return true;
+            get{
+                return statusbarnotification.IsClearable;
             }
-            return false;
         }
+        internal PendingIntent ContentIntent
+        {
+            get
+            {
+                return statusbarnotification.Notification.ContentIntent;
+            }
+        }
+        public bool HasBeenSeenByUser { get; set; }
 
         public bool HasActions()
         {
-            if (statusbarnotification.Notification.Actions != null)
-            {
-                return true;
-            }
-            return false;
+            return statusbarnotification.Notification.Actions != null;
+            
         }
 
         public MediaSession.Token MediaSessionToken

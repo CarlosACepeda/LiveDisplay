@@ -7,6 +7,7 @@ using Android.Runtime;
 using Android.Service.Notification;
 using Android.Util;
 using LiveDisplay.BroadcastReceivers;
+using LiveDisplay.Models;
 using LiveDisplay.Services.Music;
 using LiveDisplay.Services.Notifications;
 using LiveDisplay.Services.Notifications.NotificationEventArgs;
@@ -17,9 +18,9 @@ using System.Threading;
 
 namespace LiveDisplay.Services
 {
-    [Service(Label = "@string/app_name", Permission = "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE")]
+    [Service(Label = "@string/notification_listener", Permission = "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE")]
     [IntentFilter(new[] { "android.service.notification.NotificationListenerService" })]
-    internal class Catcher : NotificationListenerService, RemoteController.IOnClientUpdateListener
+    internal class NotificationHijackerService : NotificationListenerService, RemoteController.IOnClientUpdateListener
     {
         private ScreenOnOffReceiver screenOnOffReceiver;
         private MediaSessionManager mediaSessionManager;
@@ -27,7 +28,7 @@ namespace LiveDisplay.Services
         private ActiveMediaSessionsListener activeMediaSessionsListener;
         private RemoteController remoteController;
         private AudioManager audioManager;
-        private CatcherHelper catcherHelper;
+        private NotificationHijackerWorker catcherHelper;
         private List<StatusBarNotification> statusBarNotifications;
         private StatusBarNotification lastPostedNotification;
 
@@ -44,11 +45,7 @@ namespace LiveDisplay.Services
 
                 SubscribeToEvents();
                 RegisterReceivers();
-                remoteController = new RemoteController(Application.Context, this);
-                remoteController.SetArtworkConfiguration(Resources.DisplayMetrics.WidthPixels, Resources.DisplayMetrics.HeightPixels);
-                audioManager = (AudioManager)Application.Context.GetSystemService(AudioService);
-                audioManager.RegisterRemoteController(remoteController);
-                musicControllerKitkat = MusicControllerKitkat.GetInstance(remoteController);
+                InitializeRemoteController();
             }
             return base.OnBind(intent);
         }
@@ -65,7 +62,7 @@ namespace LiveDisplay.Services
                 {
                     try
                     {
-                        mediaSessionManager.AddOnActiveSessionsChangedListener(activeMediaSessionsListener, new ComponentName(this, Java.Lang.Class.FromType(typeof(Catcher))));
+                        mediaSessionManager.AddOnActiveSessionsChangedListener(activeMediaSessionsListener, new ComponentName(this, Java.Lang.Class.FromType(typeof(NotificationHijackerService))));
                         Log.Info("LiveDisplay", "Added Media Sess. Changed Listener");
                     }
                     catch
@@ -190,7 +187,7 @@ namespace LiveDisplay.Services
                 statusBarNotifications.Add(notification);
                 lastPostedNotification = notification;
             }
-            catcherHelper = new CatcherHelper(statusBarNotifications);
+            catcherHelper = NotificationHijackerWorker.GetInstance(statusBarNotifications);
         }
 
         //Subscribe to events by Several publishers
@@ -259,10 +256,20 @@ namespace LiveDisplay.Services
             }
         }
 
+        void InitializeRemoteController()
+        {
+            remoteController = new RemoteController(Application.Context, this);
+            remoteController.SetArtworkConfiguration(Resources.DisplayMetrics.WidthPixels, Resources.DisplayMetrics.HeightPixels);
+            audioManager = (AudioManager)Application.Context.GetSystemService(AudioService);
+            audioManager.RegisterRemoteController(remoteController);
+            musicControllerKitkat = MusicControllerKitkat.GetInstance(remoteController);
+        }
+
+
         public void OnClientChange(bool clearing)
         {
             Log.Info("LiveDisplay", "clearing: " + clearing);
-            musicControllerKitkat = MusicControllerKitkat.GetInstance(remoteController);
+            if(clearing) musicControllerKitkat = MusicControllerKitkat.GetInstance(remoteController);
         }
 
         public void OnClientMetadataUpdate(RemoteController.MetadataEditor metadataEditor)

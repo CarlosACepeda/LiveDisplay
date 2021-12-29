@@ -26,7 +26,7 @@ namespace LiveDisplay.Services.Music
         private static PendingIntent _activityIntent;
         private static MediaController _currentMediaController;
         private static MediaSession.Token _currentToken;
-        private static bool _playbackstarted;
+        private bool _playbackstarted;
         private static string _appname;
         private static string _openNotificationId;
 
@@ -59,6 +59,7 @@ namespace LiveDisplay.Services.Music
                 {
                     _currentMediaController = new MediaController(Application.Context, token);
                     _currentToken = token;
+                    LoadMediaControllerData(_currentMediaController);
                 }
                 else
                 {
@@ -69,7 +70,7 @@ namespace LiveDisplay.Services.Music
             }
             else
             {
-                if (IsPlaybackStarted(token) == false)
+                if (!IsPlaybackStarted(token))
                 {
                     StopPlayback(_currentToken); //the incoming token is different so I will stop the previous media callback before
                                                  //creating a new one.
@@ -82,21 +83,18 @@ namespace LiveDisplay.Services.Music
                 else
                 {
                     //The mediaplayback is already started for this session in particular.
-
-                    if (_openNotificationId != owningNotificationId) //It means that the session is the same, but the notification owning this session changed.
-                    {
-                        _openNotificationId = owningNotificationId; //Update the notification (taking its id) that way we can identify the notification that owns this media session.
-                    }
+                    _openNotificationId = owningNotificationId; //Update the notification (taking its id) that way we can identify the notification that owns this media session.
                     return false;
                 }
             }
         }
 
-        private static MusicController GetCurrentInstance(MediaController controller, string owningNotificationId)
+        private static void GetCurrentInstance(MediaController controller, string owningNotificationId)
         {
             if (instance == null)
+            {
                 instance = new MusicController(controller, owningNotificationId);
-            return instance;
+            }
         }
 
         private MusicController(MediaController controller, string notificationId)
@@ -234,14 +232,14 @@ namespace LiveDisplay.Services.Music
                 switch (e.PlaybackState)
                 {
                     case PlaybackStateCode.Playing:
-                        MusicPlaying?.Invoke(this, EventArgs.Empty);
+                        MusicPlaying?.Invoke(null, EventArgs.Empty);
                         break;
 
                     case PlaybackStateCode.Paused:
-                        MusicPaused?.Invoke(this, EventArgs.Empty);
+                        MusicPaused?.Invoke(null, EventArgs.Empty);
                         break;
                 }
-                MediaPlaybackChanged?.Invoke(this, e);
+                MediaPlaybackChanged?.Invoke(null, e);
             });
         }
 
@@ -255,14 +253,6 @@ namespace LiveDisplay.Services.Music
         }
 
         #endregion Raising events.
-
-        protected override void Dispose(bool disposing)
-        {
-            //release resources.
-
-            base.Dispose(disposing);
-        }
-
         private static bool StartMediaPlayback()
         {
             if (_currentMediaController == null)
@@ -272,13 +262,13 @@ namespace LiveDisplay.Services.Music
             try
             {
                 _currentMediaController.RegisterCallback(instance);
-                _playbackstarted = true;
+                instance._playbackstarted = true;
                 return true;
             }
             catch (Exception)
             {
                 Log.Warn("LiveDisplay", "Failed MusicController#StartMediaCallback");
-                _playbackstarted = false;
+                instance._playbackstarted = false;
                 return false;
             }
         }
@@ -291,14 +281,14 @@ namespace LiveDisplay.Services.Music
                 try
                 {
                     _currentMediaController.UnregisterCallback(instance);
-                    _playbackstarted = false;
+                    instance._playbackstarted = false;
                     _openNotificationId = null;
                     return true;
                 }
                 catch (Exception)
                 {
                     Log.Warn("LiveDisplay", "Failed MusicController#StopMediaCallback");
-                    _playbackstarted = false;
+                    instance._playbackstarted = false;
                     _openNotificationId = null;
                     return false;
                 }
@@ -308,7 +298,7 @@ namespace LiveDisplay.Services.Music
 
         private static bool IsPlaybackStarted(MediaSession.Token token)
         {
-            if (_currentToken.Equals(token) && _playbackstarted == true)
+            if (_currentToken.Equals(token) && instance._playbackstarted)
             {
                 return true;
             }

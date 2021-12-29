@@ -2,16 +2,34 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/notification_container"
-    android:orientation="vertical"
+    android:orientation="horizontal"
+    android:gravity="center_horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:visibility="visible"
-    android:background="?android:selectableItemBackground">
+    tools:visibility="visible"
+    android:visibility="invisible">
+    <ImageButton
+        tools:visibility="visible"
+        android:visibility="invisible"
+        android:contentDescription=""
+        android:background="?android:attr/selectableItemBackground"
+        android:src="@drawable/ic_previous_notification_24dp"
+        android:id="@+id/previous_notification"
+        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        />
+    <LinearLayout
+        android:id="@+id/actual_notification"
+        android:layout_width="300sp"
+        android:layout_height="150sp"
+        android:orientation="vertical"
+        android:background="?android:selectableItemBackground">
     <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal">
         <ImageView
+            android:contentDescription=""
             android:id="@+id/mini_main_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -71,7 +89,10 @@
                 android:alpha="0.5"
                 android:layout_height="wrap_content"/>
             <ImageButton
+                android:contentDescription=""
+                    android:background="?android:attr/selectableItemBackground"
                 android:id="@+id/toggle_collapse"
+                    android:src="@drawable/ic_collapse_18dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 		</LinearLayout>
@@ -89,19 +110,19 @@
 
     <TextView
         android:id="@+id/notification_title"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
         android:textSize="20sp"
         android:fontFamily="sans-serif-condensed"
-                android:textColor="@color/white"
+        android:textColor="@color/white"
+        android:gravity="center"
         android:textAlignment="center"
         tools:text="2 Mensajes nuevos de 2 chats"/>
     <TextView
         android:id="@+id/notification_text"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
+        android:gravity="center"
         android:textSize="15sp"
         android:textAlignment="center"
         android:fontFamily="sans-serif-condensed"
@@ -119,12 +140,9 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal">
-		<LinearLayout
+		<include
         android:id="@+id/actions"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:visibility="visible"
+        layout="@layout/actions"
 		/>
 		<LinearLayout
 			android:id="@+id/inline_notification_container"
@@ -145,6 +163,7 @@
 				android:layout_height="wrap_content"
 				/>
 			<ImageButton
+                android:contentDescription=""
 				android:id="@+id/send_response"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
@@ -157,8 +176,14 @@
 			/>
 		</LinearLayout>
 	</FrameLayout>
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/child_notifications"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+    </LinearLayout>
+    <ImageButton
+        tools:visibility="visible"
+        android:visibility="invisible"
+        android:background="?android:attr/selectableItemBackground"
+        android:src="@drawable/ic_next_notification_24dp"
+        android:id="@+id/next_notification"
+        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        />
 </LinearLayout>

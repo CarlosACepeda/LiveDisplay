@@ -7,6 +7,7 @@ using Android.Views;
 using Android.Widget;
 using AndroidX.RecyclerView.Widget;
 using LiveDisplay.Adapters;
+using LiveDisplay.Models;
 using LiveDisplay.Services;
 using LiveDisplay.Services.Notifications;
 using System;
@@ -40,7 +41,7 @@ namespace LiveDisplay.Fragments
                 using (var layoutManager = new LinearLayoutManager(Application.Context, (int)Orientation.Vertical, DONT_REVERSE_LAYOUT))
                 {
                     notification_list.SetLayoutManager(layoutManager);
-                    notification_list.SetAdapter(new FilteredNotificationAdapter(OpenNotifications));
+                    //notification_list.SetAdapter(new FilteredNotificationAdapter(OpenNotifications));
                 }
             }
             return view;

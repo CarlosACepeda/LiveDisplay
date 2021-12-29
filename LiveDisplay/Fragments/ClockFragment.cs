@@ -4,10 +4,12 @@
     using Android.Content;
     using Android.OS;
     using Android.Provider;
+    using Android.Util;
     using Android.Views;
     using Android.Widget;
     using Java.Util;
     using LiveDisplay.BroadcastReceivers;
+    using LiveDisplay.Enums;
     using LiveDisplay.Misc;
     using LiveDisplay.Services;
     using LiveDisplay.Services.Keyguard;
@@ -93,26 +95,34 @@
 
         private void WidgetStatusPublisher_OnWidgetStatusChanged(object sender, WidgetStatusEventArgs e)
         {
-            if (e.WidgetName == Constants.CLOCK_FRAGMENT)
+            if (e.WidgetName == WidgetTypes.CLOCK_FRAGMENT)
             {
                 if (e.Show)
                 {
                     ToggleWidgetVisibility(true);
                 }
                 else
+                {
                     ToggleWidgetVisibility(false);
+                }
             }
-            else ToggleWidgetVisibility(false);
         }
         private void ToggleWidgetVisibility(bool visible)
         {
-            if (maincontainer != null)
-            {
-                if(visible)
-                    maincontainer.Visibility = ViewStates.Visible;
-                else
-                    maincontainer.Visibility = ViewStates.Gone;
-            }
+            Activity.RunOnUiThread(() => {
+                if (maincontainer != null)
+                {
+                    if (visible)
+                    {
+                        maincontainer.Visibility = ViewStates.Visible;
+                    }
+                    else
+                    {
+                        maincontainer.Visibility = ViewStates.Invisible;
+                    }
+                }
+
+            });
         }
 
         public override void OnPause()

@@ -2,6 +2,7 @@
 using Android.Graphics.Drawables;
 using Android.Widget;
 using AndroidX.AppCompat.Widget;
+using LiveDisplay.Models;
 using LiveDisplay.Services.Music;
 using LiveDisplay.Services.Wallpaper;
 using System;
