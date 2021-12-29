@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal">
+    <Button
+        android:maxLines="1"
+        android:gravity="left| center_vertical"
+        tools:text="test"
+        android:minWidth="0sp"
+        android:paddingHorizontal="10sp"
+        android:textColor="@color/white"
+        android:background="?android:attr/selectableItemBackground"
+        android:fontFamily="sans-serif-condensed"
+        android:contentDescription=""
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:maxLines="1"
+        android:gravity="left| center_vertical"
+        tools:text="test"
+        android:minWidth="0sp"
+        android:paddingHorizontal="10sp"
+        android:textColor="@color/white"
+        android:background="?android:attr/selectableItemBackground"
+        android:fontFamily="sans-serif-condensed"
+        android:contentDescription=""
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:maxLines="1"
+        android:gravity="left| center_vertical"
+        tools:text="test"
+        android:minWidth="0sp"
+        android:paddingHorizontal="10sp"
+        android:textColor="@color/white"
+        android:background="?android:attr/selectableItemBackground"
+        android:fontFamily="sans-serif-condensed"
+        android:contentDescription=""
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:maxLines="1"
+        tools:text="test"
+        tools:visibility="visible"
+        android:minWidth="0sp"
+        android:paddingHorizontal="10sp"
+        android:textColor="@color/white"
+        android:background="?android:attr/selectableItemBackground"
+        android:fontFamily="sans-serif-condensed"
+        android:gravity="left| center_vertical"
+        android:contentDescription=""
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:maxLines="1"
+        android:gravity="left| center_vertical"
+        tools:text="test"
+        tools:visibility="visible"
+        android:minWidth="0sp"
+        android:paddingHorizontal="10sp"
+        android:fontFamily="sans-serif-condensed"
+        android:textColor="@color/white"
+        android:background="?android:attr/selectableItemBackground"
+        android:visibility="gone"
+        android:contentDescription=""
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+</LinearLayout>

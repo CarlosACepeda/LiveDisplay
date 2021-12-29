@@ -55,6 +55,7 @@
   <string name="enablenotificationlistener">Acceder a las Notificaciones</string>
   <string name="enablequickreply">Activar la respuesta rápida</string>
   <string name="enablequickreplydesc">Contesta directamente a mensajes desde la notificación como se muestra en Nougat y versiones superiores</string>
+  <string name="enablestorageaccess">Activar el acceso al almacenamiento</string>
   <string name="enabletestsetting">Activar opción de prueba</string>
   <string name="eng">Inglés</string>
   <string name="entercityplaceholder">Introduce una ciudad aquí</string>
@@ -146,5 +147,4 @@
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">Diseño del icono de esta app!</string>
   <string name="youneeddigitalwellbeingapp">Necesitas la app de Bienestar Digital</string>
-  <string name="enablestorageaccess">Activar el acceso al almacenamiento</string>
 </resources>

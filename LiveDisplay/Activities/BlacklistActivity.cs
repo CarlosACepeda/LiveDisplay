@@ -8,7 +8,7 @@
     using AndroidX.RecyclerView.Widget;
     using LiveDisplay.Adapters;
     using LiveDisplay.Misc;
-    using LiveDisplay.Servicios;
+    using LiveDisplay.Services;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;

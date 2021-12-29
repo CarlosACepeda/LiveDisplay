@@ -6,8 +6,8 @@ using Android.Views;
 using AndroidX.Preference;
 using AndroidX.Work;
 using LiveDisplay.Misc;
-using LiveDisplay.Servicios;
-using LiveDisplay.Servicios.Weather;
+using LiveDisplay.Services;
+using LiveDisplay.Services.Weather;
 using System;
 
 namespace LiveDisplay.Fragments.Preferences

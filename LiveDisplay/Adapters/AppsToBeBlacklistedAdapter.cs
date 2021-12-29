@@ -6,7 +6,7 @@ using AndroidX.AppCompat.App;
 using AndroidX.AppCompat.Widget;
 using AndroidX.RecyclerView.Widget;
 using LiveDisplay.Misc;
-using LiveDisplay.Servicios;
+using LiveDisplay.Services;
 using System;
 using System.Collections.Generic;
 

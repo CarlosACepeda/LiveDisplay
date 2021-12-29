@@ -13,9 +13,9 @@
     using AndroidX.Preference;
     using LiveDisplay.BroadcastReceivers;
     using LiveDisplay.Misc;
-    using LiveDisplay.Servicios;
-    using LiveDisplay.Servicios.Awake;
-    using LiveDisplay.Servicios.Wallpaper;
+    using LiveDisplay.Services;
+    using LiveDisplay.Services.Awake;
+    using LiveDisplay.Services.Wallpaper;
 
     //for CI.
     using Microsoft.AppCenter;

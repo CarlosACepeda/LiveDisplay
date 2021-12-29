@@ -1,5 +1,6 @@
 ﻿namespace LiveDisplay.Adapters
 {
+    using Android.App;
     using Android.OS;
     using Android.Util;
     using Android.Views;
@@ -7,29 +8,76 @@
     using AndroidX.RecyclerView.Widget;
     using LiveDisplay.Factories;
     using LiveDisplay.Misc;
-    using LiveDisplay.Servicios;
-    using LiveDisplay.Servicios.Music;
-    using LiveDisplay.Servicios.Notificaciones;
-    using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
+    using LiveDisplay.Models;
+    using LiveDisplay.Services;
+    using LiveDisplay.Services.Music;
+    using LiveDisplay.Services.Notifications;
+    using LiveDisplay.Services.Notifications.NotificationEventArgs;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     public class NotificationAdapter : RecyclerView.Adapter
     {
-        public static int selectedItem = -1;
-        public List<OpenNotification> notifications = new List<OpenNotification>();
-        public override int ItemCount => notifications.Count;
+        public int selectedItem = -1;
+        List<OpenNotification> singleNotifications = new List<OpenNotification>();
+        List<OpenNotification> groupedNotifications = new List<OpenNotification>();
 
-        public NotificationAdapter(List<OpenNotification> notificaciones)
+        public static event EventHandler<NotificationItemClickedEventArgs> ItemClick;
+        public static event EventHandler<NotificationItemClickedEventArgs> ItemLongClick;
+
+        public static event EventHandler<NotificationRemovedEventArgs> NotificationRemoved;
+
+        public static event EventHandler<NotificationPostedEventArgs> NotificationPosted;
+
+        public override int ItemCount
         {
-            this.notifications = notificaciones;
+            get
+            {
+                return Build.VERSION.SdkInt < BuildVersionCodes.N ? 
+                    singleNotifications.Count : groupedNotifications.Count;
+            }
         }
 
+        public NotificationAdapter(List<OpenNotification> notifications)
+        {
+            GroupNotifications(notifications);
+        }
+        public void GroupNotifications(List<OpenNotification> notifications)
+        {
+            if (NotificationHijackerWorker.DeviceSupportsNotificationGrouping())
+            {
+                foreach (var openNotification in notifications)
+                {
+                    if (openNotification.IsSummary ||
+                        (!openNotification.IsSummary && !openNotification.BelongsToGroup))
+                    {
+                        groupedNotifications.Add(openNotification);
+                    }
+                    else
+                    {
+                        singleNotifications.Add(openNotification); //Is a standalone notification
+                    }
+                }
+
+            }
+            else
+            {
+                singleNotifications = notifications; // no grouping made.
+            }
+        }
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
             if (position != RecyclerView.NoPosition)
             {
-                if (MusicController.MediaSessionAssociatedWThisNotification(notifications[position].GetCustomId())
+                OpenNotification item;
+
+                if (Build.VERSION.SdkInt < BuildVersionCodes.N)
+                    item = singleNotifications[position];
+                else
+                    item= groupedNotifications[position];
+
+                if (MusicController.MediaSessionAssociatedWThisNotification(item.GetCustomId())
                     && new ConfigurationManager(AppPreferences.Default).RetrieveAValue(ConfigurationParameters.HideNotificationWhenItsMediaPlaying)
                     && Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
                 {
@@ -42,94 +90,302 @@
                     NotificationAdapterViewHolder viewHolder = holder as NotificationAdapterViewHolder;
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
                     {
-                        viewHolder.Icono.Background = IconFactory.ReturnIconDrawable(notifications[position].GetSmallIcon(), notifications[position].GetPackage());
+                        viewHolder.Icono.Background = IconFactory.ReturnIconDrawable(item.SmallIcon, item.ApplicationPackage);
                     }
                     else
                     {
-                        viewHolder.Icono.Background = IconFactory.ReturnIconDrawable(notifications[position].GetIconInt(), notifications[position].GetPackage());
+                        viewHolder.Icono.Background = IconFactory.ReturnIconDrawable(item.IconResourceInt, item.ApplicationPackage);
                     }
-                    if (selectedItem == position)
+                    if (GetChildNotificationCount(item)>0)
                     {
-                        viewHolder.Icono.Alpha = 0.5f;
+                        viewHolder.NotificationCount.Text = GetChildNotificationCount(item).ToString();
+                        viewHolder.NotificationCount.Visibility = ViewStates.Visible;
                     }
                     else
-                    {
-                        viewHolder.Icono.Alpha = 1;
-                    }
+                        viewHolder.NotificationCount.Visibility = ViewStates.Gone;
+
+
+                    //if (selectedItem == position)
+                    //{
+                    //    viewHolder.Icono.Alpha = 0.5f;
+                    //}
+                    //else
+                    //{
+                    //    viewHolder.Icono.Alpha = 1;
+                    //}
+
                 }
             }
             else
             {
                 Log.Info("LiveDisplay", "WTF Position: " + position);
             }
+            
+        }
+
+        public void InsertIntoList(OpenNotification openNotification)
+        {
+            if (openNotification.IsSummary)
+                HandleSummaryNotification(openNotification);
+
+            if (openNotification.IsStandalone)
+                HandleStandaloneNotification(openNotification);
+
+            if (openNotification.BelongsToGroup)
+                HandleChildNotification(openNotification);
+
+            OnNotificationPosted(openNotification);
+
+        }
+
+        void HandleSummaryNotification(OpenNotification notification)
+        {
+            int notificationPosition = GetItemPosition(notification, true);
+
+            if (notificationPosition!= -1)
+            {
+                groupedNotifications.RemoveAt(notificationPosition);
+                groupedNotifications.Add(notification);
+                NotifyItemChanged(notificationPosition);
+            }
+            else
+            {
+                groupedNotifications.Add(notification);
+                NotifyItemInserted(groupedNotifications.Count - 1);
+            }
+        }
+        void HandleChildNotification(OpenNotification notification) //It is a notification that's part of a group.
+        {
+            int notificationPosition = GetItemPosition(notification, false);
+
+            if (notificationPosition != -1)
+            {
+                singleNotifications.RemoveAt(notificationPosition);
+                singleNotifications.Add(notification);
+            }
+            else
+            {
+                singleNotifications.Add(notification);
+            }
+
+        }
+        void HandleStandaloneNotification(OpenNotification notification)
+        {
+            int notificationPosition;
+
+            if (Build.VERSION.SdkInt < BuildVersionCodes.N)
+            {
+                notificationPosition = GetItemPosition(notification, false);
+                if (notificationPosition != -1)
+                {
+                    singleNotifications.RemoveAt(notificationPosition);
+                    singleNotifications.Add(notification);
+                    NotifyItemChanged(notificationPosition);
+                }
+                else
+                {
+                    singleNotifications.Add(notification);
+                    NotifyItemInserted(singleNotifications.Count - 1);
+                }
+
+
+            }
+            else
+            {
+                notificationPosition = GetItemPosition(notification, true);
+                if (notificationPosition != -1)
+                {
+                    groupedNotifications.RemoveAt(notificationPosition);
+                    groupedNotifications.Add(notification);
+                    NotifyItemChanged(notificationPosition);
+                }
+                else
+                {
+                    groupedNotifications.Add(notification);
+                    NotifyItemInserted(groupedNotifications.Count - 1);
+                }
+            }
+
+        }
+
+        public void RemoveNotification(OpenNotification openNotification)
+        {
+
+            if (openNotification.IsSummary)
+                RemoveSummaryNotification(openNotification);
+
+            if (openNotification.IsStandalone)
+                RemoveStandaloneNotification(openNotification);
+
+            if (openNotification.BelongsToGroup)
+                RemoveChildNotification(openNotification);
+
+
+        }
+
+        private void RemoveChildNotification(OpenNotification openNotification)
+        {
+            int notificationPosition;
+            notificationPosition = GetItemPosition(openNotification, false);
+            if (notificationPosition != -1)
+            {
+                singleNotifications.RemoveAt(notificationPosition);
+                int parentNotificationPosition = GetParentNotificationPosition(openNotification);
+                NotifyItemChanged(parentNotificationPosition);
+            }
+            OnNotificationRemoved(openNotification);
+        }
+
+        private void RemoveStandaloneNotification(OpenNotification openNotification)
+        {
+            int notificationPosition;
+
+            if (Build.VERSION.SdkInt < BuildVersionCodes.N)
+            {
+                notificationPosition = GetItemPosition(openNotification, false);
+                if (notificationPosition != -1)
+                {
+                    singleNotifications.RemoveAt(notificationPosition);
+                    NotifyItemRemoved(notificationPosition);
+                }
+
+            }
+            else
+            {
+                notificationPosition = GetItemPosition(openNotification, true);
+                if (notificationPosition != -1)
+                {
+                    groupedNotifications.RemoveAt(notificationPosition);
+                    NotifyItemRemoved(notificationPosition);
+                }
+            }
+            OnNotificationRemoved(openNotification);
+
+        }
+
+        private void RemoveSummaryNotification(OpenNotification openNotification)
+        {
+            int notificationPosition;
+            notificationPosition = GetItemPosition(openNotification, true);
+            if (notificationPosition != -1)
+            {
+                groupedNotifications.RemoveAt(notificationPosition);
+                NotifyItemRemoved(notificationPosition);
+            }
+            OnNotificationRemoved(openNotification);
+        }
+        int GetParentNotificationPosition(OpenNotification child)
+        {
+            OpenNotification parent = groupedNotifications.FirstOrDefault(p => p.GroupKey == child.GroupKey && p.IsSummary);
+            if (parent == null) return -1;
+
+            return groupedNotifications.IndexOf(parent);
+        }
+
+        int GetChildNotificationCount(OpenNotification openNotification)
+        {
+            if (openNotification.IsSummary)
+                return singleNotifications.Count(child => child.BelongsToGroup && child.GroupKey == openNotification.GroupKey);
+            else return 0;
+        }
+        List<OpenNotification> GetChildNotifications(OpenNotification parent)
+        {
+            return singleNotifications.Where(child => child.GroupKey == parent.GroupKey).ToList();
+        }
+
+        private int GetItemPosition(OpenNotification openNotification, bool searchInGroupedList)
+        {
+            if(searchInGroupedList)
+                return groupedNotifications.IndexOf(groupedNotifications.FirstOrDefault
+                (o => o.Id == openNotification.Id && o.ApplicationPackage == openNotification.ApplicationPackage && o.Tag == openNotification.Tag &&
+            o.IsSummary == openNotification.IsSummary));
+            else
+                return singleNotifications.IndexOf(singleNotifications.FirstOrDefault
+                (o => o.Id == openNotification.Id && o.ApplicationPackage == openNotification.ApplicationPackage && o.Tag == openNotification.Tag &&
+            o.IsSummary == openNotification.IsSummary));
+        }
+        private void OnNotificationRemoved(OpenNotification sbn)
+        {
+            NotificationRemoved?.Invoke(null, new NotificationRemovedEventArgs
+            {
+                OpenNotification= sbn
+            });
+        }
+        private void OnNotificationPosted(OpenNotification sbn)
+        {
+            NotificationPosted?.Invoke(null, new NotificationPostedEventArgs
+            {
+                NotificationPosted= sbn,
+                ShouldCauseWakeUp= true,
+                UpdatesPreviousNotification= true
+            });
         }
 
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
         {
             LayoutInflater layoutInflater = LayoutInflater.From(parent.Context);
             View itemView = layoutInflater.Inflate(Resource.Layout.NotificationItemRow, parent, false);
-            return new NotificationAdapterViewHolder(itemView);
+            return new NotificationAdapterViewHolder(itemView, OnClick, OnLongClick);
+        }
+
+        void OnClick(NotificationAdapterClickEventArgs args)
+        {
+            if (args.Position != RecyclerView.NoPosition)
+            {
+                //Simply indicates which item was clicked and after that call NotifyDataSetChanged to changes take effect.
+                //selectedItem = args.Position;
+                //NotifyDataSetChanged();
+                var statusBarNotification = groupedNotifications[args.Position];
+                OnItemClicked(args.Position, statusBarNotification);
+            }
+        }
+
+        void OnLongClick(NotificationAdapterClickEventArgs args)
+        {
+            var statusBarNotification = groupedNotifications[args.Position];
+            OnItemLongClicked(args.Position, statusBarNotification);
+        }
+        private void OnItemClicked(int position, OpenNotification sbn)
+        {
+            ItemClick?.Invoke(null, new NotificationItemClickedEventArgs
+            {
+                Position = position,
+                StatusBarNotification = sbn,
+            });
+        }
+
+        private void OnItemLongClicked(int position, OpenNotification sbn)
+        {
+            ItemLongClick?.Invoke(null, new NotificationItemClickedEventArgs
+            {
+                Position = position,
+                StatusBarNotification = sbn,
+            }
+            );
         }
     }
 
     //The following class just simply saves the view's references to the row, in order to avoid making calls to 'FindViewById' each time, nothing more is done here.
     internal class NotificationAdapterViewHolder : RecyclerView.ViewHolder
     {
-        public static event EventHandler<NotificationItemClickedEventArgs> ItemClicked;
-
-        public static event EventHandler<NotificationItemClickedEventArgs> ItemLongClicked;
-
         public ImageView Icono { get; set; }
+        public TextView NotificationCount { get; set; }
         public OpenNotification OpenNotification { get; set; }
 
-        public NotificationAdapterViewHolder(View itemView) : base(itemView)
+        public NotificationAdapterViewHolder(View itemView, Action<NotificationAdapterClickEventArgs> clickListener,
+                            Action<NotificationAdapterClickEventArgs> longClickListener) : base(itemView)
         {
-            Icono = itemView.FindViewById<ImageView>(Resource.Id.ivNotificationIcon);
-            itemView.Click += ItemView_Click;
-            itemView.LongClick += ItemView_LongClick;
-        }
+            Icono = itemView.FindViewById<ImageView>(Resource.Id.icon);
+            NotificationCount = itemView.FindViewById<TextView>(Resource.Id.notification_count);
 
-        private void ItemView_LongClick(object sender, View.LongClickEventArgs e)
-        {
-            var statusBarNotification = CatcherHelper.StatusBarNotifications[LayoutPosition];
-            OnItemLongClicked(LayoutPosition, statusBarNotification);
+            itemView.Click += (sender, e) => clickListener(new NotificationAdapterClickEventArgs { View = itemView, Position = AdapterPosition });
+            itemView.LongClick += (sender, e) => longClickListener(new NotificationAdapterClickEventArgs { View = itemView, Position = AdapterPosition });
         }
-
-        private void ItemView_Click(object sender, EventArgs e)
-        {
-            //Simply indicates which item was clicked and after that call NotifyDataSetChanged to changes take effect.
-            NotificationAdapter.selectedItem = LayoutPosition;
-            CatcherHelper.notificationAdapter.NotifyDataSetChanged();
-            var statusBarNotification = CatcherHelper.StatusBarNotifications[LayoutPosition];
-            OnItemClicked(LayoutPosition, statusBarNotification);
-            //try
-            //{
-            //    var view = sender as View;
-            //    view.Visibility = ViewStates.Gone;
-            //}
-            //catch (Exception ex)
-            //{
-            //    Log.Info("LiveDisplay", "Exception hiding notification" + ex.Message);
-            //}
-        }
-
-        private void OnItemClicked(int position, OpenNotification sbn)
-        {
-            ItemClicked?.Invoke(this, new NotificationItemClickedEventArgs
-            {
-                Position = position,
-                StatusBarNotification = sbn
-            });
-        }
-
-        private void OnItemLongClicked(int position, OpenNotification sbn)
-        {
-            ItemLongClicked?.Invoke(this, new NotificationItemClickedEventArgs
-            {
-                Position = position,
-                StatusBarNotification = sbn
-            }
-            );
-        }
+        
+    }
+    public class NotificationAdapterClickEventArgs : EventArgs
+    {
+        public View View { get; set; }
+        public int Position { get; set; }
     }
 }

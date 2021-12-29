@@ -1,7 +1,7 @@
 ﻿using Android.App;
 using Android.Content;
 using LiveDisplay.Misc;
-using LiveDisplay.Servicios;
+using LiveDisplay.Services;
 using System.Threading;
 
 namespace LiveDisplay.BroadcastReceivers

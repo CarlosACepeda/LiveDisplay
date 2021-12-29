@@ -16,8 +16,15 @@
 
         public static Drawable ReturnIconDrawable(Icon icon, string paquete)
         {
-            Context remotePackageContext = Application.Context.CreatePackageContext(paquete, 0);
-            return icon.LoadDrawable(remotePackageContext);
+            try
+            {
+                Context remotePackageContext = Application.Context.CreatePackageContext(paquete, 0);
+                return icon.LoadDrawable(remotePackageContext);
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public static Drawable ReturnActionIconDrawable(Icon icon, string paquete)

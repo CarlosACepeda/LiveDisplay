@@ -58,6 +58,7 @@
   <string name="enablenotificationlistener">Enable Notification Access</string>
   <string name="enablequickreply">Enable quick Notification Reply</string>
   <string name="enablequickreplydesc">Answer directly from Notification to messages, as seen in Nougat and beyond</string>
+  <string name="enablestorageaccess">Enable Storage Access</string>
   <string name="enabletestsetting">Enable test setting</string>
   <string name="eng">English</string>
   <string name="entercityplaceholder">Enter a city here</string>
@@ -153,5 +154,5 @@
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
   <string name="youneeddigitalwellbeingapp">You need the Digital Wellbeing app</string>
-  <string name="enablestorageaccess">Enable Storage Access</string>
+  <string name="notification_listener">Notification Hijacker</string>
 </resources>

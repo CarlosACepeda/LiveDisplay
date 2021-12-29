@@ -4,7 +4,7 @@ using Android.Content;
 using Android.OS;
 using Android.Provider;
 using LiveDisplay.BroadcastReceivers;
-using LiveDisplay.Servicios;
+using LiveDisplay.Services;
 
 namespace LiveDisplay.Misc
 {
@@ -12,7 +12,7 @@ namespace LiveDisplay.Misc
     {
         public static bool IsNotificationListenerEnabled()
         {
-            ComponentName cn = new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(Catcher)).Name);
+            ComponentName cn = new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(NotificationHijackerService)).Name);
             string flat = Settings.Secure.GetString(Application.Context.ContentResolver, "enabled_notification_listeners");
             if (flat != null && flat.Contains(cn.FlattenToString()))
             {
