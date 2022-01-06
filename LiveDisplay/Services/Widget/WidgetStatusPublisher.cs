@@ -17,6 +17,7 @@ namespace LiveDisplay.Services.Widget
         static WidgetStatusPublisher instance;
         string widgetActiveForLimitedTime = string.Empty;
         const int ONE_SECOND_IN_MILLIS = 1000;
+        const int SHOW_TIME_WHEN_WIDGET_DECIDES = 5;
 
         readonly List<ShowParameters> currentActiveWidgets = new List<ShowParameters>();
 
@@ -103,10 +104,6 @@ namespace LiveDisplay.Services.Widget
                 throw new InvalidOperationException(string.Format("Invalid {0}, please provide a correct value to {0}", nameof(e.WidgetName)));
 
             HandleActiveWidget(e);
-
-            Log.Info("HandleActiveWidget: ",
-                " WidgetName: " + GetCurrentActiveWidget().WidgetName.ToString()+
-                " Show: " + GetCurrentActiveWidget().Show.ToString());
         }
         void HandleActiveWidget(ShowParameters e)
         {
@@ -114,12 +111,18 @@ namespace LiveDisplay.Services.Widget
             
             if (e.Show)
             {
+                if (e.TimeToShow == ShowParameters.WIDGET_MAY_DECIDE)
+                {
+                    e.TimeToShow = SHOW_TIME_WHEN_WIDGET_DECIDES;
+                }
+
+
                 if (e.TimeToShow == ShowParameters.INVALID_TIME_TO_SHOW)
                     throw new InvalidOperationException(
                         string.Format(
                             "You must specify the amount of seconds this widget should be active, pass {0}.{1} to show it permanently",
                             nameof(ShowParameters), nameof(ShowParameters.ACTIVE_PERMANENTLY)));
-            
+
                 else if (e.TimeToShow > 0)
                 {
                     widgetActiveTimer.Interval = e.TimeToShow * ONE_SECOND_IN_MILLIS;
@@ -210,7 +213,7 @@ namespace LiveDisplay.Services.Widget
     {
         public const int ACTIVE_PERMANENTLY = 0;
         public const int INVALID_TIME_TO_SHOW = -1;
-        public const int WIDGET_MAY_DECIDE = 2; //If we start the widget from somewhere external instead of the widget doing so by itself, then we pass this value.
+        public const int WIDGET_MAY_DECIDE = -2; //If we start the widget from somewhere external instead of the widget doing so by itself, then we pass this value.
         public bool Show { get; set; }
         public bool Active 
         {

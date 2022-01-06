@@ -6,6 +6,7 @@ using Android.OS;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using Java.Lang;
 using LiveDisplay.Adapters;
 using LiveDisplay.Enums;
 using LiveDisplay.Misc;
@@ -35,15 +36,15 @@ namespace LiveDisplay.Fragments
         private readonly ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
 
         private bool timeoutStarted = false;
-        //private Handler handler;
-        //private Runnable runnable;
+        private Handler handler;
+        private Runnable runnable;
 
         #region Fragment Lifecycle
 
         public override void OnCreate(Bundle savedInstanceState)
         {
-            //handler = new Handler();
-            //runnable = new Runnable(MoveSeekbar);
+            handler = new Handler();
+            runnable = new Runnable(MoveSeekbar);
             base.OnCreate(savedInstanceState);
 
             WidgetStatusPublisher.GetInstance().OnWidgetStatusChanged += WidgetStatusPublisher_OnWidgetStatusChanged;
@@ -114,6 +115,7 @@ namespace LiveDisplay.Fragments
                     if (visible)
                     {
                         maincontainer.Visibility = ViewStates.Visible;
+                        RetrieveMediaInformation();
                     }
                     else
                     {
@@ -232,7 +234,8 @@ namespace LiveDisplay.Fragments
                     {
                         Show = true,
                         WidgetName = WidgetTypes.NOTIFICATION_FRAGMENT,
-                        AdditionalInfo = openNotificationId
+                        AdditionalInfo = openNotificationId,
+                        TimeToShow= ShowParameters.WIDGET_MAY_DECIDE,
                     });
                 }
             }
@@ -362,20 +365,20 @@ namespace LiveDisplay.Fragments
                     case RemoteControlPlayState.Paused:
                         btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
                         playbackState = PlaybackStateCode.Paused;
-                        //MoveSeekbar(false);
+                        MoveSeekbar(false);
 
                         break;
 
                     case RemoteControlPlayState.Playing:
                         btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_pause_white_24dp, 0, 0);
                         playbackState = PlaybackStateCode.Playing;
-                        //MoveSeekbar(true);
+                        MoveSeekbar(true);
                         break;
 
                     case RemoteControlPlayState.Stopped:
                         btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_replay_white_24dp, 0, 0);
                         playbackState = PlaybackStateCode.Stopped;
-                        //MoveSeekbar(false);
+                        MoveSeekbar(false);
                         break;
 
                     default:
@@ -469,7 +472,7 @@ namespace LiveDisplay.Fragments
                         {
                             //StartTimeout(true); //TODO: make use of Widget publisher
                         }
-                        //MoveSeekbar(false);
+                        MoveSeekbar(false);
 
                         break;
 
@@ -478,15 +481,15 @@ namespace LiveDisplay.Fragments
                         btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_pause_white_24dp, 0, 0);
                         playbackState = PlaybackStateCode.Playing;
                         //StartTimeout(false);
-                        //MoveSeekbar(true);
+                        MoveSeekbar(true);
 
                         break;
 
                     case PlaybackStateCode.Stopped:
-                        //HideMusicWidget();
+                        HideMusicWidget();
                         btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_replay_white_24dp, 0, 0);
                         playbackState = PlaybackStateCode.Stopped;
-                        //MoveSeekbar(false);
+                        MoveSeekbar(false);
                         break;
 
                     case PlaybackStateCode.Buffering:
@@ -557,12 +560,12 @@ namespace LiveDisplay.Fragments
             //Start
             if (move)
             {
-                //handler.RemoveCallbacks(runnable);
-                //handler.PostDelayed(runnable, 1000);
+                handler.RemoveCallbacks(runnable);
+                handler.PostDelayed(runnable, 1000);
             }
             else
             {
-                //handler.RemoveCallbacks(runnable);
+                handler.RemoveCallbacks(runnable);
             }
         }
 
@@ -581,7 +584,7 @@ namespace LiveDisplay.Fragments
                         skbSeekSongTime.Progress += 1;
                 }
             });
-            //handler.PostDelayed(runnable, 1000);
+            handler.PostDelayed(runnable, 1000);
         }
 
         private void StartTimeout(bool start)
