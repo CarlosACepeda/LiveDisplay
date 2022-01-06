@@ -110,6 +110,13 @@ namespace LiveDisplay.Fragments
             {
                 if (e.Show)
                 {
+                    if(e.AdditionalInfo!= null)
+                    {
+                        //TODO: Standarize the type of info presented here.
+                        //When this isn't null, it carries a notification id. to search for that notification
+                        //and show it here. but it could be something else and cause a crash. 
+                        ShowNotification(NotificationHijackerWorker.GetOpenNotification(e.AdditionalInfo.ToString()));
+                    }
                     ToggleWidgetVisibility(true);
                 }
                 else

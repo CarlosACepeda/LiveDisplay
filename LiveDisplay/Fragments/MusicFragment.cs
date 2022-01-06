@@ -32,7 +32,7 @@ namespace LiveDisplay.Fragments
         private PlaybackStateCode playbackState;
         private PendingIntent activityIntent; //A Pending intent if available to start the activity associated with this music fragent.
         private BitmapDrawable CurrentAlbumArt;
-        private string openNotificationId; //Used if the button launch Notification is used.
+        private string openNotificationId; //Used if the button launch Notification is used, it comes from the current active MusicController instance.
         private readonly ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
 
         private bool timeoutStarted = false;

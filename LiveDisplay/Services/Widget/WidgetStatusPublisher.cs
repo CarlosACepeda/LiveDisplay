@@ -134,22 +134,14 @@ namespace LiveDisplay.Services.Widget
                 if (activeWidget != null && activeWidget.WidgetName != e.WidgetName)
                 {
                     NotifyWidgetRemoval(activeWidget.WidgetName);
-
-                    ////If we have a time to show, we don't remove the widget from the list.
-                    ////otherwise, we remove it, because the one with time to show must dissapear in certain amount of time.
-                    ////then show the widget that was showing before the widget that has time to show.
-                    //if (e.TimeToShow == ShowParameters.ACTIVE_PERMANENTLY) 
-                    //{
-                    //    RemoveCurrentActiveWidget();
-                    //}
-                    Console.WriteLine("Updating...");
-                    Console.WriteLine(currentActiveWidgets.RemoveAll(caw=> caw.WidgetName == e.WidgetName));
+                    currentActiveWidgets.RemoveAll(caw=> caw.WidgetName == e.WidgetName);
                     currentActiveWidgets.Add(e); //This will be the new active widget
                     NotifyWidgetAddition(GetCurrentActiveWidget().WidgetName);
                 }
                 else
                 {
                     //Just notify, it already exists within the list.
+                    GetCurrentActiveWidget().AdditionalInfo = e.AdditionalInfo; //In case there's any update we are missing.
                     NotifyWidgetAddition(GetCurrentActiveWidget().WidgetName);
                 }
             }
@@ -227,7 +219,7 @@ namespace LiveDisplay.Services.Widget
             }
         }
         public int TimeToShow { get; set; } = INVALID_TIME_TO_SHOW;
-        public object AdditionalInfo { get; set; }
+        public object AdditionalInfo { get; set; } = null;
         public string WidgetName { get; set; }
     }
     public class WidgetStatusEventArgs : EventArgs
