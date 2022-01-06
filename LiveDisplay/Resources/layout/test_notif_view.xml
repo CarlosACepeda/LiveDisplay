@@ -57,6 +57,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content">
 			<TextView
+                    android:maxWidth="100dp"
 				android:fontFamily="sans-serif-condensed"
 				android:textStyle="italic"
 				android:layout_width="wrap_content"
@@ -81,6 +82,7 @@
             <TextView
                 android:fontFamily="sans-serif-condensed"
                 android:textSize="16dp"
+                    android:maxWidth="200dp"
                 android:id="@+id/subtext"
                 android:maxLines="1"
 				android:textAppearance="?android:attr/textAppearanceSmall"

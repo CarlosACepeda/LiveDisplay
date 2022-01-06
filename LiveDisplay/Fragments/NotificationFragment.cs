@@ -243,49 +243,6 @@ namespace LiveDisplay.Fragments
         }
 
         #endregion Events Implementation:
-
-        //THis works like a charm :)
-        private void StartTimeout(bool stop)
-        {
-            //This action is: 'Hide the notification, and set the timeoutStarted as finished(false)
-            //because this action will be invoked only when the timeout has finished.
-
-            //If the timeout has started, then cancel the action, and start again.
-
-            if (stop)
-            {
-                maincontainer?.RemoveCallbacks(HideNotification); //Stop counting.
-            }
-            else
-            {
-                if (timeoutStarted)
-                {
-                    maincontainer?.RemoveCallbacks(HideNotification);
-                    maincontainer?.PostDelayed(HideNotification, 7000);
-                }
-                //If not, simply wait 5 seconds then hide the notification, in that span of time, the timeout is
-                //marked as Started(true)
-                else
-                {
-                    timeoutStarted = true;
-                    maincontainer?.PostDelayed(HideNotification, 7000);
-                }
-            }
-        }
-
-        private void HideNotification()
-        {
-            //TODO: Check if its useful now that WidgetStatusPublisher has this covered.
-            if (maincontainer != null)
-            {
-                maincontainer.Visibility = ViewStates.Gone;
-                timeoutStarted = false;
-            }
-        }
-        void IsNotificationSummary(int id)
-        {
-
-        }
         void SpawnLeftAndRightArrows()
         {
             
