@@ -240,7 +240,7 @@ namespace LiveDisplay.Services.Notifications.NotificationStyle
         {
             Button actionButton = sender as Button;
             OpenAction openAction = actionButton.GetTag(DefaultActionIdentificator) as OpenAction;
-            if (openAction.ActionRepresentDirectReply())
+            if (openAction.ActionRepresentsDirectReply())
             {
                 if (new ConfigurationManager(AppPreferences.Default).RetrieveAValue(ConfigurationParameters.EnableQuickReply))
                 {

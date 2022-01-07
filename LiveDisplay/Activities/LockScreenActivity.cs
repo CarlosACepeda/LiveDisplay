@@ -441,21 +441,22 @@
             doubletapbehavior = configurationManager.RetrieveAValue(ConfigurationParameters.DoubleTapOnTopActionBehavior, "0");
             if (configurationManager.RetrieveAValue(ConfigurationParameters.HideShortcutsWhenKeyguardSafe))
             {
-                if (KeyguardHelper.IsSystemSecured())
-                    using (var shortcuts = FindViewById<FrameLayout>(Resource.Id.shortcutcontainer))
-                    {
-                        //shortcuts.Visibility = ViewStates.Invisible;
-                    }
+                //TODO: Redefine shortcuts into something more useful, they are useless on most phones.
+                //if (KeyguardHelper.IsSystemSecured())
+                //    using (var shortcuts = FindViewById<FrameLayout>(Resource.Id.shortcutcontainer))
+                //    {
+                //        //shortcuts.Visibility = ViewStates.Invisible;
+                //    }
             }
             else
             {
-                using (var shortcuts = FindViewById<FrameLayout>(Resource.Id.shortcutcontainer))
-                {
-                    if (shortcuts.Visibility != ViewStates.Visible)
-                    {
-                        shortcuts.Visibility = ViewStates.Visible;
-                    }
-                }
+                //using (var shortcuts = FindViewById<FrameLayout>(Resource.Id.shortcutcontainer))
+                //{
+                //    if (shortcuts.Visibility != ViewStates.Visible)
+                //    {
+                //        shortcuts.Visibility = ViewStates.Visible;
+                //    }
+                //}
             }
         }
 

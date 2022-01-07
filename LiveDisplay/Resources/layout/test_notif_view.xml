@@ -54,17 +54,19 @@
         android:layout_height="wrap_content">
 		<LinearLayout
 			android:orientation="horizontal"
-			android:layout_width="wrap_content"
+			android:layout_width="match_parent"
 			android:layout_height="wrap_content">
 			<TextView
-                    android:maxWidth="100dp"
+                    android:maxWidth="90dp"
+                    android:maxLines="1"
+                    android:ellipsize="end"
 				android:fontFamily="sans-serif-condensed"
 				android:textStyle="italic"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:id="@+id/app_name"
                 android:alpha="0.5"
-				android:textSize="16dp" />
+                    tools:text="Sistemul Android"/>
 			<Space
 				android:layout_width="3dp"
 				android:layout_height="wrap_content" />
@@ -73,18 +75,23 @@
 				android:textStyle="italic"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:textSize="16dp"
                 android:alpha="0.5"
+                    tools:text="06:51 p.m"
+                    android:maxLines="1"
+                    android:maxWidth="60dp"
+                    android:ellipsize="end"
 				android:id="@+id/when" />
             <Space
                 android:layout_width="3dp"
                 android:layout_height="wrap_content"/>
             <TextView
+                tools:text="carlosalt5125@gmail.com"
                 android:fontFamily="sans-serif-condensed"
-                android:textSize="16dp"
-                    android:maxWidth="200dp"
+
+                android:maxWidth="100dp"
                 android:id="@+id/subtext"
                 android:maxLines="1"
+                android:ellipsize="end"
 				android:textAppearance="?android:attr/textAppearanceSmall"
                 android:layout_width="wrap_content"
                 android:textColor="@color/white"

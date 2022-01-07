@@ -46,7 +46,7 @@ namespace LiveDisplay.BroadcastReceivers
                 //Start hidden in Darkness. :$
                 IsScreenOn = false;
 
-                if (AwakeService.isLaidDown == false)
+                if (!AwakeService.isLaidDown)
                 {
                     ScreenTurnedOffWhileInVertical = true;
                 }
@@ -68,7 +68,7 @@ namespace LiveDisplay.BroadcastReceivers
                     {
                         lockScreenIntent.AddFlags(ActivityFlags.NewDocument | ActivityFlags.NoAnimation);
 
-                        if (IsScreenOn == false)
+                        if (!IsScreenOn)
                         {
                             PendingIntent pendingIntent = PendingIntent.GetActivity(Application.Context, 0, lockScreenIntent, 0);
 

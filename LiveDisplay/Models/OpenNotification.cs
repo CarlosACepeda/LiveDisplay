@@ -56,17 +56,17 @@ namespace LiveDisplay.Models
                 if (Style == NotificationStyles.MESSAGING_STYLE)
                 {
                     var messageBundles = statusbarnotification.Notification.Extras?.GetParcelableArray("android.messages");
-                    if (messageBundles.Length > 0)
+                    if (messageBundles?.Length > 0)
                     {
                         messages = new OpenMessage[messageBundles.Length];
 
                         for (int i = 0; i < messageBundles.Length; i++)
                         {
-                            Person sender_person = ((Bundle)messageBundles[i]).Get("sender_person") as Person;
+                            Person sender_person = ((Bundle)messageBundles[i]).Get(NotificationBundleKeys.MESSAGE_SENDER_PERSON) as Person;
 
                             OpenMessage message = new OpenMessage
                             {
-                                Sender = ((Bundle)messageBundles[i]).GetString("sender"),
+                                Sender = ((Bundle)messageBundles[i]).GetString(NotificationBundleKeys.MESSAGE_SENDER),
                                 SenderPerson = new OpenPerson
                                 {
                                     Icon = sender_person.Icon,
@@ -76,8 +76,8 @@ namespace LiveDisplay.Models
                                     Name = sender_person.Name,
                                     NameFormatted = sender_person.NameFormatted
                                 },
-                                Text = ((Bundle)messageBundles[i]).GetString("text"),
-                                Time = ((Bundle)messageBundles[i]).GetLong("time")
+                                Text = ((Bundle)messageBundles[i]).GetString(NotificationBundleKeys.MESSAGE_TEXT),
+                                Time = ((Bundle)messageBundles[i]).GetLong(NotificationBundleKeys.MESSAGE_TIME)
                             };
                             messages[i] = message;
                         }
@@ -215,14 +215,11 @@ namespace LiveDisplay.Models
             }
         }
 
-        //<only for testing>
-
         public bool RepresentsMediaPlaying
         {
             get
             {
-                if (MediaSessionToken == null) return false;
-                return true;
+                return MediaSessionToken != null;
             }
         }
 
@@ -384,7 +381,7 @@ namespace LiveDisplay.Models
         internal string GetGroupInfo()
         {
             string result = "";
-            if (statusbarnotification.Notification.Flags.HasFlag(NotificationFlags.GroupSummary) == true)
+            if (statusbarnotification.Notification.Flags.HasFlag(NotificationFlags.GroupSummary))
             {
                 result += " This is summary!";
             }
@@ -556,7 +553,7 @@ namespace LiveDisplay.Models
             }
         }
 
-        public bool ActionRepresentDirectReply()
+        public bool ActionRepresentsDirectReply()
         {
             //Direct reply action is a new feature in Nougat, so when called on Marshmallow and backwards, so in those cases an Action will never represent a Direct Reply.
             if (Build.VERSION.SdkInt < BuildVersionCodes.N) return false;
@@ -594,10 +591,9 @@ namespace LiveDisplay.Models
             {
                 return null;
             }
-            if (color != null)
-            {
-                actionIcon.SetColorFilter(color, PorterDuff.Mode.Multiply);
-            }
+            
+            actionIcon.SetColorFilter(color, PorterDuff.Mode.Multiply);
+
             return actionIcon;
         }
 

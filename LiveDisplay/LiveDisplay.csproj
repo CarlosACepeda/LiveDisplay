@@ -609,9 +609,6 @@
     <AndroidResource Include="Resources\layout\FloatingNotification.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\NotificationFrag.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\layout\NotificationList.xml">
       <SubType>Designer</SubType>
     </AndroidResource>

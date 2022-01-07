@@ -10,6 +10,17 @@ namespace LiveDisplay.Services.Notifications.NotificationStyle
         {
         }
 
+        protected override void SetText()
+        {
+            if (OpenNotification.IsSummary)
+            {
+                Text.Text = OpenNotification.TextLines;
+            }
+            else
+            {
+                base.SetText();
+            }
+        }
         protected override void SetTextMaxLines()
         {
             Text.SetMaxLines(6);

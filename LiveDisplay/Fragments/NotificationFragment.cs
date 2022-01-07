@@ -243,9 +243,5 @@ namespace LiveDisplay.Fragments
         }
 
         #endregion Events Implementation:
-        void SpawnLeftAndRightArrows()
-        {
-            
-        }
     }
 }
