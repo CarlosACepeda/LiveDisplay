@@ -55,7 +55,7 @@ namespace LiveDisplay.Models
                 //Only Valid in MessagingStyle
                 if (Style == NotificationStyles.MESSAGING_STYLE)
                 {
-                    var messageBundles = statusbarnotification.Notification.Extras?.GetParcelableArray("android.messages");
+                    var messageBundles = statusbarnotification.Notification.Extras?.GetParcelableArray(NotificationBundleKeys.MESSAGE_BUNDLES);
                     if (messageBundles?.Length > 0)
                     {
                         messages = new OpenMessage[messageBundles.Length];

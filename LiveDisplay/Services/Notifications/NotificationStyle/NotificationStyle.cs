@@ -16,7 +16,7 @@ using System;
 namespace LiveDisplay.Services.Notifications.NotificationStyle
 {
     //Provides a basic way to show a notification on the lockscreen.
-    public abstract class NotificationStyle
+    public abstract class NotificationStyle: Java.Lang.Object, View.IOnClickListener
     {
 
         public static event EventHandler<bool> SendInlineResponseAvailabityChanged;
@@ -194,15 +194,18 @@ namespace LiveDisplay.Services.Notifications.NotificationStyle
                 var actions = OpenNotification.Actions;
                 for (int i = 0; i <= actions.Count - 1; i++)
                 {
+                    Button actionButton = NotificationActions.GetChildAt(i) as Button;
+                    actionButton.SetOnClickListener(this);
+
                     var action = actions[i];
                     OpenAction openAction = new OpenAction(action);
-                    Button actionButton = NotificationActions.GetChildAt(i) as Button;
+                    
                     if (i > 2)
                     {
                         actionButton.Visibility = ViewStates.Visible;
                     }
                     SetActionTag(actionButton, openAction);
-                    actionButton.Click += ActionButton_Click;
+                    
                     SetActionText(actionButton, openAction.Title());
                     SetActionIcon(actionButton, openAction);
                 }
@@ -214,13 +217,16 @@ namespace LiveDisplay.Services.Notifications.NotificationStyle
         }
         void CleanActionViews()
         {
-            for (int i = 0; i < NotificationActions.ChildCount-1; i++)
+            for (int i = 0; i <= NotificationActions.ChildCount-1; i++)
             {
                 Button actionView= NotificationActions.GetChildAt(i) as Button;
-                if(i>2)
+                actionView.SetOnClickListener(null);
+
+                if (i>2)
                 {
                     actionView.Visibility = ViewStates.Gone; //Hide additional two action buttons.
                 }
+                actionView.SetTag(DefaultActionIdentificator, null);
                 SetActionText(actionView, null);
                 SetActionIcon(actionView, null);
             }
@@ -234,28 +240,6 @@ namespace LiveDisplay.Services.Notifications.NotificationStyle
         protected virtual void SetActionTag(Button action, OpenAction openAction)
         {
             action.SetTag(DefaultActionIdentificator, openAction);
-        }
-
-        protected virtual void ActionButton_Click(object sender, EventArgs e)
-        {
-            Button actionButton = sender as Button;
-            OpenAction openAction = actionButton.GetTag(DefaultActionIdentificator) as OpenAction;
-            if (openAction.ActionRepresentsDirectReply())
-            {
-                if (new ConfigurationManager(AppPreferences.Default).RetrieveAValue(ConfigurationParameters.EnableQuickReply))
-                {
-                    NotificationActions.Visibility = ViewStates.Invisible;
-                    InlineResponseNotificationContainer.Visibility = ViewStates.Visible;
-                    InlineResponse.Hint = openAction.GetPlaceholderTextForInlineResponse();
-                    SendInlineResponse.SetTag(DefaultActionIdentificator, openAction);
-                    SendInlineResponse.Click += SendInlineResponse_Click;
-                    SendInlineResponseAvailabityChanged?.Invoke(null, true);
-                }
-            }
-            else
-            {
-                openAction.ClickAction();
-            }
         }
 
         protected virtual void SetActionButtonGravity(Button action)
@@ -301,22 +285,6 @@ namespace LiveDisplay.Services.Notifications.NotificationStyle
                 action.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction?.GetActionIcon(Color.White), null, null, null);
         }
 
-        protected void AddActionToActionsView(Button button, int position)
-        {
-            Handler looper = new Handler(Looper.MainLooper);
-            looper.Post(() =>
-            {
-                try
-                {
-                    NotificationActions.AddView(button, position);
-                }
-                catch (Exception ex)
-                {
-                    Log.Error("LiveDisplay", "Error adding actions: " + ex);
-                }
-            });
-        }
-
         private void SendInlineResponse_Click(object sender, EventArgs e)
         {
             ImageButton actionButton = sender as ImageButton;
@@ -338,6 +306,28 @@ namespace LiveDisplay.Services.Notifications.NotificationStyle
         protected T FindView<T>(int id) where T : View
         {
             return (T)NotificationView.FindViewById(id);
+        }
+
+        public void OnClick(View v)
+        {
+            Button actionButton = v as Button;
+            OpenAction openAction = actionButton.GetTag(DefaultActionIdentificator) as OpenAction;
+            if (openAction.ActionRepresentsDirectReply())
+            {
+                if (new ConfigurationManager(AppPreferences.Default).RetrieveAValue(ConfigurationParameters.EnableQuickReply))
+                {
+                    NotificationActions.Visibility = ViewStates.Invisible;
+                    InlineResponseNotificationContainer.Visibility = ViewStates.Visible;
+                    InlineResponse.Hint = openAction.GetPlaceholderTextForInlineResponse();
+                    SendInlineResponse.SetTag(DefaultActionIdentificator, openAction);
+                    SendInlineResponse.Click += SendInlineResponse_Click;
+                    SendInlineResponseAvailabityChanged?.Invoke(null, true);
+                }
+            }
+            else
+            {
+                openAction.ClickAction();
+            }
         }
     }
 }

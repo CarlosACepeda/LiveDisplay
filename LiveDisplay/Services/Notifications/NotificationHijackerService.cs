@@ -28,7 +28,7 @@ namespace LiveDisplay.Services
         private ActiveMediaSessionsListener activeMediaSessionsListener;
         private RemoteController remoteController;
         private AudioManager audioManager;
-        private NotificationHijackerWorker catcherHelper;
+        private NotificationHijackerWorker notificationHijackerWorker;
         private List<StatusBarNotification> statusBarNotifications;
         private StatusBarNotification lastPostedNotification;
 
@@ -83,7 +83,7 @@ namespace LiveDisplay.Services
         public override void OnNotificationPosted(StatusBarNotification sbn)
         {
             lastPostedNotification = sbn;
-            catcherHelper.OnNotificationPosted(new OpenNotification(sbn));
+            notificationHijackerWorker.OnNotificationPosted(new OpenNotification(sbn));
 
             //var test1 = sbn.Notification.Extras.GetString(Notification.ExtraTemplate);
             //var test2 = sbn.Notification.Extras;
@@ -112,12 +112,12 @@ namespace LiveDisplay.Services
 
         public override void OnNotificationRemoved(StatusBarNotification sbn)
         {
-            catcherHelper.OnNotificationRemoved(new OpenNotification(sbn));
+            notificationHijackerWorker.OnNotificationRemoved(new OpenNotification(sbn));
         }
 
         public override void OnListenerDisconnected()
         {
-            catcherHelper.Dispose();
+            notificationHijackerWorker.Dispose();
             mediaSessionManager.RemoveOnActiveSessionsChangedListener(activeMediaSessionsListener);
             UnregisterReceiver(screenOnOffReceiver);
             base.OnListenerDisconnected();
@@ -129,7 +129,7 @@ namespace LiveDisplay.Services
             {
                 if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
                 {
-                    catcherHelper.Dispose();
+                    notificationHijackerWorker.Dispose();
                     UnregisterReceiver(screenOnOffReceiver);
 #pragma warning disable CS0618 // El tipo o el miembro están obsoletos
                     audioManager.UnregisterRemoteController(remoteController);
@@ -137,7 +137,7 @@ namespace LiveDisplay.Services
                 }
                 else
                 {
-                    catcherHelper.Dispose();
+                    notificationHijackerWorker.Dispose();
                     mediaSessionManager.RemoveOnActiveSessionsChangedListener(activeMediaSessionsListener);
                     UnregisterReceiver(screenOnOffReceiver);
                 }
@@ -187,7 +187,7 @@ namespace LiveDisplay.Services
                 statusBarNotifications.Add(notification);
                 lastPostedNotification = notification;
             }
-            catcherHelper = NotificationHijackerWorker.GetInstance(statusBarNotifications);
+            notificationHijackerWorker = NotificationHijackerWorker.GetInstance(statusBarNotifications);
         }
 
         //Subscribe to events by Several publishers
@@ -248,7 +248,7 @@ namespace LiveDisplay.Services
             try
             {
                 CancelAllNotifications();
-                catcherHelper.CancelAllNotifications();
+                notificationHijackerWorker.CancelAllNotifications();
             }
             catch (Java.Lang.SecurityException)
             {

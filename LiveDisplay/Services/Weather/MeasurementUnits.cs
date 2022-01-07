@@ -1,6 +1,6 @@
 ﻿namespace LiveDisplay.Services.Weather
 {
-    public class MeasurementUnits
+    public static class MeasurementUnits
     {
         public const string Kelvin = "";
         public const string Celsius = "metric";

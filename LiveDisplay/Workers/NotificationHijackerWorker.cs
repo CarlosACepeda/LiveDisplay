@@ -40,13 +40,10 @@ namespace LiveDisplay.Services.Notifications
                 StatusBarNotifications.Add(new OpenNotification(sbn));
             }
             NotificationAdapter = new NotificationAdapter(StatusBarNotifications);
-            if (statusBarNotifications.Count > 0)
+            OnNotificationListSizeChanged(new NotificationListSizeChangedEventArgs
             {
-                OnNotificationListSizeChanged(new NotificationListSizeChangedEventArgs
-                {
-                    ThereAreNotifications = true
-                });
-            }
+                ThereAreNotifications = statusBarNotifications.Count > 0
+            });
         }
 
         public void OnNotificationPosted(OpenNotification sbn)

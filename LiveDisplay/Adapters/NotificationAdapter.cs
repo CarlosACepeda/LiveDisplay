@@ -96,23 +96,13 @@
                     {
                         viewHolder.Icono.Background = IconFactory.ReturnIconDrawable(item.IconResourceInt, item.ApplicationPackage);
                     }
-                    if (GetChildNotificationCount(item)>0)
+                    if (GetChildNotificationCount(item)>1)
                     {
                         viewHolder.NotificationCount.Text = GetChildNotificationCount(item).ToString();
                         viewHolder.NotificationCount.Visibility = ViewStates.Visible;
                     }
                     else
                         viewHolder.NotificationCount.Visibility = ViewStates.Gone;
-
-
-                    //if (selectedItem == position)
-                    //{
-                    //    viewHolder.Icono.Alpha = 0.5f;
-                    //}
-                    //else
-                    //{
-                    //    viewHolder.Icono.Alpha = 1;
-                    //}
 
                 }
             }
@@ -287,10 +277,6 @@
             if (openNotification.IsSummary)
                 return singleNotifications.Count(child => child.BelongsToGroup && child.GroupKey == openNotification.GroupKey);
             else return 0;
-        }
-        List<OpenNotification> GetChildNotifications(OpenNotification parent)
-        {
-            return singleNotifications.Where(child => child.GroupKey == parent.GroupKey).ToList();
         }
 
         private int GetItemPosition(OpenNotification openNotification, bool searchInGroupedList)
