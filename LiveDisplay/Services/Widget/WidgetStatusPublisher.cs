@@ -140,6 +140,8 @@ namespace LiveDisplay.Services.Widget
                 }
                 else
                 {
+                    //TODO: fix when widget passes from timed to active permanently.
+                    
                     //Just notify, it already exists within the list.
                     GetCurrentActiveWidget().AdditionalInfo = e.AdditionalInfo; //In case there's any update we are missing.
                     NotifyWidgetAddition(GetCurrentActiveWidget().WidgetName);

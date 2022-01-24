@@ -38,7 +38,6 @@
         //private ImageView unlocker;
         //private Button clearAll;
 
-        //private TextView livedisplayinfo;
         private Button startCamera;
         private Button startDialer;
         private FrameLayout lockscreen; //The root linear layout, used to implement double tap to sleep.
@@ -72,9 +71,6 @@
                 }
             });
 
-            //startCamera = FindViewById<Button>(Resource.Id.btnStartCamera);
-            //startDialer = FindViewById<Button>(Resource.Id.btnStartPhone);
-            //clearAll = FindViewById<Button>(Resource.Id.btnClearAllNotifications);
             lockscreen = FindViewById<FrameLayout>(Resource.Id.main_container);
             viewPropertyAnimator = Window.DecorView.Animate();
             viewPropertyAnimator.SetListener(new LockScreenAnimationHelper(Window));
@@ -82,9 +78,6 @@
             fadeoutanimation = AnimationUtils.LoadAnimation(Application.Context, Resource.Animation.abc_fade_out);
             fadeoutanimation.AnimationEnd += Fadeoutanimation_AnimationEnd;
 
-            //clearAll.Click += BtnClearAll_Click;
-            //startCamera.Click += StartCamera_Click;
-            //startDialer.Click += StartDialer_Click;
             lockscreen.Touch += Lockscreen_Touch;
 
             watchDog = new System.Timers.Timer
@@ -214,11 +207,10 @@
                             }
                             else
                             {
-                                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-                                    if (KeyguardHelper.IsDeviceCurrentlyLocked())
-                                    {
-                                        KeyguardHelper.RequestDismissKeyguard(this);
-                                    }
+                                if (Build.VERSION.SdkInt >= BuildVersionCodes.O && KeyguardHelper.IsDeviceCurrentlyLocked())
+                                {
+                                    KeyguardHelper.RequestDismissKeyguard(this);
+                                }
                                 MoveTaskToBack(true);
                             }
                         }
@@ -227,11 +219,10 @@
                         {
                             if (e.Event.RawY < halfscreenheight)
                             {
-                                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-                                    if (KeyguardHelper.IsDeviceCurrentlyLocked())
-                                    {
-                                        KeyguardHelper.RequestDismissKeyguard(this);
-                                    }
+                                if (Build.VERSION.SdkInt >= BuildVersionCodes.O && KeyguardHelper.IsDeviceCurrentlyLocked())
+                                {
+                                    KeyguardHelper.RequestDismissKeyguard(this);
+                                }
                                 MoveTaskToBack(true);
                             }
                             else
@@ -267,41 +258,6 @@
                 welcome.Visibility = ViewStates.Visible;
                 welcome.Touch += Welcome_Touch;
             }
-            //Check if Awake is enabled.
-            //Refactor
-            //switch (AwakeHelper.GetAwakeStatus())
-            //{
-            //    case AwakeStatus.None:
-            //        livedisplayinfo.Text = Resources.GetString(Resource.String.idk);
-            //        break;
-
-            //    case AwakeStatus.CompletelyDisabled:
-            //        livedisplayinfo.Text = "Completely disabled";
-            //        break;
-
-            //    case AwakeStatus.Up:
-            //        livedisplayinfo.Text = "Awake is active";
-            //        break;
-
-            //    case AwakeStatus.Sleeping:
-            //        livedisplayinfo.Text = "Awake is Sleeping";
-            //        break;
-
-            //    case AwakeStatus.UpWithDeviceMotionDisabled:
-            //        livedisplayinfo.Text = "Awake is active but not listening orientation changes";
-            //        break;
-
-            //    case AwakeStatus.SleepingWithDeviceMotionEnabled:
-            //        livedisplayinfo.Text = "Awake is sleeping but listening orientation changes";
-            //        break;
-
-            //    case AwakeStatus.DisabledbyUser:
-            //        livedisplayinfo.Text = "Awake is disabled by the user.";
-            //        break;
-
-            //    default:
-            //        break;
-            //}
         }
 
         private void Welcome_Touch(object sender, View.TouchEventArgs e)
@@ -320,16 +276,13 @@
             watchDog.Stop();
             watchDog.Elapsed -= WatchdogInterval_Elapsed;
             ActivityLifecycleHelper.GetInstance().NotifyActivityStateChange(typeof(LockScreenActivity), ActivityStates.Paused);
-            GC.Collect();
         }
 
         protected override void OnDestroy()
         {
             base.OnDestroy();
             ActivityLifecycleHelper.GetInstance().NotifyActivityStateChange(typeof(LockScreenActivity), ActivityStates.Destroyed);
-            //Unbind events
 
-            //clearAll.Click -= BtnClearAll_Click;
             WallpaperPublisher.NewWallpaperIssued -= Wallpaper_NewWallpaperIssued;
             NotificationHijackerWorker.NotificationListSizeChanged -= CatcherHelper_NotificationListSizeChanged;
             WidgetStatusPublisher.GetInstance().OnWidgetStatusChanged += WidgetStatusPublisher_OnWidgetStatusChanged;
@@ -341,7 +294,6 @@
             //Dispose Views
             //Views
             recycler.Dispose();
-            //clearAll.Dispose();
             lockscreen.Dispose();
 
             viewPropertyAnimator.Dispose();
@@ -351,12 +303,11 @@
         public override void OnBackPressed()
         {
             //Do nothing.
-            //In Nougat it works after several tries to go back, I can't fix that.
         }
 
         public override void OnWindowFocusChanged(bool hasFocus)
         {
-            if (hasFocus == false)
+            if (!hasFocus)
             {
                 ThreadPool.QueueUserWorkItem(m =>
                 {
@@ -372,7 +323,7 @@
         public override void OnUserInteraction()
         {
             base.OnUserInteraction();
-            //Refresh the Watchdog, damn dog, annoying, lol.
+            //Refresh the Watchdog.
             watchDog.Stop();
             watchDog.Start();
         }
@@ -407,27 +358,6 @@
             using (NotificationSlave notificationSlave = NotificationSlave.NotificationSlaveInstance())
             {
                 notificationSlave.CancelAll();
-            }
-        }
-
-        private void StartCamera_Click(object sender, EventArgs e)
-        {
-            using (Intent intent = new Intent(MediaStore.IntentActionStillImageCamera))
-            {
-                StartActivity(intent);
-            }
-        }
-
-        private void StartDialer_Click(object sender, EventArgs e)
-        {
-            using (Intent intent = new Intent(Intent.ActionDial))
-            {
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-                    if (KeyguardHelper.IsDeviceCurrentlyLocked())
-                    {
-                        KeyguardHelper.RequestDismissKeyguard(this);
-                    }
-                StartActivity(intent);
             }
         }
 
@@ -495,8 +425,7 @@
                             Bitmap bitmap = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.ImagePath, imagePath));
                             BlurImage blurImage = new BlurImage(Application.Context);
                             blurImage.Load(bitmap).Intensity(savedblurlevel);
-                            Drawable drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
-                            WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = new BitmapDrawable(Resources, bitmap), OpacityLevel = (short)savedOpacitylevel, BlurLevel = (short)savedblurlevel, WallpaperPoster = WallpaperPoster.Lockscreen });
+                            WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = new BitmapDrawable(Resources, blurImage.GetImageBlur()), OpacityLevel = (short)savedOpacitylevel, BlurLevel = (short)savedblurlevel, WallpaperPoster = WallpaperPoster.Lockscreen });
                         });
                     }
                     break;
@@ -573,19 +502,19 @@
 
     public class LockScreenAnimationHelper : Java.Lang.Object, Animator.IAnimatorListener
     {
-        private Window lockScreenWindow;
+        private readonly Window lockScreenWindow;
 
         public LockScreenAnimationHelper(Window window)
         {
             lockScreenWindow = window;
         }
 
-        public void OnAnimationCancel(Animator animation) { }
+        public void OnAnimationCancel(Animator animation) { /*this method is not needed*/ }
         public void OnAnimationEnd(Animator animation)
         {
             lockScreenWindow.DecorView.Animate().SetDuration(100).Alpha(1f);
         }
-        public void OnAnimationRepeat(Animator animation) { }
-        public void OnAnimationStart(Animator animation) { }
+        public void OnAnimationRepeat(Animator animation) { /*this method is not needed*/ }
+        public void OnAnimationStart(Animator animation) { /*this method is not needed*/ }
     }
 }

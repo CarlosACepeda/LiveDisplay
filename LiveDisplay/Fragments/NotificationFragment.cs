@@ -21,13 +21,12 @@ using Fragment = AndroidX.Fragment.App.Fragment;
 namespace LiveDisplay.Fragments
 {
     public class NotificationFragment : Fragment
-    {        
+    {
         const int SEVEN_SECONDS = 7;
 
         private OpenNotification _openNotification; //the current active OpenNotification instance.
         private LinearLayout maincontainer;
         private LinearLayout actual_notification;
-        private bool timeoutStarted = false;
         private readonly ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
 
         #region Lifecycle events
@@ -54,19 +53,39 @@ namespace LiveDisplay.Fragments
             return v;
         }
 
-        private void NotificationStyleApplier_SendInlineResponseAvailabityChanged(object sender, bool e)
+        private void NotificationStyleApplier_SendInlineResponseAvailabityChanged(object sender, bool available)
         {
-            if (e)
+            if (available)
             {
-                //TODO: set the notification widget to show this widget permanently
-                //StartTimeout(true); //Tell the Timeout counter to stop because the SendInlineResponse is currently being showed.
+                WidgetStatusPublisher.GetInstance().SetWidgetVisibility(
+                    new ShowParameters
+                    {
+                        Show = true,
+                        WidgetName = WidgetTypes.NOTIFICATION_FRAGMENT,
+                        TimeToShow = ShowParameters.ACTIVE_PERMANENTLY
+                    });
+            }
+            else
+            {
+                WidgetStatusPublisher.GetInstance().SetWidgetVisibility(
+                    new ShowParameters
+                    {
+                        Show = true,
+                        WidgetName = WidgetTypes.NOTIFICATION_FRAGMENT,
+                        TimeToShow = SEVEN_SECONDS
+                    });
             }
         }
 
         private void Notification_Drag(object sender, View.DragEventArgs e)
         {
-            //TODO: make use of widgetpublisher to keep the notification visible.
-            //StartTimeout(false); //To keep the notification visible while the user touches the notification fragment
+            WidgetStatusPublisher.GetInstance().SetWidgetVisibility(
+                    new ShowParameters
+                    {
+                        Show = true,
+                        WidgetName = WidgetTypes.NOTIFICATION_FRAGMENT,
+                        TimeToShow = SEVEN_SECONDS
+                    });
         }
 
         private void NotificationAdapter_NotificationPosted(object sender, NotificationPostedEventArgs e)
@@ -90,6 +109,8 @@ namespace LiveDisplay.Fragments
             NotificationAdapter.NotificationRemoved -= NotificationAdapter_NotificationRemoved;
             NotificationAdapter.NotificationPosted -= NotificationAdapter_NotificationPosted;
             NotificationStyle.SendInlineResponseAvailabityChanged -= NotificationStyleApplier_SendInlineResponseAvailabityChanged;
+            maincontainer.Drag -= Notification_Drag;
+            actual_notification.Click -= ActualNotification_Click;
 
             base.OnDestroyView();
         }
@@ -219,7 +240,6 @@ namespace LiveDisplay.Fragments
                     case NotificationStyles.INBOX_STYLE:
                         new InboxStyleNotification(_openNotification, ref maincontainer, this).ApplyStyle();
                         break;
-
                     case NotificationStyles.BIG_TEXT_STYLE:
                         new BigTextStyleNotification(_openNotification, ref maincontainer, this).ApplyStyle();
                         break;
@@ -232,8 +252,6 @@ namespace LiveDisplay.Fragments
                         new DefaultStyleNotification(_openNotification, ref maincontainer, this).ApplyStyle();
                         break;
                 }
-
-                //StartTimeout(false);
 
                 WidgetStatusPublisher.GetInstance().SetWidgetVisibility(
                     new ShowParameters { 
