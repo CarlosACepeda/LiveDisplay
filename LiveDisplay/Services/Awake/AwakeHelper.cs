@@ -106,18 +106,18 @@ namespace LiveDisplay.Services.Awake
 
         public static AwakeStatus GetAwakeStatus()
         {
-            if (UserHasEnabledAwake() == false && UserHasSetAwakeHours() == false)
-                return AwakeStatus.CompletelyDisabled;
-            if (UserHasEnabledAwake() == false && UserHasSetAwakeHours())
-                return AwakeStatus.DisabledbyUser;
-            if (UserHasEnabledAwake() && IsAwakeUp() && AwakeService.isRunning)
-                return AwakeStatus.Up;
-            if (UserHasEnabledAwake() && IsAwakeUp() && AwakeService.isRunning == false)
-                return AwakeStatus.UpWithDeviceMotionDisabled;
-            if (UserHasEnabledAwake() && IsAwakeUp() == false && AwakeService.isRunning)
-                return AwakeStatus.SleepingWithDeviceMotionEnabled;
-            if (UserHasEnabledAwake() && IsAwakeUp() == false && AwakeService.isRunning == false)
-                return AwakeStatus.Sleeping;
+            //if (UserHasEnabledAwake() == false && UserHasSetAwakeHours() == false)
+            //    return AwakeStatus.CompletelyDisabled;
+            //if (UserHasEnabledAwake() == false && UserHasSetAwakeHours())
+            //    return AwakeStatus.DisabledbyUser;
+            //if (UserHasEnabledAwake() && IsAwakeUp() && AwakeService.isRunning)
+            //    return AwakeStatus.Up;
+            //if (UserHasEnabledAwake() && IsAwakeUp() && AwakeService.isRunning == false)
+            //    return AwakeStatus.UpWithDeviceMotionDisabled;
+            //if (UserHasEnabledAwake() && IsAwakeUp() == false && AwakeService.isRunning)
+            //    return AwakeStatus.SleepingWithDeviceMotionEnabled;
+            //if (UserHasEnabledAwake() && IsAwakeUp() == false && AwakeService.isRunning == false)
+            //    return AwakeStatus.Sleeping;
 
             return AwakeStatus.None;
         }

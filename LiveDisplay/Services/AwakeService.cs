@@ -7,6 +7,8 @@ using Android.Util;
 using LiveDisplay.BroadcastReceivers;
 using LiveDisplay.Misc;
 using LiveDisplay.Services.Awake;
+using System;
+using System.Collections.Generic;
 
 namespace LiveDisplay.Services
 {
@@ -17,15 +19,16 @@ namespace LiveDisplay.Services
         private SensorManager sensorManager;
         private Sensor accelerometerSensor;
         private Sensor proximitySensor;
-        public static bool isLaidDown = false;
-        public static bool isInPocket;
-        private static bool isSensorBlocked;
-        public static bool isRunning;
-        private long layDownTime; //Timestamp indicating at which moment the device is laid down.
-        private long wakeUpWaitTime = 500000000; //Half a second in nanoseconds.
-        private long sleepTime = 1000000000; //1 Seconds in nanoseconds.
-        private long phoneInVerticalTime; //Timestamp indicating at which moment the device is vertical.
-        private long proxSensorBlockedTime; //Timestamp indicating at which moment the proximity sensor is being blocked;
+        private Sensor lightSensor;
+        private float yAbs;
+        private double norm_Of_g_last;
+        private double acceleration;
+        private int inclination;
+        private float proximity;
+        private float light;
+        private IList<float> g;
+
+        //Order is x, y, z, proximity sensor blocked.
 
         public override IBinder OnBind(Intent intent)
         {
@@ -39,9 +42,10 @@ namespace LiveDisplay.Services
 
             accelerometerSensor = sensorManager.GetDefaultSensor(SensorType.Accelerometer);
             proximitySensor = sensorManager.GetDefaultSensor(SensorType.Proximity);
+            lightSensor = sensorManager.GetDefaultSensor(SensorType.Light);
             sensorManager.RegisterListener(this, accelerometerSensor, SensorDelay.Normal);
             sensorManager.RegisterListener(this, proximitySensor, SensorDelay.Normal);
-            isRunning = true;
+            sensorManager.RegisterListener(this, lightSensor, SensorDelay.Normal);
             return StartCommandResult.Sticky;
         }
 
@@ -51,118 +55,85 @@ namespace LiveDisplay.Services
 
         public void OnSensorChanged(SensorEvent e)
         {
+
             switch (e.Sensor.Type)
             {
                 case SensorType.Accelerometer:
+                    g = e.Values;
 
-                    //Detect phone on plain surface:
-                    //Z axis must have the following value:
-                    //>10 m/s2;
-                    //Y axis must be less than 3m/s2 so, the device can be slightly tilted and still being
-                    //in a Plain surface.
+                    double norm_Of_g = Math.Sqrt(g[0] * g[0] + g[1] * g[1] + g[2] * g[2]);
 
-                    if (e.Values[2] > 9 && e.Values[1] < 3)
-                    {
-                        if (layDownTime == 0)
-                        {
-                            layDownTime = e.Timestamp;
-                        }
+                    g[0] = (float)(g[0] / norm_Of_g);
+                    g[1] = (float)(g[1] / norm_Of_g);
+                    g[2] = (float)(g[2] / norm_Of_g);
 
-                        if (e.Timestamp > (sleepTime + layDownTime))
-                        {
-                            isLaidDown = true;
-                            Log.Info("SENSOR", "Is Laid down");
-                            if (isSensorBlocked)
-                            {
-                                isInPocket = true;
-                                Log.Info("SENSOR", "Is in Pocket (horizontal)");
-                            }
-                            else
-                            {
-                                Log.Info("SENSOR", "Is not in Pocket (horizontal)");
+                    yAbs = Math.Abs(g[1]);
 
-                                isInPocket = false;
-                            }
-                        }
-                        phoneInVerticalTime = 0;
-                    }
-                    if (e.Values[1] > 3 && isInPocket == false)
-                    {
-                        if (isLaidDown == true)
-                        {
-                            if (phoneInVerticalTime == 0)
-                            {
-                                phoneInVerticalTime = e.Timestamp;
-                            }
-                            if (e.Timestamp > (wakeUpWaitTime + phoneInVerticalTime))
-                            {
-                                if (ScreenOnOffReceiver.IsScreenOn == false)
-                                {
-                                    Log.Info("SENSOR", "Should turn on screen");
-                                    if (configurationManager.RetrieveAValue(ConfigurationParameters.TurnOnUserMovement))
-                                    {
-                                        AwakeHelper.TurnOnScreen();
-                                    }
-                                }
-                                isLaidDown = false;
-                                layDownTime = 0;
-                            }
-                        }
-                        else if (isLaidDown == false && e.Timestamp > (phoneInVerticalTime + sleepTime) && isSensorBlocked)
-                        {
-                            isInPocket = true;
-                            Log.Info("SENSOR", "Is In Pocket (vertical) I guess");
-                        }
-                    }
+                    norm_Of_g_last = norm_Of_g;
+                    double delta = norm_Of_g - norm_Of_g_last;
 
-                    //The less Z axis m/s2 value is, and the more Y axis m/s2 value is, the phone more vertically is.
+                    acceleration = acceleration * 0.9 + delta;
 
-                    //Notes:
-                    //X axis is not necessary as I don't need to know if the phone is being moved Horizontally.
+                    inclination = (int)Math.Round(Java.Lang.Math.ToDegrees(Math.Acos(g[2])));
 
                     break;
-
                 case SensorType.Proximity:
-                    Log.Info("Livedisplay", "value 1 " + e.Values[0]);
-                    if (e.Values[0] == 0)
-                    {
-                        proxSensorBlockedTime = e.Timestamp;
-                        isSensorBlocked = true;
-                    }
-                    else
-                    {
-                        proxSensorBlockedTime = 0;
-                        isSensorBlocked = false;
-                    }
-
+                    proximity = e.Values[0];
                     break;
 
+                case SensorType.Light:
+                    light = e.Values[0];
+                    break;
                 default:
                     break;
             }
-            //Kind of works. :/
-            //If you turn off the screen when the phone is vertical then okay, the screen won't turn on, but if you lay down your phone
-            //and get it back up it won't turn on the screen again.
-            //Because the code doesn't recognize that I wan't to turn on the screen and that the phone is no longer vertical.
-            //if I remove the third argument then when I turn off the Screen it will immediately turn on the screen
-            //because it recognizes is vertical and also it isn't inside a pocket
-            //TODO: Fix this behavior
 
-            //if (isInPocket == false && isLaidDown == false && ScreenOnOffReceiver.ScreenTurnedOffWhileInVertical==false)
-            //{
-            //    if (configurationManager.RetrieveAValue(ConfigurationParameters.TurnOnUserMovement) == true)
-            //    {
-            //        AwakeHelper.TurnOnScreen();
-            //    }
-            //}
+            if (IsInPocket(proximity, light, g, inclination))
+            {
+
+            }
+            else
+            {
+
+            }
+            if (IsPickedUp(yAbs))
+            {
+
+            }
+            else
+            {
+
+            }
         }
-
+        bool IsInPocket(float prox, float light, IList<float> g, int inc)
+        {
+            if ((prox < 1) && (light < 60) && g != null && (g[1] < -0.6  || g[1] > 0.8) && ((inc > 75) || (inc < 110)))
+                {
+                    return true;
+                }
+                if ((prox >= 1) && (light >= 2) && (g!= null && g[1] >= -0.7))
+                {
+                    return false;
+                }
+            return false;
+        }
+        bool IsPickedUp(float yAccelAbs)
+        {
+            Console.WriteLine(yAccelAbs);
+            if (yAccelAbs > 0.25 && yAccelAbs < 0.6)
+            {
+                return true;
+            }
+            return false;
+        }
         public override void OnDestroy()
         {
             sensorManager.UnregisterListener(this);
             accelerometerSensor.Dispose();
+            proximitySensor.Dispose();
+            lightSensor.Dispose();
             sensorManager.Dispose();
-            isRunning = false;
+
             base.OnDestroy();
         }
     }
