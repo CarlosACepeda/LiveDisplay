@@ -23,6 +23,7 @@
   <string name="contactme">Contactează-mă</string>
   <string name="contributetoprojectdesc">LiveDisplay la Github</string>
   <string name="country">Tara</string>
+  <string name="currentwallpaper">Fundal Actual</string>
   <string name="defaultwallpaper">Fundal default</string>
   <string name="defaultwallpaperappearance">Fundal</string>
   <string name="dialogallowbutton">Permite</string>
@@ -52,6 +53,7 @@
   <string name="help">Ajutor</string>
   <string name="hidenotifwhenmediaplayingdesc">Ascundeți notificare de la listă</string>
   <string name="hideshortcutswhenkeyguardsafe">Ascundeți comenzile rapide</string>
+  <string name="hidesystemicons">Nu să arat iconul sistemului</string>
   <string name="humidity">Umiditate</string>
   <string name="idk">¯\\_(ツ)_/¯</string>
   <string name="immediately">Imediat</string>
@@ -60,6 +62,7 @@
   <string name="launchnotification">Merge la notificare</string>
   <string name="launchnotification_desc">Merge la app in loc de arata notificare</string>
   <string name="lockdelay">Blocați automatic</string>
+  <string name="lockdelay_desc">Blocați ecranul după timpul indicat</string>
   <string name="lockonboot">Blocați ecranul la pornire</string>
   <string name="m_widgethidenotificationwhenmediaplaying">Ascundeti o notificare</string>
   <string name="musiccontrolledfrommediasession">Alegeți cea mai bună sesiune multimedia</string>
@@ -86,6 +89,7 @@
   <string name="showalbumart">Arată coperta albumului</string>
   <string name="sixhours">6 ore</string>
   <string name="syncwithdigitalwellbeing">Sincronieaza cu modul ora de culcare</string>
+  <string name="syncwithdigitalwellbeing_desc">Serviciul se va opri când modul Ora de Culcare se va opri</string>
   <string name="tenseconds">10 secunde</string>
   <string name="testnotificationtext">Es Ține apăsat pe o notificare din listă o presiona X pentru a o elimina</string>
   <string name="thirtyminutes">30 de minute</string>
@@ -105,4 +109,5 @@
   <string name="weatherwidgetenabled">Activează Widget de Climă</string>
   <string name="yasujizr_ty">Design de icon din acest app!</string>
   <string name="youneeddigitalwellbeingapp">Ai nevoie din aplicația Bunastara Digitala</string>
+  <string name="livedisplayaccess">Accesul lui LiveDisplay</string>
 </resources>
