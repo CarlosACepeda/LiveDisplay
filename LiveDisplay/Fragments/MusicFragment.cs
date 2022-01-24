@@ -82,7 +82,7 @@ namespace LiveDisplay.Fragments
             e.NotificationPosted.RepresentsMediaPlaying)
             { 
                     MusicController.StartPlayback(e.NotificationPosted.MediaSessionToken, 
-                        e.NotificationPosted.GetCustomId());
+                        e.NotificationPosted.GetCustomId);
 
                     //Also start the Widget to control the playback.
                     WidgetStatusPublisher.GetInstance().SetWidgetVisibility(
@@ -243,11 +243,10 @@ namespace LiveDisplay.Fragments
 
         private void MusicPlayerContainer_Click(object sender, EventArgs e)
         {
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-                if (KeyguardHelper.IsDeviceCurrentlyLocked())
-                {
-                    KeyguardHelper.RequestDismissKeyguard(Activity);
-                }
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.O && KeyguardHelper.IsDeviceCurrentlyLocked())
+            {
+                KeyguardHelper.RequestDismissKeyguard(Activity);
+            }
 
             try { activityIntent.Send(); }
             catch { Log.Info("LiveDisplay", "Failed to send the Music pending intent"); }

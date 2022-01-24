@@ -30,7 +30,7 @@ namespace LiveDisplay.Services.Awake
             ThreadPool.QueueUserWorkItem(o =>
             {
                 Thread.Sleep(500);
-                if (screenLock.IsHeld == true)
+                if (screenLock.IsHeld)
                 {
                     screenLock.Release();
                 }
@@ -44,7 +44,7 @@ namespace LiveDisplay.Services.Awake
             if (Build.VERSION.SdkInt < BuildVersionCodes.KitkatWatch)
             {
 #pragma warning disable CS0618 // El tipo o el miembro están obsoletos
-                if (pm.IsScreenOn == true)
+                if (pm.IsScreenOn)
                 {
                     policy = (DevicePolicyManager)Application.Context.GetSystemService(Context.DevicePolicyService);
                     try
@@ -59,7 +59,7 @@ namespace LiveDisplay.Services.Awake
             }
             else
             {
-                if (pm.IsInteractive == true)
+                if (pm.IsInteractive)
                 {
                     policy = (DevicePolicyManager)Application.Context.GetSystemService(Context.DevicePolicyService);
                     try
@@ -92,7 +92,7 @@ namespace LiveDisplay.Services.Awake
 
         public static void ToggleStartStopAwakeService(bool toggle)
         {
-            if (toggle == true)
+            if (toggle)
             {
                 Intent awake = new Intent(Application.Context, typeof(AwakeService));
                 Application.Context.StartService(awake);
@@ -162,7 +162,7 @@ namespace LiveDisplay.Services.Awake
         private static bool UserHasEnabledAwake()
         {
             //Check if the user has enabled it in the first place
-            if (configurationManager.RetrieveAValue(ConfigurationParameters.ListenForDeviceMotion) == false)
+            if (!configurationManager.RetrieveAValue(ConfigurationParameters.ListenForDeviceMotion))
             {
                 return false;
             }
@@ -205,7 +205,6 @@ namespace LiveDisplay.Services.Awake
         }
     }
 
-    [Flags]
     public enum AwakeStatus
     {
         None = -1, //Shrug.

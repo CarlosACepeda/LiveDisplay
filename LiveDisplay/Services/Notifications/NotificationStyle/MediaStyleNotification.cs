@@ -19,7 +19,7 @@ namespace LiveDisplay.Services.Notifications.NotificationStyle
             var notificationMediaArtwork = new BitmapDrawable(Application.Context.Resources, OpenNotification.MediaArtwork);
             //Only post the Artwork if this notification isn't the one that keeps the Music Widget Active (because in that case it will cause redundancy, the Music Widget 
             //will be already showing the Artwork)
-            if (!MusicController.MediaSessionAssociatedWThisNotification(openNotification.GetCustomId()))
+            if (!MusicController.MediaSessionAssociatedWThisNotification(openNotification.GetCustomId))
             {
                 WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
                 {

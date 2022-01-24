@@ -216,11 +216,8 @@ namespace LiveDisplay.Services.Music
                 AppName = _appname,
                 OpenNotificationId = _openNotificationId
             });
-            //Datos de la Media que se está reproduciendo.
 
             base.OnMetadataChanged(_mediaMetadata);
-            //Memory is growing until making a GC.
-            GC.Collect();
         }
 
         #region Raising events.
@@ -248,7 +245,7 @@ namespace LiveDisplay.Services.Music
             if (e.MediaMetadata != null) //Sometimes MediaMetadata is null, and it could cause a Crash later in MusicWidget
                 ThreadPool.QueueUserWorkItem(m =>
                 {
-                    MediaMetadataChanged?.Invoke(this, e);
+                    MediaMetadataChanged?.Invoke(null, e);
                 });
         }
 

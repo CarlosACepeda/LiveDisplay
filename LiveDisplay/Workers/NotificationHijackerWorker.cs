@@ -112,12 +112,12 @@ namespace LiveDisplay.Services.Notifications
 
         private void OnNotificationListSizeChanged(NotificationListSizeChangedEventArgs e)
         {
-            NotificationListSizeChanged?.Invoke(this, e);
+            NotificationListSizeChanged?.Invoke(null, e);
         }
 
         public static OpenNotification GetOpenNotification(string customId)
         {
-            return StatusBarNotifications.Where(o => o.GetCustomId() == customId).FirstOrDefault();
+            return StatusBarNotifications.FirstOrDefault(o => o.GetCustomId == customId);
         }
         public static bool DeviceSupportsNotificationGrouping()
         {

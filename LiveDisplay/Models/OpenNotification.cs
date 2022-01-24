@@ -42,7 +42,18 @@ namespace LiveDisplay.Models
 
         //I need to pinpoint this notification, this is the way.
         //When-> Helps to really ensure is the same notification by checking also the time it was posted
-        public string GetCustomId() => PackageName + Tag + Id + When;
+        public string GetCustomId {
+            get{ 
+                if( Build.VERSION.SdkInt>= BuildVersionCodes.Lollipop)
+                {
+                    return statusbarnotification.Key;
+                }
+                else
+                {
+                    return statusbarnotification.Id.ToString();
+                }
+            }
+        }
 
         public string Tag => statusbarnotification.Tag;
 

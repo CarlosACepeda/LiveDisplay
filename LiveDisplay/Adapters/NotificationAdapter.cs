@@ -77,7 +77,7 @@
                 else
                     item= groupedNotifications[position];
 
-                if (MusicController.MediaSessionAssociatedWThisNotification(item.GetCustomId())
+                if (MusicController.MediaSessionAssociatedWThisNotification(item.GetCustomId)
                     && new ConfigurationManager(AppPreferences.Default).RetrieveAValue(ConfigurationParameters.HideNotificationWhenItsMediaPlaying)
                     && Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
                 {

@@ -93,7 +93,7 @@ namespace LiveDisplay.Fragments
             //if the incoming notification updates a previous notification, then verify if the current notification SHOWING is the same as the one
             //we are trying to update, because if this check is not done, the updated notification will show even if the user is seeing another notification.
             //the other case is simply when the notification is a new one.
-            if(e.UpdatesPreviousNotification && e.NotificationPosted.GetCustomId()== _openNotification?.GetCustomId() && !MusicController.MediaSessionAssociatedWThisNotification(_openNotification?.GetCustomId())
+            if(e.UpdatesPreviousNotification && e.NotificationPosted.GetCustomId== _openNotification?.GetCustomId && !MusicController.MediaSessionAssociatedWThisNotification(_openNotification?.GetCustomId)
                 || !e.UpdatesPreviousNotification)
             {
                 ShowNotification(e.NotificationPosted);

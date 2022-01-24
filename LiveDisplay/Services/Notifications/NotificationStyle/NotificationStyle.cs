@@ -78,7 +78,7 @@ namespace LiveDisplay.Services.Notifications.NotificationStyle
             ImageButton closenotificationbutton = sender as ImageButton;
             OpenNotification openNotification = closenotificationbutton.GetTag(DefaultActionIdentificator) as OpenNotification;
             NotificationHijackerWorker.RemoveNotification(openNotification);
-            NotificationView.SetTag(Resource.String.defaulttag, openNotification?.GetCustomId());
+            NotificationView.SetTag(Resource.String.defaulttag, openNotification?.GetCustomId);
             WidgetStatusPublisher.GetInstance().SetWidgetVisibility(new ShowParameters { Show = false, WidgetName = WidgetTypes.NOTIFICATION_FRAGMENT });
             NotificationView.Visibility = ViewStates.Invisible;
         }
