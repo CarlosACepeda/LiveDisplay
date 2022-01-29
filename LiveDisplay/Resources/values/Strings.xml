@@ -84,6 +84,7 @@
   <string name="launchnotification">Launch notification</string>
   <string name="launchnotification_desc">Go to app instead of showing the notification</string>
   <string name="listenfordevicemotion">Listen for device motion</string>
+  <string name="livedisplayaccess">LiveDisplay Access</string>
   <string name="lockdelay">Automatic lock</string>
   <string name="lockdelay_desc">Lock the screen in the given time</string>
   <string name="lockonboot">Lock the screen on device boot up</string>
@@ -155,5 +156,6 @@
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
   <string name="youneeddigitalwellbeingapp">You need the Digital Wellbeing app</string>
-  <string name="livedisplayaccess">LiveDisplay Access</string>
+  <string name="turnoffwheninpocket">Turn off screen when the device is in pocket</string>
+  <string name="turnonwhenoutofpocket">Turn on screen when pulling out phone out of the pocket</string>
 </resources>

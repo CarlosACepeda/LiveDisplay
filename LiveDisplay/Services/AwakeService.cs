@@ -27,9 +27,6 @@ namespace LiveDisplay.Services
         private float proximity;
         private float light;
         private IList<float> g;
-
-        //Order is x, y, z, proximity sensor blocked.
-
         public override IBinder OnBind(Intent intent)
         {
             return null;
@@ -88,21 +85,9 @@ namespace LiveDisplay.Services
                     break;
             }
 
-            if (IsInPocket(proximity, light, g, inclination))
+            if (IsInPocket(proximity, light, g, inclination) && ScreenOnOffReceiver.IsScreenOn)
             {
-
-            }
-            else
-            {
-
-            }
-            if (IsPickedUp(yAbs))
-            {
-
-            }
-            else
-            {
-
+                AwakeHelper.TurnOffScreen();
             }
         }
         bool IsInPocket(float prox, float light, IList<float> g, int inc)
@@ -111,7 +96,7 @@ namespace LiveDisplay.Services
                 {
                     return true;
                 }
-                if ((prox >= 1) && (light >= 2) && (g!= null && g[1] >= -0.7))
+                if ((prox >= 1) && (light >= 2) && g!= null && g[1] >= -0.7)
                 {
                     return false;
                 }

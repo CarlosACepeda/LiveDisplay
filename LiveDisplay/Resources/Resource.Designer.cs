@@ -4082,76 +4082,82 @@ namespace LiveDisplay
 			public const int turnoffscreenafterlastnotificationcleared = 2131624103;
 			
 			// aapt resource value: 0x7F0E00A8
-			public const int turnonnewnotification = 2131624104;
+			public const int turnoffwheninpocket = 2131624104;
 			
 			// aapt resource value: 0x7F0E00A9
-			public const int turnonnewnotification_desc = 2131624105;
+			public const int turnonnewnotification = 2131624105;
 			
 			// aapt resource value: 0x7F0E00AA
-			public const int turnonusermovement = 2131624106;
+			public const int turnonnewnotification_desc = 2131624106;
 			
 			// aapt resource value: 0x7F0E00AB
-			public const int tutorialtext = 2131624107;
+			public const int turnonusermovement = 2131624107;
 			
 			// aapt resource value: 0x7F0E00AC
-			public const int twelvehours = 2131624108;
+			public const int turnonwhenoutofpocket = 2131624108;
 			
 			// aapt resource value: 0x7F0E00AD
-			public const int unabletoenablesyncwbedmode = 2131624109;
+			public const int tutorialtext = 2131624109;
 			
 			// aapt resource value: 0x7F0E00AE
-			public const int updateweathereach = 2131624110;
+			public const int twelvehours = 2131624110;
 			
 			// aapt resource value: 0x7F0E00AF
-			public const int updateweathereach_desc = 2131624111;
+			public const int unabletoenablesyncwbedmode = 2131624111;
 			
 			// aapt resource value: 0x7F0E00B0
-			public const int useimperialunits = 2131624112;
+			public const int updateweathereach = 2131624112;
 			
 			// aapt resource value: 0x7F0E00B1
-			public const int v7_preference_off = 2131624113;
+			public const int updateweathereach_desc = 2131624113;
 			
 			// aapt resource value: 0x7F0E00B2
-			public const int v7_preference_on = 2131624114;
+			public const int useimperialunits = 2131624114;
 			
 			// aapt resource value: 0x7F0E00B3
-			public const int version = 2131624115;
+			public const int v7_preference_off = 2131624115;
 			
 			// aapt resource value: 0x7F0E00B4
-			public const int versionnumber = 2131624116;
+			public const int v7_preference_on = 2131624116;
 			
 			// aapt resource value: 0x7F0E00B5
-			public const int wallpaperblur = 2131624117;
+			public const int version = 2131624117;
 			
 			// aapt resource value: 0x7F0E00B6
-			public const int wallpaperopacity = 2131624118;
+			public const int versionnumber = 2131624118;
 			
 			// aapt resource value: 0x7F0E00B7
-			public const int wallpapersettingappliestoalbumart = 2131624119;
+			public const int wallpaperblur = 2131624119;
 			
 			// aapt resource value: 0x7F0E00B8
-			public const int wallpapersettings = 2131624120;
+			public const int wallpaperopacity = 2131624120;
 			
 			// aapt resource value: 0x7F0E00B9
-			public const int warningblurandroid10 = 2131624121;
+			public const int wallpapersettingappliestoalbumart = 2131624121;
 			
 			// aapt resource value: 0x7F0E00BA
-			public const int weather = 2131624122;
+			public const int wallpapersettings = 2131624122;
 			
 			// aapt resource value: 0x7F0E00BB
-			public const int weatherwidget = 2131624123;
+			public const int warningblurandroid10 = 2131624123;
 			
 			// aapt resource value: 0x7F0E00BC
-			public const int weatherwidgetenabled = 2131624124;
+			public const int weather = 2131624124;
 			
 			// aapt resource value: 0x7F0E00BD
-			public const int yasujizr = 2131624125;
+			public const int weatherwidget = 2131624125;
 			
 			// aapt resource value: 0x7F0E00BE
-			public const int yasujizr_ty = 2131624126;
+			public const int weatherwidgetenabled = 2131624126;
 			
 			// aapt resource value: 0x7F0E00BF
-			public const int youneeddigitalwellbeingapp = 2131624127;
+			public const int yasujizr = 2131624127;
+			
+			// aapt resource value: 0x7F0E00C0
+			public const int yasujizr_ty = 2131624128;
+			
+			// aapt resource value: 0x7F0E00C1
+			public const int youneeddigitalwellbeingapp = 2131624129;
 			
 			static String()
 			{

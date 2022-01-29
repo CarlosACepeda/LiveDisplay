@@ -99,7 +99,7 @@ namespace LiveDisplay.Fragments
                 ShowNotification(e.NotificationPosted);
             }
 
-            if (e.ShouldCauseWakeUp && configurationManager.RetrieveAValue(ConfigurationParameters.TurnOnNewNotification))
+            if (!e.UpdatesPreviousNotification && e.ShouldCauseWakeUp && configurationManager.RetrieveAValue(ConfigurationParameters.TurnOnNewNotification))
                 AwakeHelper.TurnOnScreen();
         }
 

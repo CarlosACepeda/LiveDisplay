@@ -51,9 +51,9 @@ namespace LiveDisplay.Services.Awake
                     {
                         policy.LockNow();
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
-                        Log.Warn("LiveDisplay", "Lock device failed, check Device Admin permission");
+                        Log.Warn("LiveDisplay", "Lock device failed, check Device Admin permission: " + ex);
                     }
                 }
             }
@@ -81,9 +81,9 @@ namespace LiveDisplay.Services.Awake
                         else
                             policy.LockNow();
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
-                        Log.Warn("LiveDisplay", "Lock device failed, check Device Admin permission");
+                        Log.Warn("LiveDisplay", "Lock device failed, check Device Admin permission: " + ex);
                     }
                 }
             }

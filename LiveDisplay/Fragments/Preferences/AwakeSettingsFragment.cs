@@ -52,10 +52,10 @@ namespace LiveDisplay.Fragments.Preferences
         }
 
         private void ToggleAwakeSettingsItems(bool enableItems)
-        {
-            Preference turnonusermovement = FindPreference("turnonusermovement?");
+        {            
             Preference awakecausesblackwallpaper = FindPreference("awakecausesblackwallpaper?");
             Preference inactivehourssettingspreference = FindPreference("inactivetimesettings");
+            Preference turnoffwheninpocket = FindPreference("turnoffwheninpocket?");
             //Preference syncwithdigitalwellbeing = FindPreference("syncwithdigitalwellbeing?");
 
             inactivehourssettingspreference.Enabled = enableItems;
@@ -64,25 +64,24 @@ namespace LiveDisplay.Fragments.Preferences
             awakecausesblackwallpaper.Enabled = enableItems;
             awakecausesblackwallpaper.Selectable = enableItems;
 
+            turnoffwheninpocket.Enabled = enableItems;
+            turnoffwheninpocket.Selectable = enableItems;
+
             //syncwithdigitalwellbeing.Enabled = enableItems;
             //syncwithdigitalwellbeing.Selectable = enableItems;
-
-            inactivehourssettingspreference.PreferenceClick += Inactivehourssettingspreference_PreferenceClick;
-
-            if (new ConfigurationManager(AppPreferences.Default).RetrieveAValue(ConfigurationParameters.ListenForDeviceMotion) == false)
+            if (enableItems)
             {
-                turnonusermovement.Enabled = false;
-                turnonusermovement.Selectable = false;
+                inactivehourssettingspreference.PreferenceClick += Inactivehourssettingspreference_PreferenceClick;
             }
             else
             {
-                turnonusermovement.Enabled = enableItems;
-                turnonusermovement.Selectable = enableItems;
-                if (enableItems == false)
-                {
-                    //User disabled Device Motion, so the service should be stopped as well.
-                    AwakeHelper.ToggleStartStopAwakeService(false);
-                }
+                inactivehourssettingspreference.PreferenceClick -= Inactivehourssettingspreference_PreferenceClick;
+            }
+
+            if (new ConfigurationManager(AppPreferences.Default).RetrieveAValue(ConfigurationParameters.ListenForDeviceMotion) && !enableItems)
+            {
+                //User disabled Device Motion, so the service should be stopped as well.
+                AwakeHelper.ToggleStartStopAwakeService(false);
             }
         }
 
@@ -156,22 +155,17 @@ namespace LiveDisplay.Fragments.Preferences
                     break;
 
                 case ConfigurationParameters.ListenForDeviceMotion:
-                    Preference turnonusermovement = FindPreference("turnonusermovement?");
                     switch (sharedPreferences.GetBoolean(ConfigurationParameters.ListenForDeviceMotion, false))
                     {
                         case true:
                             AwakeHelper.ToggleStartStopAwakeService(true);
                             ToggleAwakeSettingsItems(true);
-                            turnonusermovement.Enabled = true;
-                            turnonusermovement.Selectable = true;
 
                             break;
 
                         case false:
                             AwakeHelper.ToggleStartStopAwakeService(false);
                             ToggleAwakeSettingsItems(false);
-                            turnonusermovement.Enabled = false;
-                            turnonusermovement.Selectable = false;
                             break;
                     }
                     break;
@@ -181,7 +175,7 @@ namespace LiveDisplay.Fragments.Preferences
                         Activity.RunOnUiThread(() => Toast.MakeText(Activity, Resource.String.youneeddigitalwellbeingapp, ToastLength.Long).Show());
                     }
 
-                    if (Checkers.IsNotificationListenerEnabled()==false)
+                    if (!Checkers.IsNotificationListenerEnabled())
                     {
                         SwitchPreference syncwithdigitalwellbeing = FindPreference("syncwithdigitalwellbeing?") as SwitchPreference;
                         //new ConfigurationManager(AppPreferences.Default).SaveAValue(ConfigurationParameters.SyncWithDigitalWellbeing, false);
