@@ -67,6 +67,7 @@ namespace LiveDisplay.Services.Wallpaper
                 }
             }
             NewWallpaperIssued?.Invoke(null, e);
+            GC.Collect();
         }
 
         //Callers(entities) will use this call to force a CurrentWallpaperCleared event to be fired on this class.
