@@ -398,11 +398,6 @@
             switch (configurationManager.RetrieveAValue(ConfigurationParameters.ChangeWallpaper, "0"))
             {
                 case "0":
-
-                    WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = null, WallpaperPoster = WallpaperPoster.Lockscreen });
-                    break;
-
-                case "1":
                     if (Checkers.ThisAppHasReadStoragePermission())
                     {
                         WallpaperManager.GetInstance(Application.Context).ForgetLoadedWallpaper();
@@ -415,7 +410,7 @@
                     }
                     break;
 
-                case "2":
+                case "1":
 
                     var imagePath = configurationManager.RetrieveAValue(ConfigurationParameters.ImagePath, "");
                     if (imagePath != "")
