@@ -17,7 +17,7 @@ This Application shows the list of current notifications on a beautiful and cust
 
 ### Screenshots
 
-<img src="https://i.imgur.com/OWhWTSB.png" width=33%><img src="https://i.imgur.com/RQqF0jq.png" width=33%><img src="https://i.imgur.com/Jnmf50X.png" width=33%>
+<img src="https://i.imgur.com/mGtr9eS.png" width=33%><img src="https://i.imgur.com/tM9tFN8.png" width=33%><img src="https://i.imgur.com/GCmwaNJ.png" width=33%>
 
 
 ## Built With
@@ -27,6 +27,7 @@ This Application shows the list of current notifications on a beautiful and cust
 ## Beta Testing
 
 * Install the latest version from [Google Play!](https://play.google.com/store/apps/details?id=com.underground.livedisplay)
+* You can also use the Beta version of this app in order to get updates as soon as they are available even if they are unstable!
 
 ## Contributing
 
@@ -43,12 +44,9 @@ I use [Semantic Versioning ](http://semver.org/) for versioning, sometimes I don
 
 See also the list of [contributors](https://github.com/CarlosACepeda/LiveDisplay/contributors) who participated in the development of this project.
 
-*Spoiler alert: none yet, but I will be pleased to receive contributions ;-)*
-
 ## Acknowledgments
 
 * [Yasujizr](https://github.com/Yasujizr) : *Icon design.*
 * I'm inspired by various apps that are not longer updated, so I decided to build my own App, taking ideas from several apps.
 * Huge influence by [AcDisplay](https://github.com/AChep/AcDisplay) and NotificationPeek.
-* Friends who are testing this app! :-)
 * [Artem Chepurnoy](https://github.com/AChep) : *Guidance and help related to MediaController and NotificationListenerService, many thanks*
