@@ -59,6 +59,7 @@
   <string name="immediately">Imediat</string>
   <string name="inactivetimesettings">Ore de inactivitate</string>
   <string name="inactivetimesettingsdesc">Dezactivați Awake în anumite momente</string>
+  <string name="itneedsnotificationaccesstowork">Ai nevoie din accesul pe notificare</string>
   <string name="launchnotification">Merge la notificare</string>
   <string name="launchnotification_desc">Merge la app in loc de arata notificare</string>
   <string name="livedisplayaccess">Accesul lui LiveDisplay</string>

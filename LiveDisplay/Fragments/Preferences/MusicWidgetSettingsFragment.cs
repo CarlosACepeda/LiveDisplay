@@ -2,6 +2,7 @@
 using Android.Content;
 using Android.OS;
 using Android.Views;
+using Android.Widget;
 using AndroidX.Preference;
 using LiveDisplay.Misc;
 using LiveDisplay.Services;
@@ -58,14 +59,19 @@ namespace LiveDisplay.Fragments.Preferences
                     {
                         case "0":
                             musiccontrolmethod.SetSummary(Resource.String.m_widgetcontrolmethodsession);
-                            //hidenotifwhenmediaplaying.Selectable = false;
-                            //hidenotifwhenmediaplaying.Enabled = false;
+                            if (!Checkers.IsNotificationListenerEnabled())
+                            {
+                                Toast.MakeText(Activity, Resource.String.itneedsnotificationaccesstowork, ToastLength.Long).Show();
+                                configurationManager.SaveAValue(ConfigurationParameters.MusicWidgetMethod, "1");
+                            }
+                            else {
+                                NotificationSlave.NotificationSlaveInstance().ToggleMediaSessionsListener(true);
+                            }
                             break;
 
                         case "1":
                             musiccontrolmethod.SetSummary(Resource.String.m_widgetcontrolmethodnotification);
-                            //hidenotifwhenmediaplaying.Selectable = true;
-                            //hidenotifwhenmediaplaying.Enabled = true;
+                            NotificationSlave.NotificationSlaveInstance().ToggleMediaSessionsListener(false);
                             break;
                     }
                     break;

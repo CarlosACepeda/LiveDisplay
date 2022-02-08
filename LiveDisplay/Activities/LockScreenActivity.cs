@@ -34,8 +34,6 @@
 
         private RecyclerView recycler/*, filteredRecyclerView*/;
         private RecyclerView.LayoutManager layoutManager;
-
-        //private ImageView unlocker;
         //private Button clearAll;
 
         private Button startCamera;

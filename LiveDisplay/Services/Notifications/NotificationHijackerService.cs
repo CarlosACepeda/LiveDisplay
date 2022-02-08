@@ -52,25 +52,6 @@ namespace LiveDisplay.Services
 
         public override void OnListenerConnected()
         {
-            activeMediaSessionsListener = new ActiveMediaSessionsListener();
-            //RemoteController Lollipop and Beyond Implementation
-            mediaSessionManager = (MediaSessionManager)GetSystemService(MediaSessionService);
-
-            //Listener para Sesiones
-            using (var h = new Handler(Looper.MainLooper)) //Using UI Thread because seems to crash in some devices.
-                h.Post(() =>
-                {
-                    try
-                    {
-                        mediaSessionManager.AddOnActiveSessionsChangedListener(activeMediaSessionsListener, new ComponentName(this, Java.Lang.Class.FromType(typeof(NotificationHijackerService))));
-                        Log.Info("LiveDisplay", "Added Media Sess. Changed Listener");
-                    }
-                    catch
-                    {
-                        Log.Info("LiveDisplay", "Failed to register Media Session Callback");
-                    }
-                });
-
             SubscribeToEvents();
             RegisterReceivers();
             //This is for blocking Headsup notifications in Android Marshmallow and on, it does not work though LOL, stupid Android.
@@ -118,7 +99,7 @@ namespace LiveDisplay.Services
         public override void OnListenerDisconnected()
         {
             notificationHijackerWorker.Dispose();
-            mediaSessionManager.RemoveOnActiveSessionsChangedListener(activeMediaSessionsListener);
+            mediaSessionManager?.RemoveOnActiveSessionsChangedListener(activeMediaSessionsListener);
             UnregisterReceiver(screenOnOffReceiver);
             base.OnListenerDisconnected();
         }
@@ -138,7 +119,6 @@ namespace LiveDisplay.Services
                 else
                 {
                     notificationHijackerWorker.Dispose();
-                    mediaSessionManager.RemoveOnActiveSessionsChangedListener(activeMediaSessionsListener);
                     UnregisterReceiver(screenOnOffReceiver);
                 }
             }
@@ -198,6 +178,36 @@ namespace LiveDisplay.Services
             notificationSlave.NotificationCancelled += NotificationSlave_NotificationCancelled;
             notificationSlave.NotificationCancelledLollipop += NotificationSlave_NotificationCancelledLollipop;
             notificationSlave.ResendLastNotificationRequested += NotificationSlave_ResendLastNotificationRequested;
+            notificationSlave.OnRequestedToggleMediaSessionsListener += NotificationSlave_OnRequestedToggleMediaSessionsListener;
+        }
+
+        private void NotificationSlave_OnRequestedToggleMediaSessionsListener(object sender, bool enable)
+        {
+            if(enable)
+            {
+                activeMediaSessionsListener = new ActiveMediaSessionsListener();
+                //RemoteController Lollipop and Beyond Implementation
+                mediaSessionManager = (MediaSessionManager)GetSystemService(MediaSessionService);
+
+                using (var h = new Handler(Looper.MainLooper)) //Using UI Thread because seems to crash in some devices when not.
+                    h.Post(() =>
+                    {
+                        try
+                        {
+                            mediaSessionManager.AddOnActiveSessionsChangedListener(activeMediaSessionsListener, new ComponentName(this, Java.Lang.Class.FromType(typeof(NotificationHijackerService))));
+                            Log.Info("LiveDisplay", "Added Media Sess. Changed Listener");
+                        }
+                        catch
+                        {
+                            Log.Info("LiveDisplay", "Failed to register Media Session Callback");
+                        }
+                    });
+            }
+            else
+            {
+                mediaSessionManager?.RemoveOnActiveSessionsChangedListener(activeMediaSessionsListener);
+                Log.Info("LiveDisplay", "REMOVED MediaSessions CHanged");
+            }
         }
 
         private void NotificationSlave_ResendLastNotificationRequested(object sender, EventArgs e)

@@ -1,5 +1,7 @@
 ﻿using Android.App;
 using Android.Content.PM;
+using Android.OS;
+using System;
 
 namespace LiveDisplay.Misc
 {
@@ -21,6 +23,29 @@ namespace LiveDisplay.Misc
                 package = null;
             }
             return package;
+        }
+
+        internal static string GetAppVersionName()
+        {
+            PackageInfo packageInfo = packageManager.GetPackageInfo(Application.Context.PackageName, 0); //Zero means: No specific PackageInfoFlags specified.
+            string versionCode;
+
+            if(Build.VERSION.SdkInt< BuildVersionCodes.P)
+            {
+                versionCode = packageInfo.VersionCode.ToString();
+            }
+            else
+            {
+                versionCode = packageInfo.LongVersionCode.ToString();
+            }
+            try
+            {
+                return packageInfo.VersionName + " Build Number "+ versionCode + "";
+            }
+            catch
+            {
+                return string.Empty;
+            }
         }
     }
 }

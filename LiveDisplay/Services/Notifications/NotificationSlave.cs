@@ -17,6 +17,7 @@ namespace LiveDisplay.Services
         public event EventHandler<NotificationCancelledEventArgsLollipop> NotificationCancelledLollipop;
 
         public event EventHandler ResendLastNotificationRequested;
+        public event EventHandler<bool> OnRequestedToggleMediaSessionsListener;
 
         public event EventHandler AllNotificationsCancelled;
 
@@ -140,9 +141,13 @@ namespace LiveDisplay.Services
             notificationManager.Notify(2, builder.Build());
         }
 
-        public void RetrieveLastNotification() //ask Catcher to resend the last notification posted, (In case it was missed)
+        public void RetrieveLastNotification() //ask NotificationHijacker to resend the last notification posted, (In case it was missed)
         {
-            ResendLastNotificationRequested?.Invoke(this, null);
+            ResendLastNotificationRequested?.Invoke(this, EventArgs.Empty);
+        }
+        public void ToggleMediaSessionsListener(bool enable) //ask NotificationHijacker to resend the last notification posted, (In case it was missed)
+        {
+            OnRequestedToggleMediaSessionsListener?.Invoke(this, enable);
         }
 
         //Raising events.

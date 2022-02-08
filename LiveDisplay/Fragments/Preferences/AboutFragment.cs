@@ -3,6 +3,7 @@ using Android.Content;
 using Android.OS;
 using Android.Views;
 using AndroidX.Preference;
+using LiveDisplay.Misc;
 
 namespace LiveDisplay.Fragments.Preferences
 {
@@ -18,6 +19,8 @@ namespace LiveDisplay.Fragments.Preferences
             AddPreferencesFromResource(Resource.Xml.about);
             PreferenceManager.SetDefaultValues(Application.Context, Resource.Xml.about, false);
             Preference githubprojectpreference = FindPreference("contributetoproject");
+            Preference versionnumber = FindPreference("versionnumber");
+            versionnumber.Summary = PackageUtils.GetAppVersionName();
             githubprojectpreference.PreferenceClick += Githubprojectpreference_PreferenceClick;
         }
 

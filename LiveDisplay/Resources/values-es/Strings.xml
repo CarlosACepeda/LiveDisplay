@@ -78,6 +78,7 @@
   <string name="immediately">De inmediato</string>
   <string name="inactivetimesettings">Horas inactivas</string>
   <string name="inactivetimesettingsdesc">Desactivar Awake en ciertas horas</string>
+  <string name="itneedsnotificationaccesstowork">Necesitas activar el acceso a notificaciones para que funcione</string>
   <string name="launchnotification">Ir a notificación </string>
   <string name="launchnotification_desc">Ir a la app en lugar de mostrar la notificación</string>
   <string name="listenfordevicemotion">Detectar los movimientos del dispotivo</string>

@@ -81,6 +81,7 @@
   <string name="immediately">Immediately</string>
   <string name="inactivetimesettings">Inactive hours</string>
   <string name="inactivetimesettingsdesc">Disable Awake at certain hours</string>
+  <string name="itneedsnotificationaccesstowork">You must enable Notification Access for this to work!</string>
   <string name="launchnotification">Launch notification</string>
   <string name="launchnotification_desc">Go to app instead of showing the notification</string>
   <string name="listenfordevicemotion">Listen for device motion</string>
@@ -134,9 +135,11 @@
   <string name="turnoffdelay">Automatically turn screen off</string>
   <string name="turnoffdelay_desc">If the screen turns on(e.g.: A new notification is posted) and there is not user interaction, turn off the screen in...</string>
   <string name="turnoffscreenafterlastnotificationcleared">Turn off screen when last notification is cleared</string>
+  <string name="turnoffwheninpocket">Turn off screen when the device is in pocket</string>
   <string name="turnonnewnotification">Turn on screen</string>
   <string name="turnonnewnotification_desc">Turn on screen if a new notification is received</string>
   <string name="turnonusermovement">Turn on screen on device pick up</string>
+  <string name="turnonwhenoutofpocket">Turn on screen when pulling out phone out of the pocket</string>
   <string name="tutorialtext">Hi there! \n Double tap in the half bottom to unlock!, tap the half top to turn off the device \n Press anywhere to continue</string>
   <string name="twelvehours">12 Hours</string>
   <string name="unabletoenablesyncwbedmode">Notification Access is required for this setting to work, please enable it!</string>
@@ -144,7 +147,6 @@
   <string name="updateweathereach_desc">Weather update frequency</string>
   <string name="useimperialunits">Use Imperial units</string>
   <string name="version">Version</string>
-  <string name="versionnumber">1.0.0</string>
   <string name="wallpaperblur">Blur</string>
   <string name="wallpaperopacity">Opacity</string>
   <string name="wallpapersettingappliestoalbumart">Current setting also affects album artwork</string>
@@ -156,6 +158,4 @@
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
   <string name="youneeddigitalwellbeingapp">You need the Digital Wellbeing app</string>
-  <string name="turnoffwheninpocket">Turn off screen when the device is in pocket</string>
-  <string name="turnonwhenoutofpocket">Turn on screen when pulling out phone out of the pocket</string>
 </resources>
