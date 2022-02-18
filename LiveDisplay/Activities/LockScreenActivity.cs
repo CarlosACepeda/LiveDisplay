@@ -249,7 +249,7 @@
             watchDog.Stop();
             watchDog.Start();
             ActivityLifecycleHelper.GetInstance().NotifyActivityStateChange(typeof(LockScreenActivity), ActivityStates.Resumed);
-            if (configurationManager.RetrieveAValue(ConfigurationParameters.TutorialRead) == false)
+            if (!configurationManager.RetrieveAValue(ConfigurationParameters.TutorialRead))
             {
                 welcome = FindViewById<TextView>(Resource.Id.welcomeoverlay);
                 welcome.Text = Resources.GetString(Resource.String.tutorialtext);

@@ -5,4 +5,5 @@
     a:layout_width="wrap_content"
     a:layout_gravity="center_horizontal"
     a:paddingHorizontal="40dp"
+    a:paddingVertical="@dimen/verticalpaddingnotificationlist"
     a:layout_height="wrap_content"/>

@@ -1,7 +1,7 @@
 <LinearLayout xmlns:a="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
     a:layout_width="match_parent"
-    a:layout_height="wrap_content"
+    a:layout_height="@dimen/defaultwidgetheight"
 	a:id="@+id/container"
 	a:orientation="vertical"
 	tools:visibility="visible"

@@ -27,6 +27,7 @@
         android:summary="@string/disablewallpapertransitionanimdesc"
         app:iconSpaceReserved="false" />
       <SwitchPreference
+        android:selectable="false"
         android:defaultValue="true"
         android:key="hideshortcutswhenkeyguardsafe?"
         android:title="@string/hideshortcutswhenkeyguardsafe"

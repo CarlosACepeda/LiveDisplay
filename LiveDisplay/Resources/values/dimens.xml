@@ -2,4 +2,6 @@
 <resources>
   <dimen name="albumartsize">120dp</dimen>
   <dimen name="camerabuttonwidth">48dp</dimen>
+  <dimen name="defaultwidgetheight">180dp</dimen>
+  <dimen name="verticalpaddingnotificationlist">10dp</dimen>
 </resources>
