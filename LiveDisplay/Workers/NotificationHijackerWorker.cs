@@ -15,7 +15,6 @@ namespace LiveDisplay.Services.Notifications
         public static NotificationAdapter NotificationAdapter { get; set; }
         public static List<OpenNotification> StatusBarNotifications { get; internal set; } = new List<OpenNotification>();
 
-        public static event EventHandler<NotificationListSizeChangedEventArgs> NotificationListSizeChanged;
         private const string ANDROID_TAG_FOR_FLOATING_LIVEDISPLAY = "com.android.server.wm.AlertWindowNotification - com.underground.livedisplay";
         private const string ANDROID_APP_PACKAGE = "android";
         private static NotificationHijackerWorker instance;
@@ -40,10 +39,6 @@ namespace LiveDisplay.Services.Notifications
                 StatusBarNotifications.Add(new OpenNotification(sbn));
             }
             NotificationAdapter = new NotificationAdapter(StatusBarNotifications);
-            OnNotificationListSizeChanged(new NotificationListSizeChangedEventArgs
-            {
-                ThereAreNotifications = statusBarNotifications.Count > 0
-            });
         }
 
         public void OnNotificationPosted(OpenNotification sbn)
@@ -82,11 +77,6 @@ namespace LiveDisplay.Services.Notifications
                     notificationSlave.CancelNotification(sbn.ApplicationPackage, sbn.Tag, sbn.Id);
                 }
             }
-
-            OnNotificationListSizeChanged(new NotificationListSizeChangedEventArgs
-            {
-                ThereAreNotifications = StatusBarNotifications.Count > 0
-            });
         }
 
         public void OnNotificationRemoved(OpenNotification sbn)
@@ -97,24 +87,12 @@ namespace LiveDisplay.Services.Notifications
 
             NotificationAdapter.RemoveNotification(sbn);
             
-
-            //TODO: move this to Adapter.
-            OnNotificationListSizeChanged(new NotificationListSizeChangedEventArgs
-            {
-                ThereAreNotifications = StatusBarNotifications.Where(n => n.IsRemovable).ToList().Count > 0
-            });
         }
 
         public void CancelAllNotifications()
         {
             NotificationAdapter.NotifyDataSetChanged();
         }
-
-        private void OnNotificationListSizeChanged(NotificationListSizeChangedEventArgs e)
-        {
-            NotificationListSizeChanged?.Invoke(null, e);
-        }
-
         public static OpenNotification GetOpenNotification(string customId)
         {
             return StatusBarNotifications.FirstOrDefault(o => o.GetCustomId == customId);

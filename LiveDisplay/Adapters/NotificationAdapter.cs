@@ -19,9 +19,10 @@
 
     public class NotificationAdapter : RecyclerView.Adapter
     {
-        public int selectedItem = -1;
         List<OpenNotification> singleNotifications = new List<OpenNotification>();
         List<OpenNotification> groupedNotifications = new List<OpenNotification>();
+        public static event EventHandler<NotificationListSizeChangedEventArgs> NotificationListSizeChanged;
+
 
         public static event EventHandler<NotificationItemClickedEventArgs> ItemClick;
         public static event EventHandler<NotificationItemClickedEventArgs> ItemLongClick;
@@ -126,6 +127,13 @@
 
             OnNotificationPosted(openNotification);
 
+            OnNotificationListSizeChanged(new NotificationListSizeChangedEventArgs
+            {
+                ThereAreNotifications = NotificationHijackerWorker.DeviceSupportsNotificationGrouping() ?
+                groupedNotifications.Where(n => n.IsRemovable).ToList().Count > 0 :
+                singleNotifications.Where(n => n.IsRemovable).ToList().Count > 0
+            });
+
         }
 
         void HandleSummaryNotification(OpenNotification notification)
@@ -209,6 +217,14 @@
 
             if (openNotification.BelongsToGroup)
                 RemoveChildNotification(openNotification);
+
+
+            OnNotificationListSizeChanged(new NotificationListSizeChangedEventArgs
+            {
+                ThereAreNotifications = NotificationHijackerWorker.DeviceSupportsNotificationGrouping() ?
+                groupedNotifications.Where(n => n.IsRemovable).ToList().Count > 0 :
+                singleNotifications.Where(n => n.IsRemovable).ToList().Count > 0
+            });
 
 
         }
@@ -318,9 +334,6 @@
         {
             if (args.Position != RecyclerView.NoPosition)
             {
-                //Simply indicates which item was clicked and after that call NotifyDataSetChanged to changes take effect.
-                //selectedItem = args.Position;
-                //NotifyDataSetChanged();
                 var statusBarNotification = groupedNotifications[args.Position];
                 OnItemClicked(args.Position, statusBarNotification);
             }
@@ -349,6 +362,12 @@
             }
             );
         }
+
+        private void OnNotificationListSizeChanged(NotificationListSizeChangedEventArgs e)
+        {
+            NotificationListSizeChanged?.Invoke(null, e);
+        }
+
     }
 
     //The following class just simply saves the view's references to the row, in order to avoid making calls to 'FindViewById' each time, nothing more is done here.

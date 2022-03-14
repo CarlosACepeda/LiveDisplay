@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace LiveDisplay.Services.Widget
 {
-    //Widgets (fragments) should invoke the event! always, the reason is that the widgets had to know the state of all the widgets.
+    //Widgets (fragments) should invoke the event! always, the reason is that widgets have to know the state of all the widgets.
     //in order to show/hide them.
     public class WidgetStatusPublisher
     {
@@ -29,7 +29,13 @@ namespace LiveDisplay.Services.Widget
         private WidgetStatusPublisher()
         {
             widgetActiveTimer.Elapsed += WidgetActiveTimer_Elapsed;
+            ActivityLifecycleHelper.GetInstance().ActivityStateChanged += WidgetStatusPublisher_ActivityStateChanged;
             widgetActiveTimer.AutoReset = false;
+        }
+
+        private void WidgetStatusPublisher_ActivityStateChanged(object sender, ActivityStateChangedEventArgs e)
+        {
+            //TODO: When Lockscreen activity is present for the first time send information about the widget that should be showing.
         }
 
         private void WidgetActiveTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -198,6 +204,12 @@ namespace LiveDisplay.Services.Widget
                 });
             }
         }
+        void SaveWidget(ShowParameters widgetToSave)
+        {
+            //This method is meant to save the current active widget when currently there's not an entity capable
+            //of showing a widget.
+            
+        }
         ShowParameters GetWidget(string which)
         {
             return currentActiveWidgets.FirstOrDefault(w => w.WidgetName == which);
@@ -223,6 +235,8 @@ namespace LiveDisplay.Services.Widget
         public int TimeToShow { get; set; } = INVALID_TIME_TO_SHOW;
         public object AdditionalInfo { get; set; } = null;
         public string WidgetName { get; set; }
+
+        public long When { get; set; } = DateTime.Now.Ticks;
     }
     public class WidgetStatusEventArgs : EventArgs
     {

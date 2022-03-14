@@ -6,7 +6,6 @@ using Android.Util;
 using LiveDisplay.Adapters;
 using LiveDisplay.Misc;
 using LiveDisplay.Services.Keyguard;
-using LiveDisplay.Services.Notifications;
 using System;
 using System.Threading;
 
@@ -19,7 +18,7 @@ namespace LiveDisplay.Services.Awake
         public AwakeHelper()
         {
             NotificationAdapter.NotificationPosted += CatcherHelper_NotificationPosted;
-            NotificationHijackerWorker.NotificationListSizeChanged += CatcherHelper_NotificationListSizeChanged;
+            NotificationAdapter.NotificationListSizeChanged += Notification_Adapter_NotificationListSizeChanged;
         }
 
         public static void TurnOnScreen()
@@ -181,12 +180,11 @@ namespace LiveDisplay.Services.Awake
             return true;
         }
 
-        private void CatcherHelper_NotificationListSizeChanged(object sender, Notifications.NotificationEventArgs.NotificationListSizeChangedEventArgs e)
+        private void Notification_Adapter_NotificationListSizeChanged(object sender, Notifications.NotificationEventArgs.NotificationListSizeChangedEventArgs e)
         {
-            if (configurationManager.RetrieveAValue(ConfigurationParameters.TurnOffScreenAfterLastNotificationCleared) == true)
+            if (configurationManager.RetrieveAValue(ConfigurationParameters.TurnOffScreenAfterLastNotificationCleared) && !e.ThereAreNotifications)
             {
-                if (e.ThereAreNotifications == false)
-                    TurnOffScreen();
+                TurnOffScreen();
             }
         }
 
@@ -199,7 +197,7 @@ namespace LiveDisplay.Services.Awake
         protected override void Dispose(bool disposing)
         {
             NotificationAdapter.NotificationPosted -= CatcherHelper_NotificationPosted;
-            NotificationHijackerWorker.NotificationListSizeChanged -= CatcherHelper_NotificationListSizeChanged;
+            NotificationAdapter.NotificationListSizeChanged -= Notification_Adapter_NotificationListSizeChanged;
             configurationManager.Dispose();
             base.Dispose(disposing);
         }

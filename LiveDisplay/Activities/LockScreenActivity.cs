@@ -14,6 +14,7 @@
     using Android.Widget;
     using AndroidX.AppCompat.App;
     using AndroidX.RecyclerView.Widget;
+    using LiveDisplay.Adapters;
     using LiveDisplay.Enums;
     using LiveDisplay.Fragments;
     using LiveDisplay.Misc;
@@ -89,7 +90,7 @@
             WallpaperPublisher.NewWallpaperIssued += Wallpaper_NewWallpaperIssued;
 
             //CatcherHelper events
-            NotificationHijackerWorker.NotificationListSizeChanged += CatcherHelper_NotificationListSizeChanged;
+            NotificationAdapter.NotificationListSizeChanged += CatcherHelper_NotificationListSizeChanged;
 
             using (recycler = FindViewById<RecyclerView>(Resource.Id.notification_list))
             {
@@ -282,7 +283,7 @@
             ActivityLifecycleHelper.GetInstance().NotifyActivityStateChange(typeof(LockScreenActivity), ActivityStates.Destroyed);
 
             WallpaperPublisher.NewWallpaperIssued -= Wallpaper_NewWallpaperIssued;
-            NotificationHijackerWorker.NotificationListSizeChanged -= CatcherHelper_NotificationListSizeChanged;
+            NotificationAdapter.NotificationListSizeChanged -= CatcherHelper_NotificationListSizeChanged;
             WidgetStatusPublisher.GetInstance().OnWidgetStatusChanged += WidgetStatusPublisher_OnWidgetStatusChanged;
             lockscreen.Touch -= Lockscreen_Touch;
 
