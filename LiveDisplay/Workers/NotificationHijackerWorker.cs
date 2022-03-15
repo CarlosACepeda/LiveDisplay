@@ -26,14 +26,15 @@ namespace LiveDisplay.Services.Notifications
         /// that the RecyclerView will use, it is tighly coupled with that adapter.
         /// </param>
 
-        public static NotificationHijackerWorker GetInstance(List<StatusBarNotification> statusBarNotifications)
+        public static NotificationHijackerWorker GetInstance(List<StatusBarNotification> statusBarNotifications, bool recreate)
         {
-            if (instance == null)
+            if (instance == null || recreate)
                 instance = new NotificationHijackerWorker(statusBarNotifications);
             return instance;
         }
         private NotificationHijackerWorker(List<StatusBarNotification> statusBarNotifications)
         {
+            StatusBarNotifications = new List<OpenNotification>();
             foreach (var sbn in statusBarNotifications)
             {
                 StatusBarNotifications.Add(new OpenNotification(sbn));

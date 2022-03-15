@@ -18,11 +18,14 @@ namespace LiveDisplay.Services.Notifications.NotificationStyle
     //Provides a basic way to show a notification on the lockscreen.
     public abstract class NotificationStyle: Java.Lang.Object, View.IOnClickListener
     {
+        public string CUSTOM_VIEW_TAG = "TAG";
 
         public static event EventHandler<bool> SendInlineResponseAvailabityChanged;
 
         protected const int DefaultActionIdentificator = Resource.String.defaulttag;
         protected LinearLayout NotificationView { get; private set; }
+        protected LinearLayout ActualNotification { get; private set; }
+
         public AndroidX.Fragment.App.Fragment NotificationFragment { get; private set; }
         protected LinearLayout NotificationActions { get; private set; }
         protected TextView Title { get; private set; }
@@ -46,9 +49,11 @@ namespace LiveDisplay.Services.Notifications.NotificationStyle
         {
             OpenNotification = openNotification;
             NotificationView = notificationView;
+            
             NotificationFragment = notificationFragment;
             Resources = NotificationFragment.Resources;
             NotificationActions = FindView<LinearLayout>(Resource.Id.actions);
+            ActualNotification = FindView<LinearLayout>(Resource.Id.actual_notification);
             Title = FindView<TextView>(Resource.Id.notification_title);
             Text = FindView<TextView>(Resource.Id.notification_text);
             ApplicationName = FindView<TextView>(Resource.Id.app_name);
@@ -99,6 +104,10 @@ namespace LiveDisplay.Services.Notifications.NotificationStyle
             SetNotificationPreviousMessageVisibility();
             SetMoveBetweenSiblingNotificationsVisibility();
             ApplyActionsStyle();
+            if (HasCustomView()) //Left by DecoratedCustomViewStyle.
+            {
+                RemoveCustomView();
+            }
         }
         protected virtual void SetMoveBetweenSiblingNotificationsVisibility() 
         {
@@ -328,6 +337,15 @@ namespace LiveDisplay.Services.Notifications.NotificationStyle
             {
                 openAction.ClickAction();
             }
+        }
+        bool HasCustomView()
+        {
+           return ActualNotification.FindViewWithTag(CUSTOM_VIEW_TAG) !=null;
+        }
+
+        void RemoveCustomView()
+        {
+            ActualNotification.RemoveView(NotificationView.FindViewWithTag(CUSTOM_VIEW_TAG));
         }
     }
 }

@@ -6,6 +6,8 @@ using Android.Media.Session;
 using Android.OS;
 using Android.Service.Notification;
 using Android.Util;
+using Android.Views;
+using Android.Widget;
 using Java.Util;
 using LiveDisplay.Enums;
 using LiveDisplay.Factories;
@@ -14,6 +16,7 @@ using LiveDisplay.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MediaController = Android.Media.Session.MediaController;
 
 namespace LiveDisplay.Models
 {
@@ -359,6 +362,18 @@ namespace LiveDisplay.Models
             //On the other hand I can Register a Device Companion Service and in that way I can retrieve them, so,
             //The task is to see if I can register a dummy device to such service 
             //and trick Android into thinking I have a device and thus, the right to get the notification channels.
+        }
+
+        public RemoteViews CustomView
+        {
+            get
+            {
+                if(Style == NotificationStyles.DECORATED_CUSTOM_VIEW_STYLE)
+                {
+                    return statusbarnotification.Notification.ContentView;
+                }
+                return null;
+            }
         }
 
         public string Style

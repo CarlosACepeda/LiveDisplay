@@ -51,7 +51,8 @@
                 foreach (var openNotification in notifications)
                 {
                     if (openNotification.IsSummary ||
-                        (!openNotification.IsSummary && !openNotification.BelongsToGroup))
+                        openNotification.IsStandalone
+                        /*|| IsThisNotificationParentless(notifications, openNotification.GroupKey)*/)
                     {
                         groupedNotifications.Add(openNotification);
                     }
@@ -306,6 +307,17 @@
                 (o => o.Id == openNotification.Id && o.ApplicationPackage == openNotification.ApplicationPackage && o.Tag == openNotification.Tag &&
             o.IsSummary == openNotification.IsSummary));
         }
+
+        OpenNotification GetChildNotification(OpenNotification parent)
+        {
+            return singleNotifications.FirstOrDefault(child => child.GroupKey == parent.GroupKey && child.BelongsToGroup); //I assume this parent only has one child.
+        }
+        bool IsThisNotificationParentless(List<OpenNotification> allNotifications, string groupKeyToCheck)
+        {
+            //TODO: Sometimes independent notifications pass through this and they are considered parentless when in reality they stand by their own.
+            var count= allNotifications.Count(n => n.GroupKey == groupKeyToCheck && !n.IsSummary);
+            return count == 1;
+        }
         private void OnNotificationRemoved(OpenNotification sbn)
         {
             NotificationRemoved?.Invoke(null, new NotificationRemovedEventArgs
@@ -334,8 +346,23 @@
         {
             if (args.Position != RecyclerView.NoPosition)
             {
-                var statusBarNotification = groupedNotifications[args.Position];
-                OnItemClicked(args.Position, statusBarNotification);
+                OpenNotification notificationToSend;
+                if (NotificationHijackerWorker.DeviceSupportsNotificationGrouping())
+                {
+                    notificationToSend = groupedNotifications[args.Position];
+                    //If it has only one child it means we must send the child as the parent,
+                    //because in this case, the parent doesn't contain the information to show on the Notification Widget,
+                    //like Title, subtext, etc, the child does.
+                    if (GetChildNotificationCount(notificationToSend)==1) 
+                    {
+                        notificationToSend = GetChildNotification(notificationToSend);
+                    }
+                }
+                else
+                {
+                    notificationToSend = singleNotifications[args.Position];
+                }
+                OnItemClicked(args.Position, notificationToSend);
             }
         }
 

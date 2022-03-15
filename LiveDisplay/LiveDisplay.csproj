@@ -134,6 +134,7 @@
     <Compile Include="Services\Music\MediaEventArgs\MediaPlaybackStateChangedKitkatEventArgs.cs" />
     <Compile Include="Services\Music\MusicController.cs" />
     <Compile Include="Services\Music\MusicControllerKitkat.cs" />
+    <Compile Include="Services\Notifications\NotificationStyle\DecoratedCustomViewStyle.cs" />
     <Compile Include="Workers\NotificationHijackerWorker.cs" />
     <Compile Include="Services\Notifications\NotificationHijackerService.cs" />
     <Compile Include="Services\Notifications\NotificationEventArgs\NotificationCancelledEventArgsKitkat.cs" />

@@ -243,11 +243,12 @@ namespace LiveDisplay.Fragments
                     case NotificationStyles.BIG_TEXT_STYLE:
                         new BigTextStyleNotification(_openNotification, ref maincontainer, this).ApplyStyle();
                         break;
-
                     case NotificationStyles.MEDIA_STYLE:
                         new MediaStyleNotification(_openNotification, ref maincontainer, this).ApplyStyle();
                         break;
-
+                    case NotificationStyles.DECORATED_CUSTOM_VIEW_STYLE:
+                        new DecoratedCustomViewStyle(_openNotification, ref maincontainer, this).ApplyStyle();
+                        break;
                     default:
                         new DefaultStyleNotification(_openNotification, ref maincontainer, this).ApplyStyle();
                         break;

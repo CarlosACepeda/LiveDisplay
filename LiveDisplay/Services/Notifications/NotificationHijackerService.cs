@@ -167,7 +167,7 @@ namespace LiveDisplay.Services
                 statusBarNotifications.Add(notification);
                 lastPostedNotification = notification;
             }
-            notificationHijackerWorker = NotificationHijackerWorker.GetInstance(statusBarNotifications);
+            notificationHijackerWorker = NotificationHijackerWorker.GetInstance(statusBarNotifications, true); //Always recreate when listener is attached.
         }
 
         //Subscribe to events by Several publishers
