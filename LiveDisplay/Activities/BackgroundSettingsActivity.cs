@@ -328,7 +328,7 @@
             blur.Progress = defaultBlurLevel;
             opacity.Progress = defaultBlurLevel;
 
-            switch (configurationManager.RetrieveAValue(ConfigurationParameters.ChangeWallpaper, "0"))
+            switch (configurationManager.RetrieveAValue(ConfigurationParameters.ChangeWallpaper, "1"))
             {
                 case "0":
                     ThreadPool.QueueUserWorkItem(m =>
