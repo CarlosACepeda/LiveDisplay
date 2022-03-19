@@ -94,7 +94,6 @@ namespace LiveDisplay.Fragments
 
         private void WidgetStatusPublisher_OnWidgetStatusChanged(object sender, WidgetStatusEventArgs e)
         {
-            Log.Info("MusicFragment", "DO SOMETHING" + e.WidgetName);
             if (e.WidgetName == WidgetTypes.MUSIC_FRAGMENT)
             {
                 if (e.Show)

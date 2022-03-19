@@ -25,7 +25,6 @@ namespace LiveDisplay.Services.Widget
 
         public event EventHandler<WidgetStatusEventArgs> OnWidgetStatusChanged;
 
-
         private WidgetStatusPublisher()
         {
             widgetActiveTimer.Elapsed += WidgetActiveTimer_Elapsed;
@@ -35,7 +34,10 @@ namespace LiveDisplay.Services.Widget
 
         private void WidgetStatusPublisher_ActivityStateChanged(object sender, ActivityStateChangedEventArgs e)
         {
-            //TODO: When Lockscreen activity is present for the first time send information about the widget that should be showing.
+            if(ActivityLifecycleHelper.GetInstance().AreThereAnyEntitiesPresent())
+            {
+                ShowActiveWidget();
+            }
         }
 
         private void WidgetActiveTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -59,29 +61,10 @@ namespace LiveDisplay.Services.Widget
             widgetActiveForLimitedTime = string.Empty; //Reset value.
         }
 
-        ShowParameters GetLastKnownOrDefaultWidget()
+        ShowParameters GetDefaultWidget()
         {
             return new ShowParameters { WidgetName = WidgetTypes.CLOCK_FRAGMENT, Show = true, TimeToShow = ShowParameters.ACTIVE_PERMANENTLY };
-            //The code below is made to return an active widget in case the Lockscreen is closed so we don't lose the reference about which one was 
-            //active before closing the lockscreen.
-            //however, this doesn't work correctly.
-            //we are returning the clock. 
-            //TODO: Find a way to keep track about the current active widget even when Lockscreen is closed.
-
-            //switch (configurationManager.RetrieveAValue(ConfigurationParameters.LastActiveWidget, string.Empty))
-            //{
-            //    case WidgetTypes.CLOCK_FRAGMENT:
-            //        return new ShowParameters { WidgetName = WidgetTypes.CLOCK_FRAGMENT, Show= true, TimeToShow= ShowParameters.ACTIVE_PERMANENTLY };
-            //    case WidgetTypes.NOTIFICATION_FRAGMENT:
-            //        return new ShowParameters { WidgetName = WidgetTypes.NOTIFICATION_FRAGMENT, Show= true, TimeToShow= ShowParameters.WIDGET_MAY_DECIDE };
-            //    case WidgetTypes.MUSIC_FRAGMENT:
-            //        return new ShowParameters { WidgetName = WidgetTypes.MUSIC_FRAGMENT, TimeToShow = ShowParameters.WIDGET_MAY_DECIDE };
-            //    default:
-            //        return new ShowParameters { WidgetName = WidgetTypes.CLOCK_FRAGMENT, Show = true, TimeToShow = ShowParameters.ACTIVE_PERMANENTLY };
-            //        //By design, the Clock is going to be the default value.
-            //}
         }
-        //This method is meant to be used by entities who want to get notified about the last Widget that was active.
         public void ShowActiveWidget()
         {
             var lastActiveWidget = GetCurrentActiveWidget();
@@ -91,8 +74,8 @@ namespace LiveDisplay.Services.Widget
             }
             else
             {
-                currentActiveWidgets.Add(GetLastKnownOrDefaultWidget());
-                SetWidgetVisibility(GetLastKnownOrDefaultWidget());
+                currentActiveWidgets.Add(GetDefaultWidget());
+                SetWidgetVisibility(GetCurrentActiveWidget());
             }
         }
 

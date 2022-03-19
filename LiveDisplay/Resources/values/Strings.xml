@@ -38,7 +38,7 @@
   <string name="dialogallowbutton">Allow</string>
   <string name="dialogcancelbutton">Cancel</string>
   <string name="dialogcancelledclick">Ok, you can change this setting later in Notifications section!</string>
-  <string name="dialogfordeviceaccessdescription">Permissions required:  \nLock screen: Control how and when to lock the screen</string>
+  <string name="dialogfordeviceaccessdescription">Permissions required:  \nLock screen: Control how and when to lock the screen, it isn\'t mandatory for you to allow this permission, but any functionality related to Turning off Screen won\'t work if you leave this disabled</string>
   <string name="disable">Disable</string>
   <string name="disableartworkupdateonsamealbum">Disable Artwork update</string>
   <string name="disableartworkupdateonsamealbum_desc">If media track is changed and the album is the same, ignore that song\'s album artwork (because is the same)</string>

@@ -37,8 +37,6 @@
         private RecyclerView.LayoutManager layoutManager;
         //private Button clearAll;
 
-        private Button startCamera;
-        private Button startDialer;
         private FrameLayout lockscreen; //The root linear layout, used to implement double tap to sleep.
         private float firstTouchTime = -1;
         private float finalTouchTime;
@@ -59,7 +57,7 @@
             SetContentView(Resource.Layout.test_lck);
             ThreadPool.QueueUserWorkItem(isApphealthy =>
             {
-                if (!Checkers.IsNotificationListenerEnabled()|| !Checkers.IsThisAppADeviceAdministrator())
+                if (!Checkers.IsNotificationListenerEnabled())
                 {
                     RunOnUiThread(() =>
                     {
@@ -105,12 +103,6 @@
 
             WallpaperPublisher.CurrentWallpaperCleared += WallpaperPublisher_CurrentWallpaperCleared;
             WidgetStatusPublisher.GetInstance().OnWidgetStatusChanged += WidgetStatusPublisher_OnWidgetStatusChanged;
-        }
-
-        private void LoadActiveFragment()
-        {
-            WidgetStatusPublisher.GetInstance().ShowActiveWidget();
-            
         }
         private void WidgetStatusPublisher_OnWidgetStatusChanged(object sender, WidgetStatusEventArgs e)
         {
@@ -239,8 +231,8 @@
 
         protected override void OnStart()
         {
-            base.OnStart(); 
-            LoadActiveFragment(); //by this time fragments are ready to react to this call.
+            base.OnStart();
+            ActivityLifecycleHelper.GetInstance().NotifyActivityStateChange(typeof(LockScreenActivity), ActivityStates.Started);
         }
         protected override void OnResume()
         {

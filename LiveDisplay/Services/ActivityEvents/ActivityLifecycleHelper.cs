@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace LiveDisplay.Services
 {
@@ -57,6 +58,11 @@ namespace LiveDisplay.Services
             }
             return ActivityStates.Unknown;
         }
+
+        public bool AreThereAnyEntitiesPresent()
+        {
+            return Activities.Any(e=> e.Item2 == ActivityStates.Resumed);
+        }
     }
 
     public class ActivityStateChangedEventArgs : EventArgs
@@ -68,8 +74,10 @@ namespace LiveDisplay.Services
     public enum ActivityStates
     {
         Unknown = -1,
-        Paused = 0,
-        Resumed = 1,
-        Destroyed = 2,
+        Started= 0,
+        Paused = 1,
+        Resumed = 2,
+        Stopped= 3,
+        Destroyed = 4,
     }
 }

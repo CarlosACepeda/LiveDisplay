@@ -29,12 +29,11 @@
     [Activity(Label = "@string/app_name", Theme = "@style/LiveDisplayThemeDark.NoActionBar", TaskAffinity = "livedisplay.main", MainLauncher = true)]
     internal class MainActivity : AppCompatActivity
     {
-        private int REQUEST_CODE_READ_STORAGE_PERMISSION = 1;
+        private readonly int REQUEST_CODE_READ_STORAGE_PERMISSION = 1;
 
         private Toolbar toolbar;
         private TextView enableNotificationAccess, enableDeviceAdmin;
-        private TextView enableDrawOverAccess, enableStoragePermission;
-        private RelativeLayout enableDrawOverAccessContainer;
+        private TextView enableStoragePermission;
         private RelativeLayout enableStorageAccessContainer;
         private bool isApplicationHealthy;
 
@@ -173,7 +172,7 @@
             {
                 RunOnUiThread(() =>
                 {
-                    if (Checkers.IsNotificationListenerEnabled() && Checkers.IsThisAppADeviceAdministrator() && Checkers.ThisAppHasReadStoragePermission())
+                    if (Checkers.IsNotificationListenerEnabled() && Checkers.ThisAppHasReadStoragePermission())
                     {
                         accessestext.SetText(Resource.String.accessesstatusenabled);
                         accessestext.SetTextColor(Android.Graphics.Color.Green);
@@ -266,7 +265,6 @@
                             {
                                 slave.PostNotification(1, "LiveDisplay", notificationtext, true, NotificationPriority.Max);
                             }
-                            //NotificationSlave.SendDumbNotification();
                         }
                         using (Intent intent = new Intent(Application.Context, typeof(LockScreenActivity)))
                         {
@@ -344,6 +342,7 @@
                 ComponentName devAdminReceiver = new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(AdminReceiver)));
                 DevicePolicyManager dpm = (DevicePolicyManager)GetSystemService(Context.DevicePolicyService);
                 dpm.RemoveActiveAdmin(devAdminReceiver);
+                CheckDeviceAdminAccess();
             }
             else
             {

@@ -90,17 +90,26 @@ namespace LiveDisplay.Fragments
 
         private void NotificationAdapter_NotificationPosted(object sender, NotificationPostedEventArgs e)
         {
-            //if the incoming notification updates a previous notification, then verify if the current notification SHOWING is the same as the one
-            //we are trying to update, because if this check is not done, the updated notification will show even if the user is seeing another notification.
+            //if the incoming notification updates a previous notification, then verify if the current SHOWING notification is the same as the one
+            //we are trying to update, because if this check is not done, the updated notification will show even if the user is watching another notification.
             //the other case is simply when the notification is a new one.
-            if(e.UpdatesPreviousNotification && e.NotificationPosted.GetCustomId== _openNotification?.GetCustomId && !MusicController.MediaSessionAssociatedWThisNotification(_openNotification?.GetCustomId)
-                || !e.UpdatesPreviousNotification)
+            if (e.UpdatesPreviousNotification && IsUpdatingSameNotificationUserIsViewing(e.NotificationPosted.GetCustomId)
+                && !MusicController.MediaSessionAssociatedWThisNotification(_openNotification?.GetCustomId)
+                || 
+                !e.UpdatesPreviousNotification)
             {
                 ShowNotification(e.NotificationPosted);
             }
 
             if (!e.UpdatesPreviousNotification && e.ShouldCauseWakeUp && configurationManager.RetrieveAValue(ConfigurationParameters.TurnOnNewNotification))
                 AwakeHelper.TurnOnScreen();
+        }
+        bool IsUpdatingSameNotificationUserIsViewing(string openNotificationCustomId)
+        {
+            //This is because user hasn't seen any notifications yet (hence the null value), so we'll say, yes, update it, it doesn't matter.
+            if (_openNotification == null) return true; 
+
+            return _openNotification.GetCustomId == openNotificationCustomId;
         }
 
         public override void OnDestroyView()

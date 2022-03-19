@@ -35,7 +35,7 @@
   <string name="dialogallowbutton">Permitir</string>
   <string name="dialogcancelbutton">Cancelar</string>
   <string name="dialogcancelledclick">Muy bien, puedes cambiar esta opción después en la sección \'Notificaciones\'</string>
-  <string name="dialogfordeviceaccessdescription">Permisos requeridos: \nBloquear la pantalla: \nControlar cómo y cuando se apaga la pantalla</string>
+  <string name="dialogfordeviceaccessdescription">Permisos requeridos: \nBloquear la pantalla: \nControlar cómo y cuando se apaga la pantalla, no es obligatorio que permitas este permiso, pero cualquier funcionalidad relacionada con Apagar la pantalla no funcionará sin este permiso</string>
   <string name="disable">Desactivar</string>
   <string name="disableartworkupdateonsamealbum">Desactivar actualización del artwork</string>
   <string name="disableartworkupdateonsamealbum_desc">Si la pista cambia y la siguiente pista es del mismo album, ignorar el artwork, ya que es el mismo album</string>
