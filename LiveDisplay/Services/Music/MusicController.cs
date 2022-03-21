@@ -66,7 +66,7 @@ namespace LiveDisplay.Services.Music
                     throw new ArgumentException("Token can't be null!");
                 }
                 GetCurrentInstance(_currentMediaController, owningNotificationId);
-                return StartMediaPlayback();
+                return RegisterMediaCallback();
             }
             else
             {
@@ -78,7 +78,7 @@ namespace LiveDisplay.Services.Music
                     _currentMediaController = new MediaController(Application.Context, token);
                     _currentToken = token;
                     LoadMediaControllerData(_currentMediaController);
-                    return StartMediaPlayback();
+                    return RegisterMediaCallback();
                 }
                 else
                 {
@@ -99,7 +99,6 @@ namespace LiveDisplay.Services.Music
 
         private MusicController(MediaController controller, string notificationId)
         {
-            LoadMediaControllerData(controller);
             _openNotificationId = notificationId;
             Jukebox.MediaEvent += Jukebox_MediaEvent;
         }
@@ -250,7 +249,7 @@ namespace LiveDisplay.Services.Music
         }
 
         #endregion Raising events.
-        private static bool StartMediaPlayback()
+        private static bool RegisterMediaCallback()
         {
             if (_currentMediaController == null)
             {

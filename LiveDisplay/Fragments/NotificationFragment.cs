@@ -29,8 +29,6 @@ namespace LiveDisplay.Fragments
         private LinearLayout actual_notification;
         private readonly ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
 
-        #region Lifecycle events
-
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -94,7 +92,7 @@ namespace LiveDisplay.Fragments
             //we are trying to update, because if this check is not done, the updated notification will show even if the user is watching another notification.
             //the other case is simply when the notification is a new one.
             if (e.UpdatesPreviousNotification && IsUpdatingSameNotificationUserIsViewing(e.NotificationPosted.GetCustomId)
-                && !MusicController.MediaSessionAssociatedWThisNotification(_openNotification?.GetCustomId)
+                && !MusicController.MediaSessionAssociatedWThisNotification(e.NotificationPosted.GetCustomId)
                 || 
                 !e.UpdatesPreviousNotification)
             {
@@ -145,7 +143,11 @@ namespace LiveDisplay.Fragments
                         //TODO: Standarize the type of info presented here.
                         //When this isn't null, it carries a notification id. to search for that notification
                         //and show it here. but it could be something else and cause a crash. 
-                        ShowNotification(NotificationHijackerWorker.GetOpenNotification(e.AdditionalInfo.ToString()));
+                        OpenNotification notification = NotificationHijackerWorker.GetOpenNotification(e.AdditionalInfo.ToString());
+                        if(notification!= null)
+                        {
+                            ShowNotification(notification);
+                        }
                     }
                     ToggleWidgetVisibility(true);
                 }
@@ -172,11 +174,6 @@ namespace LiveDisplay.Fragments
 
             });
         }
-
-        #endregion Lifecycle events
-
-        #region Events Implementation:
-
         private void NotificationAdapter_NotificationRemoved(object sender, NotificationRemovedEventArgs e)
         {
             Activity?.RunOnUiThread(() =>
@@ -269,7 +266,5 @@ namespace LiveDisplay.Fragments
                     });
             });
         }
-
-        #endregion Events Implementation:
     }
 }

@@ -34,8 +34,6 @@ namespace LiveDisplay.Fragments
         private BitmapDrawable CurrentAlbumArt;
         private string openNotificationId; //Used if the button launch Notification is used, it comes from the current active MusicController instance.
         private readonly ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
-
-        private bool timeoutStarted = false;
         private Handler handler;
         private Runnable runnable;
 
@@ -96,14 +94,7 @@ namespace LiveDisplay.Fragments
         {
             if (e.WidgetName == WidgetTypes.MUSIC_FRAGMENT)
             {
-                if (e.Show)
-                {
-                    ToggleWidgetVisibility(true);
-                }
-                else
-                {
-                    ToggleWidgetVisibility(false);
-                }
+               ToggleWidgetVisibility(e.Show);
             }
         }
         private void ToggleWidgetVisibility(bool visible)
@@ -468,7 +459,7 @@ namespace LiveDisplay.Fragments
                         //Otherwise, the Music Widget can only disappear when the notification is removed. (which is the correct behavior)
                         if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetMethod, "1") == "0")
                         {
-                            //StartTimeout(true); //TODO: make use of Widget publisher
+                            //WidgetStatusPublisher.GetInstance().SetWidgetVisibility(new ShowParameters { Show = true, TimeToShow= 7,  WidgetName = WidgetTypes.MUSIC_FRAGMENT });
                         }
                         MoveSeekbar(false);
 
@@ -478,16 +469,16 @@ namespace LiveDisplay.Fragments
                         SetMediaControlButtonsAvailability(true);
                         btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_pause_white_24dp, 0, 0);
                         playbackState = PlaybackStateCode.Playing;
-                        //StartTimeout(false);
                         MoveSeekbar(true);
 
                         break;
 
                     case PlaybackStateCode.Stopped:
-                        HideMusicWidget();
                         btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_replay_white_24dp, 0, 0);
                         playbackState = PlaybackStateCode.Stopped;
                         MoveSeekbar(false);
+                        ToggleWidgetVisibility(false);
+                        WidgetStatusPublisher.GetInstance().SetWidgetVisibility(new ShowParameters { Show = false, WidgetName = WidgetTypes.MUSIC_FRAGMENT });
                         break;
 
                     case PlaybackStateCode.Buffering:
@@ -584,31 +575,6 @@ namespace LiveDisplay.Fragments
             });
             handler.PostDelayed(runnable, 1000);
         }
-
-        private void StartTimeout(bool start)
-        {
-            if (start == false)
-            {
-                maincontainer?.RemoveCallbacks(HideMusicWidget); //Stop counting.
-                return;
-            }
-            else
-            {
-                if (timeoutStarted == true)
-                {
-                    maincontainer?.RemoveCallbacks(HideMusicWidget);
-                    maincontainer?.PostDelayed(HideMusicWidget, 7000);
-                }
-                //If not, simply wait 7 seconds then hide the notification, in that span of time, the timeout is
-                //marked as Started(true)
-                else
-                {
-                    timeoutStarted = true;
-                    maincontainer?.PostDelayed(HideMusicWidget, 7000);
-                }
-            }
-        }
-
         private void HideMusicWidget()
         {
             if (maincontainer != null)
@@ -617,7 +583,6 @@ namespace LiveDisplay.Fragments
                 {
                     maincontainer.Visibility = ViewStates.Gone;
                 });
-                timeoutStarted = false;
                 WidgetStatusPublisher.GetInstance().SetWidgetVisibility(new ShowParameters { Show = false, WidgetName = WidgetTypes.MUSIC_FRAGMENT });
             }
         }

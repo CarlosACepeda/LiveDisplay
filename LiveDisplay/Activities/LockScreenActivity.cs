@@ -151,13 +151,10 @@
                     Window.DecorView.SetBackgroundColor(Color.Black);
                     return;
                 }
-                if (configurationManager.RetrieveAValue(ConfigurationParameters.DisableWallpaperChangeAnim) == false) //If the animation is not disabled.
-                {
-                    if (ActivityLifecycleHelper.GetInstance().GetActivityState(typeof(LockScreenActivity)) == ActivityStates.Resumed)
-                    {
-                        //Animate only when the activity is visible to the user.
+                if (!configurationManager.RetrieveAValue(ConfigurationParameters.DisableWallpaperChangeAnim) &&
+                ActivityLifecycleHelper.GetInstance().GetActivityState(typeof(LockScreenActivity)) == ActivityStates.Resumed) //If the animation is not disabled.
+                {       //Animate only when the activity is visible to the user.
                         Window.DecorView.Animate().SetDuration(100).Alpha(0.5f);
-                    }
                 }
 
                 if (e.Wallpaper?.Bitmap != null)
