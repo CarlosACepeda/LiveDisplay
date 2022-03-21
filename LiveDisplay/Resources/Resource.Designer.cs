@@ -3613,10 +3613,7 @@ namespace LiveDisplay
 		{
 			
 			// aapt resource value: 0x7F0D0000
-			public const int ic_battery_10_white_18dp = 2131558400;
-			
-			// aapt resource value: 0x7F0D0001
-			public const int ic_launcher_2_dark = 2131558401;
+			public const int ic_launcher_2_dark = 2131558400;
 			
 			static Mipmap()
 			{

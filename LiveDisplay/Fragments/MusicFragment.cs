@@ -575,16 +575,5 @@ namespace LiveDisplay.Fragments
             });
             handler.PostDelayed(runnable, 1000);
         }
-        private void HideMusicWidget()
-        {
-            if (maincontainer != null)
-            {
-                Activity.RunOnUiThread(() =>
-                {
-                    maincontainer.Visibility = ViewStates.Gone;
-                });
-                WidgetStatusPublisher.GetInstance().SetWidgetVisibility(new ShowParameters { Show = false, WidgetName = WidgetTypes.MUSIC_FRAGMENT });
-            }
-        }
     }
 }
