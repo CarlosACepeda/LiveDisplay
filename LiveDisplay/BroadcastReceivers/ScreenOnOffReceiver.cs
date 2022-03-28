@@ -1,7 +1,7 @@
 ﻿using Android.App;
 using Android.Content;
 using LiveDisplay.Misc;
-using LiveDisplay.Servicios;
+using LiveDisplay.Services;
 using System.Threading;
 
 namespace LiveDisplay.BroadcastReceivers
@@ -12,7 +12,6 @@ namespace LiveDisplay.BroadcastReceivers
     public class ScreenOnOffReceiver : BroadcastReceiver
     {
         public static bool IsScreenOn { get; set; } = true;
-        public static bool ScreenTurnedOffWhileInVertical { get; set; } = true; //most of the times when one turns off the phone the same is vertical.
         private ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
 
         public override void OnReceive(Context context, Intent intent)
@@ -46,14 +45,6 @@ namespace LiveDisplay.BroadcastReceivers
                 //Start hidden in Darkness. :$
                 IsScreenOn = false;
 
-                if (AwakeService.isLaidDown == false)
-                {
-                    ScreenTurnedOffWhileInVertical = true;
-                }
-                else
-                {
-                    ScreenTurnedOffWhileInVertical = false;
-                }
 
                 int delaytolockscreen = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.StartLockscreenDelayTime, "0"));
 
@@ -68,7 +59,7 @@ namespace LiveDisplay.BroadcastReceivers
                     {
                         lockScreenIntent.AddFlags(ActivityFlags.NewDocument | ActivityFlags.NoAnimation);
 
-                        if (IsScreenOn == false)
+                        if (!IsScreenOn)
                         {
                             PendingIntent pendingIntent = PendingIntent.GetActivity(Application.Context, 0, lockScreenIntent, 0);
 

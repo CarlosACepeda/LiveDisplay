@@ -18,7 +18,6 @@
   <string name="awakesettings">Awake</string>
   <string name="blacklist">Lista Negra</string>
   <string name="blacklistdesc">No mostrar notificaciones de las apps seleccionadas</string>
-  <string name="blacklisted">En lista negra</string>
   <string name="blackwallpaper">Negro</string>
   <string name="changewallpaper">Cambiar fondo de pantalla</string>
   <string name="changewallpaperappearance">Apariencia del papel tapiz</string>
@@ -35,7 +34,7 @@
   <string name="dialogallowbutton">Permitir</string>
   <string name="dialogcancelbutton">Cancelar</string>
   <string name="dialogcancelledclick">Muy bien, puedes cambiar esta opción después en la sección \'Notificaciones\'</string>
-  <string name="dialogfordeviceaccessdescription">Permisos requeridos: \nBloquear la pantalla: \nControlar cómo y cuando se apaga la pantalla</string>
+  <string name="dialogfordeviceaccessdescription">Permisos requeridos: \nBloquear la pantalla: \nControlar cómo y cuando se apaga la pantalla, no es obligatorio que permitas este permiso, pero cualquier funcionalidad relacionada con Apagar la pantalla no funcionará sin este permiso</string>
   <string name="disable">Desactivar</string>
   <string name="disableartworkupdateonsamealbum">Desactivar actualización del artwork</string>
   <string name="disableartworkupdateonsamealbum_desc">Si la pista cambia y la siguiente pista es del mismo album, ignorar el artwork, ya que es el mismo album</string>
@@ -55,6 +54,7 @@
   <string name="enablenotificationlistener">Acceder a las Notificaciones</string>
   <string name="enablequickreply">Activar la respuesta rápida</string>
   <string name="enablequickreplydesc">Contesta directamente a mensajes desde la notificación como se muestra en Nougat y versiones superiores</string>
+  <string name="enablestorageaccess">Activar el acceso al almacenamiento</string>
   <string name="enabletestsetting">Activar opción de prueba</string>
   <string name="eng">Inglés</string>
   <string name="entercityplaceholder">Introduce una ciudad aquí</string>
@@ -74,12 +74,15 @@
   <string name="hidesystemicons">No mostrar iconos del sistema</string>
   <string name="humidity">Humedad</string>
   <string name="idk">¯\\_(ツ)_/¯</string>
+  <string name="ignore_notification">Ignorar notification entrante</string>
   <string name="immediately">De inmediato</string>
   <string name="inactivetimesettings">Horas inactivas</string>
   <string name="inactivetimesettingsdesc">Desactivar Awake en ciertas horas</string>
+  <string name="itneedsnotificationaccesstowork">Necesitas activar el acceso a notificaciones para que funcione</string>
   <string name="launchnotification">Ir a notificación </string>
   <string name="launchnotification_desc">Ir a la app en lugar de mostrar la notificación</string>
   <string name="listenfordevicemotion">Detectar los movimientos del dispotivo</string>
+  <string name="livedisplayaccess">Acceso de LiveDisplay</string>
   <string name="lockdelay">Bloquear automaticamente</string>
   <string name="lockdelay_desc">Bloquear la pantalla después del tiempo dado</string>
   <string name="lockonboot">Bloquear la pantalla al iniciar</string>
@@ -94,7 +97,7 @@
   <string name="musicwidgetcontrolmethod">Método de control de Música</string>
   <string name="musicwidgetenabled">Activar el Widget de Música</string>
   <string name="never">Nunca</string>
-  <string name="nonallowedtoturnonscreen">No permitido para encender la pantalla</string>
+  <string name="none">Ninguna</string>
   <string name="notavailable">n/a</string>
   <string name="notavailableyet">No disponible...aún.</string>
   <string name="notificationbehaviors">Comportamientos de las notificaciones</string>
@@ -104,10 +107,10 @@
   <string name="ok">Ok</string>
   <string name="onehour">1 Hora</string>
   <string name="opciones">Opciones</string>
-  <string name="partiallyblocked">Solo en la app</string>
   <string name="pickwallpaper">Elige uno</string>
   <string name="placeholder">Inserta una cadena aquí</string>
   <string name="playing_from_template">Desde {0}</string>
+  <string name="remove_notification">Ignorar y remover notificacion</string>
   <string name="rus">Ruso</string>
   <string name="saveweathersettings">Guardar</string>
   <string name="searchappedittexthint">Nombre de la app...</string>
@@ -146,5 +149,4 @@
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">Diseño del icono de esta app!</string>
   <string name="youneeddigitalwellbeingapp">Necesitas la app de Bienestar Digital</string>
-  <string name="enablestorageaccess">Activar el acceso al almacenamiento</string>
 </resources>

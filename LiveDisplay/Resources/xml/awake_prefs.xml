@@ -25,6 +25,20 @@
     <SwitchPreference
       android:key="turnonusermovement?"
       android:title="@string/turnonusermovement"
+      app:iconSpaceReserved="false"
+      android:enabled="false"
+      android:selectable="false">
+    </SwitchPreference>
+    <SwitchPreference
+      android:key="turnoffwheninpocket?"
+      android:title="@string/turnoffwheninpocket"
+      app:iconSpaceReserved="false">
+    </SwitchPreference>
+    <SwitchPreference
+      android:key="turnonwhenoutofpocket?"
+      android:title="@string/turnonwhenoutofpocket"
+      android:enabled="false"
+      android:selectable="false"
       app:iconSpaceReserved="false">
     </SwitchPreference>
     <SwitchPreference

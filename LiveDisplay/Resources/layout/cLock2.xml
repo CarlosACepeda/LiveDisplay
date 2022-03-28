@@ -1,12 +1,12 @@
 <LinearLayout xmlns:a="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
     a:layout_width="match_parent"
-    a:layout_height="match_parent"
+    a:layout_height="@dimen/defaultwidgetheight"
 	a:id="@+id/container"
 	a:orientation="vertical"
 	tools:visibility="visible"
 	a:visibility="invisible"
-    a:gravity="bottom">
+    a:gravity="bottom| center">
 	<!--<LinearLayout
 		a:id="@+id/weatherinfo"
 		tools:visibility="visible"
@@ -93,7 +93,7 @@
         />
 	<TextView
 		tools:text="3 de Septiembre"
-        a:layout_width="match_parent"
+        a:layout_width="wrap_content"
 		a:textSize="20dp"
 		a:paddingLeft="10dp"
         a:layout_height="wrap_content"
@@ -102,13 +102,16 @@
 	<LinearLayout
 		a:paddingLeft="10dp"
 		a:orientation="horizontal"
-        a:layout_width="match_parent"
+        a:layout_width="wrap_content"
         a:layout_height="wrap_content">
 	<ImageView
 		a:contentDescription="This is the battery level"
         a:id="@+id/batteryIcon"
+		a:layout_gravity="center"
+		a:adjustViewBounds="true"
+		a:scaleType="fitCenter"
         a:layout_width="wrap_content"
-        a:layout_height="wrap_content" />
+        a:layout_height="match_parent" />
     <TextView
 		tools:text="75%"
 		a:paddingLeft="10dp"
@@ -120,6 +123,7 @@
 	</LinearLayout>
 	<LinearLayout
 		a:orientation="horizontal"
+		a:gravity="center"
         a:layout_width="match_parent"
         a:layout_height="wrap_content">
 		<TextView

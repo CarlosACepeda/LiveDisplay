@@ -16,7 +16,7 @@
     <AndroidResgenFile>Resources\Resource.Designer.cs</AndroidResgenFile>
     <AndroidResgenClass>Resource</AndroidResgenClass>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <TargetFrameworkVersion>v10.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v11.0</TargetFrameworkVersion>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
@@ -82,13 +82,15 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enums\NotificationBundleKeys.cs" />
+    <Compile Include="Enums\NotificationStyles.cs" />
+    <Compile Include="Fragments\NotificationListFragment.cs" />
     <Compile Include="Fragments\Preferences\WeatherSettingsFragment.cs" />
-    <Compile Include="Servicios\ActivityEvents\ActivityLifecycleHelper.cs" />
+    <Compile Include="Enums\WidgetTypes.cs" />
     <Compile Include="Activities\BackgroundSettingsActivity.cs" />
     <Compile Include="Activities\BlacklistActivity.cs" />
     <Compile Include="Activities\SettingsActivity.cs" />
     <Compile Include="Adapters\AppsToBeBlacklistedAdapter.cs" />
-    <Compile Include="Adapters\FilteredNotificationAdapter.cs" />
     <Compile Include="Adapters\NotificationAdapter.cs" />
     <Compile Include="BroadcastReceivers\AdminReceiver.cs" />
     <Compile Include="BroadcastReceivers\BatteryReceiver.cs" />
@@ -112,51 +114,56 @@
     <Compile Include="Activities\MainActivity.cs" />
     <Compile Include="Activities\LockScreenActivity.cs" />
     <Compile Include="Misc\PackageUtils.cs" />
+    <Compile Include="Models\NotificationGroup.cs" />
+    <Compile Include="Models\NotificationListWorker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
-    <Compile Include="Servicios\AwakeService.cs" />
-    <Compile Include="Servicios\Awake\AwakeHelper.cs" />
-    <Compile Include="Servicios\Battery\BatteryEventArgs\BatteryChangedEventArgs.cs" />
-    <Compile Include="Servicios\Blacklist\Blacklist.cs" />
-    <Compile Include="Servicios\ConfigurationManager.cs" />
-    <Compile Include="Servicios\FloatingNotification\FloatingNotification.cs" />
-    <Compile Include="Servicios\Keyguard\KeyguardHelper.cs" />
-    <Compile Include="Servicios\Music\Jukebox.cs" />
-    <Compile Include="Servicios\Music\MediaEventArgs\MediaActionEventArgs.cs" />
-    <Compile Include="Servicios\Music\MediaEventArgs\MediaMetadataChangedEventArgs.cs" />
-    <Compile Include="Servicios\Music\MediaEventArgs\MediaMetadataChangedKitkatEventArgs.cs" />
-    <Compile Include="Servicios\Music\MediaEventArgs\MediaPlaybackStateChangedEventArgs.cs" />
-    <Compile Include="Servicios\Music\MediaEventArgs\MediaPlaybackStateChangedKitkatEventArgs.cs" />
-    <Compile Include="Servicios\Music\MusicControllerKitkat.cs" />
-    <Compile Include="Servicios\Music\ActiveMediaSessionsListener.cs" />
-    <Compile Include="Servicios\Notificaciones\CatcherHelper.cs" />
-    <Compile Include="Servicios\Notificaciones\CatcherService.cs" />
-    <Compile Include="Servicios\Music\MusicController.cs" />
-    <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationItemClickedEventArgs.cs" />
-    <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationListSizeChangedEventArgs.cs" />
-    <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationRemovedEventArgs.cs" />
-    <Compile Include="Servicios\Notificaciones\NotificationStyle\BigPictureStyleNotification.cs" />
-    <Compile Include="Servicios\Notificaciones\NotificationStyle\MediaStyleNotification.cs" />
-    <Compile Include="Servicios\Notificaciones\NotificationStyle\DefaultStyleNotification.cs" />
-    <Compile Include="Servicios\Notificaciones\NotificationStyle\BigTextStyleNotification.cs" />
-    <Compile Include="Servicios\Notificaciones\NotificationStyle\InboxStyleNotification.cs" />
-    <Compile Include="Servicios\Notificaciones\NotificationStyle\MessagingStyleNotification.cs" />
-    <Compile Include="Servicios\Notificaciones\NotificationStyle\NotificationStyle.cs" />
-    <Compile Include="Servicios\Notificaciones\OpenNotification.cs" />
-    <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationCancelledEventArgsKitkat.cs" />
-    <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationCancelledEventArgsLollipop.cs" />
-    <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationPostedEventArgs.cs" />
-    <Compile Include="Servicios\Notificaciones\NotificationSlave.cs" />
-    <Compile Include="Servicios\Wallpaper\BlurImage.cs" />
-    <Compile Include="Servicios\Wallpaper\CurrentWallpaperClearedEventArgs.cs" />
-    <Compile Include="Servicios\Wallpaper\WallpaperChangedEventArgs.cs" />
-    <Compile Include="Servicios\Wallpaper\WallpaperPosters.cs" />
-    <Compile Include="Servicios\Wallpaper\WallpaperPublisher.cs" />
-    <Compile Include="Servicios\Weather\GrabWeatherJob.cs" />
-    <Compile Include="Servicios\Weather\IconsForWeatherConditions.cs" />
-    <Compile Include="Servicios\Weather\MeasurementUnits.cs" />
-    <Compile Include="Servicios\Weather\OpenWeatherMapClient.cs" />
-    <Compile Include="Servicios\Widget\WidgetStatusPublisher.cs" />
+    <Compile Include="Services\ActivityEvents\ActivityLifecycleHelper.cs" />
+    <Compile Include="Services\AwakeService.cs" />
+    <Compile Include="Services\Awake\AwakeHelper.cs" />
+    <Compile Include="Services\Battery\BatteryEventArgs\BatteryChangedEventArgs.cs" />
+    <Compile Include="Services\Blacklist\Blacklist.cs" />
+    <Compile Include="Services\ConfigurationManager.cs" />
+    <Compile Include="Services\Keyguard\KeyguardHelper.cs" />
+    <Compile Include="Services\Music\ActiveMediaSessionsListener.cs" />
+    <Compile Include="Services\Music\Jukebox.cs" />
+    <Compile Include="Services\Music\MediaEventArgs\MediaActionEventArgs.cs" />
+    <Compile Include="Services\Music\MediaEventArgs\MediaMetadataChangedEventArgs.cs" />
+    <Compile Include="Services\Music\MediaEventArgs\MediaMetadataChangedKitkatEventArgs.cs" />
+    <Compile Include="Services\Music\MediaEventArgs\MediaPlaybackStateChangedEventArgs.cs" />
+    <Compile Include="Services\Music\MediaEventArgs\MediaPlaybackStateChangedKitkatEventArgs.cs" />
+    <Compile Include="Services\Music\MusicController.cs" />
+    <Compile Include="Services\Music\MusicControllerKitkat.cs" />
+    <Compile Include="Services\Notifications\NotificationStyle\DecoratedCustomViewStyle.cs" />
+    <Compile Include="Workers\NotificationHijackerWorker.cs" />
+    <Compile Include="Services\Notifications\NotificationHijackerService.cs" />
+    <Compile Include="Services\Notifications\NotificationEventArgs\NotificationCancelledEventArgsKitkat.cs" />
+    <Compile Include="Services\Notifications\NotificationEventArgs\NotificationCancelledEventArgsLollipop.cs" />
+    <Compile Include="Services\Notifications\NotificationEventArgs\NotificationItemClickedEventArgs.cs" />
+    <Compile Include="Services\Notifications\NotificationEventArgs\NotificationListSizeChangedEventArgs.cs" />
+    <Compile Include="Services\Notifications\NotificationEventArgs\NotificationPostedEventArgs.cs" />
+    <Compile Include="Services\Notifications\NotificationEventArgs\NotificationRemovedEventArgs.cs" />
+    <Compile Include="Services\Notifications\NotificationSlave.cs" />
+    <Compile Include="Services\Notifications\NotificationStyle\BigPictureStyleNotification.cs" />
+    <Compile Include="Services\Notifications\NotificationStyle\BigTextStyleNotification.cs" />
+    <Compile Include="Services\Notifications\NotificationStyle\DefaultStyleNotification.cs" />
+    <Compile Include="Services\Notifications\NotificationStyle\InboxStyleNotification.cs" />
+    <Compile Include="Services\Notifications\NotificationStyle\MediaStyleNotification.cs" />
+    <Compile Include="Services\Notifications\NotificationStyle\MessagingStyleNotification.cs" />
+    <Compile Include="Services\Notifications\NotificationStyle\NotificationStyle.cs" />
+    <Compile Include="Models\OpenMessage.cs" />
+    <Compile Include="Models\OpenNotification.cs" />
+    <Compile Include="Models\OpenPerson.cs" />
+    <Compile Include="Services\Wallpaper\BlurImage.cs" />
+    <Compile Include="Services\Wallpaper\CurrentWallpaperClearedEventArgs.cs" />
+    <Compile Include="Services\Wallpaper\WallpaperChangedEventArgs.cs" />
+    <Compile Include="Services\Wallpaper\WallpaperPosters.cs" />
+    <Compile Include="Services\Wallpaper\WallpaperPublisher.cs" />
+    <Compile Include="Services\Weather\GrabWeatherJob.cs" />
+    <Compile Include="Services\Weather\IconsForWeatherConditions.cs" />
+    <Compile Include="Services\Weather\MeasurementUnits.cs" />
+    <Compile Include="Services\Weather\OpenWeatherMapClient.cs" />
+    <Compile Include="Services\Widget\WidgetStatusPublisher.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\anim\fade_in.xml">
@@ -359,7 +366,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\MusicPlayer2.axml">
+    <AndroidResource Include="Resources\layout\MusicPlayer2.xml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
@@ -444,7 +451,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Resources\drawable\" />
+    <AndroidResource Include="Resources\layout\test_group_notif_list.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-hdpi\baseline_phone_white_48.png" />
@@ -601,16 +610,7 @@
     <AndroidResource Include="Resources\layout\FloatingNotification.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\NotificationFrag.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\layout\NotificationList.xml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\layout\LockScreen2.xml">
-      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
@@ -640,6 +640,287 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-xxxhdpi\ic_replay_white_24dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\test_lck.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\test_rclv_notif_list.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\test_notif_view.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\circle.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\actions.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\ic_previous_notification_24dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\ic_previous_notification_24dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_previous_notification_24dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_previous_notification_24dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_previous_notification_24dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\ic_next_notification_24dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\ic_next_notification_24dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_next_notification_24dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_next_notification_24dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_next_notification_24dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\ic_collapse_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\ic_collapse_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_collapse_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_collapse_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_collapse_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_battery_10.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\ic_battery_10_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\ic_battery_10_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_battery_10_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_battery_10_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_battery_10_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\ic_battery_charging_10_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\ic_battery_charging_10_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_battery_charging_10_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_battery_charging_10_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_battery_charging_10_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\ic_battery_20_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\ic_battery_20_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_battery_20_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_battery_20_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_battery_20_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\ic_battery_charging_20_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\ic_battery_charging_20_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_battery_charging_20_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_battery_charging_20_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_battery_charging_20_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\ic_battery_40_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\ic_battery_40_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_battery_40_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_battery_40_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_battery_40_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\ic_battery_charging_40_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\ic_battery_charging_40_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_battery_charging_40_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_battery_charging_40_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_battery_charging_40_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\ic_battery_60_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\ic_battery_60_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_battery_60_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_battery_60_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_battery_60_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\ic_battery_charging_60_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\ic_battery_charging_60_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_battery_charging_60_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_battery_charging_60_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_battery_charging_60_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\ic_battery_80_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\ic_battery_80_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_battery_80_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_battery_80_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_battery_80_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\ic_battery_charging_80_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\ic_battery_charging_80_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_battery_charging_80_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_battery_charging_80_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_battery_charging_80_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\ic_battery_90_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\ic_battery_90_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_battery_90_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_battery_90_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_battery_90_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\ic_battery_charging_90_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\ic_battery_charging_90_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_battery_charging_90_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_battery_charging_90_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_battery_charging_90_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\ic_battery_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\ic_battery_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_battery_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_battery_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_battery_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\ic_battery_charging_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-mdpi\ic_battery_charging_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_battery_charging_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_battery_charging_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\ic_battery_charging_white_18dp.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

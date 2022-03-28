@@ -7,14 +7,16 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Java.Lang;
+using LiveDisplay.Adapters;
+using LiveDisplay.Enums;
 using LiveDisplay.Misc;
-using LiveDisplay.Servicios;
-using LiveDisplay.Servicios.Keyguard;
-using LiveDisplay.Servicios.Music;
-using LiveDisplay.Servicios.Music.MediaEventArgs;
-using LiveDisplay.Servicios.Notificaciones;
-using LiveDisplay.Servicios.Wallpaper;
-using LiveDisplay.Servicios.Widget;
+using LiveDisplay.Services;
+using LiveDisplay.Services.Keyguard;
+using LiveDisplay.Services.Music;
+using LiveDisplay.Services.Music.MediaEventArgs;
+using LiveDisplay.Services.Notifications;
+using LiveDisplay.Services.Wallpaper;
+using LiveDisplay.Services.Widget;
 using System;
 using System.Threading;
 using Fragment = AndroidX.Fragment.App.Fragment;
@@ -30,11 +32,8 @@ namespace LiveDisplay.Fragments
         private PlaybackStateCode playbackState;
         private PendingIntent activityIntent; //A Pending intent if available to start the activity associated with this music fragent.
         private BitmapDrawable CurrentAlbumArt;
-        private string openNotificationId; //Used if the button launch Notification is used.
+        private string openNotificationId; //Used if the button launch Notification is used, it comes from the current active MusicController instance.
         private readonly ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
-
-        private bool timeoutStarted = false;
-        private bool initForFirstTime = true;
         private Handler handler;
         private Runnable runnable;
 
@@ -44,53 +43,76 @@ namespace LiveDisplay.Fragments
         {
             handler = new Handler();
             runnable = new Runnable(MoveSeekbar);
-
-            WallpaperPublisher.CurrentWallpaperCleared += WallpaperPublisher_CurrentWallpaperHasBeenCleared;
-            WidgetStatusPublisher.OnWidgetStatusChanged += WidgetStatusPublisher_OnWidgetStatusChanged;
-
             base.OnCreate(savedInstanceState);
+
+            WidgetStatusPublisher.GetInstance().OnWidgetStatusChanged += WidgetStatusPublisher_OnWidgetStatusChanged;
+            WallpaperPublisher.CurrentWallpaperCleared += WallpaperPublisher_CurrentWallpaperHasBeenCleared;
+            NotificationAdapter.NotificationPosted += CatcherHelper_NotificationPosted;
+            NotificationAdapter.NotificationRemoved += CatcherHelper_NotificationRemoved;
+
+        }
+
+        private void CatcherHelper_NotificationRemoved(object sender, Services.Notifications.NotificationEventArgs.NotificationRemovedEventArgs e)
+        {
+            Activity?.RunOnUiThread(() =>
+            {
+                if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetMethod, "0") == "1")
+                {
+                    if (e.OpenNotification.RepresentsMediaPlaying)
+                    {
+                        ThreadPool.QueueUserWorkItem(m =>
+                        {
+                            MusicController.StopPlayback(e.OpenNotification.MediaSessionToken);
+                        } //Returns true if the Playback was stopped succesfully (Sometimes it wont work)
+                        );
+                    }
+                }
+                WidgetStatusPublisher.GetInstance().SetWidgetVisibility(
+                    new ShowParameters
+                    { Show = false, WidgetName = WidgetTypes.MUSIC_FRAGMENT });
+
+            });
+        }
+
+        private void CatcherHelper_NotificationPosted(object sender, Services.Notifications.NotificationEventArgs.NotificationPostedEventArgs e)
+        {
+            if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetMethod, "0") == "1" && //1:"Use a notification to spawn the Music Widget"
+            e.NotificationPosted.RepresentsMediaPlaying)
+            { 
+                    MusicController.StartPlayback(e.NotificationPosted.MediaSessionToken, 
+                        e.NotificationPosted.GetCustomId);
+
+                    //Also start the Widget to control the playback.
+                    WidgetStatusPublisher.GetInstance().SetWidgetVisibility(
+                        new ShowParameters 
+                        { Show = true, WidgetName = WidgetTypes.MUSIC_FRAGMENT, TimeToShow= ShowParameters.ACTIVE_PERMANENTLY });
+                
+            }
         }
 
         private void WidgetStatusPublisher_OnWidgetStatusChanged(object sender, WidgetStatusEventArgs e)
         {
-            if (e.WidgetName == "MusicFragment")
+            if (e.WidgetName == WidgetTypes.MUSIC_FRAGMENT)
             {
-                if (e.Show)
+               ToggleWidgetVisibility(e.Show);
+            }
+        }
+        private void ToggleWidgetVisibility(bool visible)
+        {
+            Activity.RunOnUiThread(() => {
+                if (maincontainer != null)
                 {
-                    if (maincontainer != null)
+                    if (visible)
                     {
-                        if (initForFirstTime == true)
-                        {
-                            RetrieveMediaInformation(); //Retrieving media information is when the music widget has never been used before.
-                            //so it needs information to fill its views.
-                            initForFirstTime = false;
-                        }
                         maincontainer.Visibility = ViewStates.Visible;
+                        RetrieveMediaInformation();
                     }
-                }
-                else
-                {
-                    if (maincontainer != null)
+                    else
                     {
                         maincontainer.Visibility = ViewStates.Invisible;
-                        //Also release Wallpaper, if holded.
-                        WallpaperPublisher.ReleaseWallpaper();
                     }
                 }
-            }
-            if (e.WidgetName == "NotificationFragment")
-            {
-                if (e.Show)
-                {
-                    if (maincontainer != null)
-                        maincontainer.Visibility = ViewStates.Invisible;
-                }
-                else
-                {
-                    if (maincontainer != null && WidgetStatusPublisher.CurrentActiveWidget == "MusicFragment")
-                        maincontainer.Visibility = ViewStates.Visible;
-                }
-            }
+            });
         }
 
         private void WallpaperPublisher_CurrentWallpaperHasBeenCleared(object sender, CurrentWallpaperClearedEventArgs e)
@@ -126,25 +148,15 @@ namespace LiveDisplay.Fragments
         {
             UnbindMusicControllerEvents();
             WallpaperPublisher.ReleaseWallpaper();
+            ToggleWidgetVisibility(false);
+            WidgetStatusPublisher.GetInstance().SetWidgetVisibility(
+                        new ShowParameters
+                        { Show = false, WidgetName = WidgetTypes.MUSIC_FRAGMENT });
 
             UnbindViewEvents();
             UnbindViews();
 
             base.OnDestroyView();
-        }
-
-        public override void OnPause()
-        {
-            base.OnPause();
-        }
-
-        public override void OnResume()
-        {
-            if (WidgetStatusPublisher.CurrentActiveWidget == "MusicFragment" && initForFirstTime == true)
-            {
-                WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = true, WidgetName = "MusicFragment", Active = true });
-            }
-            base.OnResume();
         }
 
         private void UnbindMusicControllerEvents()
@@ -158,14 +170,11 @@ namespace LiveDisplay.Fragments
 
         public override void OnDestroy()
         {
-            WidgetStatusPublisher.OnWidgetStatusChanged -= WidgetStatusPublisher_OnWidgetStatusChanged;
+            WidgetStatusPublisher.GetInstance().OnWidgetStatusChanged -= WidgetStatusPublisher_OnWidgetStatusChanged;
             tvAlbum = null;
             tvArtist = null;
             tvTitle = null;
             skbSeekSongTime = null;
-            bool isWidgetActive = WidgetStatusPublisher.CurrentActiveWidget == "MusicFragment";
-            WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "MusicFragment", Active = isWidgetActive });
-            initForFirstTime = false;
             base.OnDestroy();
         }
 
@@ -205,19 +214,18 @@ namespace LiveDisplay.Fragments
             if (configurationManager.RetrieveAValue(ConfigurationParameters.LaunchNotification))
             {
                 KeyguardHelper.RequestDismissKeyguard(Activity);
-                CatcherHelper.GetOpenNotification(openNotificationId)?.ClickNotification();
+                NotificationHijackerWorker.ClickNotification(NotificationHijackerWorker.GetOpenNotification(openNotificationId));
             }
             else
             {
                 if (MusicController.MediaSessionAssociatedWThisNotification(openNotificationId))
                 {
-                    WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs
+                    WidgetStatusPublisher.GetInstance().SetWidgetVisibility(new ShowParameters
                     {
-                        Active = false,
                         Show = true,
-                        WidgetName = "NotificationFragment",
-                        WidgetAskingForShowing = "MusicFragment",
-                        AdditionalInfo = openNotificationId
+                        WidgetName = WidgetTypes.NOTIFICATION_FRAGMENT,
+                        AdditionalInfo = openNotificationId,
+                        TimeToShow= ShowParameters.WIDGET_MAY_DECIDE,
                     });
                 }
             }
@@ -225,11 +233,10 @@ namespace LiveDisplay.Fragments
 
         private void MusicPlayerContainer_Click(object sender, EventArgs e)
         {
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-                if (KeyguardHelper.IsDeviceCurrentlyLocked())
-                {
-                    KeyguardHelper.RequestDismissKeyguard(Activity);
-                }
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.O && KeyguardHelper.IsDeviceCurrentlyLocked())
+            {
+                KeyguardHelper.RequestDismissKeyguard(Activity);
+            }
 
             try { activityIntent.Send(); }
             catch { Log.Info("LiveDisplay", "Failed to send the Music pending intent"); }
@@ -390,7 +397,6 @@ namespace LiveDisplay.Fragments
                         BlurLevel = (short)blurLevel,
                         WallpaperPoster = WallpaperPoster.MusicPlayer //We must nutify WallpaperPublisher who is posting the wallpaper, otherwise it'll be ignored.
                     });
-                GC.Collect(0);
             });
         }
 
@@ -453,7 +459,7 @@ namespace LiveDisplay.Fragments
                         //Otherwise, the Music Widget can only disappear when the notification is removed. (which is the correct behavior)
                         if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetMethod, "1") == "0")
                         {
-                            StartTimeout(true);
+                            //WidgetStatusPublisher.GetInstance().SetWidgetVisibility(new ShowParameters { Show = true, TimeToShow= 7,  WidgetName = WidgetTypes.MUSIC_FRAGMENT });
                         }
                         MoveSeekbar(false);
 
@@ -463,16 +469,16 @@ namespace LiveDisplay.Fragments
                         SetMediaControlButtonsAvailability(true);
                         btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_pause_white_24dp, 0, 0);
                         playbackState = PlaybackStateCode.Playing;
-                        StartTimeout(false);
                         MoveSeekbar(true);
 
                         break;
 
                     case PlaybackStateCode.Stopped:
-                        //HideMusicWidget();
                         btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_replay_white_24dp, 0, 0);
                         playbackState = PlaybackStateCode.Stopped;
                         MoveSeekbar(false);
+                        ToggleWidgetVisibility(false);
+                        WidgetStatusPublisher.GetInstance().SetWidgetVisibility(new ShowParameters { Show = false, WidgetName = WidgetTypes.MUSIC_FRAGMENT });
                         break;
 
                     case PlaybackStateCode.Buffering:
@@ -568,43 +574,6 @@ namespace LiveDisplay.Fragments
                 }
             });
             handler.PostDelayed(runnable, 1000);
-        }
-
-        private void StartTimeout(bool start)
-        {
-            if (start == false)
-            {
-                maincontainer?.RemoveCallbacks(HideMusicWidget); //Stop counting.
-                return;
-            }
-            else
-            {
-                if (timeoutStarted == true)
-                {
-                    maincontainer?.RemoveCallbacks(HideMusicWidget);
-                    maincontainer?.PostDelayed(HideMusicWidget, 7000);
-                }
-                //If not, simply wait 7 seconds then hide the notification, in that span of time, the timeout is
-                //marked as Started(true)
-                else
-                {
-                    timeoutStarted = true;
-                    maincontainer?.PostDelayed(HideMusicWidget, 7000);
-                }
-            }
-        }
-
-        private void HideMusicWidget()
-        {
-            if (maincontainer != null)
-            {
-                Activity.RunOnUiThread(() =>
-                {
-                    maincontainer.Visibility = ViewStates.Gone;
-                });
-                timeoutStarted = false;
-                WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "MusicFragment", Active = false });
-            }
         }
     }
 }

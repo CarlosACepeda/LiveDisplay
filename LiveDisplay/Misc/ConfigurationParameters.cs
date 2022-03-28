@@ -1,6 +1,6 @@
 ﻿namespace LiveDisplay.Misc
 {
-    internal sealed class ConfigurationParameters
+    internal static class ConfigurationParameters
     {
         public const string ImagePath = "imagePath";
         public const string ChangeWallpaper = "changewallpaper";
@@ -35,6 +35,8 @@
         public const string EnableQuickReply = "enablequickreply?";
         public const string ListenForDeviceMotion = "listenfordevicemotion?";
         public const string TurnOnNewNotification = "turnonnewnotification?";
+        public const string TurnOffWhenInPocket = "turnoffwheninpocket?";
+        public const string TurnOnWhenInPocket = "turnonwhenoutofpocket?";
         public const string AwakeCausesBlackWallpaper = "awakecausesblackwallpaper?";
         public const string StartSleepTime = "startsleeptime";
         public const string FinishSleepTime = "finishsleeptime";
@@ -62,5 +64,6 @@
         //By default it is the clock. (possible values: "clock", "music", "notification")
         //When there's not an active widget.
         public const string StartingWidget = "clock";
+        public const string LastActiveWidget = "lastactivewidget";
     }
 }
