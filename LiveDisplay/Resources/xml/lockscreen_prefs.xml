@@ -3,11 +3,11 @@
                   xmlns:app="http://schemas.android.com/apk/res-auto">
   <PreferenceCategory android:title="@string/lockscreensettings"
                       app:iconSpaceReserved="false">
-    <SwitchPreference
+    <!--<SwitchPreference
       android:key="testenabled?"
       android:summary="@string/idk"
       android:title="@string/enabletestsetting"
-      app:iconSpaceReserved="false" />
+      app:iconSpaceReserved="false" />-->
     <SwitchPreference
       android:defaultValue="true"
       android:key="lockonboot?"
