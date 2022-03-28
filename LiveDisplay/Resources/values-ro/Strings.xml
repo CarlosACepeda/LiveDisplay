@@ -13,7 +13,6 @@
   <string name="awakecausesblackwall">Ecran rămâne negru</string>
   <string name="awakecausesblackwall_desc">Ecran nu arăta nici unul tapet</string>
   <string name="blacklist">Listă Neagră</string>
-  <string name="blacklisted">În lista neagră</string>
   <string name="blackwallpaper">Negru</string>
   <string name="changewallpaper">Schimbă fundalul ecranului</string>
   <string name="changewallpaperappearance">Aspect tapetului</string>
@@ -72,6 +71,7 @@
   <string name="musicwidgetcontrolmethod">Metodă de control a Muzicii</string>
   <string name="musicwidgetenabled">Activează Widget de Muzică</string>
   <string name="never">Niciodată</string>
+  <string name="none">Niciuna</string>
   <string name="notavailable">n/a</string>
   <string name="notavailableyet">Nu este disponibil încă ...</string>
   <string name="notificationbehaviors">Comportament de notificari</string>
@@ -79,7 +79,6 @@
   <string name="now_playing">Se redă</string>
   <string name="onehour">1 oră</string>
   <string name="opciones">Opțiuni</string>
-  <string name="partiallyblocked">Numai la app</string>
   <string name="pickwallpaper">Alege un</string>
   <string name="playing_from_template">de la {0}</string>
   <string name="rus">Rusă</string>

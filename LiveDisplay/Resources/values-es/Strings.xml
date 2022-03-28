@@ -18,7 +18,6 @@
   <string name="awakesettings">Awake</string>
   <string name="blacklist">Lista Negra</string>
   <string name="blacklistdesc">No mostrar notificaciones de las apps seleccionadas</string>
-  <string name="blacklisted">En lista negra</string>
   <string name="blackwallpaper">Negro</string>
   <string name="changewallpaper">Cambiar fondo de pantalla</string>
   <string name="changewallpaperappearance">Apariencia del papel tapiz</string>
@@ -75,6 +74,7 @@
   <string name="hidesystemicons">No mostrar iconos del sistema</string>
   <string name="humidity">Humedad</string>
   <string name="idk">¯\\_(ツ)_/¯</string>
+  <string name="ignore_notification">Ignorar notification entrante</string>
   <string name="immediately">De inmediato</string>
   <string name="inactivetimesettings">Horas inactivas</string>
   <string name="inactivetimesettingsdesc">Desactivar Awake en ciertas horas</string>
@@ -97,7 +97,7 @@
   <string name="musicwidgetcontrolmethod">Método de control de Música</string>
   <string name="musicwidgetenabled">Activar el Widget de Música</string>
   <string name="never">Nunca</string>
-  <string name="nonallowedtoturnonscreen">No permitido para encender la pantalla</string>
+  <string name="none">Ninguna</string>
   <string name="notavailable">n/a</string>
   <string name="notavailableyet">No disponible...aún.</string>
   <string name="notificationbehaviors">Comportamientos de las notificaciones</string>
@@ -107,10 +107,10 @@
   <string name="ok">Ok</string>
   <string name="onehour">1 Hora</string>
   <string name="opciones">Opciones</string>
-  <string name="partiallyblocked">Solo en la app</string>
   <string name="pickwallpaper">Elige uno</string>
   <string name="placeholder">Inserta una cadena aquí</string>
   <string name="playing_from_template">Desde {0}</string>
+  <string name="remove_notification">Ignorar y remover notificacion</string>
   <string name="rus">Ruso</string>
   <string name="saveweathersettings">Guardar</string>
   <string name="searchappedittexthint">Nombre de la app...</string>

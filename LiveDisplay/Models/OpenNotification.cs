@@ -534,12 +534,7 @@ namespace LiveDisplay.Models
 
         public string ApplicationPackage =>
              statusbarnotification.PackageName;
-        
 
-        private NotificationRelevance GetRelevance()
-        {
-            return NotificationRelevance.DefaultRelevance;
-        }
     }
 
     public class OpenAction : Java.Lang.Object

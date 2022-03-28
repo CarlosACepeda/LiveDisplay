@@ -14,10 +14,9 @@ namespace LiveDisplay.Adapters
 {
     internal class AppsToBeBlacklistedAdapter : RecyclerView.Adapter
     {
-        private List<PackageInfo> items;
-        private int selectedItem = -1;
+        private readonly List<PackageInfo> items;
         private string currentSelectedAppPackage = "";
-        private LevelsOfAppBlocking levels;
+        private LevelsOfAppBlocking level;
 
         public AppsToBeBlacklistedAdapter(List<PackageInfo> listofapppackages)
         {
@@ -31,14 +30,12 @@ namespace LiveDisplay.Adapters
             return new AppsToBeBlacklistedAdapterViewHolder(itemView, App_Click);
         }
 
-        public override void OnBindViewHolder(RecyclerView.ViewHolder viewHolder, int position)
+        public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
-            selectedItem = position;
-
             // Replace the contents of the view with that element
-            var holder = viewHolder as AppsToBeBlacklistedAdapterViewHolder;
-            holder.App.Text = PackageUtils.GetTheAppName(items[position].PackageName);
-            holder.App.SetTag(Resource.String.defaulttag, items[position].PackageName);
+            var viewholder = holder as AppsToBeBlacklistedAdapterViewHolder;
+            viewholder.App.Text = PackageUtils.GetTheAppName(items[position].PackageName);
+            viewholder.App.SetTag(Resource.String.defaulttag, items[position].PackageName);
         }
 
         private void App_Click(AppClickedEventArgs e)
@@ -48,93 +45,45 @@ namespace LiveDisplay.Adapters
             using (AlertDialog.Builder builder = new AlertDialog.Builder(textView.Context))
             {
                 builder.SetTitle(textView.Text);
-                builder.SetMultiChoiceItems(new string[] { textView.Context.GetString(Resource.String.blacklisted), textView.Context.GetString(Resource.String.partiallyblocked), textView.Context.GetString(Resource.String.nonallowedtoturnonscreen) }, GetLevelOfBlocking(currentSelectedAppPackage), DialogMultichoiceClick);
-                builder.SetPositiveButton("Ok", OnDialogPositiveButtonEventArgs);
+                builder.SetSingleChoiceItems(new string[] {textView.Context.GetString(Resource.String.none), textView.Context.GetString(Resource.String.ignore_notification), 
+                    textView.Context.GetString(Resource.String.remove_notification) }, GetLevelOfBlocking(currentSelectedAppPackage) , DialogChoiceClick);
+                builder.SetPositiveButton(textView.Context.GetString(Resource.String.ok), OnDialogPositiveButtonEventArgs);
 
                 builder.Create();
                 builder.Show();
             }
         }
 
-        private void DialogMultichoiceClick(object sender, DialogMultiChoiceClickEventArgs e)
+        private void DialogChoiceClick(object sender, DialogClickEventArgs e)
         {
             switch (e.Which)
             {
-                case 0: //0 is 'Blacklisted'
-                    if (e.IsChecked)
-                        levels |= LevelsOfAppBlocking.Blacklisted;
-                    else
-                    {
-                        levels &= ~LevelsOfAppBlocking.Blacklisted;
-                    }
-
+                case 0:
+                    level = LevelsOfAppBlocking.None;
                     break;
-
-                case 1: //1 is 'Only blocked in the app'
-                    if (e.IsChecked)
-                        levels |= LevelsOfAppBlocking.BlockInAppOnly;
-                    else
-                    {
-                        levels &= ~LevelsOfAppBlocking.BlockInAppOnly;
-                    }
+                case 1: 
+                    level = LevelsOfAppBlocking.Ignore;
                     break;
-
-                case 2: //2 is Totally Blocked
-                    if (e.IsChecked)
-                        levels |= LevelsOfAppBlocking.NonAllowedToTurnScreenOn;
-                    else
-                    {
-                        levels &= ~LevelsOfAppBlocking.NonAllowedToTurnScreenOn;
-                    }
+                case 2:
+                    level = LevelsOfAppBlocking.Remove;
                     break;
             }
         }
 
-        private bool[] GetLevelOfBlocking(string forWhichApp)
+        private int GetLevelOfBlocking(string forWhichApp)
         {
-            bool blacklisted = false;
-            bool nonallowedtoturnscreenon = false;
-            bool onlyremovesystem = false;
             using (ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default))
             {
                 var flag = configurationManager.RetrieveAValue(forWhichApp, 0);
-
-                switch ((LevelsOfAppBlocking)flag)
-                {
-                    case LevelsOfAppBlocking.Default:
-                        //the booleans are alredy false.
-                        break;
-
-                    case LevelsOfAppBlocking.Blacklisted:
-                        blacklisted = true;
-                        break;
-
-                    case LevelsOfAppBlocking.NonAllowedToTurnScreenOn:
-                        nonallowedtoturnscreenon = true;
-                        break;
-
-                    case LevelsOfAppBlocking.BlockInAppOnly:
-                        onlyremovesystem = true;
-                        break;
-
-                    case LevelsOfAppBlocking.TotallyBlocked:
-                        onlyremovesystem = true;
-                        blacklisted = true;
-                        nonallowedtoturnscreenon = true;
-                        break;
-
-                    default:
-                        break;
-                }
+                return flag;
             }
-            return new bool[3] { blacklisted, onlyremovesystem, nonallowedtoturnscreenon };
         }
 
         private void OnDialogPositiveButtonEventArgs(object sender, DialogClickEventArgs e)
         {
             using (ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default))
             {
-                configurationManager.SaveAValue(currentSelectedAppPackage, (int)levels);
+                configurationManager.SaveAValue(currentSelectedAppPackage, (int)level);
             }
         }
 

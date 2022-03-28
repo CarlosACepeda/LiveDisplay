@@ -52,17 +52,10 @@ namespace LiveDisplay.Services.Notifications
 
             var blockingstatus = Blacklist.ReturnBlockLevel(sbn.ApplicationPackage);
 
-            if (!blockingstatus.HasFlag(LevelsOfAppBlocking.Blacklisted))
+            if (!blockingstatus.HasFlag(LevelsOfAppBlocking.Remove))
             {
-                if (!blockingstatus.HasFlag(LevelsOfAppBlocking.BlockInAppOnly))
+                if (!blockingstatus.HasFlag(LevelsOfAppBlocking.Ignore))
                 {
-                    bool causesWakeUp;
-                    if (sbn.NotificationPriority >= (int)NotificationPriority.Default) //Solves a issue where non important notifications also turn on screen.
-                        //anyway this is a hotfix, a better method shoudl be used to improve the blacklist/the importance of notifications.
-                        causesWakeUp = true;
-                    else
-                        causesWakeUp = false;
-
                     NotificationAdapter.InsertIntoList(sbn);
                 }
             }
