@@ -26,7 +26,7 @@ namespace LiveDisplay.Fragments
     public class MusicFragment : Fragment
     {
         private TextView tvTitle, tvArtist, tvAlbum, sourceApp, playbackstatus;
-        private Button btnSkipPrevious, btnPlayPause, btnSkipNext, btnLaunchNotification;
+        private ImageButton btnSkipPrevious, btnPlayPause, btnSkipNext, btnLaunchNotification;
         private LinearLayout maincontainer;
         private SeekBar skbSeekSongTime;
         private PlaybackStateCode playbackState;
@@ -352,20 +352,20 @@ namespace LiveDisplay.Fragments
                 switch (e.PlaybackState)
                 {
                     case RemoteControlPlayState.Paused:
-                        btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
+                        btnPlayPause.Background =Resources.GetDrawable(Resource.Drawable.ic_play_arrow_white_24dp, Context.Theme);
                         playbackState = PlaybackStateCode.Paused;
                         MoveSeekbar(false);
 
                         break;
 
                     case RemoteControlPlayState.Playing:
-                        btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_pause_white_24dp, 0, 0);
+                        btnPlayPause.Background = Resources.GetDrawable(Resource.Drawable.ic_pause_white_24dp, Context.Theme);
                         playbackState = PlaybackStateCode.Playing;
                         MoveSeekbar(true);
                         break;
 
                     case RemoteControlPlayState.Stopped:
-                        btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_replay_white_24dp, 0, 0);
+                        btnPlayPause.Background = Resources.GetDrawable(Resource.Drawable.ic_replay_white_24dp, Context.Theme);
                         playbackState = PlaybackStateCode.Stopped;
                         MoveSeekbar(false);
                         break;
@@ -453,7 +453,7 @@ namespace LiveDisplay.Fragments
                 {
                     case PlaybackStateCode.Paused:
                         SetMediaControlButtonsAvailability(true);
-                        btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_play_arrow_white_24dp, 0, 0);
+                        btnPlayPause.Background = Resources.GetDrawable(Resource.Drawable.ic_play_arrow_white_24dp, Context.Theme);
                         playbackState = PlaybackStateCode.Paused;
                         //Start timeout to hide the MusicFragment (but only if the music method chosen is 'Pick a MediaSession' (0)
                         //Otherwise, the Music Widget can only disappear when the notification is removed. (which is the correct behavior)
@@ -467,14 +467,14 @@ namespace LiveDisplay.Fragments
 
                     case PlaybackStateCode.Playing:
                         SetMediaControlButtonsAvailability(true);
-                        btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_pause_white_24dp, 0, 0);
+                        btnPlayPause.Background = Resources.GetDrawable(Resource.Drawable.ic_pause_white_24dp, Context.Theme);
                         playbackState = PlaybackStateCode.Playing;
                         MoveSeekbar(true);
 
                         break;
 
                     case PlaybackStateCode.Stopped:
-                        btnPlayPause.SetCompoundDrawablesRelativeWithIntrinsicBounds(0, Resource.Drawable.ic_replay_white_24dp, 0, 0);
+                        btnPlayPause.Background = Resources.GetDrawable(Resource.Drawable.ic_replay_white_24dp, Context.Theme);
                         playbackState = PlaybackStateCode.Stopped;
                         MoveSeekbar(false);
                         ToggleWidgetVisibility(false);
@@ -512,10 +512,10 @@ namespace LiveDisplay.Fragments
             sourceApp = view.FindViewById<TextView>(Resource.Id.sourceapp);
             playbackstatus = view.FindViewById<TextView>(Resource.Id.playbackstatus);
 
-            btnSkipPrevious = view.FindViewById<Button>(Resource.Id.btnMediaPrevious);
-            btnPlayPause = view.FindViewById<Button>(Resource.Id.btnMediaPlayPlause);
-            btnSkipNext = view.FindViewById<Button>(Resource.Id.btnMediaNext);
-            btnLaunchNotification = view.FindViewById<Button>(Resource.Id.btnLaunchNotification);
+            btnSkipPrevious = view.FindViewById<ImageButton>(Resource.Id.btnMediaPrevious);
+            btnPlayPause = view.FindViewById<ImageButton>(Resource.Id.btnMediaPlayPlause);
+            btnSkipNext = view.FindViewById<ImageButton>(Resource.Id.btnMediaNext);
+            btnLaunchNotification = view.FindViewById<ImageButton>(Resource.Id.btnLaunchNotification);
 
             skbSeekSongTime = view.FindViewById<SeekBar>(Resource.Id.seeksongTime);
 
