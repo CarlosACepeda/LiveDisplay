@@ -70,27 +70,34 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:id="@+id/mediaControls">
-        <Button
-            android:drawableTop="@drawable/ic_skip_previous_white_24dp"
+        <ImageButton
+            android:layout_margin="5dp"
+            android:contentDescription=""
+            android:src="@drawable/ic_skip_previous_white_24dp"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:id="@+id/btnMediaPrevious"
             android:background="?android:attr/selectableItemBackground" />
-        <Button
-            android:drawableTop="@drawable/ic_play_arrow_white_24dp"
+        <ImageButton
+            android:contentDescription=""
+            android:layout_margin="5dp"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:id="@+id/btnMediaPlayPlause"
             android:background="?android:attr/selectableItemBackground" />
-        <Button
-            android:drawableTop="@drawable/ic_skip_next_white_24dp"
+        <ImageButton
+            android:contentDescription=""
+            android:layout_margin="5dp"
+            android:src="@drawable/ic_skip_next_white_24dp"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:id="@+id/btnMediaNext"
             android:background="?android:attr/selectableItemBackground" />
-        <Button
+        <ImageButton
+            android:contentDescription=""
+            android:layout_margin="5dp"
             android:visibility="visible"
-            android:drawableTop="@drawable/ic_notifications_white_24dp"
+            android:src="@drawable/ic_notifications_white_24dp"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:id="@+id/btnLaunchNotification"

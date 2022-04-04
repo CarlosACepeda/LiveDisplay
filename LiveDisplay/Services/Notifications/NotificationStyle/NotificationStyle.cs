@@ -111,7 +111,7 @@ namespace LiveDisplay.Services.Notifications.NotificationStyle
         }
         protected virtual void SetMoveBetweenSiblingNotificationsVisibility() 
         {
-            if(OpenNotification.BelongsToGroup)
+            if(NotificationHijackerWorker.NotificationAdapter.NotificationHasSiblings(OpenNotification))
             {
                 PreviousNotificationButton.Visibility = ViewStates.Visible;
                 NextNotificationButton.Visibility = ViewStates.Visible;
