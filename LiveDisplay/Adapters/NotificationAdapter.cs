@@ -51,8 +51,7 @@
                 foreach (var openNotification in notifications)
                 {
                     if (openNotification.IsSummary ||
-                        openNotification.IsStandalone
-                        /*|| IsThisNotificationParentless(notifications, openNotification.GroupKey)*/)
+                        openNotification.IsStandalone)
                     {
                         groupedNotifications.Add(openNotification);
                     }
@@ -123,7 +122,7 @@
             if (openNotification.IsStandalone)
                 HandleStandaloneNotification(openNotification);
 
-            if (openNotification.BelongsToGroup)
+            if (openNotification.BelongsToGroup && !openNotification.IsSummary) //Summary notifications also belong to the group. so we exclude it here.
                 HandleChildNotification(openNotification);
 
             OnNotificationPosted(openNotification);
@@ -295,6 +294,11 @@
                 return singleNotifications.Count(child => child.BelongsToGroup && child.GroupKey == openNotification.GroupKey);
             else return 0;
         }
+        public bool NotificationHasSiblings(OpenNotification openNotification)
+        {
+            if (!NotificationHijackerWorker.DeviceSupportsNotificationGrouping()) return false;
+            return singleNotifications.Count(on => on.GroupKey == openNotification?.GroupKey)>1;
+        }
 
         private int GetItemPosition(OpenNotification openNotification, bool searchInGroupedList)
         {
@@ -311,12 +315,6 @@
         OpenNotification GetChildNotification(OpenNotification parent)
         {
             return singleNotifications.FirstOrDefault(child => child.GroupKey == parent.GroupKey && child.BelongsToGroup); //I assume this parent only has one child.
-        }
-        bool IsThisNotificationParentless(List<OpenNotification> allNotifications, string groupKeyToCheck)
-        {
-            //TODO: Sometimes independent notifications pass through this and they are considered parentless when in reality they stand by their own.
-            var count= allNotifications.Count(n => n.GroupKey == groupKeyToCheck && !n.IsSummary);
-            return count == 1;
         }
         private void OnNotificationRemoved(OpenNotification sbn)
         {
