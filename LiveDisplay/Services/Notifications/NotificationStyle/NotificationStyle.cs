@@ -253,7 +253,7 @@ namespace LiveDisplay.Services.Notifications.NotificationStyle
 
         protected virtual void SetActionButtonGravity(Button action)
         {
-            action.Gravity = GravityFlags.Left | GravityFlags.CenterVertical;
+            action.Gravity = GravityFlags.Center;
         }
 
         protected virtual void SetActionButtonTextMaxLines(Button action)
@@ -306,7 +306,7 @@ namespace LiveDisplay.Services.Notifications.NotificationStyle
             View view = NotificationFragment?.Activity?.CurrentFocus;
             if (view != null)
             {
-                InputMethodManager imm = (InputMethodManager)NotificationFragment.Activity.GetSystemService(Context.InputMethodService);                
+                InputMethodManager imm = (InputMethodManager)NotificationFragment.Activity.GetSystemService(Context.InputMethodService);
                 imm.HideSoftInputFromInputMethod(view.WindowToken, 0);
             }
             SendInlineResponseAvailabityChanged?.Invoke(null, false);
