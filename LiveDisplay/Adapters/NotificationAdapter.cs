@@ -22,6 +22,7 @@
         List<OpenNotification> singleNotifications = new List<OpenNotification>();
         List<OpenNotification> groupedNotifications = new List<OpenNotification>();
         public static event EventHandler<NotificationListSizeChangedEventArgs> NotificationListSizeChanged;
+        Handler uiThreadHandler;
 
 
         public static event EventHandler<NotificationItemClickedEventArgs> ItemClick;
@@ -69,6 +70,7 @@
         }
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
+            if(uiThreadHandler== null) { uiThreadHandler = new Handler(holder.ItemView.Context.MainLooper); }
             if (position != RecyclerView.NoPosition)
             {
                 OpenNotification item;
@@ -178,15 +180,15 @@
                 {
                     singleNotifications.RemoveAt(notificationPosition);
                     singleNotifications.Add(notification);
-                    NotifyItemChanged(notificationPosition);
+                    uiThreadHandler?.Post(()=>
+                    NotifyItemChanged(notificationPosition)) ;
                 }
                 else
                 {
                     singleNotifications.Add(notification);
-                    NotifyItemInserted(singleNotifications.Count - 1);
+                    uiThreadHandler?.Post(() =>
+                    NotifyItemInserted(singleNotifications.Count - 1));
                 }
-
-
             }
             else
             {
@@ -308,13 +310,12 @@
             o.IsSummary == openNotification.IsSummary));
             else
                 return singleNotifications.IndexOf(singleNotifications.FirstOrDefault
-                (o => o.Id == openNotification.Id && o.ApplicationPackage == openNotification.ApplicationPackage && o.Tag == openNotification.Tag &&
-            o.IsSummary == openNotification.IsSummary));
+                (o => o.Id == openNotification.Id && o.ApplicationPackage == openNotification.ApplicationPackage && o.Tag == openNotification.Tag));
         }
 
         OpenNotification GetChildNotification(OpenNotification parent)
         {
-            return singleNotifications.FirstOrDefault(child => child.GroupKey == parent.GroupKey && child.BelongsToGroup); //I assume this parent only has one child.
+            return singleNotifications.FirstOrDefault(child => child.GroupKey == parent.GroupKey && child.BelongsToGroup); //we grab the first child found
         }
         private void OnNotificationRemoved(OpenNotification sbn)
         {
