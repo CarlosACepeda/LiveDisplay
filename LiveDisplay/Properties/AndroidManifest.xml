@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.underground.livedisplay" android:installLocation="auto" android:versionName="1.0.1" android:versionCode="21">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.underground.livedisplay" android:installLocation="auto" android:versionName="1.0.2" android:versionCode="22">
 	<uses-sdk android:minSdkVersion="19" android:targetSdkVersion="30" />
 	<uses-permission android:name="android.permission.WAKE_LOCK" />
 	<uses-permission android:name="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" />
