@@ -217,7 +217,7 @@
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
             using (var readStorageAccessImageView = FindViewById<ImageView>(Resource.Id.readStorageAccessCheckbox))
             {
-                if (requestCode == REQUEST_CODE_READ_STORAGE_PERMISSION && grantResults[0] == Permission.Granted)
+                if (requestCode == REQUEST_CODE_READ_STORAGE_PERMISSION && grantResults.Length>0 && grantResults[0] == Permission.Granted)
                 {
                     readStorageAccessImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
                 }

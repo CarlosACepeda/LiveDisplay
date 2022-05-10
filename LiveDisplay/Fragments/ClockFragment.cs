@@ -192,7 +192,15 @@
                     {
                         KeyguardHelper.RequestDismissKeyguard(Activity);
                     }
-                StartActivity(intent);
+                try
+                {
+                    StartActivity(intent);
+                }
+                catch(AndroidRuntimeException arex)
+                {
+                    Log.Warn("TAG", arex);
+                    clock.Click -= Clock_Click;
+                }
             }
         }
 
