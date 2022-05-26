@@ -99,17 +99,21 @@ namespace LiveDisplay.Services.Notifications
         {
             return (Build.VERSION.SdkInt <= BuildVersionCodes.N); //Nougat and inferior versions can.
         }
-        public static void RemoveNotification(OpenNotification openNotification)
+        public static void RemoveNotification(OpenNotification openNotification, bool excludeSystem= false)
         {
             //There's a really strange bug where removed Incoming Calls notifications never gets to OnNotificationRemoved method on the NotificationListener
             //so the notification stays within our list. TODO: Find a way to remove a notification when this happens.
 
-            if (openNotification.IsRemovable)
+            if(excludeSystem)
+            {
+                instance?.OnNotificationRemoved(openNotification); //Skip call to actual Notification Listener.
+            }
+            else if (openNotification.IsRemovable)
                 using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())
                 {
                     if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
                     {
-                        slave.CancelNotification(openNotification.PackageName, openNotification.Tag, openNotification.Id);
+                        slave.CancelNotification(openNotification.ApplicationPackage, openNotification.Tag, openNotification.Id);
                     }
                     else
                     {

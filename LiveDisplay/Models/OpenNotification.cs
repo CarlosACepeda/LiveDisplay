@@ -60,8 +60,6 @@ namespace LiveDisplay.Models
 
         public string Tag => statusbarnotification.Tag;
 
-        public string PackageName => statusbarnotification.PackageName;
-
         public OpenMessage[] Messages
         {
             get {
@@ -427,7 +425,7 @@ namespace LiveDisplay.Models
             else
                 result += " Is not group";
 
-            result += "\n" + "Package: " + PackageName + " Id: " + Id + " Tag :" + Tag
+            result += "\n" + "Package: " + ApplicationPackage + " Id: " + Id + " Tag :" + Tag
                 + " Importance: " + NotificationImportance + " Priority: " + NotificationPriority;
             return result;
         }

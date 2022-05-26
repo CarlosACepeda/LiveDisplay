@@ -234,6 +234,7 @@
             watchDog.Elapsed += WatchdogInterval_Elapsed;
             watchDog.Stop();
             watchDog.Start();
+            NotificationAdapter.ItemLongClick += NotificationAdapter_ItemLongClick;
             ActivityLifecycleHelper.GetInstance().NotifyActivityStateChange(typeof(LockScreenActivity), ActivityStates.Resumed);
             if (!configurationManager.RetrieveAValue(ConfigurationParameters.TutorialRead))
             {
@@ -242,6 +243,13 @@
                 welcome.Visibility = ViewStates.Visible;
                 welcome.Touch += Welcome_Touch;
             }
+        }
+
+        private void NotificationAdapter_ItemLongClick(object sender, NotificationItemClickedEventArgs e)
+        {
+            //Requires to have an activity to attach this dialog to.
+            NotificationOptionsDialog dialog = new NotificationOptionsDialog(this, e.StatusBarNotification);
+            dialog.Show();
         }
 
         private void Welcome_Touch(object sender, View.TouchEventArgs e)
@@ -258,7 +266,8 @@
         {
             base.OnPause();
             watchDog.Stop();
-            watchDog.Elapsed -= WatchdogInterval_Elapsed;
+            watchDog.Elapsed -= WatchdogInterval_Elapsed; 
+            NotificationAdapter.ItemLongClick -= NotificationAdapter_ItemLongClick;
             ActivityLifecycleHelper.GetInstance().NotifyActivityStateChange(typeof(LockScreenActivity), ActivityStates.Paused);
         }
 

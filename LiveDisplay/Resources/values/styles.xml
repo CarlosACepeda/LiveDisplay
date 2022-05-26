@@ -40,4 +40,12 @@
     <item name="windowActionBar">false</item>
     <item name="windowNoTitle">true</item>
   </style>
+
+<style name="LiveDisplayDialogTheme" parent="LiveDisplayThemeDark.NoActionBar">
+    <item name="android:windowNoTitle">true</item>
+    <item name="android:windowContentOverlay">@null</item>
+    <item name="android:backgroundDimEnabled">true</item>
+  <item name="android:textColor">@color/white</item>
+  <item name="android:background">@android:color/transparent</item>
+</style>
 </resources>
