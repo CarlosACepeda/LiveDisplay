@@ -345,30 +345,37 @@
         {
             if (args.Position != RecyclerView.NoPosition)
             {
-                OpenNotification notificationToSend;
-                if (NotificationHijackerWorker.DeviceSupportsNotificationGrouping())
-                {
-                    notificationToSend = groupedNotifications[args.Position];
-                    //If it has only one child it means we must send the child as the parent,
-                    //because in this case, the parent doesn't contain the information to show on the Notification Widget,
-                    //like Title, subtext, etc, the child does.
-                    if (GetChildNotificationCount(notificationToSend)==1) 
-                    {
-                        notificationToSend = GetChildNotification(notificationToSend);
-                    }
-                }
-                else
-                {
-                    notificationToSend = singleNotifications[args.Position];
-                }
-                OnItemClicked(args.Position, notificationToSend);
+                OpenNotification notificationToSend = GetClickedNotification(args);
+                OnItemClicked(args.Position, notificationToSend);  
             }
+        }
+
+        private OpenNotification GetClickedNotification(NotificationAdapterClickEventArgs args)
+        {
+            OpenNotification notificationToSend;
+            if (NotificationHijackerWorker.DeviceSupportsNotificationGrouping())
+            {
+                notificationToSend = groupedNotifications[args.Position];
+                //If it has only one child it means we must send the child as the parent,
+                //because in this case, the parent doesn't contain the information to show on the Notification Widget,
+                //like Title, subtext, etc, the child does.
+                if (GetChildNotificationCount(notificationToSend) == 1)
+                {
+                    notificationToSend = GetChildNotification(notificationToSend);
+                }
+            }
+            else
+            {
+                notificationToSend = singleNotifications[args.Position];
+            }
+
+            return notificationToSend;
         }
 
         void OnLongClick(NotificationAdapterClickEventArgs args)
         {
-            var statusBarNotification = groupedNotifications[args.Position];
-            OnItemLongClicked(args.Position, statusBarNotification);
+            OpenNotification notificationToSend = GetClickedNotification(args);
+            OnItemLongClicked(args.Position, notificationToSend, args.View.GetX(), args.View.Width);
         }
         private void OnItemClicked(int position, OpenNotification sbn)
         {
@@ -379,12 +386,14 @@
             });
         }
 
-        private void OnItemLongClicked(int position, OpenNotification sbn)
+        private void OnItemLongClicked(int position, OpenNotification sbn, float notificationViewX, int notificationViewWidth)
         {
             ItemLongClick?.Invoke(null, new NotificationItemClickedEventArgs
             {
                 Position = position,
                 StatusBarNotification = sbn,
+                NotificationViewX= notificationViewX,
+                NotificationViewWidth= notificationViewWidth
             }
             );
         }

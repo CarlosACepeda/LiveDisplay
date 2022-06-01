@@ -109,6 +109,7 @@
     <Compile Include="Fragments\Preferences\MusicWidgetSettingsFragment.cs" />
     <Compile Include="Fragments\Preferences\NotificationSettingsFragment.cs" />
     <Compile Include="Misc\ConfigurationParameters.cs" />
+    <Compile Include="Misc\NotificationOptionsDialog.cs" />
     <Compile Include="Misc\MediaActionFlags.cs" />
     <Compile Include="Misc\Checkers.cs" />
     <Compile Include="Activities\MainActivity.cs" />
@@ -921,6 +922,9 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-xxxhdpi\ic_battery_charging_white_18dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\notification_options_dialog.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
