@@ -375,7 +375,7 @@
         void OnLongClick(NotificationAdapterClickEventArgs args)
         {
             OpenNotification notificationToSend = GetClickedNotification(args);
-            OnItemLongClicked(args.Position, notificationToSend);
+            OnItemLongClicked(args.Position, notificationToSend, args.View.GetX(), args.View.Width);
         }
         private void OnItemClicked(int position, OpenNotification sbn)
         {
@@ -386,12 +386,14 @@
             });
         }
 
-        private void OnItemLongClicked(int position, OpenNotification sbn)
+        private void OnItemLongClicked(int position, OpenNotification sbn, float notificationViewX, int notificationViewWidth)
         {
             ItemLongClick?.Invoke(null, new NotificationItemClickedEventArgs
             {
                 Position = position,
                 StatusBarNotification = sbn,
+                NotificationViewX= notificationViewX,
+                NotificationViewWidth= notificationViewWidth
             }
             );
         }

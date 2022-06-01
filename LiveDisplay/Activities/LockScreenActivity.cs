@@ -248,7 +248,8 @@
         private void NotificationAdapter_ItemLongClick(object sender, NotificationItemClickedEventArgs e)
         {
             //Requires to have an activity to attach this dialog to.
-            NotificationOptionsDialog dialog = new NotificationOptionsDialog(this, e.StatusBarNotification);
+            NotificationOptionsDialog dialog = 
+                new NotificationOptionsDialog(this, e.StatusBarNotification, e.NotificationViewX, e.NotificationViewWidth);
             dialog.Show();
         }
 
