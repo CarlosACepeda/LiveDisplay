@@ -33,7 +33,7 @@
     {
         private AndroidX.Fragment.App.Fragment clockFragment, musicFragment, notificationFragment;
 
-        private RecyclerView recycler/*, filteredRecyclerView*/;
+        private RecyclerView recycler;
         private RecyclerView.LayoutManager layoutManager;
         //private Button clearAll;
 
@@ -41,7 +41,7 @@
         private float firstTouchTime = -1;
         private float finalTouchTime;
         private readonly float threshold = 1000; //1 second of threshold.(used to implement the double tap.)
-        private readonly bool REVERSE_LAYOUT_FALSE= false;
+        private readonly bool REVERSE_LAYOUT= true;
 
         private int halfscreenheight; //To decide the behavior of the double tap.
         private System.Timers.Timer watchDog; //the watchdog simply will start counting down until it gets resetted by OnUserInteraction() override.
@@ -92,7 +92,7 @@
 
             using (recycler = FindViewById<RecyclerView>(Resource.Id.notification_list))
             {
-                using (layoutManager = new LinearLayoutManager(Application.Context, RecyclerView.Horizontal, REVERSE_LAYOUT_FALSE))
+                using (layoutManager = new LinearLayoutManager(Application.Context, RecyclerView.Horizontal, REVERSE_LAYOUT))
                 {
                     recycler.SetLayoutManager(layoutManager);
                     recycler.SetAdapter(NotificationHijackerWorker.NotificationAdapter);
