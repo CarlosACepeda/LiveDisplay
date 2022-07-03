@@ -157,5 +157,7 @@
   <string name="weatherwidgetenabled">Enable Weather Widget</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
+  <string name="ignored">Ignored</string>
+  <string name="ignored_and_removed">Ignored and Removed</string>
   <string name="youneeddigitalwellbeingapp">You need the Digital Wellbeing app</string>
 </resources>
