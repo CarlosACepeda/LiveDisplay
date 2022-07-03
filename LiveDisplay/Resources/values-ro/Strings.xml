@@ -109,5 +109,7 @@
   <string name="weatherwidget">Widget de Climă</string>
   <string name="weatherwidgetenabled">Activează Widget de Climă</string>
   <string name="yasujizr_ty">Design de icon din acest app!</string>
+  <string name="ignored">Ignorat</string>
+  <string name="ignored_and_removed">Ignorat și Șters</string>
   <string name="youneeddigitalwellbeingapp">Ai nevoie din aplicația Bunastara Digitala</string>
 </resources>

@@ -27,7 +27,7 @@
         private AppCompatImageView wallpaperPreview;
         private SeekBar blur;
         private SeekBar opacity;
-        private Spinner wallpaperbeingsetted;
+        private Spinner wallpaperbeingset;
         private int currentSpinnerOptionSelected;
         private WallpaperManager wallpaperManager;
         private ConfigurationManager configurationManager;
@@ -58,7 +58,7 @@
             wallpaperPreview = FindViewById<AppCompatImageView>(Resource.Id.wallpaperPreview);
             blur = FindViewById<SeekBar>(Resource.Id.blur);
             opacity = FindViewById<SeekBar>(Resource.Id.opacity);
-            wallpaperbeingsetted = FindViewById<Spinner>(Resource.Id.wallpaperbeingsetted);
+            wallpaperbeingset = FindViewById<Spinner>(Resource.Id.wallpaperbeingsetted);
             appliesToMusicWidget = FindViewById<CheckBox>(Resource.Id.appliesToMusicWidget);
             if(Build.VERSION.SdkInt >= BuildVersionCodes.Q)
             {
@@ -77,9 +77,9 @@
                 enableblurandroid10.Click += Enableblurandroid10_Click;
             }
             var spinnerAdapter = ArrayAdapter<string>.CreateFromResource(this, Resource.Array.listentriescurrentwallpapersetting, Android.Resource.Layout.SimpleSpinnerDropDownItem);
-            wallpaperbeingsetted.Adapter = spinnerAdapter;
+            wallpaperbeingset.Adapter = spinnerAdapter;
 
-            wallpaperbeingsetted.ItemSelected += Wallpaperbeingsetted_ItemSelected;
+            wallpaperbeingset.ItemSelected += Wallpaperbeingsetted_ItemSelected;
             pickwallpaper.Click += Pickwallpaper_Click;
             appliesToMusicWidget.CheckedChange += AppliesToMusicWidget_CheckedChange;
 

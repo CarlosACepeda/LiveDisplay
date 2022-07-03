@@ -23,6 +23,9 @@
         private Toolbar toolbar;
         private ProgressBar loadingblacklistitemsprogressbar;
         private EditText searchboxapp;
+        private Spinner blocklevelfilter;
+        private LevelsOfAppBlocking selectedAppBlockingFilter;
+
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -33,6 +36,11 @@
             loadingblacklistitemsprogressbar = FindViewById<ProgressBar>(Resource.Id.loadingblacklistitemsprogressbar);
             searchboxapp = FindViewById<EditText>(Resource.Id.searchboxapp);
             searchboxapp.TextChanged += Searchboxapp_TextChanged;
+            blocklevelfilter = FindViewById<Spinner>(Resource.Id.blocklevelfilter);
+            var spinnerAdapter = ArrayAdapter<string>.CreateFromResource(this, Resource.Array.listentriesblockingfilter, Android.Resource.Layout.SimpleSpinnerDropDownItem);
+            blocklevelfilter.Adapter = spinnerAdapter;
+
+            blocklevelfilter.ItemSelected += Blocklevelfilter_ItemSelected;
 
             using (toolbar = FindViewById<Toolbar>(Resource.Id.mainToolbar))
             {
@@ -44,42 +52,62 @@
             manager = new LinearLayoutManager(Application.Context);
 
             blacklistRecyclerView.SetLayoutManager(manager);
-            ThreadPool.QueueUserWorkItem(m =>
+            LoadList(LevelsOfAppBlocking.None, null);
+        }
+
+        private void Blocklevelfilter_ItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
+        {
+            switch (e.Id)
             {
-                applist = Blacklist.GetListOfApps();
-                RunOnUiThread(() => blacklistRecyclerView.SetAdapter(new AppsToBeBlacklistedAdapter(applist)));
+                case 0: //None
+                    selectedAppBlockingFilter = LevelsOfAppBlocking.None;
+                    break;
+                case 1: //Ignored
+                    selectedAppBlockingFilter = LevelsOfAppBlocking.Ignore;
+                    break;
+                case 2: //Ignored and Removed.
+                    selectedAppBlockingFilter = LevelsOfAppBlocking.Remove;
+                    break;
+                default:
+                    selectedAppBlockingFilter = LevelsOfAppBlocking.None;
+                    break;
+
             }
-            );
+            LoadList(selectedAppBlockingFilter, searchboxapp?.Text);
+
         }
 
         private void Searchboxapp_TextChanged(object sender, Android.Text.TextChangedEventArgs e)
         {
-            bool searching = false;
-            if (!searching) //Is this valid? It does not seem to do anything.
-            {
-                searching = true;
-                loadingblacklistitemsprogressbar.Visibility = Android.Views.ViewStates.Visible;
-                blacklistRecyclerView.Visibility = Android.Views.ViewStates.Invisible;
-                ThreadPool.QueueUserWorkItem(method =>
+            LoadList(selectedAppBlockingFilter, e.Text.ToString());
+        }
+
+        void LoadList(LevelsOfAppBlocking level, string searchText)
+        {
+            loadingblacklistitemsprogressbar.Visibility = Android.Views.ViewStates.Visible;
+            blacklistRecyclerView.Visibility = Android.Views.ViewStates.Invisible;
+
+            ThreadPool.QueueUserWorkItem(method =>
+            { 
+
+                if (string.IsNullOrEmpty(searchText))
                 {
-                    if (e.Text.ToString() != string.Empty || e.Text.ToString() != null)
-                    {
-                        applist = Blacklist.GetListOfApps().Where(x => PackageUtils.GetTheAppName(x.PackageName).Contains(e.Text.ToString())).ToList();
-                    }
-                    else
-                    {
-                        applist = Blacklist.GetListOfApps();
-                    }
+                    applist = Blacklist.GetListOfApps(level);
                 }
-                );
+                else
+                {
+                    applist = Blacklist.GetListOfApps(level).Where(x => PackageUtils.GetTheAppName(x.PackageName).Contains(searchText)).ToList();
+                }
                 RunOnUiThread(() =>
                 {
                     blacklistRecyclerView.SetAdapter(new AppsToBeBlacklistedAdapter(applist));
                     loadingblacklistitemsprogressbar.Visibility = Android.Views.ViewStates.Invisible;
                     blacklistRecyclerView.Visibility = Android.Views.ViewStates.Visible;
-                    searching = false;
                 });
             }
+            );
+            
+
         }
     }
 }
