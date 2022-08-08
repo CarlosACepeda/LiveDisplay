@@ -212,5 +212,17 @@
                 date.Text = string.Format(calendar.Get(CalendarField.DayOfMonth).ToString() + ", " + calendar.GetDisplayName((int)CalendarField.Month, (int)CalendarStyle.Long, Locale.Default));
             }
         }
+        public override void OnSaveInstanceState(Bundle outState)
+        {
+            outState.PutBoolean("FRAGMENT", true);
+            base.OnSaveInstanceState(outState);
+        }
+        public override void OnViewStateRestored(Bundle savedInstanceState)
+        {
+            var value= savedInstanceState?.GetBoolean("FRAGMENT");
+
+            Console.WriteLine("Clock says: " + value);
+            base.OnViewStateRestored(savedInstanceState);
+        }
     }
 }

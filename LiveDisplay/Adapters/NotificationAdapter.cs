@@ -141,7 +141,7 @@
         void HandleSummaryNotification(OpenNotification notification)
         {
             int notificationPosition = GetItemPosition(notification, true);
-
+           
             if (notificationPosition!= -1)
             {
                 groupedNotifications.RemoveAt(notificationPosition);
@@ -150,7 +150,26 @@
             }
             else
             {
-                groupedNotifications.Add(notification);
+                //Checking if Automatic Grouping happened
+                //Android groups automatically a set of notifications is the app issuing them doesn't do so.
+                //(Provides a parent for a set of individual notifications that are meant to be grouped)
+                //So we must do the same
+                if (NotificationHasSiblings(notification)) //If it returns true it means this new notification is meant to be the parent
+                    //of the subsequent children.
+                {
+                    var orphanNotifications = GetOrphanNotifications(notification);
+                    foreach (OpenNotification orphan in orphanNotifications)
+                    {
+                        RemoveStandaloneNotification(orphan); //Up until now, they were their own parent 
+                        HandleChildNotification(orphan); //Now we add them as a child.
+                    }
+                    groupedNotifications.Add(notification); //Finally we add the parent to the list.
+
+                }
+                else
+                {
+                    groupedNotifications.Add(notification);
+                }
                 NotifyItemInserted(groupedNotifications.Count - 1);
             }
         }
@@ -302,6 +321,13 @@
             return singleNotifications.Count(on => on.GroupKey == openNotification?.GroupKey)>1;
         }
 
+        List<OpenNotification> GetOrphanNotifications(OpenNotification newParent)
+        {
+            //Orphan notifications live in the 'grouped' list because before this method call, they are considered to be their own 
+            //parent, so they live here.
+            return groupedNotifications.Where(child => child.GroupKey == newParent.GroupKey && child.BelongsToGroup).ToList();
+        }
+
         private int GetItemPosition(OpenNotification openNotification, bool searchInGroupedList)
         {
             if(searchInGroupedList)
@@ -329,8 +355,8 @@
             NotificationPosted?.Invoke(null, new NotificationPostedEventArgs
             {
                 NotificationPosted= sbn,
-                ShouldCauseWakeUp= true,
-                UpdatesPreviousNotification= true
+                ShouldCauseWakeUp= true, //TODO: This should be set by 'HandlexxxxNotification()' Methods
+                UpdatesPreviousNotification= true //TODO: This should be set by 'HandlexxxxNotification()' Methods
             });
         }
 

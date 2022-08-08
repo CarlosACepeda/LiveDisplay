@@ -121,7 +121,6 @@
                 }
             }
         }
-
         private void WallpaperPublisher_CurrentWallpaperCleared(object sender, CurrentWallpaperClearedEventArgs e)
         {
             //<document me>
