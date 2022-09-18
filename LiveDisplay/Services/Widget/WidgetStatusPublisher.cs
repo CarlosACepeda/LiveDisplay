@@ -176,15 +176,14 @@ namespace LiveDisplay.Services.Widget
                 if (activeWidget?.WidgetName == e.WidgetName)
                 {
                     NotifyWidgetRemoval(e.WidgetName);
-                    RemoveActiveWidget(e.WidgetName);
                     if (widgetActiveForLimitedTime == e.WidgetName)
                     {
                         //Cancel countdown.
                         widgetActiveTimer.Stop();
                         widgetActiveForLimitedTime = string.Empty;
-                        NotifyWidgetAddition(GetCurrentActiveWidget().WidgetName);
                     }
                 }
+                RemoveActiveWidget(e.WidgetName);
             }
         }
         void RemoveActiveWidget(string which)
