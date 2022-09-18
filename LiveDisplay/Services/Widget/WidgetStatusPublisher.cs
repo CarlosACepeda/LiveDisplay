@@ -120,20 +120,51 @@ namespace LiveDisplay.Services.Widget
                 }
             
                 //now let's check that this widget is not already in the list of active Widgets
-                if (activeWidget != null && activeWidget.WidgetName != e.WidgetName)
+                if (activeWidget != null && activeWidget.WidgetName != e.WidgetName) //New active widget.
                 {
                     NotifyWidgetRemoval(activeWidget.WidgetName);
                     currentActiveWidgets.RemoveAll(caw=> caw.WidgetName == e.WidgetName);
                     currentActiveWidgets.Add(e); //This will be the new active widget
                     NotifyWidgetAddition(GetCurrentActiveWidget().WidgetName);
                 }
-                else
+                else //Same active widget wants to update itself.
                 {
-                    //TODO: fix when widget passes from timed to active permanently.
-                    
-                    //Just notify, it already exists within the list.
-                    GetCurrentActiveWidget().AdditionalInfo = e.AdditionalInfo; //In case there's any update we are missing.
-                    NotifyWidgetAddition(GetCurrentActiveWidget().WidgetName);
+                    if(activeWidget.TimeToShow!= e.TimeToShow)
+                    {
+                        switch(e.TimeToShow)
+                        {
+                            case ShowParameters.ACTIVE_PERMANENTLY:
+                                if(activeWidget.TimeToShow>0)
+                                {
+                                    //It means that it is showing using the timer.
+                                    //Stop it, then add this as a permanent widget.
+                                    widgetActiveTimer.Stop();
+                                    widgetActiveForLimitedTime = string.Empty;
+
+                                }
+                                break;
+                            case ShowParameters.WIDGET_MAY_DECIDE:
+
+                                e.TimeToShow = SHOW_TIME_WHEN_WIDGET_DECIDES;
+                                widgetActiveTimer.Interval = e.TimeToShow * ONE_SECOND_IN_MILLIS;
+                                widgetActiveTimer.Start();
+                                widgetActiveForLimitedTime = e.WidgetName;
+                                break;
+                            default:
+                                if(activeWidget.TimeToShow== ShowParameters.ACTIVE_PERMANENTLY && e.TimeToShow>0)
+                                {
+                                    //it means that passed from permanent to temporary.
+                                    widgetActiveTimer.Interval = e.TimeToShow * ONE_SECOND_IN_MILLIS;
+                                    widgetActiveTimer.Start();
+                                    widgetActiveForLimitedTime = e.WidgetName;
+                                }
+                                break;
+                        }
+                    }
+                    currentActiveWidgets.RemoveAll(caw => caw.WidgetName == e.WidgetName);
+                    currentActiveWidgets.Add(e); //This will be the new active widget
+
+                    NotifyWidgetAddition(activeWidget.WidgetName);
                 }
             }
             else

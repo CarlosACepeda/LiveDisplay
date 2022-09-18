@@ -5,7 +5,7 @@ using System;
 
 namespace LiveDisplay.BroadcastReceivers
 {
-    [BroadcastReceiver(Permission = "android.permission.BIND_DEVICE_ADMIN")]
+    [BroadcastReceiver(Permission = "android.permission.BIND_DEVICE_ADMIN", Exported = false)]
     [MetaData("android.app.device_admin", Resource = "@xml/device_admin")]
     [IntentFilter(new[] { "android.app.action.DEVICE_ADMIN_ENABLED" })]
     public class AdminReceiver : DeviceAdminReceiver

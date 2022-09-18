@@ -18,7 +18,7 @@ using System.Threading;
 
 namespace LiveDisplay.Services
 {
-    [Service(Label = "@string/notification_listener", Permission = "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE")]
+    [Service(Label = "@string/notification_listener", Permission = "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE", Exported=true)]
     [IntentFilter(new[] { "android.service.notification.NotificationListenerService" })]
     internal class NotificationHijackerService : NotificationListenerService, RemoteController.IOnClientUpdateListener
     {

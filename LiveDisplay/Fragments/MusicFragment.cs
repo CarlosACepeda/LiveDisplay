@@ -244,7 +244,8 @@ namespace LiveDisplay.Fragments
 
         private void BtnSkipNext_LongClick(object sender, View.LongClickEventArgs e)
         {
-            Jukebox.FastFoward();
+            Jukebox.FastFoward(); //Doesn't work as expected, one would expect this would rewind as long as the button is clicked,
+            //but it only does it once. what's the point of this?
         }
 
         private void BtnSkipPrevious_LongClick(object sender, View.LongClickEventArgs e)

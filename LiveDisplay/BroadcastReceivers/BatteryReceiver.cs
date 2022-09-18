@@ -7,7 +7,7 @@ using System;
 
 namespace LiveDisplay.BroadcastReceivers
 {
-    [BroadcastReceiver(Label = "Battery Receiver")]
+    [BroadcastReceiver(Label = "Battery Receiver", Exported = false)]
     [IntentFilter(new[] { Intent.ActionBatteryChanged, Intent.ActionPowerConnected, Intent.ActionPowerDisconnected })]
     public class BatteryReceiver : BroadcastReceiver
     {

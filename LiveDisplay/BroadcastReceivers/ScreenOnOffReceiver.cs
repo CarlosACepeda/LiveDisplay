@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace LiveDisplay.BroadcastReceivers
 {
-    [BroadcastReceiver(Label = "ScreenOnOffReceiver")]
+    [BroadcastReceiver(Label = "ScreenOnOffReceiver", Exported =false)]
     [IntentFilter(new[] { Intent.ActionScreenOff })]
     [IntentFilter(new[] { Intent.ActionScreenOn })]
     public class ScreenOnOffReceiver : BroadcastReceiver
