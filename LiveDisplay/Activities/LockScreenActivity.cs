@@ -53,6 +53,7 @@
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            WidgetStatusPublisher.GetInstance().TellMeTheActiveWidget();
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.test_lck);
             ThreadPool.QueueUserWorkItem(isApphealthy =>
@@ -107,9 +108,11 @@
         protected override void OnSaveInstanceState(Bundle outState)
         {
             base.OnSaveInstanceState(outState);
+            Console.WriteLine("SAVED INSTANCE STATE");
         }
         protected override void OnRestoreInstanceState(Bundle savedInstanceState)
         {
+            Console.WriteLine("RESTORED INSTANCE STATE");
             base.OnRestoreInstanceState(savedInstanceState);
         }
         private void WidgetStatusPublisher_OnWidgetStatusChanged(object sender, WidgetStatusEventArgs e)

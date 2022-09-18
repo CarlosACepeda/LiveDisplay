@@ -1,5 +1,6 @@
 ﻿using Android.App;
 using Android.Content;
+using Android.OS;
 using LiveDisplay.Misc;
 using LiveDisplay.Services;
 using System.Threading;
@@ -61,7 +62,9 @@ namespace LiveDisplay.BroadcastReceivers
 
                         if (!IsScreenOn)
                         {
-                            PendingIntent pendingIntent = PendingIntent.GetActivity(Application.Context, 0, lockScreenIntent, 0);
+                            PendingIntent pendingIntent = (Build.VERSION.SdkInt >= BuildVersionCodes.S) ?
+                            PendingIntent.GetActivity(Application.Context, 0, lockScreenIntent, PendingIntentFlags.Mutable):
+                            PendingIntent.GetActivity(Application.Context, 0, lockScreenIntent, 0);
 
                             pendingIntent.Send();
                         }

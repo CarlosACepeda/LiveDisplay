@@ -91,7 +91,9 @@ namespace LiveDisplay.Services
 
             Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(SettingsActivity)));
 
-            PendingIntent pendingIntent = PendingIntent.GetActivity(Application.Context, 35, intent, PendingIntentFlags.UpdateCurrent);
+            PendingIntent pendingIntent = (Build.VERSION.SdkInt >= BuildVersionCodes.S) ?
+                PendingIntent.GetActivity(Application.Context, 35, intent, PendingIntentFlags.UpdateCurrent | PendingIntentFlags.Mutable) :
+                PendingIntent.GetActivity(Application.Context, 35, intent, PendingIntentFlags.UpdateCurrent);
 
             Notification.Action.Builder action = new Notification.Action.Builder(Resource.Drawable.ic_stat_default_appicon, "Answer", pendingIntent).AddRemoteInput(remoteInput);
 

@@ -105,7 +105,6 @@ namespace LiveDisplay.Fragments
                     if (visible)
                     {
                         maincontainer.Visibility = ViewStates.Visible;
-                        RetrieveMediaInformation();
                     }
                     else
                     {
@@ -148,11 +147,6 @@ namespace LiveDisplay.Fragments
         {
             UnbindMusicControllerEvents();
             WallpaperPublisher.ReleaseWallpaper();
-            ToggleWidgetVisibility(false);
-            WidgetStatusPublisher.GetInstance().SetWidgetVisibility(
-                        new ShowParameters
-                        { Show = false, WidgetName = WidgetTypes.MUSIC_FRAGMENT });
-
             UnbindViewEvents();
             UnbindViews();
 
@@ -478,7 +472,6 @@ namespace LiveDisplay.Fragments
                         btnPlayPause.Background = Resources.GetDrawable(Resource.Drawable.ic_replay_white_24dp, Context.Theme);
                         playbackState = PlaybackStateCode.Stopped;
                         MoveSeekbar(false);
-                        ToggleWidgetVisibility(false);
                         WidgetStatusPublisher.GetInstance().SetWidgetVisibility(new ShowParameters { Show = false, WidgetName = WidgetTypes.MUSIC_FRAGMENT });
                         break;
 

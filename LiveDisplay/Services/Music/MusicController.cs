@@ -59,13 +59,14 @@ namespace LiveDisplay.Services.Music
                 {
                     _currentMediaController = new MediaController(Application.Context, token);
                     _currentToken = token;
+                    GetCurrentInstance(_currentMediaController, owningNotificationId);
                     LoadMediaControllerData(_currentMediaController);
                 }
                 else
                 {
                     throw new ArgumentException("Token can't be null!");
                 }
-                GetCurrentInstance(_currentMediaController, owningNotificationId);
+                
                 return RegisterMediaCallback();
             }
             else

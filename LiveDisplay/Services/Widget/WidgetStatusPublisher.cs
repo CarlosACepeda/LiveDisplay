@@ -31,6 +31,10 @@ namespace LiveDisplay.Services.Widget
             ActivityLifecycleHelper.GetInstance().ActivityStateChanged += WidgetStatusPublisher_ActivityStateChanged;
             widgetActiveTimer.AutoReset = false;
         }
+        public void TellMeTheActiveWidget()
+        {
+            Console.WriteLine("The Active Widget is: " + GetCurrentActiveWidget()?.WidgetName + "Timed Widget is: " + widgetActiveForLimitedTime);
+        }
 
         private void WidgetStatusPublisher_ActivityStateChanged(object sender, ActivityStateChangedEventArgs e)
         {
