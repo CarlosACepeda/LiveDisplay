@@ -3,6 +3,7 @@ using Android.OS;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using AndroidX.RecyclerView.Widget;
 using LiveDisplay.Adapters;
 using LiveDisplay.Enums;
 using LiveDisplay.Misc;
@@ -16,6 +17,8 @@ using LiveDisplay.Services.Notifications.NotificationEventArgs;
 using LiveDisplay.Services.Notifications.NotificationStyle;
 using LiveDisplay.Services.Widget;
 using System;
+using System.Collections.Generic;
+using static AndroidX.RecyclerView.Widget.RecyclerView;
 using Fragment = AndroidX.Fragment.App.Fragment;
 
 namespace LiveDisplay.Fragments
@@ -27,6 +30,7 @@ namespace LiveDisplay.Fragments
         private OpenNotification _openNotification; //the current active OpenNotification instance.
         private LinearLayout maincontainer;
         private LinearLayout actual_notification;
+        private RecyclerView children_notifications;
         private readonly ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
 
         public override void OnCreate(Bundle savedInstanceState)
@@ -42,6 +46,12 @@ namespace LiveDisplay.Fragments
             View v = inflater.Inflate(Resource.Layout.test_notif_view, container, false);
             maincontainer = v.FindViewById<LinearLayout>(Resource.Id.notification_container);
             actual_notification = v.FindViewById<LinearLayout>(Resource.Id.actual_notification);
+            children_notifications = v.FindViewById<RecyclerView>(Resource.Id.children_notifications);
+
+            var layoutManager = new LinearLayoutManager(Application.Context, Vertical, false);
+            children_notifications.SetLayoutManager(layoutManager);
+            
+
             maincontainer.Drag += Notification_Drag;
             actual_notification.Click += ActualNotification_Click;
             NotificationAdapter.ItemLongClick += ItemLongClicked;
@@ -88,6 +98,31 @@ namespace LiveDisplay.Fragments
 
         private void NotificationAdapter_NotificationPosted(object sender, NotificationPostedEventArgs e)
         {
+            if(e.IsParent)
+            {
+                ToggleChildrenVisibility(false);
+                LoadChildrenNotifications(e.Children);
+            }
+            if(e.IsSibling)
+            {
+                //TODO: Check what's more convenient, to alert the user with the updated/posted parent notification
+                //that contains a tiny fraction of the actual posted notification, without expanding the children list, or show the actual notification that was posted/ updated by scrolling the children recycler view to
+                ////the notification that was posted/updated, meaning that it'll expand children list that this group has.
+
+                //We pass the group adapter the notification id we want to show.
+                ToggleChildrenVisibility(true);
+                var childrenNotificationsAdapter = new NotificationGroupAdapter(e.Children, e.NotificationPosted.Id);
+                children_notifications.SetAdapter(childrenNotificationsAdapter);
+                children_notifications.SmoothScrollToPosition(childrenNotificationsAdapter.notificationToShowPosition);
+            }
+            if (e.IsStandalone)
+            {
+                children_notifications.Visibility = ViewStates.Gone;
+                //As always, just be sure to not show the Grouped notifications recycler view, is not needed.
+            }
+
+
+
             //if the incoming notification updates a previous notification, then verify if the current SHOWING notification is the same as the one
             //we are trying to update, because if this check is not done, the updated notification will show even if the user is watching another notification.
             //the other case is simply when the notification is a new one.
@@ -96,12 +131,23 @@ namespace LiveDisplay.Fragments
                 || 
                 !e.UpdatesPreviousNotification)
             {
-                ShowNotification(e.NotificationPosted);
+                ShowNotification(e.NotificationPosted, 0, null); // todo: fix or find a better way/
             }
 
             if (!e.UpdatesPreviousNotification && e.ShouldCauseWakeUp && configurationManager.RetrieveAValue(ConfigurationParameters.TurnOnNewNotification))
                 AwakeHelper.TurnOnScreen();
         }
+
+        void ToggleChildrenVisibility(bool visible)
+        {
+            if(children_notifications != null)
+                children_notifications.Visibility = visible? ViewStates.Visible: ViewStates.Gone;
+        }
+        void LoadChildrenNotifications(List<OpenNotification>children)
+        {
+            children_notifications.SetAdapter(new NotificationGroupAdapter(children));
+        }
+
         bool IsUpdatingSameNotificationUserIsViewing(string openNotificationCustomId)
         {
             //This is because user hasn't seen any notifications yet (hence the null value), so we'll say, yes, update it, it doesn't matter.
@@ -146,7 +192,7 @@ namespace LiveDisplay.Fragments
                         OpenNotification notification = NotificationHijackerWorker.GetOpenNotification(e.AdditionalInfo.ToString());
                         if(notification!= null)
                         {
-                            ShowNotification(notification);
+                            ShowNotification(notification, 0, null);
                         }
                     }
                     ToggleWidgetVisibility(true);
@@ -216,10 +262,10 @@ namespace LiveDisplay.Fragments
 
         private void ItemClicked(object sender, NotificationItemClickedEventArgs e)
         {
-            ShowNotification(e.StatusBarNotification);
+            ShowNotification(e.StatusBarNotification, e.ChildCount ,e.Children);
         }
 
-        public void ShowNotification(OpenNotification openNotification)
+        public void ShowNotification(OpenNotification openNotification, int childrenCount, List<OpenNotification> children)
         {
             _openNotification = openNotification;
 
@@ -258,6 +304,11 @@ namespace LiveDisplay.Fragments
                     default:
                         new DefaultStyleNotification(_openNotification, ref maincontainer, this).ApplyStyle();
                         break;
+                }
+
+                if(childrenCount>0)
+                {
+                    children_notifications.SetAdapter(new NotificationGroupAdapter(children));
                 }
 
                 WidgetStatusPublisher.GetInstance().SetWidgetVisibility(

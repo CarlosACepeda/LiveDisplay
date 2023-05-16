@@ -26,6 +26,8 @@ namespace LiveDisplay.Models
         private MediaController mediaController; //A media controller to be used with the  Media Session token provided by a MediaStyle notification.
         public const int UNKNOWN_IMPORTANCE_OR_PRIORITY = -1;
         public const int UNKNOWN = -1;
+        private string title= null;
+        private string text= null;
 
         public OpenNotification(StatusBarNotification sbn)
         {
@@ -105,13 +107,21 @@ namespace LiveDisplay.Models
             {
                 try
                 {
-                    return statusbarnotification.Notification.Extras.Get(Notification.ExtraTitle).ToString();
+                    if(title== null)
+                        return statusbarnotification.Notification.Extras.Get(Notification.ExtraTitle).ToString();
+
+                    return title;
                 }
                 catch
                 {
                     return string.Empty;
                 }
             }
+            set {
+                title = value;
+                //In summary notifications this value needs to be modified
+
+                  }
         }
         public string Text
         {
@@ -119,12 +129,18 @@ namespace LiveDisplay.Models
             {
                 try
                 {
-                    return statusbarnotification.Notification.Extras.Get(Notification.ExtraText).ToString();
+                    if(text== null)
+                        return statusbarnotification.Notification.Extras.Get(Notification.ExtraText).ToString();
+                    return text;
                 }
                 catch
                 {
                     return string.Empty;
                 }
+            }
+            set
+            { //In summary notifications this value needs to be modified
+                text = value;
             }
         }
         public string SummaryText{

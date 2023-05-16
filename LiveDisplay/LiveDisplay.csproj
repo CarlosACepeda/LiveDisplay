@@ -88,6 +88,8 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Activities\TestAreaActivity.cs" />
+    <Compile Include="Adapters\NotificationGroupAdapter.cs" />
     <Compile Include="Enums\NotificationBundleKeys.cs" />
     <Compile Include="Enums\NotificationStyles.cs" />
     <Compile Include="Fragments\NotificationListFragment.cs" />
@@ -931,6 +933,16 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\notification_options_dialog.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\testarea.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\notification_group_item.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Multilingual App Toolkit\Microsoft.Multilingual.Xamarin.Android.targets" Label="MultilingualAppToolkit" Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\Multilingual App Toolkit\v$(MultilingualAppToolkitVersion)\Microsoft.Multilingual.Xamarin.Android.targets')" />

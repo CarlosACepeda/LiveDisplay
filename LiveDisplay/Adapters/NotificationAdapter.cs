@@ -16,6 +16,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using static Android.App.DownloadManager;
 
     public class NotificationAdapter : RecyclerView.Adapter
     {
@@ -43,34 +44,36 @@
 
         public NotificationAdapter(List<OpenNotification> notifications)
         {
+            notifications = SortNotifications(notifications);
             GroupNotifications(notifications);
         }
         public void GroupNotifications(List<OpenNotification> notifications)
         {
-            if (NotificationHijackerWorker.DeviceSupportsNotificationGrouping())
-            {
                 foreach (var openNotification in notifications)
                 {
-                    if (openNotification.IsSummary ||
-                        openNotification.IsStandalone)
-                    {
-                        groupedNotifications.Add(openNotification);
-                    }
-                    else
-                    {
-                        singleNotifications.Add(openNotification); //Is a standalone notification
-                    }
+                    InsertIntoList(openNotification);
                 }
-
-            }
-            else
-            {
-                singleNotifications = notifications; // no grouping made.
-            }
         }
+
+        private List<OpenNotification> SortNotifications(List<OpenNotification> notifications)
+        {
+            //Ordering notifications:
+            //1st: Standalone notifs.
+            //2st: Children notifs.
+            //3st: Summary notifs.
+            //4th: nothing, just to fill the operator.
+            //That's because when handling summary notifications for the first time, we need the children already in place,
+            //Or subsequent manipulations done to the summary notification requiring their children won't work at all.
+            return notifications.OrderBy(x =>
+                x.IsStandalone == true ? 1 :
+                x.BelongsToGroup && !x.IsSummary == true ? 2 :
+                x.IsSummary? 3:
+                4
+                ).ToList();
+        }
+
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
-            if(uiThreadHandler== null) { uiThreadHandler = new Handler(holder.ItemView.Context.MainLooper); }
             if (position != RecyclerView.NoPosition)
             {
                 OpenNotification item;
@@ -150,6 +153,12 @@
             }
             else
             {
+                if (IsSystemSummary(notification))
+                {
+                    //system summary notifications don't carry any information, so we must set it ourselves,
+                    //else the lockscreen shows this notification without text.
+                    notification= FillSystemSummaryNotification(notification);
+                }
                 //Checking if Automatic Grouping happened
                 //Android groups automatically a set of notifications is the app issuing them doesn't do so.
                 //(Provides a parent for a set of individual notifications that are meant to be grouped)
@@ -173,6 +182,23 @@
                 NotifyItemInserted(groupedNotifications.Count - 1);
             }
         }
+
+        private OpenNotification FillSystemSummaryNotification(OpenNotification notification)
+        {
+            List<OpenNotification> children = GetChildrenNotifications(notification);
+            string title;
+            string text = null;
+            foreach(var child in children)
+            {
+                text = text + string.Concat(child.Title, "  ", child.Text, "\n");
+            }
+            title = notification.ApplicationOwnerName;
+            notification.Title = title;
+            notification.Text = text;
+
+            return notification;
+        }
+
         void HandleChildNotification(OpenNotification notification) //It is a notification that's part of a group.
         {
             int notificationPosition = GetItemPosition(notification, false);
@@ -315,10 +341,19 @@
                 return singleNotifications.Count(child => child.BelongsToGroup && child.GroupKey == openNotification.GroupKey);
             else return 0;
         }
+        int GetSiblingNotificationCount(OpenNotification openNotification)
+        {
+             return singleNotifications.Count(child => child.BelongsToGroup && child.GroupKey == openNotification.GroupKey);
+        }
         public bool NotificationHasSiblings(OpenNotification openNotification)
         {
             if (!NotificationHijackerWorker.DeviceSupportsNotificationGrouping()) return false;
             return singleNotifications.Count(on => on.GroupKey == openNotification?.GroupKey)>1;
+        }
+        List<OpenNotification> GetSiblings(OpenNotification aSibling)
+        {
+            if (!NotificationHijackerWorker.DeviceSupportsNotificationGrouping()) return null;
+            return singleNotifications.Where(on => on.GroupKey == aSibling?.GroupKey).ToList();
         }
 
         List<OpenNotification> GetOrphanNotifications(OpenNotification newParent)
@@ -343,6 +378,14 @@
         {
             return singleNotifications.FirstOrDefault(child => child.GroupKey == parent.GroupKey && child.BelongsToGroup); //we grab the first child found
         }
+        List<OpenNotification> GetChildrenNotifications(OpenNotification parent)
+        {
+            return singleNotifications.Where(child => child.GroupKey == parent.GroupKey && child.BelongsToGroup).ToList();
+        }
+        private bool IsSystemSummary(OpenNotification summaryNotification)
+        {
+            return summaryNotification.GroupKey.Contains("g:ranker_group");
+        }
         private void OnNotificationRemoved(OpenNotification sbn)
         {
             NotificationRemoved?.Invoke(null, new NotificationRemovedEventArgs
@@ -352,12 +395,23 @@
         }
         private void OnNotificationPosted(OpenNotification sbn)
         {
+            var children = GetChildrenNotifications(sbn);
+            var siblings = GetSiblings(sbn);
+            bool isParent = children != null && children.Count > 0;
+            bool isSibling = !isParent && NotificationHasSiblings(sbn);
+            bool isStandalone = !isParent && (children == null || children.Count == 0);
+
             NotificationPosted?.Invoke(null, new NotificationPostedEventArgs
             {
                 NotificationPosted= sbn,
                 ShouldCauseWakeUp= true, //TODO: This should be set by 'HandlexxxxNotification()' Methods
-                UpdatesPreviousNotification= true //TODO: This should be set by 'HandlexxxxNotification()' Methods
-            });
+                UpdatesPreviousNotification= true, //TODO: This should be set by 'HandlexxxxNotification()' Methods
+                Children= GetChildrenNotifications(sbn),
+                Siblings= GetSiblings(sbn),
+                IsSibling= isSibling,
+                IsParent= isParent,
+                IsStandalone= isStandalone
+        });
         }
 
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
@@ -372,7 +426,14 @@
             if (args.Position != RecyclerView.NoPosition)
             {
                 OpenNotification notificationToSend = GetClickedNotification(args);
-                OnItemClicked(args.Position, notificationToSend);  
+                var children = GetChildrenNotifications(notificationToSend);
+                bool isParent = children != null && children.Count > 0;
+                bool isStandalone= !isParent && (children == null || children.Count == 0);
+                bool isSibling = !isParent && NotificationHasSiblings(notificationToSend);
+                int siblingCount = GetSiblingNotificationCount(notificationToSend);
+                int childCount = GetChildNotificationCount(notificationToSend);
+                var siblings = GetSiblings(notificationToSend);
+                OnItemClicked(args.Position, notificationToSend, children, isParent, isStandalone, isSibling, siblingCount, childCount, siblings);
             }
         }
 
@@ -403,13 +464,22 @@
             OpenNotification notificationToSend = GetClickedNotification(args);
             OnItemLongClicked(args.Position, notificationToSend, args.View.GetX(), args.View.Width);
         }
-        private void OnItemClicked(int position, OpenNotification sbn)
+        private void OnItemClicked(int position, OpenNotification sbn,
+            List<OpenNotification> children, bool isParent, bool isStandalone, bool isSibling, int siblingCount, int childCount, List<OpenNotification> siblings)
         {
             ItemClick?.Invoke(null, new NotificationItemClickedEventArgs
             {
                 Position = position,
                 StatusBarNotification = sbn,
-            });
+                Children = children,
+                IsParent = isParent,
+                IsStandalone = isStandalone,
+                IsSibling = isSibling,
+                SiblingCount = siblingCount,
+                ChildCount = childCount,
+                Siblings = siblings,
+                IsFakeParent= sbn.GroupKey.Contains("g:ranker_group")
+            }) ;
         }
 
         private void OnItemLongClicked(int position, OpenNotification sbn, float notificationViewX, int notificationViewWidth)

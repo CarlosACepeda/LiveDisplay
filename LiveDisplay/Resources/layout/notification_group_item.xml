@@ -1,42 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/notification_container"
-    android:orientation="horizontal"
-    android:gravity="center_horizontal"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:visibility="visible"
-    android:visibility="invisible">
-    <LinearLayout
-        android:id="@+id/actual_notification"
-        android:layout_width="300sp"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="?android:selectableItemBackground">
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal">
-        <ImageView
-            android:contentDescription=""
-            android:id="@+id/mini_main_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minHeight="60sp"
-            android:minWidth="65sp"
-            android:visibility="gone"
-            tools:src="@android:color/holo_green_dark"/>
-        <ImageView
-            android:id="@+id/mini_app_icon"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:maxHeight="25sp"
-            android:maxWidth="25sp"
-            android:visibility="gone"
-            android:adjustViewBounds="true"/>
-    </FrameLayout>
-
+    android:layout_height="match_parent">
     <LinearLayout
         android:orientation="horizontal"
         android:layout_gravity="center"
@@ -108,7 +75,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/notification_title"
+        android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="20sp"
@@ -118,7 +85,7 @@
         android:textAlignment="center"
         tools:text="2 Mensajes nuevos de 2 chats"/>
     <TextView
-        android:id="@+id/notification_text"
+        android:id="@+id/text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -144,7 +111,7 @@
         layout="@layout/actions"
 		/>
 		<LinearLayout
-			android:id="@+id/inline_notification_container"
+			android:id="@+id/inline_response_container"
 			android:orientation="horizontal"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
@@ -175,11 +142,4 @@
 			/>
 		</LinearLayout>
 	</FrameLayout>
-     <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/children_notifications"
-            tools:visibility="visible"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="30sp"/>
-    </LinearLayout>
 </LinearLayout>

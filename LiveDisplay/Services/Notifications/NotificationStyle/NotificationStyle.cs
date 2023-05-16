@@ -64,8 +64,8 @@ namespace LiveDisplay.Services.Notifications.NotificationStyle
             InlineResponseNotificationContainer = FindView<LinearLayout>(Resource.Id.inline_notification_container);
             //PreviousMessages = FindView<TextView>(Resource.Id.previousMessages);
             Collapse = FindView<ImageButton>(Resource.Id.toggle_collapse);
-            PreviousNotificationButton = FindView<ImageButton>(Resource.Id.previous_notification);
-            NextNotificationButton = FindView<ImageButton>(Resource.Id.next_notification);
+            //PreviousNotificationButton = FindView<ImageButton>(Resource.Id.previous_notification);
+            //NextNotificationButton = FindView<ImageButton>(Resource.Id.next_notification);
             
             InlineResponse = FindView<EditText>(Resource.Id.inline_text);
             SendInlineResponse = FindView<ImageButton>(Resource.Id.send_response);
@@ -111,16 +111,16 @@ namespace LiveDisplay.Services.Notifications.NotificationStyle
         }
         protected virtual void SetMoveBetweenSiblingNotificationsVisibility() 
         {
-            if(NotificationHijackerWorker.NotificationAdapter.NotificationHasSiblings(OpenNotification))
-            {
-                PreviousNotificationButton.Visibility = ViewStates.Visible;
-                NextNotificationButton.Visibility = ViewStates.Visible;
-            }
-            else
-            {
-                PreviousNotificationButton.Visibility = ViewStates.Invisible;
-                NextNotificationButton.Visibility = ViewStates.Invisible;
-            }
+            //if(NotificationHijackerWorker.NotificationAdapter.NotificationHasSiblings(OpenNotification))
+            //{
+            //    PreviousNotificationButton.Visibility = ViewStates.Visible;
+            //    NextNotificationButton.Visibility = ViewStates.Visible;
+            //}
+            //else
+            //{
+            //    PreviousNotificationButton.Visibility = ViewStates.Invisible;
+            //    NextNotificationButton.Visibility = ViewStates.Invisible;
+            //}
         }
 
         protected virtual void SetTitle()

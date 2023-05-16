@@ -259,7 +259,10 @@
                             var notificationtext = Resources.GetString(Resource.String.testnotificationtext);
                             if (Build.VERSION.SdkInt > BuildVersionCodes.NMr1)
                             {
-                                slave.PostNotification(7, "LiveDisplay", notificationtext, true, NotificationImportance.Max);
+                                slave.PostNotification(7, "LiveDisplay1", notificationtext, true, NotificationImportance.Max);
+                                slave.PostNotification(8, "LiveDisplay2", notificationtext, true, NotificationImportance.Max);
+                                slave.PostNotification(9, "LiveDisplay3", notificationtext, true, NotificationImportance.Max);
+                                slave.PostNotification(10, "LiveDisplay4", notificationtext, true, NotificationImportance.Max);
                             }
                             else
                             {
@@ -287,7 +290,13 @@
                     }
 
                     break;
-
+                case Resource.Id.test_area:
+                    using (Intent intent = new Intent(this, typeof(TestAreaActivity)))
+                    {
+                        intent.AddFlags(ActivityFlags.NewDocument);
+                        StartActivity(intent);
+                    }
+                    break;
                 default:
                     break;
             }
