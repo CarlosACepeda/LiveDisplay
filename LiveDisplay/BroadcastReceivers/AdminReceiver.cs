@@ -1,13 +1,14 @@
-﻿using Android.App;
+﻿using Android;
+using Android.App;
 using Android.App.Admin;
 using Android.Content;
 using System;
 
 namespace LiveDisplay.BroadcastReceivers
 {
-    [BroadcastReceiver(Permission = "android.permission.BIND_DEVICE_ADMIN", Exported =true)]
-    [MetaData("android.app.device_admin", Resource = "@xml/device_admin")]
-    [IntentFilter(new[] { "android.app.action.DEVICE_ADMIN_ENABLED" })]
+    [BroadcastReceiver(Permission = Manifest.Permission.BindDeviceAdmin, Exported =true)]
+    [MetaData( DeviceAdminMetaData, Resource = "@xml/device_admin")]
+    [IntentFilter(new[] {ActionDeviceAdminEnabled })]
     public class AdminReceiver : DeviceAdminReceiver
     {
         public static event EventHandler<bool> OnDeviceAdminEnabled;

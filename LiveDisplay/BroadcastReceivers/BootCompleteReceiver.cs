@@ -6,7 +6,7 @@ using LiveDisplay.Servicios;
 
 namespace LiveDisplay.BroadcastReceivers
 {
-    [BroadcastReceiver(Permission = "android.permission.RECEIVE_BOOT_COMPLETED", Exported = true)]
+    [BroadcastReceiver(Permission = Android.Manifest.Permission.ReceiveBootCompleted, Exported = true)]
     [IntentFilter(new[] { Intent.ActionBootCompleted })]
     public class BootCompleteReceiver : BroadcastReceiver
     {

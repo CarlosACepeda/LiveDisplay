@@ -16,7 +16,7 @@ namespace LiveDisplay.BroadcastReceivers
     //For now, Target SDK will be that of Android 13.
     //Maybe the fix is to create a Dummy Job scheduler to make Android believe we are doing some serious work. Ha
     //So this Broadcast will continue to function correctly
-    [BroadcastReceiver(Label = "ScreenOnOffReceiver", Enabled =true, Exported = true, Permission = "android.permission.USE_FULL_SCREEN_INTENT")]
+    [BroadcastReceiver(Label = "ScreenOnOffReceiver", Enabled =true, Exported = true, Permission = Android.Manifest.Permission.UseFullScreenIntent)]
     [IntentFilter(new[] { Intent.ActionScreenOff })]
     [IntentFilter(new[] { Intent.ActionScreenOn })]
     public class ScreenOnOffReceiver : BroadcastReceiver
