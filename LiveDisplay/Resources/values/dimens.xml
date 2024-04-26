@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <resources>
-  <dimen name="albumartsize">120dp</dimen>
-  <dimen name="camerabuttonwidth">48dp</dimen>
+  <dimen name="alpha_totally_opaque">0</dimen>
+  <dimen name="alpha_half_visibility">0.5</dimen>
+  <dimen name="alpha_totally_visible">1</dimen>
+  <dimen name="discard_media_button_horizontal_padding">30dp</dimen>
+  <dimen name="media_widget_info_horizontal_padding">10dp</dimen>
+  <dimen name="media_widget_controls_horizontal_padding">20dp</dimen>
+  <dimen name="media_widget_controls_vertical_padding">20dp</dimen>
+
 </resources>

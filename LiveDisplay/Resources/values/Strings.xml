@@ -14,7 +14,10 @@
   <string name="allowweatherchangewallpaper">Change wallpaper briefly after a update</string>
   <string name="app_name">LiveDisplay</string>
   <string name="askfortranslations">Want to help with translations?</string>
+  <string name="awakecausesblackwall">Keep screen black</string>
+  <string name="awakecausesblackwall_desc">Causes the lockscreen to not show any wallpaper</string>
   <string name="awakesettings">Awake</string>
+  <string name="beta">Preliminary Version</string>
   <string name="blacklist">Blacklist</string>
   <string name="blacklistdesc">Don\'t show notifications from the apps selected.</string>
   <string name="blacklisted">Blacklisted</string>
@@ -43,6 +46,7 @@
   <string name="doubletaptopactioninverteddesc">Double tapping on the half top of the lockscreen unlocks the device</string>
   <string name="doubletaptosleep">Double tap to sleep</string>
   <string name="doubletaptosleepdesc">Touch twice anywhere on the lock screen to turn off the screen</string>
+  <string name="enable_posting_notifications_permission">Enable Notifications for this app</string>
   <string name="enableawake">Enable Awake service</string>
   <string name="enabledeviceaccess">Enable device Access</string>
   <string name="enablefloatingpermission">Display over other apps</string>
@@ -71,6 +75,8 @@
   <string name="inactivetimesettings">Inactive hours</string>
   <string name="inactivetimesettingsdesc">Disable Awake at certain hours</string>
   <string name="listenfordevicemotion">Listen for device motion</string>
+  <string name="livedisplay_mandatory_permissions">Required Permissions</string>
+  <string name="livedisplay_optional_permissions">Optional permissions</string>
   <string name="lockdelay">Automatic lock</string>
   <string name="lockdelay_desc">Lock the screen in the given time</string>
   <string name="lockonboot">Lock the screen on device boot up</string>
@@ -85,6 +91,7 @@
   <string name="musicwidgetcontrolmethod">Music Control Method</string>
   <string name="musicwidgetenabled">Enable Music Widget</string>
   <string name="never">Never</string>
+  <string name="nomediaplaying">There\'s no media playing currently!  \n Let\'s play something!</string>
   <string name="nonallowedtoturnonscreen">Non allowed to turn on screen</string>
   <string name="notavailableyet">Not available... yet.</string>
   <string name="notificationsettings">Notifications</string>
@@ -132,6 +139,4 @@
   <string name="weatherwidgetenabled">Enable Weather Widget</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
-  <string name="awakecausesblackwall">Keep screen black</string>
-  <string name="awakecausesblackwall_desc">Causes the lockscreen to not show any wallpaper</string>
 </resources>

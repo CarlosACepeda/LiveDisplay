@@ -86,7 +86,7 @@ namespace LiveDisplay.Fragments
             {
                 if (e.OpenNotification.RepresentsMediaPlaying())
                 {
-                    MusicController.StartPlayback(e.OpenNotification.GetMediaSessionToken());
+                    MediaEventsPublisherLollipop.InitializeFromToken(e.OpenNotification.GetMediaSessionToken());
 
                     maincontainer.Visibility = ViewStates.Invisible;
                     WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "NotificationFragment" });
@@ -102,7 +102,7 @@ namespace LiveDisplay.Fragments
 
             if (maincontainer.GetTag(Resource.String.defaulttag) == null)
             {
-                maincontainer.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
+                //maincontainer.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
             }
 
             if (configurationManager.RetrieveAValue(ConfigurationParameters.TestEnabled))
@@ -120,26 +120,26 @@ namespace LiveDisplay.Fragments
                 {
                     //if updates a previous notification, first of all let's see if the notification
                     //to be updated is the same that's currently being displayed in the Notification Widget.
-                    if ((string)maincontainer.GetTag(Resource.String.defaulttag) == openNotification.GetCustomId())
-                    {
-                        //Watch out for possible memory leaks here.
-                        styleApplier?.ApplyStyle(openNotification);
+                    //if ((string)maincontainer.GetTag(Resource.String.defaulttag) == openNotification.GetCustomId())
+                    //{
+                    //    //Watch out for possible memory leaks here.
+                    //    styleApplier?.ApplyStyle(openNotification);
 
-                        //let's attach a tag to the fragment in order to know which notification is this fragment showing.
-                        maincontainer.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
+                    //    //let's attach a tag to the fragment in order to know which notification is this fragment showing.
+                    //    maincontainer.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
 
-                        if (maincontainer.Visibility != ViewStates.Visible)
-                        {
-                            WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = true, WidgetName = "NotificationFragment" });
-                            maincontainer.Visibility = ViewStates.Visible;
-                            StartTimeout(false);
-                        }
-                    }
-                    else
-                    {
-                        //they are not the same so, the notification widget won't get updated(because that'll cause the
-                        //notification the user is viewing to be replaced)
-                    }
+                    //    if (maincontainer.Visibility != ViewStates.Visible)
+                    //    {
+                    //        WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = true, WidgetName = "NotificationFragment" });
+                    //        maincontainer.Visibility = ViewStates.Visible;
+                    //        StartTimeout(false);
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    //they are not the same so, the notification widget won't get updated(because that'll cause the
+                    //    //notification the user is viewing to be replaced)
+                    //}
                 });
             }
             else
@@ -147,7 +147,7 @@ namespace LiveDisplay.Fragments
                 Activity?.RunOnUiThread(() =>
                 {
                     styleApplier?.ApplyStyle(openNotification);
-                    maincontainer.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
+                    //maincontainer.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
                     if (maincontainer.Visibility != ViewStates.Visible)
                     {
                         WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = true, WidgetName = "NotificationFragment" });
@@ -204,7 +204,7 @@ namespace LiveDisplay.Fragments
                 {
                     if (e.OpenNotification.RepresentsMediaPlaying())
                     {
-                        if (MusicController.StopPlayback(e.OpenNotification.GetMediaSessionToken())) //Returns true if the Playback was stopped succesfully
+                        if (MediaEventsPublisherLollipop.GetInstance().Finish(e.OpenNotification.GetMediaSessionToken())) //Returns true if the Playback was stopped succesfully
                         {
                             //In that case, order MusicWidget to stop.
                             WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "MusicFragment", Active = false });
@@ -244,7 +244,7 @@ namespace LiveDisplay.Fragments
         private void ItemLongClicked(object sender, NotificationItemClickedEventArgs e)
         {
             maincontainer.Visibility = ViewStates.Visible;
-            openNotification = new OpenNotification(e.StatusBarNotification);
+            openNotification = e.OpenNotification;
             openNotification.Cancel();
             WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "NotificationFragment" });
             maincontainer.Visibility = ViewStates.Invisible;
@@ -252,14 +252,14 @@ namespace LiveDisplay.Fragments
 
         private void ItemClicked(object sender, NotificationItemClickedEventArgs e)
         {
-            openNotification = new OpenNotification(e.StatusBarNotification);
+            openNotification =e.OpenNotification;
 
             //if the current notification widget does not have a tag, let's set it.
 
-            if (maincontainer.GetTag(Resource.String.defaulttag) == null)
-            {
-                maincontainer.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
-            }
+            //if (maincontainer.GetTag(Resource.String.defaulttag) == null)
+            //{
+            //    maincontainer.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
+            //}
 
             if (configurationManager.RetrieveAValue(ConfigurationParameters.TestEnabled))
             {
@@ -273,22 +273,22 @@ namespace LiveDisplay.Fragments
             //Only do this process if the notification that I want to show is different than the one that
             //the Notification Widget has.
             //If it's the same then simply show it.
-            if ((string)maincontainer.GetTag(Resource.String.defaulttag) != openNotification.GetCustomId())
-            {
-                styleApplier?.ApplyStyle(openNotification);
-                maincontainer.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
-                if (maincontainer.Visibility != ViewStates.Visible)
-                {
-                    WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = true, WidgetName = "NotificationFragment" });
-                    maincontainer.Visibility = ViewStates.Visible;
-                }
-            }
-            else
-            {
-                styleApplier?.ApplyStyle(openNotification);
-                WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = true, WidgetName = "NotificationFragment" });
-                maincontainer.Visibility = ViewStates.Visible;
-            }
+            //if ((string)maincontainer.GetTag(Resource.String.defaulttag) != openNotification.GetCustomId())
+            //{
+            //    styleApplier?.ApplyStyle(openNotification);
+            //    maincontainer.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
+            //    if (maincontainer.Visibility != ViewStates.Visible)
+            //    {
+            //        WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = true, WidgetName = "NotificationFragment" });
+            //        maincontainer.Visibility = ViewStates.Visible;
+            //    }
+            //}
+            //else
+            //{
+            //    styleApplier?.ApplyStyle(openNotification);
+            //    WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = true, WidgetName = "NotificationFragment" });
+            //    maincontainer.Visibility = ViewStates.Visible;
+            //}
             StartTimeout(false);
         }
 

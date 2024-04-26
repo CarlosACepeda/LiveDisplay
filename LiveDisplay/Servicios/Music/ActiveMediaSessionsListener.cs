@@ -8,7 +8,6 @@ namespace LiveDisplay.Servicios.Music
     /// <summary>
     /// This class acts a a Listener for MediaSessions being created
     /// So, when a Session is created, I catch that Session and Use it to Control Media of tha session
-    /// through the Jukebox class.
     /// </summary>
     internal class ActiveMediaSessionsListener : Java.Lang.Object, MediaSessionManager.IOnActiveSessionsChangedListener
     {
@@ -22,17 +21,7 @@ namespace LiveDisplay.Servicios.Music
                     {
                         if (mediacontroller?.GetTransportControls() != null)//Ensure that this session has transport controls we can control
                         {
-                            try
-                            {
-                                MusicController.StartPlayback(mediacontroller.SessionToken);
-                                WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = true, WidgetName = "MusicFragment", Active=true });
-                                
-                            }
-                            catch
-                            {
-                                MusicController.StopPlayback(mediacontroller?.SessionToken);
-                            }
-                            break;
+                          MediaEventsPublisherLollipop.Initialize(mediacontroller);
                         }
                     }
             }

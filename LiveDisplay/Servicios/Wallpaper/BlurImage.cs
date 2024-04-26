@@ -1,8 +1,7 @@
-﻿using Android.App;
-using Android.Content;
+﻿using Android.Content;
 using Android.Graphics;
 using Android.Renderscripts;
-using Android.Views;
+using System;
 using System.Threading;
 
 namespace LiveDisplay.Servicios.Wallpaper
@@ -71,11 +70,11 @@ namespace LiveDisplay.Servicios.Wallpaper
             }
 
             Bitmap input;
-            if (image.Width > deviceWidth || image.Height > deviceHeight)
-            {
+            //if (image.Width > deviceWidth || image.Height > deviceHeight)
+            //{
                 input = Bitmap.CreateScaledBitmap(image, deviceWidth, deviceHeight, false);
-            }
-            else { input = image; }
+            //}
+            //else { input = image; }
 
             Bitmap output = Bitmap.CreateBitmap(input);
 
@@ -87,10 +86,15 @@ namespace LiveDisplay.Servicios.Wallpaper
             intrinsicBlur.SetRadius(intensity);
             intrinsicBlur.SetInput(inputallocation);
             intrinsicBlur.ForEach(outputallocation);
-
-            outputallocation.CopyTo(output);
-
-            return output;
+            try
+            {
+                outputallocation.CopyTo(output);
+                return output;
+            }
+            catch (Exception)
+            {
+                return output;
+            }
         }
 
         public BlurImage Async(bool async)

@@ -6,7 +6,7 @@ using LiveDisplay.Servicios;
 
 namespace LiveDisplay.BroadcastReceivers
 {
-    [BroadcastReceiver(Permission = "android.permission.RECEIVE_BOOT_COMPLETED")]
+    [BroadcastReceiver(Permission = "android.permission.RECEIVE_BOOT_COMPLETED", Exported = true)]
     [IntentFilter(new[] { Intent.ActionBootCompleted })]
     public class BootCompleteReceiver : BroadcastReceiver
     {
@@ -16,9 +16,9 @@ namespace LiveDisplay.BroadcastReceivers
         {
             if (configurationManager.RetrieveAValue(ConfigurationParameters.LockOnBoot))
             {
-                Intent lanzarLockScreen = new Intent(context, typeof(LockScreenActivity));
-                lanzarLockScreen.AddFlags(ActivityFlags.NewTask);
-                PendingIntent pendingIntent = PendingIntent.GetActivity(context, 0, lanzarLockScreen, 0);
+                Intent lockscreenLaunch = new Intent(context, typeof(LockScreenActivity));
+                lockscreenLaunch.AddFlags(ActivityFlags.NoAnimation);
+                PendingIntent pendingIntent = PendingIntent.GetActivity(context, 0, lockscreenLaunch, PendingIntentFlags.Immutable);
                 pendingIntent.Send();
             }
         }

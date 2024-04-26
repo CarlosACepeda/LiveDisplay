@@ -7,7 +7,7 @@ using System;
 
 namespace LiveDisplay.BroadcastReceivers
 {
-    [BroadcastReceiver(Label = "Battery Receiver")]
+    [BroadcastReceiver(Label = "Battery Receiver", Exported = true)]
     [IntentFilter(new[] { Intent.ActionBatteryChanged })]
     public class BatteryReceiver : BroadcastReceiver
     {
@@ -19,7 +19,7 @@ namespace LiveDisplay.BroadcastReceivers
         {
             int batterylevel = intent.GetIntExtra(BatteryManager.ExtraLevel, 0);
             int batteryIcon = intent.GetIntExtra(BatteryManager.ExtraIconSmall, 100);
-            if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
             {
                 levelListDrawable = Application.Context.Resources.GetDrawable(batteryIcon, Application.Context.Resources.NewTheme()) as LevelListDrawable;
             }

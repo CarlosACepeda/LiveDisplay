@@ -160,7 +160,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
 
             if (floatingNotificationView.GetTag(Resource.String.defaulttag) == null)
             {
-                floatingNotificationView.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
+                //floatingNotificationView.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
             }
 
             if (configurationManager.RetrieveAValue(ConfigurationParameters.TestEnabled))
@@ -174,17 +174,17 @@ namespace LiveDisplay.Servicios.FloatingNotification
 
             if (e.UpdatesPreviousNotification)
             {
-                if ((string)floatingNotificationView.GetTag(Resource.String.defaulttag) == openNotification.GetCustomId())
-                {
-                    styleApplier?.ApplyStyle(openNotification);
+                //if ((string)floatingNotificationView.GetTag(Resource.String.defaulttag) == openNotification.GetCustomId())
+                //{
+                //    styleApplier?.ApplyStyle(openNotification);
 
-                    floatingNotificationView.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
-                }
+                //    floatingNotificationView.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
+                //}
             }
             else
             {
                 //Is a new notification, so set a new tag.
-                floatingNotificationView.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
+                //floatingNotificationView.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
                 styleApplier?.ApplyStyle(openNotification);
 
                 if (floatingNotificationView.Visibility != ViewStates.Visible)
@@ -206,14 +206,14 @@ namespace LiveDisplay.Servicios.FloatingNotification
 
         private void NotificationAdapterViewHolder_ItemLongClicked(object sender, NotificationItemClickedEventArgs e)
         {
-            openNotification = new OpenNotification(e.StatusBarNotification);
+            openNotification =e.OpenNotification;
             openNotification.Cancel();
             floatingNotificationView.Visibility = ViewStates.Gone;
         }
 
         private void NotificationAdapterViewHolder_ItemClicked(object sender, NotificationItemClickedEventArgs e)
         {
-            openNotification = new OpenNotification(e.StatusBarNotification);
+            openNotification = e.OpenNotification;
 
             if (configurationManager.RetrieveAValue(ConfigurationParameters.TestEnabled))
             {
@@ -226,19 +226,19 @@ namespace LiveDisplay.Servicios.FloatingNotification
             //Only do this process if the notification that I want to show is different than the one that
             //the Floating Notification Widget has.
             //If it's the same then simply show it.
-            if ((string)floatingNotificationView.GetTag(Resource.String.defaulttag) != openNotification.GetCustomId())
-            {
-                styleApplier?.ApplyStyle(openNotification);
-                floatingNotificationView.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
-            }
-            if (floatingNotificationView.Visibility != ViewStates.Visible)
-            {
-                floatingNotificationView.Visibility = ViewStates.Visible;
-            }
-            else if (floatingNotificationView.Visibility != ViewStates.Visible)
-            {
-                floatingNotificationView.Visibility = ViewStates.Invisible;
-            }
+        //    if ((string)floatingNotificationView.GetTag(Resource.String.defaulttag) != openNotification.GetCustomId())
+        //    {
+        //        styleApplier?.ApplyStyle(openNotification);
+        //        floatingNotificationView.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
+        //    }
+        //    if (floatingNotificationView.Visibility != ViewStates.Visible)
+        //    {
+        //        floatingNotificationView.Visibility = ViewStates.Visible;
+        //    }
+        //    else if (floatingNotificationView.Visibility != ViewStates.Visible)
+        //    {
+        //        floatingNotificationView.Visibility = ViewStates.Invisible;
+        //    }
         }
 
         private void FloatingNotificationView_Click(object sender, EventArgs e)

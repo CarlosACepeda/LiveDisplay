@@ -14,11 +14,10 @@ namespace LiveDisplay.Servicios.Music
     /// For Kitkat only.
     /// </summary>
 
-    internal class MusicControllerKitkat : IDisposable
+    internal class MediaEventsPublisherKitkat : IMediaEventsPublisher
     {
-        private static MusicControllerKitkat instance;
-
         private bool requestedWidgetStart = false;
+        private static MediaEventsPublisherKitkat instance;
 
         public static RemoteControlPlayState MusicStatus { get; private set; }
         public RemoteControlPlayState PlaybackState { get; set; }
@@ -26,30 +25,32 @@ namespace LiveDisplay.Servicios.Music
         public RemoteController TransportControls { get; set; }
         public long CurrentMediaPosition { get; set; }
 
+
         public static event EventHandler<MediaPlaybackStateChangedKitkatEventArgs> MediaPlaybackChanged;
 
         public static event EventHandler<MediaMetadataChangedKitkatEventArgs> MediaMetadataChanged;
 
-        public static event EventHandler MusicPlaying;
+        public event EventHandler MusicPlaying;
 
-        public static event EventHandler MusicPaused;
+        public event EventHandler MusicPaused;
 
-        internal static MusicControllerKitkat GetInstance(RemoteController remoteController)
+        private MediaEventsPublisherKitkat(RemoteController remoteController)
         {
-            if (instance == null)
-            {
-                instance = new MusicControllerKitkat(remoteController);
-            }
+            MusicControlsKitkat.GetInstance().MediaEvent += MusicControlsKitkat_MediaEvent;
+            TransportControls = remoteController;
+        }
+        public static MediaEventsPublisherKitkat Initialize(RemoteController remoteController)
+        {
+           instance= new MediaEventsPublisherKitkat(remoteController);
+            return instance;
+        }
+        public static MediaEventsPublisherKitkat GetInstance()
+        {
+            if (instance == null) throw new InvalidOperationException("Call Initialize First");
             return instance;
         }
 
-        private MusicControllerKitkat(RemoteController remoteController)
-        {
-            JukeboxKitkat.MediaEvent += Jukebox_MediaEvent;
-            TransportControls = remoteController;
-        }
-
-        private void Jukebox_MediaEvent(object sender, MediaActionEventArgs e)
+        private void MusicControlsKitkat_MediaEvent(object sender, MediaActionEventArgs e)
         {
             switch (e.MediaActionFlags)
             {
@@ -156,23 +157,14 @@ namespace LiveDisplay.Servicios.Music
             });            
         }
 
-        #region Raising events.
-
-        protected virtual void OnMediaPlaybackChanged(MediaPlaybackStateChangedKitkatEventArgs e)
+        public void OnMediaPlaybackChanged(EventArgs e)
         {
-            MediaPlaybackChanged?.Invoke(this, e);
+            
         }
 
-        protected virtual void OnMediaMetadataChanged(MediaMetadataChangedKitkatEventArgs e)
+        public void OnMediaMetadataChanged(EventArgs e)
         {
-            MediaMetadataChanged?.Invoke(this, e);
-        }
-
-        #endregion Raising events.
-
-        public void Dispose()
-        {
-            Jukebox.MediaEvent -= Jukebox_MediaEvent;
+            
         }
     }
 }

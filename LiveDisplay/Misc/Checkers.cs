@@ -23,13 +23,17 @@ namespace LiveDisplay.Misc
 
         public static bool IsThisAppADeviceAdministrator()
         {
-            DevicePolicyManager devicePolicyManager = Application.Context.GetSystemService(Context.DevicePolicyService) as DevicePolicyManager;
+            DevicePolicyManager devicePolicyManager;
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
+            {
+                devicePolicyManager = Application.Context.GetSystemService(Java.Lang.Class.FromType(typeof(DevicePolicyManager))) as DevicePolicyManager;
+            }
+            else
+            {
+                devicePolicyManager= Application.Context.GetSystemService(Context.DevicePolicyService) as DevicePolicyManager;
+            }
 
             ComponentName componentName = new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(AdminReceiver)));
-
-#if DEBUG
-            return true;
-#endif
 
             return devicePolicyManager.IsAdminActive(componentName);
         }
@@ -54,6 +58,28 @@ namespace LiveDisplay.Misc
                     return false;
                 }
             return true;
+        }
+        public static bool ThisAppCanPostNotifications()
+        {
+            NotificationManager notificationManager;
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
+            {
+                notificationManager = Application.Context.GetSystemService(Java.Lang.Class.FromType(typeof(NotificationManager))) as NotificationManager;
+            }
+            else
+            {
+                notificationManager = Application.Context.GetSystemService(Context.NotificationService) as NotificationManager;
+            }
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
+            {
+                return notificationManager.AreNotificationsEnabled();
+            }
+            return true;
+        }
+
+        public static bool AreMandatoryPermissionsEnabled()
+        {
+            return IsNotificationListenerEnabled() && ThisAppCanPostNotifications();
         }
     }
 }

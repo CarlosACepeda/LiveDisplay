@@ -149,7 +149,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
             subtext.Text = notification.SubText();
             when.Text = notification.When();
             closenotificationbutton.SetTag(DefaultActionIdentificator, notification);
-            closenotificationbutton.Visibility = notification.IsRemovable() ? ViewStates.Visible : ViewStates.Invisible;
+            closenotificationbutton.Visibility = notification.IsClearable() ? ViewStates.Visible : ViewStates.Invisible;
             notificationActions.Visibility = notification.HasActions() ? ViewStates.Visible : ViewStates.Gone;
             inlineNotificationContainer.Visibility = ViewStates.Invisible;
 
@@ -223,7 +223,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
             ImageButton closenotificationbutton = sender as ImageButton;
             OpenNotification openNotification = closenotificationbutton.GetTag(DefaultActionIdentificator) as OpenNotification;
             openNotification.Cancel();
-            notificationView.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
+            //notificationView.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
             WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "NotificationFragment" }); 
             notificationView.Visibility = ViewStates.Invisible;
         }

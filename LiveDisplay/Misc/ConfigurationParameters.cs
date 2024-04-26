@@ -9,7 +9,7 @@
         public const int DefaultAlbumartBlurLevel = 16;
         public const string OpacityLevel = "opacitylevel";
         public const int DefaultOpacityLevel =100;
-        public const int DefaultAlbumartOpacityLevel = 40;
+        public const int DefaultAlbumartOpacityLevel = 80;
         public const string AlbumArtBlurLevel = "albumartblurlevel";
         public const string AlbumArtOpacityLevel = "albumartopacitylevel";
         public const string DefaultWallpaperSettingsAppliesToAlbumArt = "copywallpsettingsfromdefaultwallpaper";
@@ -18,6 +18,7 @@
         public const string DisableWallpaperChangeAnim = "disablewallpaperchangeanim?";
         public const string MusicWidgetEnabled = "musicwidgetenabled?";
         public const string ShowAlbumArt = "showalbumart?";
+
         public const string WeatherCurrent = "weathercurrent";
         public const string WeatherMinimum = "weatherminimum";
         public const string WeatherMaximum = "weathermaximum";

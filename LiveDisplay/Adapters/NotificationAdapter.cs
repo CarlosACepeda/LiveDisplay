@@ -1,5 +1,6 @@
 ﻿namespace LiveDisplay.Adapters
 {
+    using Android.App;
     using Android.OS;
     using Android.Service.Notification;
     using Android.Util;
@@ -15,10 +16,10 @@
     public class NotificationAdapter : RecyclerView.Adapter
     {
         public static int selectedItem = -1;
-        public List<StatusBarNotification> notifications = new List<StatusBarNotification>();
+        public List<OpenNotification> notifications = new List<OpenNotification>();
         public override int ItemCount => notifications.Count;
 
-        public NotificationAdapter(List<StatusBarNotification> notificaciones)
+        public NotificationAdapter(List<OpenNotification> notificaciones)
         {
             this.notifications = notificaciones;
         }
@@ -29,17 +30,8 @@
             {
                 //Cast
                 NotificationAdapterViewHolder viewHolder = holder as NotificationAdapterViewHolder;
-                if (Build.VERSION.SdkInt > BuildVersionCodes.M)
-                {
-                    viewHolder.Icono.Background = IconFactory.ReturnIconDrawable(notifications[position].Notification.SmallIcon, notifications[position].PackageName);
 
-                }
-                else
-                {
-#pragma warning disable CS0618
-                    viewHolder.Icono.Background = IconFactory.ReturnIconDrawable(notifications[position].Notification.Icon, notifications[position].PackageName);
-#pragma warning restore CS0618 
-                }
+                viewHolder.Icono.Background = notifications[position].GetSmallIcon().LoadDrawable(Application.Context);
                 if (selectedItem == position)
                 {
                     viewHolder.Icono.Alpha = 0.5f;
@@ -82,7 +74,7 @@
 
         private void ItemView_LongClick(object sender, View.LongClickEventArgs e)
         {
-            var statusBarNotification = CatcherHelper.StatusBarNotifications[LayoutPosition];
+            var statusBarNotification = CatcherHelper.OpenNotifications[LayoutPosition];
             OnItemLongClicked(LayoutPosition, statusBarNotification);
         }
 
@@ -90,8 +82,8 @@
         {
             //Simply indicates which item was clicked and after that call NotifyDataSetChanged to changes take effect.
             NotificationAdapter.selectedItem = LayoutPosition;
-            CatcherHelper.notificationAdapter.NotifyDataSetChanged();
-            var statusBarNotification = CatcherHelper.StatusBarNotifications[LayoutPosition];
+            //CatcherHelper.notificationAdapter.NotifyDataSetChanged();
+            var statusBarNotification = CatcherHelper.OpenNotifications[LayoutPosition];
             OnItemClicked(LayoutPosition, statusBarNotification);
             //try
             //{
@@ -104,21 +96,21 @@
             //}
         }
 
-        private void OnItemClicked(int position, StatusBarNotification sbn)
+        private void OnItemClicked(int position, OpenNotification sbn)
         {
             ItemClicked?.Invoke(this, new NotificationItemClickedEventArgs
             {
                 Position = position,
-                StatusBarNotification = sbn
+                OpenNotification = sbn
             });
         }
 
-        private void OnItemLongClicked(int position, StatusBarNotification sbn)
+        private void OnItemLongClicked(int position, OpenNotification sbn)
         {
             ItemLongClicked?.Invoke(this, new NotificationItemClickedEventArgs
             {
                 Position = position,
-                StatusBarNotification = sbn
+                OpenNotification = sbn
             }
             );
         }

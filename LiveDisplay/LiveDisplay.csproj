@@ -16,7 +16,7 @@
     <AndroidResgenFile>Resources\Resource.Designer.cs</AndroidResgenFile>
     <AndroidResgenClass>Resource</AndroidResgenClass>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <TargetFrameworkVersion>v10.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v13.0</TargetFrameworkVersion>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
@@ -43,12 +43,12 @@
     <Debugger>Xamarin</Debugger>
     <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
     <AndroidCreatePackagePerAbi>false</AndroidCreatePackagePerAbi>
-    <AndroidEnableMultiDex>false</AndroidEnableMultiDex>
+    <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
     <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
-    <AndroidLinkTool>r8</AndroidLinkTool>
     <AndroidPackageFormat>apk</AndroidPackageFormat>
-    <AndroidDexTool>dx</AndroidDexTool>
+    <AndroidDexTool>d8</AndroidDexTool>
     <PlatformTarget>AnyCPU</PlatformTarget>
+    <AndroidKeyStore>false</AndroidKeyStore>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -68,11 +68,11 @@
     <AndroidSupportedAbis>
     </AndroidSupportedAbis>
     <AndroidCreatePackagePerAbi>false</AndroidCreatePackagePerAbi>
-    <EnableProguard>false</EnableProguard>
     <AndroidEnableMultiDex>false</AndroidEnableMultiDex>
     <AndroidEnableSGenConcurrent>false</AndroidEnableSGenConcurrent>
     <Debugger>Native</Debugger>
     <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
+    <AndroidLinkTool>r8</AndroidLinkTool>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Java.Interop" />
@@ -105,7 +105,7 @@
     <Compile Include="Factories\IconFactory.cs" />
     <Compile Include="Fragments\ClockFragment.cs" />
     <Compile Include="Fragments\PreferencesFragment.cs" />
-    <Compile Include="Fragments\MusicFragment.cs" />
+    <Compile Include="Fragments\MediaFragment.cs" />
     <Compile Include="Fragments\NotificationFragment.cs" />
     <Compile Include="Fragments\Preferences\AboutFragment.cs" />
     <Compile Include="Fragments\Preferences\AwakeSettingsFragment.cs" />
@@ -128,18 +128,21 @@
     <Compile Include="Servicios\ConfigurationManager.cs" />
     <Compile Include="Servicios\FloatingNotification\FloatingNotification.cs" />
     <Compile Include="Servicios\Keyguard\KeyguardHelper.cs" />
-    <Compile Include="Servicios\Music\Jukebox.cs" />
-    <Compile Include="Servicios\Music\JukeboxKitkat.cs" />
+    <Compile Include="Servicios\Music\IMediaEventsPublisher.cs" />
+    <Compile Include="Servicios\Music\IMusicControls.cs" />
+    <Compile Include="Servicios\Music\MusicControlsBase.cs" />
+    <Compile Include="Servicios\Music\MusicControlsLollipop.cs" />
+    <Compile Include="Servicios\Music\MusicControlsKitkat.cs" />
     <Compile Include="Servicios\Music\MediaEventArgs\MediaActionEventArgs.cs" />
     <Compile Include="Servicios\Music\MediaEventArgs\MediaMetadataChangedEventArgs.cs" />
     <Compile Include="Servicios\Music\MediaEventArgs\MediaMetadataChangedKitkatEventArgs.cs" />
     <Compile Include="Servicios\Music\MediaEventArgs\MediaPlaybackStateChangedEventArgs.cs" />
     <Compile Include="Servicios\Music\MediaEventArgs\MediaPlaybackStateChangedKitkatEventArgs.cs" />
-    <Compile Include="Servicios\Music\MusicControllerKitkat.cs" />
+    <Compile Include="Servicios\Music\MediaEventsPublisherKitkat.cs" />
     <Compile Include="Servicios\Music\ActiveMediaSessionsListener.cs" />
     <Compile Include="Servicios\Notificaciones\CatcherHelper.cs" />
     <Compile Include="Servicios\Notificaciones\CatcherService.cs" />
-    <Compile Include="Servicios\Music\MusicController.cs" />
+    <Compile Include="Servicios\Music\MediaEventsPublisherLollipop.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationItemClickedEventArgs.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationListSizeChangedEventArgs.cs" />
     <Compile Include="Servicios\Notificaciones\NotificationEventArgs\NotificationRemovedEventArgs.cs" />
@@ -161,26 +164,6 @@
     <Compile Include="Servicios\Widget\WidgetStatusPublisher.cs" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\anim\fade_in.xml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\anim\fade_out.xml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\anim\slidetounlockanim.xml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-hdpi\check_black_24.png">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-hdpi\denied_black_24.png">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
-    </AndroidResource>
     <AndroidResource Include="Resources\drawable-hdpi\ic_awake_24dp.png">
       <SubType>Designer</SubType>
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
@@ -233,14 +216,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xhdpi\check_black_24.png">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xhdpi\denied_black_24.png">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
-    </AndroidResource>
     <AndroidResource Include="Resources\drawable-xhdpi\ic_awake_24dp.png">
       <SubType>Designer</SubType>
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
@@ -286,14 +261,6 @@
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
     <AndroidResource Include="Resources\drawable-xhdpi\ic_warning_white_24dp.png">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxxhdpi\check_black_24.png">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\drawable-xxxhdpi\denied_black_24.png">
       <SubType>Designer</SubType>
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
@@ -373,11 +340,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\MusicPlayer.axml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\layout\MusicPlayer2.axml">
+    <AndroidResource Include="Resources\layout\Media.xml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
@@ -471,6 +434,7 @@
     <None Include="Assets\AboutAssets.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Resources\anim\" />
     <Folder Include="Resources\drawable\" />
   </ItemGroup>
   <ItemGroup>
@@ -555,43 +519,43 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AppCenter">
-      <Version>3.2.1</Version>
+      <Version>3.4.3</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AppCenter.Analytics">
-      <Version>3.2.1</Version>
+      <Version>3.4.3</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AppCenter.Crashes">
-      <Version>3.2.1</Version>
+      <Version>3.4.3</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>12.0.3</Version>
+      <Version>13.0.3</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.AndroidX.Activity">
-      <Version>1.1.0</Version>
+      <Version>1.8.2.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.AndroidX.AppCompat">
-      <Version>1.1.0</Version>
+      <Version>1.6.1.7</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.AndroidX.AppCompat.Resources">
-      <Version>1.1.0</Version>
+      <Version>1.1.0.3</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.AndroidX.CardView">
-      <Version>1.0.0</Version>
+      <Version>1.0.0.25</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.AndroidX.Fragment">
-      <Version>1.2.4</Version>
+      <Version>1.6.2.2</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.AndroidX.Preference">
-      <Version>1.1.1</Version>
+      <Version>1.2.1.4</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.AndroidX.RecyclerView">
-      <Version>1.1.0</Version>
+      <Version>1.3.2.2</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.AndroidX.Room.Runtime">
-      <Version>2.2.5</Version>
+      <Version>2.6.1.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.AndroidX.Work.Runtime">
-      <Version>2.3.4.1</Version>
+      <Version>2.9.0.1</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
@@ -646,6 +610,25 @@
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\outline_check_white_24.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\outline_close_white_24.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\outline_check_white_24.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\outline_close_white_24.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\outline_check_white_24.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\outline_close_white_24.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\outline_check_white_24.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\outline_close_white_24.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\outline_check_white_24.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\outline_close_white_24.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\outline_delete_white_24.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\outline_delete_white_24.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\outline_delete_white_24.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\outline_delete_white_24.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\outline_delete_white_24.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

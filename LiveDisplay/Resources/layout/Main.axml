@@ -2,11 +2,10 @@
 <LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:a="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
 	android:orientation="vertical"
 	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:minWidth="25px"
-	android:minHeight="25px">
+	android:layout_height="match_parent">
 	<androidx.appcompat.widget.Toolbar
 		android:id="@+id/mainToolbar"
 		android:layout_width="match_parent"
@@ -17,111 +16,125 @@
 		<LinearLayout
 			android:layout_width="wrap_content"
 			android:layout_height="match_parent"
-			android:gravity="right">
+			android:gravity="center">
 			<TextView
 				android:fontFamily="sans-serif-condensed-light"
 				android:textColor="@android:color/white"
 				android:layout_width="wrap_content"
-				android:layout_height="match_parent"
+				android:layout_height="wrap_content"
 				android:background="@android:color/transparent"
-				android:text="beta" />
+				android:text="@string/beta" />
 		</LinearLayout>
 	</androidx.appcompat.widget.Toolbar>
-	<FrameLayout
-		android:minWidth="25px"
-		android:minHeight="25px"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content">
-		<ScrollView
-			android:minWidth="25px"
-			android:minHeight="25px"
+	<ScrollView
 			android:layout_width="match_parent"
-			android:layout_height="match_parent">
-			<LinearLayout
+			android:layout_height="match_parent"
+			android:layout_margin="10dp">
+		<LinearLayout
 				android:orientation="vertical"
-				android:minWidth="25px"
-				android:minHeight="25px"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent">
-				<TextView
+			<TextView
+					android:layout_marginVertical="5dp"
 					android:fontFamily="sans-serif-condensed-light"
-					android:text="LiveDisplay Access"
+					android:text="@string/livedisplay_mandatory_permissions"
 					android:textAppearance="?android:attr/textAppearanceSmall"
 					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:padding="10dp"
+					android:layout_height="wrap_content"					
 				/>
-				<RelativeLayout
+			<RelativeLayout
+					android:layout_marginVertical="10dp"
+					android:id="@+id/notification_access"
 					android:background="?android:attr/selectableItemBackground"
-					android:minWidth="25px"
-					android:minHeight="25px"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content">
-					<TextView
-						android:fontFamily="sans-serif-condensed"
-						android:padding="10dp"
+				<TextView
+						android:fontFamily="sans-serif-condensed"						
 						android:text="@string/enablenotificationlistener"
 						android:textAppearance="?android:attr/textAppearanceLarge"
 						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:id="@+id/enableNotificationAccess"/>
-					<ImageView
+						android:layout_height="wrap_content"/>
+				<ImageView
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:id="@+id/notificationAccessCheckbox"
 						android:layout_alignParentRight="true" />
-				</RelativeLayout>
-				<RelativeLayout
+			</RelativeLayout>
+			<RelativeLayout
+					android:id="@+id/display_overlays"
+					android:layout_marginVertical="10dp"
+					tools:visibility="visible"
+					android:visibility="gone"
 					android:background="?android:attr/selectableItemBackground"
-					android:minWidth="25px"
-					android:minHeight="25px"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content">
-					<TextView
+				<TextView
 						android:fontFamily="sans-serif-condensed"
-						android:padding="10dp"			
-						android:text="@string/enabledeviceaccess"
+						android:text="@string/enablefloatingpermission"
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"/>
+				<ImageView
+						tools:src="@drawable/check_black_24"
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"
+						android:id="@+id/drawOverOtherAppsAccessCheckbox"
+						android:layout_centerVertical="true"
+						android:layout_alignParentRight="true" />
+			</RelativeLayout>
+			<RelativeLayout
+					android:id="@+id/post_notifications"
+					android:layout_marginVertical="10dp"
+					tools:visibility="visible"
+					android:visibility="gone"
+					android:background="?android:attr/selectableItemBackground"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+				<TextView
+						android:fontFamily="sans-serif-condensed"
+						android:text="@string/enable_posting_notifications_permission"
 						android:textAppearance="?android:attr/textAppearanceLarge"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
-						android:id="@+id/enableDeviceAccess"/>
-					<ImageView
+						android:id="@+id/enable_notification_permission"/>
+				<ImageView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:id="@+id/enable_notification_permission_checkbox"
+						android:layout_alignParentRight="true" />
+			</RelativeLayout>
+			<TextView
+					android:layout_marginVertical="10dp"
+					android:fontFamily="sans-serif-condensed"
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:id="@+id/health" />
+			<TextView
+					android:layout_marginVertical="10dp"
+					android:fontFamily="sans-serif-condensed-light"
+					android:text="@string/livedisplay_optional_permissions"
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+				/>
+			<RelativeLayout
+					android:id="@+id/device_access"
+					android:layout_marginVertical="10dp"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+				<TextView
+						android:fontFamily="sans-serif-condensed"
+						android:text="@string/enabledeviceaccess"
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"/>
+				<ImageView
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:id="@+id/deviceAccessCheckbox"
 						android:layout_alignParentRight="true" />
-				</RelativeLayout>
-				<RelativeLayout
-					android:id="@+id/drawOverlaysCheckboxContainer"
-					android:visibility="gone"
-					android:background="?android:attr/selectableItemBackground"
-					android:minWidth="25px"
-					android:minHeight="25px"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content">
-					<TextView
-						android:fontFamily="sans-serif-condensed"
-						android:padding="10dp"			
-						android:text="@string/enablefloatingpermission"
-						android:textAppearance="?android:attr/textAppearanceLarge"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:id="@+id/enableFloatingPermission"/>
-					<ImageView
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:id="@+id/drawOverOtherAppsAccessCheckbox"
-						android:layout_alignParentRight="true" />
-				</RelativeLayout>
-				<TextView
-					android:fontFamily="sans-serif-condensed"
-					android:padding="10dp"
-					android:textAppearance="?android:attr/textAppearanceSmall"
-		            android:layout_width="match_parent"
-		            android:layout_height="wrap_content"
-		            android:id="@+id/health" />
-			</LinearLayout>
-			
-		</ScrollView>
-	</FrameLayout>
+			</RelativeLayout>
+		</LinearLayout>
+	</ScrollView>
 </LinearLayout>

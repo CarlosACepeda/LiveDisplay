@@ -37,6 +37,7 @@
   </style>
   <!--the following Style is for No action bar dark-->
   <style name="LiveDisplayThemeDark.NoActionBar" parent="LiveDisplayThemeDark">
+    <item name="android:windowBackground">@android:color/holo_red_light</item>
     <item name="windowActionBar">false</item>
     <item name="windowNoTitle">true</item>
   </style>

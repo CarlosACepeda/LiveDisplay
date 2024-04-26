@@ -106,7 +106,7 @@
                 a:layout_weight="0.9"
                 a:id="@+id/unlocker" />-->
         <!--This button is the camera shortcut.-->
-            <Button
+<!--            <Button
                 a:alpha="0.7"
                 a:drawableTop="@drawable/ic_camera_48"
                 a:background="?android:selectableItemBackground"
@@ -121,7 +121,7 @@
                 a:layout_gravity="left"
                 a:layout_width="@dimen/camerabuttonwidth"
                 a:layout_height="match_parent"
-                a:id="@+id/btnStartPhone" />
+                a:id="@+id/btnStartPhone" />-->
         </FrameLayout>
     </LinearLayout>
 	<include

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+   >
+   <ImageButton
+        android:id="@+id/discard_media_session"
+        android:paddingHorizontal="@dimen/discard_media_button_horizontal_padding"
+        android:visibility="visible" 
+        android:alpha="@dimen/alpha_totally_opaque"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/outline_delete_white_24"
+        />
+    <LinearLayout 
+    android:id="@+id/container"
+    android:animateLayoutChanges="true"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:visibility="visible"
+    android:visibility="invisible"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/playbackstatus"
+        android:alpha="@dimen/alpha_half_visibility"
+        android:text="@string/now_playing"
+        android:textAlignment="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:singleLine="true"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
+		android:paddingHorizontal="@dimen/media_widget_info_horizontal_padding"
+        android:textAlignment="center"
+		android:textSize="25dp"
+        android:fontFamily="sans-serif-condensed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvSongName"
+        android:textColor="@android:color/white"
+        android:textStyle="normal" />
+    <TextView
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:textAlignment="center"
+        android:paddingHorizontal="@dimen/media_widget_info_horizontal_padding"
+		android:textSize="19dp"
+        android:fontFamily="sans-serif-condensed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvArtistName"
+        android:textColor="@android:color/white"
+        android:textStyle="normal" />
+    <TextView
+        android:textAlignment="center"
+        android:paddingHorizontal="@dimen/media_widget_info_horizontal_padding"
+	    android:textSize="17dp"
+        android:fontFamily="sans-serif-condensed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvAlbumName"
+        android:textStyle="italic"
+        android:textColor="@android:color/white" />
+    <SeekBar
+        android:alpha="@dimen/alpha_half_visibility"
+		android:paddingHorizontal="@dimen/media_widget_info_horizontal_padding"
+        android:textAlignment="center"
+        android:visibility="visible"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/seeksongTime" />
+    <TextView
+        android:id="@+id/sourceapp"
+        android:textAlignment="center"
+        android:alpha="@dimen/alpha_half_visibility"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:id="@+id/mediaControls">
+
+        <ImageButton
+            android:src="@drawable/ic_skip_previous_white_24dp"
+            android:paddingHorizontal="@dimen/media_widget_controls_horizontal_padding"
+            android:paddingVertical="@dimen/media_widget_controls_vertical_padding"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnMediaPrevious"
+            android:background="?android:attr/selectableItemBackground" />
+        <ImageButton
+            android:src="@drawable/ic_play_arrow_white_24dp"
+            android:paddingHorizontal="@dimen/media_widget_controls_horizontal_padding"
+                android:paddingVertical="@dimen/media_widget_controls_vertical_padding"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnMediaPlayPlause"
+            android:background="?android:attr/selectableItemBackground" />
+        <ImageButton
+            android:paddingHorizontal="@dimen/media_widget_controls_horizontal_padding"
+                android:paddingVertical="@dimen/media_widget_controls_vertical_padding"
+            android:src="@drawable/ic_skip_next_white_24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnMediaNext"
+            android:background="?android:attr/selectableItemBackground" />
+        <ImageButton
+            android:visibility="visible"
+            android:src="@drawable/ic_notifications_white_24dp"
+            android:paddingHorizontal="@dimen/media_widget_controls_horizontal_padding"
+                android:paddingVertical="@dimen/media_widget_controls_vertical_padding"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnLaunchNotification"
+            android:background="?android:attr/selectableItemBackground" />
+    </LinearLayout>
+    </LinearLayout>
+    <TextView
+        android:layout_gravity="center"
+        android:textAlignment="center"
+        android:visibility="invisible"
+        android:id="@+id/no_media_playing"
+        android:text="@string/nomediaplaying"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+</FrameLayout>
+

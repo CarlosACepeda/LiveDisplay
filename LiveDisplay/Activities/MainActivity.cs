@@ -8,6 +8,7 @@
     using Android.Runtime;
     using Android.Views;
     using Android.Widget;
+    using AndroidX.Activity.Result;
     using AndroidX.AppCompat.App;
     using LiveDisplay.BroadcastReceivers;
     using LiveDisplay.Misc;
@@ -20,30 +21,33 @@
     using Microsoft.AppCenter.Crashes;
     using System;
     using System.Threading;
+    using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
     using AlertDialog = AndroidX.AppCompat.App.AlertDialog;
     using Toolbar = AndroidX.AppCompat.Widget.Toolbar;
 
-    [Activity(Label = "@string/app_name", Theme = "@style/LiveDisplayThemeDark.NoActionBar", TaskAffinity = "livedisplay.main", MainLauncher = true)]
-    internal class MainActivity : AppCompatActivity
+    [Activity(Label = "@string/app_name", Theme = "@style/LiveDisplayThemeDark.NoActionBar", MainLauncher = true)]
+    internal class MainActivity : AppCompatActivity, IActivityResultCallback
     {
         private Toolbar toolbar;
-        private TextView enableNotificationAccess, enableDeviceAdmin;
-        private TextView enableDrawOverAccess;
-        private RelativeLayout enableDrawOverAccessContainer;
+        private RelativeLayout enableNotificationAccess, enableDeviceAdmin, enablePostingNotifications;
         private bool isApplicationHealthy;
+        public static int StartCount = 0;
+        ActivityResultLauncher activityResultLauncher;
+
         protected override void OnCreate(Bundle savedInstanceState)
-        {
+        {           
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.Main);
+            activityResultLauncher = RegisterForActivityResult(new RequestPermission(), this);
             BindViews();
-            StartAppCenterMonotoring();
+            StartAppCenterMonitoring();
         }
 
         protected override void OnResume()
         {
             CheckNotificationAccess();
             CheckDeviceAdminAccess();
-            CheckDrawOverOtherAppsAccess();
+            CheckEnabledNotificationPosting();
             IsApplicationHealthy();
             AdminReceiver.OnDeviceAdminEnabled += AdminReceiver_OnDeviceAdminEnabled;
             base.OnResume();
@@ -58,11 +62,11 @@
                     switch (e)
                     {
                         case true:
-                            adminGivenImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
+                            adminGivenImageView.SetBackgroundResource(Resource.Drawable.outline_check_white_24);
                             break;
 
                         case false:
-                            adminGivenImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
+                            adminGivenImageView.SetBackgroundResource(Resource.Drawable.outline_close_white_24);
                             break;
                     }
                 });
@@ -81,11 +85,11 @@
                 switch (Checkers.IsThisAppADeviceAdministrator())
                 {
                     case true:
-                        adminGivenImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
+                        adminGivenImageView.SetBackgroundResource(Resource.Drawable.outline_check_white_24);
                         break;
 
                     case false:
-                        adminGivenImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
+                        adminGivenImageView.SetBackgroundResource(Resource.Drawable.outline_close_white_24);
                         break;
                 }
             }
@@ -98,28 +102,29 @@
                 switch (Checkers.IsNotificationListenerEnabled())
                 {
                     case true:
-                        notificationAccessGivenImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
+                        notificationAccessGivenImageView.SetBackgroundResource(Resource.Drawable.outline_check_white_24);
 
                         break;
 
                     case false:
-                        notificationAccessGivenImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
+                        notificationAccessGivenImageView.SetBackgroundResource(Resource.Drawable.outline_close_white_24);
                         break;
                 }
             }
         }
-
-        private void CheckDrawOverOtherAppsAccess()
+        private void CheckEnabledNotificationPosting()
         {
-            using (var drawOverOtherAppsImageView = FindViewById<ImageView>(Resource.Id.drawOverOtherAppsAccessCheckbox))
+            using (var notificationAccessGivenImageView = FindViewById<ImageView>(Resource.Id.enable_notification_permission_checkbox))
             {
-                if (Checkers.ThisAppCanDrawOverlays())
+
+                if (Checkers.ThisAppCanPostNotifications())
                 {
-                    drawOverOtherAppsImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
+                    notificationAccessGivenImageView.SetBackgroundResource(Resource.Drawable.outline_check_white_24);
                 }
+
                 else
-                {
-                    drawOverOtherAppsImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
+                { 
+                    notificationAccessGivenImageView.SetBackgroundResource(Resource.Drawable.outline_close_white_24);
                 }
             }
         }
@@ -128,7 +133,8 @@
         {
             using (var accessestext = FindViewById<TextView>(Resource.Id.health))
             {
-                if (Checkers.IsNotificationListenerEnabled() && Checkers.IsThisAppADeviceAdministrator())
+                if (Checkers.IsNotificationListenerEnabled() && 
+                    Checkers.ThisAppCanPostNotifications())
                 {
                     accessestext.SetText(Resource.String.accessesstatusenabled);
                     accessestext.SetTextColor(Android.Graphics.Color.Green);
@@ -147,7 +153,6 @@
         {
             base.OnPause();
             AdminReceiver.OnDeviceAdminEnabled -= AdminReceiver_OnDeviceAdminEnabled;
-
         }
 
         protected override void OnDestroy()
@@ -157,15 +162,6 @@
             enableNotificationAccess.Dispose();
             enableDeviceAdmin.Dispose();
             base.OnDestroy();
-        }
-
-        protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
-        {
-            base.OnActivityResult(requestCode, resultCode, data);
-            if (requestCode == 25)
-            {
-                CheckDrawOverOtherAppsAccess();
-            }
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
@@ -182,7 +178,6 @@
                 case Resource.Id.action_settings:
                     using (Intent intent = new Intent(this, typeof(SettingsActivity)))
                     {
-                        intent.AddFlags(ActivityFlags.NewDocument);
                         StartActivity(intent);
                     }
 
@@ -241,25 +236,28 @@
                 SetSupportActionBar(toolbar);
             }
 
-            enableDeviceAdmin = FindViewById<TextView>(Resource.Id.enableDeviceAccess);
-            enableNotificationAccess = FindViewById<TextView>(Resource.Id.enableNotificationAccess);
-            //if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1)
-            //{
-            //    enableDrawOverAccessContainer = FindViewById<RelativeLayout>(Resource.Id.drawOverlaysCheckboxContainer);
-            //    enableDrawOverAccessContainer.Visibility = ViewStates.Visible;
-            //    enableDrawOverAccess = FindViewById<TextView>(Resource.Id.enableFloatingPermission);
-            //    enableDrawOverAccess.Click += EnableDrawOverAccess_Click;
-            //}            //You won't be needing the permission for now.
+            enableDeviceAdmin = FindViewById<RelativeLayout>(Resource.Id.device_access);
+            enableNotificationAccess = FindViewById<RelativeLayout>(Resource.Id.notification_access);
+            enablePostingNotifications = FindViewById<RelativeLayout>(Resource.Id.post_notifications);
+            if(Build.VERSION.SdkInt>= BuildVersionCodes.Tiramisu)
+            {
+                enablePostingNotifications.Visibility = ViewStates.Visible;
+                enablePostingNotifications.Click += EnablePostingNotifications_Click;
+            }
 
             enableNotificationAccess.Click += EnableNotificationAccess_Click;
             enableDeviceAdmin.Click += EnableDeviceAdmin_Click;
+
+        }
+
+        private void EnablePostingNotifications_Click(object sender, EventArgs e)
+        {
+            activityResultLauncher.Launch(Android.Manifest.Permission.PostNotifications);
         }
 
         private void EnableDrawOverAccess_Click(object sender, EventArgs e)
         {
-            using (var intent = new Intent(Settings.ActionManageOverlayPermission))
-                StartActivityForResult(intent, 25);
-            
+            activityResultLauncher.Launch(Settings.ActionManageOverlayPermission);
         }
 
         private void EnableDeviceAdmin_Click(object sender, EventArgs e)
@@ -301,12 +299,18 @@
             }
         }
 
-        private void StartAppCenterMonotoring()
+        private void StartAppCenterMonitoring()
         {
             ThreadPool.QueueUserWorkItem(m =>
             {
-                AppCenter.Start("0ec5320c-34b4-498b-a9c2-dae7614997fa", typeof(Analytics), typeof(Crashes), typeof(ErrorReport));
+                Console.WriteLine("Start Appcenter here");
+                //AppCenter.Start("0ec5320c-34b4-498b-a9c2-dae7614997fa", typeof(Analytics), typeof(Crashes), typeof(ErrorReport));
             });
+        }
+
+        public void OnActivityResult(Java.Lang.Object result)
+        {
+            CheckEnabledNotificationPosting();
         }
     }
 }

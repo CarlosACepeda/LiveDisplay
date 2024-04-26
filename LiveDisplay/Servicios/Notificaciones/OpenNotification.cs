@@ -4,6 +4,7 @@ using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.Media.Session;
 using Android.OS;
+using Android.Runtime;
 using Android.Service.Notification;
 using Android.Util;
 using Java.Util;
@@ -16,17 +17,36 @@ using System.Linq;
 
 namespace LiveDisplay.Servicios.Notificaciones
 {
-    public class OpenNotification : Java.Lang.Object
+    public class OpenNotification : Java.Lang.Object, PendingIntent.IOnFinished
     {
+        public const string BigPictureStyle = "android.app.Notification$BigPictureStyle";
+        public const string InboxStyle = "android.app.Notification$InboxStyle";
+        public const string MediaStyle = "android.app.Notification$MediaStyle";
+        public const string MessagingStyle = "android.app.Notification$MessagingStyle"; //Only available on API Level 24 and up.
+        public const string BigTextStyle = "android.app.Notification$BigTextStyle";
+        public const string DecoratedCustomViewStyle = "android.app.Notification$DecoratedCustomViewStyle";
         private StatusBarNotification statusbarnotification;
-        private MediaController mediaController; //A media controller to be used with the  Media Session token provided by a MediaStyle notification.
 
         public OpenNotification(StatusBarNotification sbn)
         {
             statusbarnotification = sbn;
+            try
+            {
+                //var context = Application.Context.CreatePackageContext(sbn.PackageName, PackageContextFlags.Restricted);
+                //notificationManager = (NotificationManager)context.GetSystemService(Context.NotificationService);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+
         }
 
-        private string GetKey()
+        public StatusBarNotification GetUnderlyingStatusBarNotification()
+        {
+            return statusbarnotification;
+        }
+        public string GetKey()
         {
             if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
                 return statusbarnotification.Key;
@@ -34,14 +54,14 @@ namespace LiveDisplay.Servicios.Notificaciones
             return string.Empty;
         }
 
-        private int GetId()
+        public int GetId()
         {
             return statusbarnotification.Id;
         }
 
         public void Cancel()
         {
-            if (IsRemovable())
+            if (IsClearable())
                 using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())
                 {
                     if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
@@ -55,19 +75,15 @@ namespace LiveDisplay.Servicios.Notificaciones
                 }
         }
 
-        //I need to pinpoint this notification, this is the way.
-        //When-> Helps to really ensure is the same notification by checking also the time it was posted
-        public string GetCustomId() => GetPackageName() + GetTag() + GetId() + When();
+        public string GetTag() => statusbarnotification.Tag;
 
-        private string GetTag() => statusbarnotification.Tag;
-
-        private string GetPackageName() => statusbarnotification.PackageName;
+        public string GetPackageName() => statusbarnotification.PackageName;
 
         public string Title()
         {
             try
             {
-                return statusbarnotification.Notification.Extras.Get(Notification.ExtraTitle).ToString();
+                return statusbarnotification.Notification.Extras.GetString(Notification.ExtraTitle);
             }
             catch
             {
@@ -79,7 +95,7 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             try
             {
-                return statusbarnotification.Notification.Extras.Get(Notification.ExtraText).ToString();
+                return statusbarnotification.Notification.Extras.GetString(Notification.ExtraText);
             }
             catch
             {
@@ -91,7 +107,7 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             try
             {
-                return statusbarnotification.Notification.Extras.Get(Notification.ExtraSummaryText).ToString();
+                return statusbarnotification.Notification.Extras.GetString(Notification.ExtraSummaryText);
             }
             catch
             {
@@ -121,7 +137,7 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             try
             {
-                return statusbarnotification.Notification.Extras.Get(Notification.ExtraBigText).ToString();
+                return statusbarnotification.Notification.Extras.GetString(Notification.ExtraBigText);
             }
             catch
             {
@@ -145,14 +161,32 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             try
             {
-                statusbarnotification.Notification.ContentIntent.Send();
+                var intent = statusbarnotification.Notification.ContentIntent;
+                intent ??= statusbarnotification.Notification.FullScreenIntent;
+
+                //This is part of a Workaround to make LockScreen show on Android Q devices and above:
+                //Please check CatcherHelper#OnNotificationPosted() to get an idea of how it works.
+
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.Q && GetPackageName() == "com.underground.livedisplay" /*Only act on notifications sent by this app*/)
+                {
+                    //Causes a FullScreenIntent that's contained within a Notification matchig the if statement to be sent correctly.
+                    //For some unknown reason the usual "Send()" method doesn't work if the screen is locked.
+                    intent.Send(Result.Ok, this, new Handler());
+                    Cancel(); //ignoring documentation: if we leave this notification alive after performing the previous line intent.Send(...),
+                              //then after if the same notification gets posted without the previous one being removed then the intent.Send(...) won't succeed.
+                              //and the lockscreen won't show.
+                              //Android is weird.
+                }
+                intent.Send();
                 //Android Docs: For NotificationListeners: When implementing a custom click for notification
                 //Cancel the notification after it was clicked when this notification is autocancellable.
-                Cancel();
+                if (IsAutoCancellable())
+                    Cancel();
+
             }
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("Click Notification failed, fail in pending intent");
+                Console.WriteLine($"Click Notification failed, fail in pending intent {ex.Message}");
             }
         }
 
@@ -161,13 +195,9 @@ namespace LiveDisplay.Servicios.Notificaciones
             return statusbarnotification.Notification.Actions?.ToList();
         }
 
-        internal bool IsRemovable()
+        internal bool IsClearable()
         {
-            if (statusbarnotification.IsClearable == true)
-            {
-                return true;
-            }
-            return false;
+            return statusbarnotification.IsClearable;
         }
 
         public bool HasActions()
@@ -179,11 +209,12 @@ namespace LiveDisplay.Servicios.Notificaciones
             return false;
         }
 
-        public  MediaSession.Token GetMediaSessionToken()
+        public MediaSession.Token GetMediaSessionToken()
         {
             try
             {
-                return statusbarnotification.Notification.Extras.Get(Notification.ExtraMediaSession) as MediaSession.Token;
+                return statusbarnotification.Notification.Extras.GetParcelable(
+                    Notification.ExtraMediaSession, Java.Lang.Class.FromType(typeof(MediaSession.Token))) as MediaSession.Token;
             }
             catch
             {
@@ -191,32 +222,10 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
         }
 
-        //<only for testing>
-        private bool StartMediaCallback()
-        {
-            var mediaSessionToken = GetMediaSessionToken();
-            if (mediaSessionToken == null) return false;
-            else
-            {
-                try
-                {
-                    MusicController.StartPlayback(mediaSessionToken);
-                    Log.Info("LiveDisplay", "Callback registered Successfully");
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    Log.Info("LiveDisplay", "Callback failed Successfully: LOL" + ex.Message);
-                    return false;
-                }
-            }
-        }
-
         public bool RepresentsMediaPlaying()
         {
             var mediaSessionToken = GetMediaSessionToken();
-            if (mediaSessionToken == null) return false;
-            return true;
+            return mediaSessionToken != null;
         }
 
         internal string When()
@@ -236,6 +245,10 @@ namespace LiveDisplay.Servicios.Notificaciones
                 return string.Empty;
             }
         }
+        internal long PostTime()
+        {
+            return statusbarnotification.PostTime;
+        }
 
         internal string AppName()
         {
@@ -249,17 +262,28 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
         }
 
+        internal Icon GetSmallIcon()
+        {
+            if (Build.VERSION.SdkInt > BuildVersionCodes.M)
+            {
+                return statusbarnotification.Notification.SmallIcon;
+            }
+            else
+            {
+                return Icon.CreateWithResource(
+                    new Application().CreatePackageContext(GetPackageName(), PackageContextFlags.Restricted), statusbarnotification.Notification.Icon);
+            }
+        }
         internal Bitmap BigPicture()
         {
-            return statusbarnotification.Notification.Extras.Get(Notification.ExtraPicture) as Bitmap;
+            return statusbarnotification.Notification.Extras.GetParcelable(Notification.ExtraPicture, Java.Lang.Class.FromType(typeof(Bitmap))) as Bitmap;
         }
 
         internal Bitmap MediaArtwork()
         {
             if(Build.VERSION.SdkInt< BuildVersionCodes.O)
-#pragma warning disable CS0618 // El tipo o el miembro están obsoletos
-                return statusbarnotification.Notification.Extras.Get(Notification.ExtraLargeIcon) as Bitmap;
-#pragma warning restore CS0618 // El tipo o el miembro están obsoletos
+                return statusbarnotification.Notification.Extras.GetParcelable(Notification.ExtraLargeIcon, Java.Lang.Class.FromType(typeof(Bitmap))) as Bitmap;
+
             return statusbarnotification.Notification.LargeIcon;
         }
         //internal Bitmap GetPersonAvatar()
@@ -282,11 +306,12 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         internal NotificationImportance GetNotificationImportance()
         {
-            //TODO
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
                 return (NotificationImportance)(-1);
 
-            return (NotificationImportance)(-1); //<-- try to return an appropiate value
+            var channel = GetNotificationChannel();
+
+            return channel!=null? channel.Importance: NotificationImportance.Unspecified;
         }
 
         private NotificationChannel GetNotificationChannel()
@@ -294,7 +319,8 @@ namespace LiveDisplay.Servicios.Notificaciones
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
                 return null;
 
-            return null; //TODO.
+            var channelId = statusbarnotification.Notification.ChannelId;
+            return null;
         }
 
         internal string Style()
@@ -398,6 +424,15 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             return statusbarnotification.Notification.Extras.GetIntArray(Notification.ExtraCompactActions);
         }
+        internal bool IsOnGoing()
+        {
+            return statusbarnotification.IsOngoing;
+        }
+
+        public void OnSendFinished(PendingIntent pendingIntent, Intent intent, [GeneratedEnum] Result resultCode, string resultData, Bundle resultExtras)
+        {
+            Console.WriteLine($"Android Q background activity launch was defeated by me (debug info, FullScreenIntent result):  {resultCode} || {resultData}");
+        }
     }
 
     public class OpenAction : Java.Lang.Object
@@ -487,14 +522,8 @@ namespace LiveDisplay.Servicios.Notificaciones
             //Direct reply action is a new feature in Nougat, so this method call is invalid in Marshmallow and backwards, let's return empty.
             if (Build.VERSION.SdkInt < BuildVersionCodes.N) return string.Empty;
 
-            try
-            {
-                return remoteInputDirectReply.Label;
-            }
-            catch
-            {
-                return string.Empty;
-            }
+            return remoteInputDirectReply.Label;
+            
         }
 
         //Since API 24 Nougat.

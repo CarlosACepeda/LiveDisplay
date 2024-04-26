@@ -13,7 +13,10 @@
   <string name="allowweatherchangewallpaper">Cambiar wallpaper brevemente después de una actualización</string>
   <string name="app_name">LiveDisplay</string>
   <string name="askfortranslations">Quieres ayudar con las traducciones?</string>
+  <string name="awakecausesblackwall">La pantalla permanece negra</string>
+  <string name="awakecausesblackwall_desc">La pantalla no muestra ningún fondo de pantalla</string>
   <string name="awakesettings">Awake</string>
+  <string name="beta">Version Preliminar</string>
   <string name="blacklist">Lista Negra</string>
   <string name="blacklistdesc">No mostrar notificaciones de las apps seleccionadas</string>
   <string name="blacklisted">En lista negra</string>
@@ -41,6 +44,7 @@
   <string name="doubletaptopactioninverteddesc">Tocar dos veces la mitad superior de la pantalla de bloqueo desbloquea el dispositivo</string>
   <string name="doubletaptosleep">Doble pulsación para suspender</string>
   <string name="doubletaptosleepdesc">Pulsa dos veces en la pantalla de bloqueo para apagar la pantalla</string>
+  <string name="enable_posting_notifications_permission">Activa las notificaciones de esta app</string>
   <string name="enableawake">Activar servicio Awake</string>
   <string name="enabledeviceaccess">Acceso al Dispositivo</string>
   <string name="enablefloatingpermission">Mostrar sobre otras aplicaciones</string>
@@ -69,6 +73,8 @@
   <string name="inactivetimesettings">Horas inactivas</string>
   <string name="inactivetimesettingsdesc">Desactivar Awake en ciertas horas</string>
   <string name="listenfordevicemotion">Detectar los movimientos del dispotivo</string>
+  <string name="livedisplay_mandatory_permissions">Permisos Requeridos</string>
+  <string name="livedisplay_optional_permissions">Permisos opcionales</string>
   <string name="lockdelay">Bloquear automaticamente</string>
   <string name="lockdelay_desc">Bloquear la pantalla después del tiempo dado</string>
   <string name="lockonboot">Bloquear la pantalla al iniciar</string>
@@ -82,6 +88,7 @@
   <string name="musicwidgetcontrolmethod">Método de control de Música</string>
   <string name="musicwidgetenabled">Activar el Widget de Música</string>
   <string name="never">Nunca</string>
+  <string name="nomediaplaying">No hay nada reproduciendose por el momento, \n Pon algo de música! </string>
   <string name="nonallowedtoturnonscreen">No permitido para encender la pantalla</string>
   <string name="notavailableyet">No disponible...aún.</string>
   <string name="notificationsettings">Notificaciones</string>
@@ -126,6 +133,4 @@
   <string name="weatherwidgetenabled">Activar el Widget del Clima</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">Diseño del icono de esta app!</string>
-  <string name="awakecausesblackwall">La pantalla permanece negra</string>
-  <string name="awakecausesblackwall_desc">La pantalla no muestra ningún fondo de pantalla</string>
 </resources>

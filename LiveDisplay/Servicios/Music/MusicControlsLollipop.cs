@@ -9,11 +9,18 @@ namespace LiveDisplay.Servicios.Music
     /// Play/pause/forward/rewind, etc.
     /// for Lollipop and beyond
     /// </summary>
-    internal class Jukebox
+    internal class MusicControlsLollipop: MusicControlsBase, IMusicControls
     {
-        public static event EventHandler<MediaActionEventArgs> MediaEvent;
-
-        public static void Play()
+        private static MusicControlsLollipop _instance;
+        public static MusicControlsLollipop GetInstance()
+        {
+            _instance ??= new MusicControlsLollipop();
+            return _instance;
+        }
+        private MusicControlsLollipop()
+        {
+        }
+        public void Play()
         {
             OnMediaEvent(new MediaActionEventArgs
             {
@@ -21,7 +28,7 @@ namespace LiveDisplay.Servicios.Music
             });
         }
 
-        public static void Pause()
+        public void Pause()
         {
             OnMediaEvent(new MediaActionEventArgs
             {
@@ -29,7 +36,7 @@ namespace LiveDisplay.Servicios.Music
             });
         }
 
-        public static void SkipToPrevious()
+        public void SkipToPrevious()
         {
             OnMediaEvent(new MediaActionEventArgs
             {
@@ -37,7 +44,7 @@ namespace LiveDisplay.Servicios.Music
             });
         }
 
-        public static void SeekTo(long time)
+        public void SeekTo(long time)
         {
             OnMediaEvent(new MediaActionEventArgs
             {
@@ -46,7 +53,7 @@ namespace LiveDisplay.Servicios.Music
             });
         }
 
-        public static void FastFoward()
+        public void FastForward()
         {
             OnMediaEvent(new MediaActionEventArgs
             {
@@ -54,7 +61,7 @@ namespace LiveDisplay.Servicios.Music
             });
         }
 
-        public static void Rewind()
+        public void Rewind()
         {
             OnMediaEvent(new MediaActionEventArgs
             {
@@ -62,7 +69,7 @@ namespace LiveDisplay.Servicios.Music
             });
         }
 
-        internal static void SkipToNext()
+        public void SkipToNext()
         {
             OnMediaEvent(new MediaActionEventArgs
             {
@@ -70,7 +77,7 @@ namespace LiveDisplay.Servicios.Music
             });
         }
 
-        internal static void Stop()
+        public void Stop()
         {
             OnMediaEvent(new MediaActionEventArgs
             {
@@ -78,17 +85,12 @@ namespace LiveDisplay.Servicios.Music
             });
         }
 
-        internal static void RetrieveMediaInformation()
+        public void RetrieveMediaInformation()
         {
             OnMediaEvent(new MediaActionEventArgs
             {
                 MediaActionFlags = MediaActionFlags.RetrieveMediaInformation
             });
-        }
-
-        private static void OnMediaEvent(MediaActionEventArgs e)
-        {
-            MediaEvent?.Invoke(null, e);
         }
     }
 }
