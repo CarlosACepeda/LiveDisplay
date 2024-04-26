@@ -2,7 +2,7 @@
 {
     using Android.App;
     using LiveDisplay.Misc;
-    using LiveDisplay.Servicios;
+    using LiveDisplay.Services;
 
     // TODO: Correct me, I can be optimized.
     internal class BackgroundFactory : Java.Lang.Object

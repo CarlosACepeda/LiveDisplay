@@ -16,4 +16,9 @@
     android:orderInCategory="3"
     android:title="@string/help"
     app:showAsAction="never" />
+<item
+    android:id="@+id/test_area"
+    android:orderInCategory="4"
+    android:title="bash"
+    app:showAsAction="never" />
 </menu>

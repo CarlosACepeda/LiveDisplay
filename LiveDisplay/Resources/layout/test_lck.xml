@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:id="@+id/main_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:src="@android:color/holo_green_light"
+        />
+    <LinearLayout
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <FrameLayout
+            android:id="@+id/fragment_container"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"/>
+        <include
+            layout="@layout/test_rclv_notif_list"/>
+    </LinearLayout>
+
+    <TextClock
+        android:id="@+id/miniclock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"/>
+    <include
+        android:id="@+id/welcomeoverlay"
+        layout="@layout/welcome"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</FrameLayout>

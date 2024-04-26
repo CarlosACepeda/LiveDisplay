@@ -1,7 +1,6 @@
 ﻿namespace LiveDisplay.Activities
 {
     using Android.App;
-    using Android.Content;
     using Android.OS;
     using Android.Widget;
     using AndroidX.AppCompat.App;
@@ -46,8 +45,7 @@
         public bool OnPreferenceStartFragment(PreferenceFragmentCompat caller, Preference pref)
         {
             string fragmentQualifiedName = string.Empty;
-            string activityQualifiedName = string.Empty;
-            //Switch: a Workaround, there's not possible way to get the Qualified name of the Fragment to Start
+            //Switch: a Workaround, there's not possible way to get the fragment's qualified name to Start
             //in Xamarin Android.
 
             //Check first if what we have to start is a fragment replace or start a new activity
@@ -61,18 +59,27 @@
                     case "LockScreenSettingsFragment":
                         fragmentQualifiedName = Java.Lang.Class.FromType(typeof(LockScreenSettingsFragment)).Name;
                         break;
+
                     case "NotificationSettingsFragment":
                         fragmentQualifiedName = Java.Lang.Class.FromType(typeof(NotificationSettingsFragment)).Name;
                         break;
+
                     case "AwakeSettingsFragment":
                         fragmentQualifiedName = Java.Lang.Class.FromType(typeof(AwakeSettingsFragment)).Name;
                         break;
+
                     case "MusicWidgetSettingsFragment":
                         fragmentQualifiedName = Java.Lang.Class.FromType(typeof(MusicWidgetSettingsFragment)).Name;
                         break;
+
+                    case "WeatherSettingsFragment":
+                        fragmentQualifiedName = Java.Lang.Class.FromType(typeof(WeatherSettingsFragment)).Name;
+                        break;
+
                     case "AboutFragment":
                         fragmentQualifiedName = Java.Lang.Class.FromType(typeof(AboutFragment)).Name;
                         break;
+
                     default:
                         break;
                 }
@@ -88,19 +95,6 @@
                         .Replace(Resource.Id.content, fragment)
                         .AddToBackStack(null)
                         .Commit();
-            }
-            else if (pref.Fragment.Contains("Activity"))
-            {
-                switch (pref.Fragment)
-                {
-                    case "WeatherSettingsActivity":
-                        activityQualifiedName = Java.Lang.Class.FromType(typeof(WeatherSettingsActivity)).Name;
-                        break;
-                }
-                using (Intent intent = new Intent(Application.Context, Java.Lang.Class.ForName(activityQualifiedName)))
-                {
-                    StartActivity(intent);
-                }
             }
             return true;
         }

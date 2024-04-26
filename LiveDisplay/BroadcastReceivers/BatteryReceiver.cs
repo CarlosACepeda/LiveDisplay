@@ -2,7 +2,7 @@
 using Android.Content;
 using Android.Graphics.Drawables;
 using Android.OS;
-using LiveDisplay.Servicios.Battery.BatteryEventArgs;
+using LiveDisplay.Services.Battery.BatteryEventArgs;
 using System;
 
 namespace LiveDisplay.BroadcastReceivers
@@ -11,8 +11,6 @@ namespace LiveDisplay.BroadcastReceivers
     [IntentFilter(new[] { Intent.ActionBatteryChanged })]
     public class BatteryReceiver : BroadcastReceiver
     {
-        private LevelListDrawable levelListDrawable;
-
         public static event EventHandler<BatteryChangedEventArgs> BatteryInfoChanged;
 
         public override void OnReceive(Context context, Intent intent)
@@ -29,17 +27,44 @@ namespace LiveDisplay.BroadcastReceivers
                 levelListDrawable = Application.Context.Resources.GetDrawable(batteryIcon) as LevelListDrawable;
 #pragma warning restore
             }
-
-            OnBatteryInfoChanged(batterylevel, levelListDrawable);
-        }
-
-        private void OnBatteryInfoChanged(int batterylevel, Drawable batteryIcon)
-        {
-            BatteryInfoChanged?.Invoke(this, new BatteryChangedEventArgs
+            else if (batterylevel <= 60)
             {
-                BatteryLevel = batterylevel,
-                BatteryIcon = batteryIcon
-            });
+                batteryIcon =
+                    !isCharging ?
+                    Application.Context.Resources.GetDrawable(Resource.Drawable.ic_battery_40_white_18dp, Application.Context.Resources.NewTheme())
+                    : Application.Context.Resources.GetDrawable(Resource.Drawable.ic_battery_charging_40_white_18dp, Application.Context.Resources.NewTheme());
+
+            }
+            else if (batterylevel <= 80)
+            {
+                batteryIcon =
+                    !isCharging ?
+                    Application.Context.Resources.GetDrawable(Resource.Drawable.ic_battery_60_white_18dp, Application.Context.Resources.NewTheme())
+                    : Application.Context.Resources.GetDrawable(Resource.Drawable.ic_battery_charging_60_white_18dp, Application.Context.Resources.NewTheme());
+
+            }
+            else if (batterylevel <= 90)
+            {
+                batteryIcon =
+                    !isCharging ?
+                    Application.Context.Resources.GetDrawable(Resource.Drawable.ic_battery_80_white_18dp, Application.Context.Resources.NewTheme())
+                    : Application.Context.Resources.GetDrawable(Resource.Drawable.ic_battery_charging_80_white_18dp, Application.Context.Resources.NewTheme());
+            }
+            else if (batterylevel < 100)
+            {
+                batteryIcon =
+                    !isCharging ?
+                    Application.Context.Resources.GetDrawable(Resource.Drawable.ic_battery_90_white_18dp, Application.Context.Resources.NewTheme())
+                    : Application.Context.Resources.GetDrawable(Resource.Drawable.ic_battery_charging_90_white_18dp, Application.Context.Resources.NewTheme());
+            }
+            else if (batterylevel == 100)
+            {
+                batteryIcon =
+                    !isCharging ?
+                    Application.Context.Resources.GetDrawable(Resource.Drawable.ic_battery_white_18dp, Application.Context.Resources.NewTheme())
+                    : Application.Context.Resources.GetDrawable(Resource.Drawable.ic_battery_charging_white_18dp, Application.Context.Resources.NewTheme());
+            }
+            return batteryIcon;
         }
     }
 }

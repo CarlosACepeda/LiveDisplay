@@ -3,116 +3,135 @@ using Android.OS;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using AndroidX.RecyclerView.Widget;
 using LiveDisplay.Adapters;
+using LiveDisplay.Enums;
 using LiveDisplay.Misc;
-using LiveDisplay.Servicios;
-using LiveDisplay.Servicios.Awake;
-using LiveDisplay.Servicios.Music;
-using LiveDisplay.Servicios.Notificaciones;
-using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
-using LiveDisplay.Servicios.Notificaciones.NotificationStyle;
-using LiveDisplay.Servicios.Widget;
+using LiveDisplay.Models;
+using LiveDisplay.Services;
+using LiveDisplay.Services.Awake;
+using LiveDisplay.Services.Keyguard;
+using LiveDisplay.Services.Music;
+using LiveDisplay.Services.Notifications;
+using LiveDisplay.Services.Notifications.NotificationEventArgs;
+using LiveDisplay.Services.Notifications.NotificationStyle;
+using LiveDisplay.Services.Widget;
 using System;
-
+using System.Collections.Generic;
+using static AndroidX.RecyclerView.Widget.RecyclerView;
 using Fragment = AndroidX.Fragment.App.Fragment;
 
 namespace LiveDisplay.Fragments
 {
     public class NotificationFragment : Fragment
     {
-        private OpenNotification openNotification; //the current OpenNotification instance active.
+        const int SEVEN_SECONDS = 7;
+
+        private OpenNotification _openNotification; //the current active OpenNotification instance.
         private LinearLayout maincontainer;
-        private bool timeoutStarted = false;
-        private NotificationStyleApplier styleApplier;
-        private ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
-        #region Lifecycle events
+        private LinearLayout actual_notification;
+        private RecyclerView children_notifications;
+        private readonly ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
 
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            NotificationAdapterViewHolder.ItemClicked += ItemClicked;
+            NotificationAdapter.ItemClick += ItemClicked;
             // Create your fragment here
-            WidgetStatusPublisher.OnWidgetStatusChanged += WidgetStatusPublisher_OnWidgetStatusChanged;
-
+            WidgetStatusPublisher.GetInstance().OnWidgetStatusChanged += WidgetStatusPublisher_OnWidgetStatusChanged;
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            View v = inflater.Inflate(Resource.Layout.NotificationFrag, container, false);
-            maincontainer = v.FindViewById<LinearLayout>(Resource.Id.container);
-            styleApplier = new NotificationStyleApplier(ref maincontainer, this, NotificationViewType.OnLockscreen);
-            maincontainer.Drag += Notification_Drag;
-            maincontainer.Click += LlNotification_Click;
-            NotificationAdapterViewHolder.ItemLongClicked += ItemLongClicked;
-            CatcherHelper.NotificationPosted += CatcherHelper_NotificationPosted;
-            CatcherHelper.NotificationRemoved += CatcherHelper_NotificationRemoved;
-            NotificationStyleApplier.SendInlineResponseAvailabityChanged += NotificationStyleApplier_SendInlineResponseAvailabityChanged;
+            View v = inflater.Inflate(Resource.Layout.test_notif_view, container, false);
+            maincontainer = v.FindViewById<LinearLayout>(Resource.Id.notification_container);
+            actual_notification = v.FindViewById<LinearLayout>(Resource.Id.actual_notification);
+            children_notifications = v.FindViewById<RecyclerView>(Resource.Id.children_notifications);
 
-            //if (openNotification == null) //We don't have a notification to show here, so...
-            //{
-            //    //...Now ask Catcher to send us the last notification posted to fill the views..
-            //    NotificationSlave.NotificationSlaveInstance().RetrieveLastNotification();
-            //}
+            var layoutManager = new LinearLayoutManager(Application.Context, Vertical, false);
+            children_notifications.SetLayoutManager(layoutManager);
+            
+
+            maincontainer.Drag += Notification_Drag;
+            actual_notification.Click += ActualNotification_Click;
+            NotificationAdapter.ItemLongClick += ItemLongClicked;
+            NotificationAdapter.NotificationPosted += NotificationAdapter_NotificationPosted;
+            NotificationAdapter.NotificationRemoved += NotificationAdapter_NotificationRemoved;
+            NotificationStyle.SendInlineResponseAvailabityChanged += NotificationStyleApplier_SendInlineResponseAvailabityChanged;
             return v;
         }
-        public override void OnPause()
+
+        private void NotificationStyleApplier_SendInlineResponseAvailabityChanged(object sender, bool available)
         {
-            base.OnPause();
-        }
-        public override void OnResume()
-        {
-            base.OnResume();
-        }
-        private void NotificationStyleApplier_SendInlineResponseAvailabityChanged(object sender, bool e)
-        {
-            if (e == true)
+            if (available)
             {
-                StartTimeout(true); //Tell the Timeout counter to stop because the SendInlineResponse is currently being showed.
+                WidgetStatusPublisher.GetInstance().SetWidgetVisibility(
+                    new ShowParameters
+                    {
+                        Show = true,
+                        WidgetName = WidgetTypes.NOTIFICATION_FRAGMENT,
+                        TimeToShow = ShowParameters.ACTIVE_PERMANENTLY
+                    });
+            }
+            else
+            {
+                WidgetStatusPublisher.GetInstance().SetWidgetVisibility(
+                    new ShowParameters
+                    {
+                        Show = true,
+                        WidgetName = WidgetTypes.NOTIFICATION_FRAGMENT,
+                        TimeToShow = SEVEN_SECONDS
+                    });
             }
         }
 
         private void Notification_Drag(object sender, View.DragEventArgs e)
         {
-            StartTimeout(false); //To keep the notification visible while the user touches the notification fragment
+            WidgetStatusPublisher.GetInstance().SetWidgetVisibility(
+                    new ShowParameters
+                    {
+                        Show = true,
+                        WidgetName = WidgetTypes.NOTIFICATION_FRAGMENT,
+                        TimeToShow = SEVEN_SECONDS
+                    });
         }
 
-        private void CatcherHelper_NotificationPosted(object sender, NotificationPostedEventArgs e)
+        private void NotificationAdapter_NotificationPosted(object sender, NotificationPostedEventArgs e)
         {
-            openNotification = e.OpenNotification;
-            if (e.ShouldCauseWakeUp && configurationManager.RetrieveAValue(ConfigurationParameters.TurnOnUserMovement))
-                AwakeHelper.TurnOnScreen();
-
-            if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetMethod, "0") == "1") //1:"Use a notification to spawn the Music Widget"
+            if(e.IsParent)
             {
                 if (e.OpenNotification.RepresentsMediaPlaying())
                 {
                     MediaEventsPublisherLollipop.InitializeFromToken(e.OpenNotification.GetMediaSessionToken());
 
-                    maincontainer.Visibility = ViewStates.Invisible;
-                    WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "NotificationFragment" });
-
-                    //Also start the Widget to control the playback.
-                    WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = true, WidgetName = "MusicFragment", Active = true });
-                    return;
-                }
+                //We pass the group adapter the notification id we want to show.
+                ToggleChildrenVisibility(true);
+                var childrenNotificationsAdapter = new NotificationGroupAdapter(e.Children, e.NotificationPosted.Id);
+                children_notifications.SetAdapter(childrenNotificationsAdapter);
+                children_notifications.SmoothScrollToPosition(childrenNotificationsAdapter.notificationToShowPosition);
+            }
+            if (e.IsStandalone)
+            {
+                children_notifications.Visibility = ViewStates.Gone;
+                //As always, just be sure to not show the Grouped notifications recycler view, is not needed.
             }
 
 
-            //if the current notification widget does not have a tag, let's set it.
 
-            if (maincontainer.GetTag(Resource.String.defaulttag) == null)
+            //if the incoming notification updates a previous notification, then verify if the current SHOWING notification is the same as the one
+            //we are trying to update, because if this check is not done, the updated notification will show even if the user is watching another notification.
+            //the other case is simply when the notification is a new one.
+            if (e.UpdatesPreviousNotification && IsUpdatingSameNotificationUserIsViewing(e.NotificationPosted.GetCustomId)
+                && !MusicController.MediaSessionAssociatedWThisNotification(e.NotificationPosted.GetCustomId)
+                || 
+                !e.UpdatesPreviousNotification)
             {
                 //maincontainer.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
             }
 
-            if (configurationManager.RetrieveAValue(ConfigurationParameters.TestEnabled))
-            {
-                Toast.MakeText(Application.Context, "Progress Indeterminate?: " + openNotification.IsProgressIndeterminate().ToString() + "\n"
-                    + "Current Progress: " + openNotification.GetProgress().ToString() + "\n"
-                    + "Max Progress: " + openNotification.GetProgressMax().ToString() + "\n"
-                    + openNotification.GetGroupInfo()
-                    , ToastLength.Short).Show();
-            }
+            if (!e.UpdatesPreviousNotification && e.ShouldCauseWakeUp && configurationManager.RetrieveAValue(ConfigurationParameters.TurnOnNewNotification))
+                AwakeHelper.TurnOnScreen();
+        }
 
             if (e.UpdatesPreviousNotification)
             {
@@ -159,24 +178,23 @@ namespace LiveDisplay.Fragments
         }
         public override void OnDestroyView()
         {
-            //maincontainer.Drag -= Notification_Drag;
-            //maincontainer.Click -= LlNotification_Click;
-            NotificationAdapterViewHolder.ItemLongClicked -= ItemLongClicked;
-            CatcherHelper.NotificationRemoved -= CatcherHelper_NotificationRemoved;
-            CatcherHelper.NotificationPosted -= CatcherHelper_NotificationPosted;
-            NotificationStyleApplier.SendInlineResponseAvailabityChanged -= NotificationStyleApplier_SendInlineResponseAvailabityChanged;
+            NotificationAdapter.ItemLongClick -= ItemLongClicked;
+            NotificationAdapter.NotificationRemoved -= NotificationAdapter_NotificationRemoved;
+            NotificationAdapter.NotificationPosted -= NotificationAdapter_NotificationPosted;
+            NotificationStyle.SendInlineResponseAvailabityChanged -= NotificationStyleApplier_SendInlineResponseAvailabityChanged;
+            maincontainer.Drag -= Notification_Drag;
+            actual_notification.Click -= ActualNotification_Click;
 
             base.OnDestroyView();
         }
 
         public override void OnDestroy()
         {
-            openNotification?.Dispose();
-            
+            _openNotification?.Dispose();
 
-            NotificationAdapterViewHolder.ItemClicked -= ItemClicked;
-            WidgetStatusPublisher.OnWidgetStatusChanged -= WidgetStatusPublisher_OnWidgetStatusChanged;
-            styleApplier = null;
+            NotificationAdapter.ItemClick -= ItemClicked;
+            WidgetStatusPublisher.GetInstance().OnWidgetStatusChanged -= WidgetStatusPublisher_OnWidgetStatusChanged;
+            ToggleWidgetVisibility(false);
             base.OnDestroy();
         }
 
@@ -211,27 +229,34 @@ namespace LiveDisplay.Fragments
                         }
                     }
                 }
-                
-                WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "NotificationFragment" });
 
-                maincontainer.Visibility = ViewStates.Gone;
+            });
+        }
+        private void NotificationAdapter_NotificationRemoved(object sender, NotificationRemovedEventArgs e)
+        {
+            Activity?.RunOnUiThread(() =>
+            {
+                WidgetStatusPublisher.GetInstance().SetWidgetVisibility(new ShowParameters { Show = false, WidgetName = WidgetTypes.NOTIFICATION_FRAGMENT });
+
                 //Remove tag, notification removed
-                openNotification = null;
+                _openNotification = null;
                 maincontainer?.SetTag(Resource.String.defaulttag, null);
             });
         }
 
-        private void LlNotification_Click(object sender, EventArgs e)
+        private void ActualNotification_Click(object sender, EventArgs e)
         {
             Activity?.RunOnUiThread(() =>
             {
                 try
                 {
-                    Activity?.RunOnUiThread(() => openNotification.ClickNotification());
-                    if (openNotification.IsAutoCancellable())
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.O && KeyguardHelper.IsDeviceCurrentlyLocked())
+                        KeyguardHelper.RequestDismissKeyguard(Activity);
+
+                    Activity?.RunOnUiThread(() => NotificationHijackerWorker.ClickNotification(_openNotification));
+                    if (_openNotification.IsAutoCancellable)
                     {
-                        WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "NotificationFragment" });
-                        maincontainer.Visibility = ViewStates.Invisible;
+                        WidgetStatusPublisher.GetInstance().SetWidgetVisibility(new ShowParameters { Show = false, WidgetName = WidgetTypes.NOTIFICATION_FRAGMENT });
                     }
                 }
                 catch
@@ -261,14 +286,9 @@ namespace LiveDisplay.Fragments
             //    maincontainer.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
             //}
 
-            if (configurationManager.RetrieveAValue(ConfigurationParameters.TestEnabled))
-            {
-                Toast.MakeText(Application.Context, "Progress Indeterminate?: " + openNotification.IsProgressIndeterminate().ToString() + "\n"
-                    + "Current Progress: " + openNotification.GetProgress().ToString() + "\n"
-                    + "Max Progress: " + openNotification.GetProgressMax().ToString() + "\n"
-                    + openNotification.GetGroupInfo()
-                    , ToastLength.Short).Show();
-            }
+        public void ShowNotification(OpenNotification openNotification, int childrenCount, List<OpenNotification> children)
+        {
+            _openNotification = openNotification;
 
             //Only do this process if the notification that I want to show is different than the one that
             //the Notification Widget has.
@@ -302,35 +322,33 @@ namespace LiveDisplay.Fragments
             
             //If the timeout has started, then cancel the action, and start again.
 
-            if (stop)
-            {
-                maincontainer?.RemoveCallbacks(HideNotification); //Stop counting.
-                return;
-            }
-            else
-            {
-                if (timeoutStarted == true)
-                {
-                    maincontainer?.RemoveCallbacks(HideNotification);
-                    maincontainer?.PostDelayed(HideNotification,7000);
+                    case NotificationStyles.INBOX_STYLE:
+                        new InboxStyleNotification(_openNotification, ref maincontainer, this).ApplyStyle();
+                        break;
+                    case NotificationStyles.BIG_TEXT_STYLE:
+                        new BigTextStyleNotification(_openNotification, ref maincontainer, this).ApplyStyle();
+                        break;
+                    case NotificationStyles.MEDIA_STYLE:
+                        new MediaStyleNotification(_openNotification, ref maincontainer, this).ApplyStyle();
+                        break;
+                    case NotificationStyles.DECORATED_CUSTOM_VIEW_STYLE:
+                        new DecoratedCustomViewStyle(_openNotification, ref maincontainer, this).ApplyStyle();
+                        break;
+                    default:
+                        new DefaultStyleNotification(_openNotification, ref maincontainer, this).ApplyStyle();
+                        break;
                 }
-                //If not, simply wait 5 seconds then hide the notification, in that span of time, the timeout is
-                //marked as Started(true)
-                else
+
+                if(childrenCount>0)
                 {
-                    timeoutStarted = true;
-                    maincontainer?.PostDelayed(HideNotification, 7000);
+                    children_notifications.SetAdapter(new NotificationGroupAdapter(children));
                 }
-            }
-        }
-        void HideNotification()
-        {
-            if (maincontainer != null)
-            {
-                maincontainer.Visibility = ViewStates.Gone;
-                timeoutStarted = false;
-                WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "NotificationFragment" });
-            }
+
+                WidgetStatusPublisher.GetInstance().SetWidgetVisibility(
+                    new ShowParameters { 
+                        Show = true, WidgetName = WidgetTypes.NOTIFICATION_FRAGMENT, TimeToShow= SEVEN_SECONDS
+                    });
+            });
         }
     }
 }

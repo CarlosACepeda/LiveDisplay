@@ -17,7 +17,6 @@ namespace LiveDisplay.Fragments.Preferences
         public override void OnCreatePreferences(Bundle savedInstanceState, string rootKey)
         {
             AddPreferencesFromResource(Resource.Xml.lockscreen_prefs);
-            PreferenceManager.SetDefaultValues(Application.Context, Resource.Xml.lockscreen_prefs, true);
 
             Preference wallpapersettingspreference = FindPreference("wallpapersettings");
 

@@ -5,16 +5,17 @@
     app:iconSpaceReserved="false">
     <SwitchPreference
       android:defaultValue="false"
-      android:key="enableawake?"
-      android:title="@string/enableawake"
-      app:iconSpaceReserved="false">
-    </SwitchPreference>
-    <SwitchPreference
-      android:defaultValue="false"
       android:key="listenfordevicemotion?"
       android:title="@string/listenfordevicemotion"
       app:iconSpaceReserved="false">
     </SwitchPreference>
+    <!--<SwitchPreference
+      android:defaultValue="true"
+      android:key="syncwithdigitalwellbeing?"
+      android:title="@string/syncwithdigitalwellbeing"
+      android:summary="@string/syncwithdigitalwellbeing_desc"
+      app:iconSpaceReserved="false">
+    </SwitchPreference>-->
     <Preference
       android:key="inactivetimesettings"
       android:title="@string/inactivetimesettings"
@@ -22,15 +23,22 @@
       app:iconSpaceReserved="false">
     </Preference>
     <SwitchPreference
-      android:defaultValue="true"
-      android:key="turnonnewnotification?"
-      android:title="@string/turnonnewnotification"
-      android:summary="@string/turnonnewnotification_desc"
+      android:key="turnonusermovement?"
+      android:title="@string/turnonusermovement"
+      app:iconSpaceReserved="false"
+      android:enabled="false"
+      android:selectable="false">
+    </SwitchPreference>
+    <SwitchPreference
+      android:key="turnoffwheninpocket?"
+      android:title="@string/turnoffwheninpocket"
       app:iconSpaceReserved="false">
     </SwitchPreference>
     <SwitchPreference
-      android:key="turnonusermovement?"
-      android:title="@string/turnonusermovement"
+      android:key="turnonwhenoutofpocket?"
+      android:title="@string/turnonwhenoutofpocket"
+      android:enabled="false"
+      android:selectable="false"
       app:iconSpaceReserved="false">
     </SwitchPreference>
     <SwitchPreference
@@ -39,14 +47,18 @@
      android:summary="@string/awakecausesblackwall_desc"
       app:iconSpaceReserved="false">
     </SwitchPreference>
-    <ListPreference
-      android:defaultValue="0"
-      android:key="doubletapontoppactionbehavior"
-      android:title="@string/doubletaptopaction"
-      android:summary="@string/doubletaptopactiondesc"
-      android:entries="@array/listentrieschangedoubletapbehavior"
-      android:entryValues="@array/listvalueschangedoubletapbehavior"
-      app:iconSpaceReserved="false">
+  </PreferenceCategory>
+  <PreferenceCategory
+  android:title="@string/lockscreenbehaviors"
+  app:iconSpaceReserved="false">
+  <ListPreference
+  android:defaultValue="0"
+  android:key="doubletapontoppactionbehavior"
+  android:title="@string/doubletaptopaction"
+  android:summary="@string/doubletaptopactiondesc"
+  android:entries="@array/listentrieschangedoubletapbehavior"
+  android:entryValues="@array/listvalueschangedoubletapbehavior"
+  app:iconSpaceReserved="false">
     </ListPreference>
     <ListPreference
       android:defaultValue="0"
@@ -66,5 +78,16 @@
       android:entryValues="@array/listvaluesturnoff"
       app:iconSpaceReserved="false">
     </ListPreference>
+  </PreferenceCategory>
+  <PreferenceCategory
+     android:title="@string/notificationbehaviors"
+    app:iconSpaceReserved="false">
+    <SwitchPreference
+  android:defaultValue="true"
+  android:key="turnonnewnotification?"
+  android:title="@string/turnonnewnotification"
+  android:summary="@string/turnonnewnotification_desc"
+  app:iconSpaceReserved="false">
+    </SwitchPreference>
   </PreferenceCategory>
 </PreferenceScreen>

@@ -18,7 +18,14 @@
 		android:padding="10dp"
 		android:layout_height="wrap_content"
 		android:layout_width="match_parent"/>
+	<Spinner
+			android:id="@+id/blocklevelfilter"
+			android:padding="5dp"
+			android:layout_height="wrap_content"
+			android:layout_width="match_parent">
+		</Spinner>
 	<EditText
+		android:inputType="text"
 		android:hint="@string/searchappedittexthint"
 		android:id="@+id/searchboxapp"
 		android:padding="10dp"

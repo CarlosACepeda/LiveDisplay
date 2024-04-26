@@ -3,6 +3,7 @@
     using Android.App;
     using Android.App.Admin;
     using Android.Content;
+    using Android.Content.PM;
     using Android.OS;
     using Android.Provider;
     using Android.Runtime;
@@ -10,10 +11,12 @@
     using Android.Widget;
     using AndroidX.Activity.Result;
     using AndroidX.AppCompat.App;
+    using AndroidX.Preference;
     using LiveDisplay.BroadcastReceivers;
     using LiveDisplay.Misc;
-    using LiveDisplay.Servicios;
-    using LiveDisplay.Servicios.Awake;
+    using LiveDisplay.Services;
+    using LiveDisplay.Services.Awake;
+    using LiveDisplay.Services.Wallpaper;
 
     //for CI.
     using Microsoft.AppCenter;
@@ -28,6 +31,8 @@
     [Activity(Label = "@string/app_name", Theme = "@style/LiveDisplayThemeDark.NoActionBar", MainLauncher = true)]
     internal class MainActivity : AppCompatActivity, IActivityResultCallback
     {
+        private readonly int REQUEST_CODE_READ_STORAGE_PERMISSION = 1;
+
         private Toolbar toolbar;
         private RelativeLayout enableNotificationAccess, enableDeviceAdmin, enablePostingNotifications;
         private bool isApplicationHealthy;
@@ -49,15 +54,35 @@
             CheckDeviceAdminAccess();
             CheckEnabledNotificationPosting();
             IsApplicationHealthy();
-            AdminReceiver.OnDeviceAdminEnabled += AdminReceiver_OnDeviceAdminEnabled;
+            LoadDefaultSettings();
             base.OnResume();
+        }
+
+        private void LoadDefaultSettings()
+        {
+            PreferenceManager.SetDefaultValues(Application.Context, Resource.Xml.awake_prefs, true);
+            PreferenceManager.SetDefaultValues(Application.Context, Resource.Xml.lockscreen_prefs, true);
+            PreferenceManager.SetDefaultValues(Application.Context, Resource.Xml.music_widget_prefs, true);
+            PreferenceManager.SetDefaultValues(Application.Context, Resource.Xml.notification_prefs, true);
+            PreferenceManager.SetDefaultValues(Application.Context, "weatherpreferences", (int)FileCreationMode.Private, Resource.Xml.weather_widget_prefs, true);
+        }
+
+        private void WallpaperPublisher_NewWallpaperIssued(object sender, WallpaperChangedEventArgs e)
+        {
+            if (e.Wallpaper?.Bitmap != null)
+            {
+                RunOnUiThread(() =>
+                {
+                    Window.DecorView.Background = e.Wallpaper;
+                });
+            }
         }
 
         private void AdminReceiver_OnDeviceAdminEnabled(object sender, bool e)
         {
             using (var adminGivenImageView = FindViewById<ImageView>(Resource.Id.deviceAccessCheckbox))
             {
-                RunOnUiThread(()=>
+                RunOnUiThread(() =>
                 {
                     switch (e)
                     {
@@ -128,6 +153,20 @@
                 }
             }
         }
+        private void CheckStorageAccess()
+        {
+            using (var readStorageAccessImageView = FindViewById<ImageView>(Resource.Id.readStorageAccessCheckbox))
+            {
+                if (Checkers.ThisAppHasReadStoragePermission())
+                {
+                    readStorageAccessImageView.SetBackgroundResource(Resource.Drawable.check_black_24);
+                }
+                else
+                {
+                    readStorageAccessImageView.SetBackgroundResource(Resource.Drawable.denied_black_24);
+                }
+            }
+        }
 
         private void IsApplicationHealthy()
         {
@@ -136,16 +175,19 @@
                 if (Checkers.IsNotificationListenerEnabled() && 
                     Checkers.ThisAppCanPostNotifications())
                 {
-                    accessestext.SetText(Resource.String.accessesstatusenabled);
-                    accessestext.SetTextColor(Android.Graphics.Color.Green);
-                    isApplicationHealthy = true;
-                }
-                else
-                {
-                    accessestext.SetText(Resource.String.accessesstatusdisabled);
-                    accessestext.SetTextColor(Android.Graphics.Color.Red);
-                    isApplicationHealthy = false;
-                }
+                    if (Checkers.IsNotificationListenerEnabled() && Checkers.ThisAppHasReadStoragePermission())
+                    {
+                        accessestext.SetText(Resource.String.accessesstatusenabled);
+                        accessestext.SetTextColor(Android.Graphics.Color.Green);
+                        isApplicationHealthy = true;
+                    }
+                    else
+                    {
+                        accessestext.SetText(Resource.String.accessesstatusdisabled);
+                        accessestext.SetTextColor(Android.Graphics.Color.Red);
+                        isApplicationHealthy = false;
+                    }
+                });
             }
         }
 
@@ -159,9 +201,12 @@
         {
             enableNotificationAccess.Click -= EnableNotificationAccess_Click;
             enableDeviceAdmin.Click -= EnableDeviceAdmin_Click;
+            WallpaperPublisher.NewWallpaperIssued -= WallpaperPublisher_NewWallpaperIssued;
             enableNotificationAccess.Dispose();
             enableDeviceAdmin.Dispose();
             base.OnDestroy();
+        }
+
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
@@ -193,7 +238,10 @@
                             var notificationtext = Resources.GetString(Resource.String.testnotificationtext);
                             if (Build.VERSION.SdkInt > BuildVersionCodes.NMr1)
                             {
-                                slave.PostNotification(1, "LiveDisplay", notificationtext, true, NotificationImportance.Max);
+                                slave.PostNotification(7, "LiveDisplay1", notificationtext, true, NotificationImportance.Max);
+                                slave.PostNotification(8, "LiveDisplay2", notificationtext, true, NotificationImportance.Max);
+                                slave.PostNotification(9, "LiveDisplay3", notificationtext, true, NotificationImportance.Max);
+                                slave.PostNotification(10, "LiveDisplay4", notificationtext, true, NotificationImportance.Max);
                             }
                             else
                             {
@@ -221,7 +269,13 @@
                     }
 
                     break;
-
+                case Resource.Id.test_area:
+                    using (Intent intent = new Intent(this, typeof(TestAreaActivity)))
+                    {
+                        intent.AddFlags(ActivityFlags.NewDocument);
+                        StartActivity(intent);
+                    }
+                    break;
                 default:
                     break;
             }
@@ -267,6 +321,7 @@
                 ComponentName devAdminReceiver = new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(AdminReceiver)));
                 DevicePolicyManager dpm = (DevicePolicyManager)GetSystemService(Context.DevicePolicyService);
                 dpm.RemoveActiveAdmin(devAdminReceiver);
+                CheckDeviceAdminAccess();
             }
             else
             {

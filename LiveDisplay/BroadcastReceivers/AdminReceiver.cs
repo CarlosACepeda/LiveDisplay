@@ -11,6 +11,7 @@ namespace LiveDisplay.BroadcastReceivers
     public class AdminReceiver : DeviceAdminReceiver
     {
         public static event EventHandler<bool> OnDeviceAdminEnabled;
+
         public override void OnEnabled(Context context, Intent intent)
         {
             base.OnEnabled(context, intent);

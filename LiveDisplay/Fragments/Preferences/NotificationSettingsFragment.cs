@@ -1,20 +1,14 @@
 ﻿using Android.App;
 using Android.Content;
-using Android.Content.Res;
 using Android.OS;
 using Android.Views;
-using Android.Widget;
 using AndroidX.Preference;
 using LiveDisplay.Activities;
-using LiveDisplay.Misc;
-using LiveDisplay.Servicios;
-using System;
 
 namespace LiveDisplay.Fragments.Preferences
 {
     public class NotificationSettingsFragment : PreferenceFragmentCompat
     {
-
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -33,7 +27,6 @@ namespace LiveDisplay.Fragments.Preferences
         public override void OnCreatePreferences(Bundle savedInstanceState, string rootKey)
         {
             AddPreferencesFromResource(Resource.Xml.notification_prefs);
-            PreferenceManager.SetDefaultValues(Application.Context, Resource.Xml.notification_prefs, true);
 
             Preference blacklistpreference = FindPreference("blacklist");
             blacklistpreference.PreferenceClick += Blacklistpreference_PreferenceClick;

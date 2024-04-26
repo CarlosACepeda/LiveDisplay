@@ -18,13 +18,11 @@
         android:title="@string/enablequickreply"
         android:summary="@string/enablequickreplydesc"
         android:defaultValue="true"
-        app:iconSpaceReserved="false"
-        />
+        app:iconSpaceReserved="false" />
     <SwitchPreference
         android:key="turnoffscreenafterlastnotificationcleared?"
         android:title="@string/turnoffscreenafterlastnotificationcleared"
         android:defaultValue="true"
-        app:iconSpaceReserved="false"
-        />
+        app:iconSpaceReserved="false" />
   </PreferenceCategory>
 </PreferenceScreen>

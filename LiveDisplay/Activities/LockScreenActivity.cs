@@ -9,7 +9,6 @@
     using Android.Graphics.Drawables;
     using Android.OS;
     using Android.Provider;
-    using Android.Util;
     using Android.Views;
     using Android.Views.Animations;
     using Android.Widget;
@@ -31,16 +30,17 @@
     [Activity(Label = "LockScreen",Theme = "@style/LiveDisplayThemeDark.NoActionBar", ShowWhenLocked = true, ScreenOrientation = ScreenOrientation.Portrait, MainLauncher = false, LaunchMode = LaunchMode.SingleInstance, ExcludeFromRecents = true)]
     public class LockScreenActivity : AppCompatActivity
     {
-
         private AndroidX.Fragment.App.Fragment clockFragment, musicFragment, notificationFragment;
 
-        private RecyclerView recycler/*, filteredRecyclerView*/;
+        private RecyclerView recycler;
         private RecyclerView.LayoutManager layoutManager;
         
         private LinearLayout lockscreen; //The root linear layout, used to implement double tap to sleep.
         private float firstTouchTime = -1;
         private float finalTouchTime;
         private readonly float threshold = 1000; //1 second of threshold.(used to implement the double tap.)
+        private readonly bool REVERSE_LAYOUT= true;
+
         private int halfscreenheight; //To decide the behavior of the double tap.
         private System.Timers.Timer watchDog; //the watchdog simply will start counting down until it gets resetted by OnUserInteraction() override.
         private string doubletapbehavior;
@@ -104,6 +104,7 @@
             if (ActivityLifecycleHelper.GetInstance().GetActivityState(typeof(LockScreenActivity)) == ActivityStates.Resumed)
                 AwakeHelper.TurnOffScreen();
         }
+
         private void Wallpaper_NewWallpaperIssued(object sender, WallpaperChangedEventArgs e)
         {
             RunOnUiThread(() =>
@@ -119,7 +120,7 @@
                     Window.DecorView.Animate().SetDuration(100).Alpha(0.5f);
                 }
 
-                if (e.Wallpaper == null)
+                if (e.Wallpaper?.Bitmap != null)
                 {
                     Window.DecorView.SetBackgroundColor(Color.Black);
                 }
@@ -212,13 +213,18 @@
             }
         }
 
+        protected override void OnStart()
+        {
+            base.OnStart();
+            ActivityLifecycleHelper.GetInstance().NotifyActivityStateChange(typeof(LockScreenActivity), ActivityStates.Started);
+        }
         protected override void OnResume()
         {
             base.OnResume();
             AddFlags();
             watchDog.Stop();
             watchDog.Start();
-            if (configurationManager.RetrieveAValue(ConfigurationParameters.TutorialRead) == false)
+            if (!configurationManager.RetrieveAValue(ConfigurationParameters.TutorialRead))
             {
                 welcome = FindViewById<TextView>(Resource.Id.welcomeoverlay);
                 welcome.Text = Resources.GetString(Resource.String.tutorialtext);
@@ -235,7 +241,6 @@
                 welcome.Touch -= Welcome_Touch;
             }
         }
-        
 
         protected override void OnPause()
         {
@@ -260,12 +265,11 @@
         public override void OnBackPressed()
         {
             //Do nothing.
-            //In Nougat it works after several tries to go back, I can't fix that.
         }
 
         public override void OnWindowFocusChanged(bool hasFocus)
         {
-            if (hasFocus == false)
+            if (!hasFocus)
             {
                 ThreadPool.QueueUserWorkItem(m =>
                 {
@@ -350,14 +354,14 @@
             AndroidX.Fragment.App.FragmentTransaction transaction = SupportFragmentManager.BeginTransaction();
             transaction.Add(Resource.Id.WidgetPlaceholder, CreateFragment("music_fragment"), "music_fragment");
             transaction.Commit();
-
         }
+
         private AndroidX.Fragment.App.Fragment CreateFragment(string tag)
         {
             AndroidX.Fragment.App.Fragment result = null;
             switch (tag)
             {
-                case "clock_fragment":
+                case WidgetTypes.CLOCK_FRAGMENT:
 
                     if (clockFragment == null)
                     {
@@ -365,14 +369,16 @@
                     }
                     result = clockFragment;
                     break;
-                case "notification_fragment":
+
+                case WidgetTypes.NOTIFICATION_FRAGMENT:
                     if (notificationFragment == null)
                     {
                         notificationFragment = new NotificationFragment();
                     }
                     result = notificationFragment;
                     break;
-                case "music_fragment":
+
+                case WidgetTypes.MUSIC_FRAGMENT:
                     if (musicFragment == null)
                     {
                         musicFragment = new MediaFragment();
@@ -414,21 +420,12 @@
             lockScreenWindow = window;
         }
 
-        public void OnAnimationCancel(Animator animation)
-        {
-        }
-
+        public void OnAnimationCancel(Animator animation) { /*this method is not needed*/ }
         public void OnAnimationEnd(Animator animation)
         {
             lockScreenWindow.Animate().SetDuration(100).Alpha(1f);
         }
-
-        public void OnAnimationRepeat(Animator animation)
-        {
-        }
-
-        public void OnAnimationStart(Animator animation)
-        {
-        }
+        public void OnAnimationRepeat(Animator animation) { /*this method is not needed*/ }
+        public void OnAnimationStart(Animator animation) { /*this method is not needed*/ }
     }
 }

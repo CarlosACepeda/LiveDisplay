@@ -12,8 +12,8 @@
       app:iconSpaceReserved="false">
     </Preference>
     <Preference
+     android:key="versionnumber"
      android:title="@string/version"
-     android:summary="@string/versionnumber"
      android:selectable="false"
      android:persistent="false"
       app:iconSpaceReserved="false">

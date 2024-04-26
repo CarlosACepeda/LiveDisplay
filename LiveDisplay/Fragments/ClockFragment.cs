@@ -4,14 +4,17 @@
     using Android.Content;
     using Android.OS;
     using Android.Provider;
+    using Android.Util;
     using Android.Views;
     using Android.Widget;
     using Java.Util;
     using LiveDisplay.BroadcastReceivers;
+    using LiveDisplay.Enums;
     using LiveDisplay.Misc;
-    using LiveDisplay.Servicios;
-    using LiveDisplay.Servicios.Weather;
-    using LiveDisplay.Servicios.Widget;
+    using LiveDisplay.Services;
+    using LiveDisplay.Services.Keyguard;
+    using LiveDisplay.Services.Weather;
+    using LiveDisplay.Services.Widget;
     using System;
     using Fragment = AndroidX.Fragment.App.Fragment;
 
@@ -36,13 +39,14 @@
 
         private TextView lastupdated;
         private TextView city;
+
         //private LinearLayout weatherinfo;
-        private bool initForFirstTime=false;
-        
+        private bool initForFirstTime = false;
+
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            WidgetStatusPublisher.OnWidgetStatusChanged += WidgetStatusPublisher_OnWidgetStatusChanged;
+            WidgetStatusPublisher.GetInstance().OnWidgetStatusChanged += WidgetStatusPublisher_OnWidgetStatusChanged;
         }
 
         private void RegisterBatteryReceiver()
@@ -73,7 +77,6 @@
             LoadDate();
             RegisterBatteryReceiver();
 
-
             //View Events
             clock.Click += Clock_Click;
             //weatherclockcontainer.Click += Weatherclockcontainer_Click;
@@ -84,14 +87,6 @@
 
         public override void OnResume()
         {
-            if (WidgetStatusPublisher.CurrentActiveWidget == string.Empty || WidgetStatusPublisher.CurrentActiveWidget == "ClockFragment")
-            {
-                if (ConfigurationParameters.StartingWidget == "clock" && initForFirstTime == false)
-                {
-                    maincontainer.Visibility = ViewStates.Visible;
-                    initForFirstTime = true;
-                }
-            }
             LoadWeather();
             GrabWeatherJob.WeatherUpdated += GrabWeatherJob_WeatherUpdated;
 
@@ -100,47 +95,34 @@
 
         private void WidgetStatusPublisher_OnWidgetStatusChanged(object sender, WidgetStatusEventArgs e)
         {
-            if (e.WidgetName == "NotificationFragment")
+            if (e.WidgetName == WidgetTypes.CLOCK_FRAGMENT)
             {
                 if (e.Show)
                 {
-                    if (maincontainer != null)
-                        maincontainer.Visibility = ViewStates.Invisible;
+                    ToggleWidgetVisibility(true);
                 }
                 else
                 {
-                    if (WidgetStatusPublisher.CurrentActiveWidget == string.Empty) //If clock has a chance to show itself!
+                    ToggleWidgetVisibility(false);
+                }
+            }
+        }
+        private void ToggleWidgetVisibility(bool visible)
+        {
+            Activity.RunOnUiThread(() => {
+                if (maincontainer != null)
+                {
+                    if (visible)
                     {
-                        if (maincontainer != null)
-                            maincontainer.Visibility = ViewStates.Visible;
+                        maincontainer.Visibility = ViewStates.Visible;
                     }
                     else
                     {
-                        WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs 
-                        { 
-                            WidgetName= WidgetStatusPublisher.CurrentActiveWidget, 
-                            Active=true, //Having a Current Active Widget means it should be active by def.
-                            Show=true });
-
-                        if (maincontainer != null)
-                            maincontainer.Visibility = ViewStates.Invisible;
-
+                        maincontainer.Visibility = ViewStates.Invisible;
                     }
                 }
-            }
-            else if (e.WidgetName == "MusicFragment")
-            {
-                if (e.Show)
-                {
-                    if (maincontainer != null)
-                        maincontainer.Visibility = ViewStates.Invisible;
-                }
-                else
-                {
-                    if (maincontainer != null)
-                        maincontainer.Visibility = ViewStates.Visible;
-                }
-            }
+
+            });
         }
 
         public override void OnPause()
@@ -149,9 +131,11 @@
 
             base.OnPause();
         }
+
         public override void OnDestroy()
         {
-            WidgetStatusPublisher.OnWidgetStatusChanged -= WidgetStatusPublisher_OnWidgetStatusChanged;
+            WidgetStatusPublisher.GetInstance().OnWidgetStatusChanged -= WidgetStatusPublisher_OnWidgetStatusChanged;
+            ToggleWidgetVisibility(false);
             initForFirstTime = false;
             base.OnDestroy();
         }
@@ -172,30 +156,17 @@
             string weatherdescription = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherDescription, string.Empty);
             string weatherlastupdated = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherLastUpdated, string.Empty);
 
-            temperature.Text = currentweather+ temperatureunit;
-            city.Text = thecity;
-            //minimumTemperature.Text = minimumtemperature;
-            //maximumTemperature.Text = maximumtemperature;
-            //humidity.Text = weatherhumidity;
-            description.Text = weatherdescription;
-            lastupdated.Text = weatherlastupdated;
+            Activity.RunOnUiThread(() =>
+            {
+                temperature.Text = currentweather + temperatureunit;
+                city.Text = thecity;
+                //minimumTemperature.Text = minimumtemperature;
+                //maximumTemperature.Text = maximumtemperature;
+                //humidity.Text = weatherhumidity;
+                description.Text = weatherdescription;
+                lastupdated.Text = weatherlastupdated;
+            });
         }
-
-        private void Weatherclockcontainer_Click(object sender, EventArgs e)
-        {
-            var view = sender as View;
-            //weatherinfo = view.FindViewById<LinearLayout>(Resource.Id.weatherinfo);
-            //if (weatherinfo.Visibility == ViewStates.Visible)
-            //{
-            //    weatherinfo.Visibility = ViewStates.Invisible;
-            //}
-            //else
-            //{
-            //    weatherinfo.Visibility = ViewStates.Visible;
-            //}
-            //weatherinfo.Dispose();
-        }
-
         public override void OnDestroyView()
         {
             base.OnDestroyView();
@@ -204,10 +175,9 @@
             Application.Context.UnregisterReceiver(batteryReceiver);
             clock.Click -= Clock_Click;
             BatteryReceiver.BatteryInfoChanged -= BatteryReceiver_BatteryInfoChanged;
-
         }
 
-        private void BatteryReceiver_BatteryInfoChanged(object sender, Servicios.Battery.BatteryEventArgs.BatteryChangedEventArgs e)
+        private void BatteryReceiver_BatteryInfoChanged(object sender, Services.Battery.BatteryEventArgs.BatteryChangedEventArgs e)
         {
             battery.Text = e.BatteryLevel.ToString() + "%";
             batteryIcon.Background = e.BatteryIcon;
@@ -217,7 +187,20 @@
         {
             using (Intent intent = new Intent(AlarmClock.ActionShowAlarms))
             {
-                StartActivity(intent);
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                    if (KeyguardHelper.IsDeviceCurrentlyLocked())
+                    {
+                        KeyguardHelper.RequestDismissKeyguard(Activity);
+                    }
+                try
+                {
+                    StartActivity(intent);
+                }
+                catch(AndroidRuntimeException arex)
+                {
+                    Log.Warn("TAG", arex);
+                    clock.Click -= Clock_Click;
+                }
             }
         }
 
@@ -228,6 +211,18 @@
             {
                 date.Text = string.Format(calendar.Get(CalendarField.DayOfMonth).ToString() + ", " + calendar.GetDisplayName((int)CalendarField.Month, (int)CalendarStyle.Long, Locale.Default));
             }
+        }
+        public override void OnSaveInstanceState(Bundle outState)
+        {
+            outState.PutBoolean("FRAGMENT", true);
+            base.OnSaveInstanceState(outState);
+        }
+        public override void OnViewStateRestored(Bundle savedInstanceState)
+        {
+            var value= savedInstanceState?.GetBoolean("FRAGMENT");
+
+            Console.WriteLine("Clock says: " + value);
+            base.OnViewStateRestored(savedInstanceState);
         }
     }
 }

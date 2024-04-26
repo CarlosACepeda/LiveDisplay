@@ -1,6 +1,6 @@
 ﻿namespace LiveDisplay.Misc
 {
-    internal sealed class ConfigurationParameters
+    internal static class ConfigurationParameters
     {
         public const string ImagePath = "imagePath";
         public const string ChangeWallpaper = "changewallpaper";
@@ -34,9 +34,10 @@
         public const string WeatherUpdateFrequency = "weatherupdatefrequency";
         public const string WeatherUpdateChangesWallpaper = "weatherupdatechangeswallpaper?";
         public const string EnableQuickReply = "enablequickreply?";
-        public const string EnableAwakeService = "enableawake?";
         public const string ListenForDeviceMotion = "listenfordevicemotion?";
         public const string TurnOnNewNotification = "turnonnewnotification?";
+        public const string TurnOffWhenInPocket = "turnoffwheninpocket?";
+        public const string TurnOnWhenInPocket = "turnonwhenoutofpocket?";
         public const string AwakeCausesBlackWallpaper = "awakecausesblackwallpaper?";
         public const string StartSleepTime = "startsleeptime";
         public const string FinishSleepTime = "finishsleeptime";
@@ -47,6 +48,11 @@
         public const string MusicWidgetMethod = "musicwidgetcontrolmethod"; //Grab a session from the notification or from the media sessions listener.
         public const string HideNotificationWhenItsMediaPlaying = "hidenotificationwhenmediaplaying?"; //If the media session used belongs to a notification then hide this notification in the lockscreen.
         public const string HideShortcutsWhenKeyguardSafe = "hideshortcutswhenkeyguardsafe?";
+        public const string LaunchNotification = "launchnotification?";
+        public const string AppHasCustomImportanceRules = "apphascustomblockrules";
+        public const string DisableArtworkUpdateOnSameAlbum = "disableartworkupdateonsamealbum"; //related to mediasession metadata changed.
+        public const string BlurEnabledForAndroid10 = "blurenabledforandroid10?"; //Experimental setting I decided to include, to allow the user to enable unstable blur in android 10 and beyond.
+        public const string SyncWithDigitalWellbeing = "syncwithdigitalwellbeing?";
 
         //Misc.
         //It serves the purpose of enabling certain messages to be shown in a Toast Message useful for the developer.
@@ -59,7 +65,6 @@
         //By default it is the clock. (possible values: "clock", "music", "notification")
         //When there's not an active widget.
         public const string StartingWidget = "clock";
-
-
+        public const string LastActiveWidget = "lastactivewidget";
     }
 }
