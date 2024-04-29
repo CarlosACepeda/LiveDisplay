@@ -7,5 +7,11 @@
   <dimen name="media_widget_info_horizontal_padding">10dp</dimen>
   <dimen name="media_widget_controls_horizontal_padding">20dp</dimen>
   <dimen name="media_widget_controls_vertical_padding">20dp</dimen>
+  <dimen name="layout_width_for_weight_sum">0dp</dimen>
+  <dimen name="media_widget_weight">29</dimen>
+  <dimen name="media_widget_horizontal_drag_indicator_weight">1</dimen>
+  <dimen name="media_title_text_size">25dp</dimen>
+  <dimen name="media_artist_text_size">19dp</dimen>
+  <dimen name="media_album_text_size">17dp</dimen>
 
 </resources>

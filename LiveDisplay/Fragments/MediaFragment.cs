@@ -5,7 +5,6 @@ using Android.Graphics.Drawables;
 using Android.Media;
 using Android.Media.Session;
 using Android.OS;
-using Android.Service.Notification;
 using Android.Util;
 using Android.Views;
 using Android.Views.Animations;
@@ -32,7 +31,6 @@ namespace LiveDisplay.Fragments
         private LinearLayout maincontainer;
         private TextView noMediaPlaying;
         private SeekBar skbSeekSongTime;
-        private PlaybackStateCode playbackState;
         private PendingIntent activityIntent; //A Pending intent if available to start the activity associated with this music fragent.
         private Timer timer;
         private Timer fastForwardTimer;
@@ -46,7 +44,9 @@ namespace LiveDisplay.Fragments
         private bool isPixelWithinBounds;
         int lowestBoundary, highestBoundary;
         Timer discardMediaSessionButtonTimeOut;
-
+        private bool discardMediaSessionClicked;
+        private PlaybackStateCode playbackState;
+        private RemoteControlPlayState playbackStateKitkat;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
@@ -89,11 +89,13 @@ namespace LiveDisplay.Fragments
             timer.Elapsed += Timer_Elapsed;
             fastForwardTimer.Elapsed += FastForwardTimer_Elapsed;
             rewindTimer.Elapsed += RewindTimer_Elapsed;
-
-            currentMediaNotification = CatcherHelper.FindMostRecentMediaNotification();
-            if (currentMediaNotification != null)
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
             {
-                MediaEventsPublisherLollipop.InitializeFromToken(currentMediaNotification.GetMediaSessionToken());
+                currentMediaNotification = CatcherHelper.FindMostRecentMediaNotification();
+                if (currentMediaNotification != null)
+                {
+                    MediaEventsPublisherLollipop.InitializeFromToken(currentMediaNotification.GetMediaSessionToken());
+                }
             }
 
             return view;
@@ -101,15 +103,27 @@ namespace LiveDisplay.Fragments
         public override void OnResume()
         {
             Console.WriteLine("FRAGMENT: onResume");
-            if(MediaEventsPublisherLollipop.IsInitialized())
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
             {
-                Console.WriteLine("CONTROLS NOT VISIBLE, MAKING'EM VISIBLE");
-                ToggleMediaControlsVisibility(true);
+                if (MediaEventsPublisherLollipop.IsInitialized() || currentMediaNotification != null)
+                {
+                    Console.WriteLine("CONTROLS NOT VISIBLE, MAKING'EM VISIBLE");
+                    ToggleMediaControlsVisibility(true);
+                }
+                else ToggleMediaControlsVisibility(false);
+
             }
-            else if(currentMediaNotification==null)
+            else
             {
-                ToggleMediaControlsVisibility(false);
+                if(MediaEventsPublisherKitkat.IsInitialized())
+                {
+                    Console.WriteLine("CONTROLS NOT VISIBLE, MAKING'EM VISIBLE");
+                    ToggleMediaControlsVisibility(true);
+                }
+                else ToggleMediaControlsVisibility(false);
+
             }
+
             base.OnResume();
         }
         public override void OnDestroyView()
@@ -138,11 +152,10 @@ namespace LiveDisplay.Fragments
 
         private void CatcherHelper_NotificationPosted(object sender, NotificationPostedEventArgs e)
         {
+            //In Kitkat, a notification can never be a MediaStyle, that's why we instance the MediaEventsPublisherLollipop directly
             if(e.OpenNotification.Style()== OpenNotification.MediaStyle && e.OpenNotification.IsOnGoing())
             {
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.KitkatWatch)
-                {
-                    var mediaSessionToken = e.OpenNotification.GetMediaSessionToken();
+                var mediaSessionToken = e.OpenNotification.GetMediaSessionToken();
                     //Only try to initialize if it isn't initialized already
                     //or if the Current existing MediaSession is not active and is different than the one incoming
                     if(!MediaEventsPublisherLollipop.IsInitialized() 
@@ -155,7 +168,6 @@ namespace LiveDisplay.Fragments
                         currentMediaNotification = e.OpenNotification;
                     }
                     ToggleMediaControlsVisibility(true);
-                }
             }
         }
 
@@ -229,8 +241,13 @@ namespace LiveDisplay.Fragments
 
         private void DiscardMediaSession_Click(object sender, EventArgs e)
         {
-            //We can't discard a Media session that's active.
-            NotificationSlave.NotificationSlaveInstance().CancelNotification(currentMediaNotification?.GetKey()); //Now it should let us remove the notification.
+            //We can't discard a Media session that's active, let's pause it.
+            musicControls.Pause();
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop) //In kitkat ther's not a notification attached to the Media playing
+            {
+                NotificationSlave.NotificationSlaveInstance().CancelNotification(currentMediaNotification?.GetKey()); //Now it should let us remove the notification.
+            }
+            discardMediaSessionClicked = true; //Set a flag, for when the Media Session changes its state to paused.
         }
 
         private void Maincontainer_Touch(object sender, View.TouchEventArgs e)
@@ -396,20 +413,39 @@ namespace LiveDisplay.Fragments
 
         private void BtnPlayPause_Click(object sender, EventArgs e)
         {
-            switch (playbackState)
+            if(Build.VERSION.SdkInt>= BuildVersionCodes.Lollipop)
             {
-                //If the media is paused, then Play.
-                case PlaybackStateCode.Paused:
-                    musicControls.Play();
-                    break;
-                //If the media is playing, then pause.
-                case PlaybackStateCode.Playing:
-                    musicControls.Pause();
-                    break;
-                //add more cases and handle them.
-                default:
-                    break;
+                switch (playbackState)
+                {
+                    //If the media is paused, then Play.
+                    case PlaybackStateCode.Paused:
+                        musicControls.Play();
+                        break;
+                    //If the media is playing, then pause.
+                    case PlaybackStateCode.Playing:
+                        musicControls.Pause();
+                        break;
+                    //add more cases and handle them.
+                    default:
+                        break;
+                }
             }
+            else
+            {
+                switch(playbackStateKitkat)
+                {
+                    case RemoteControlPlayState.Paused:
+                        musicControls.Play();
+                            break;
+                    case RemoteControlPlayState.Playing:
+                        musicControls.Pause();
+                        break;
+                    default:
+                        musicControls.Play();
+                        break;
+                }
+            }
+            
         }
 
         private void BtnSkipPrevious_Click(object sender, EventArgs e)
@@ -435,28 +471,29 @@ namespace LiveDisplay.Fragments
             }
         }
 
-        private void MusicControllerKitkat_MediaPlaybackChanged(object sender, MediaPlaybackStateChangedKitkatEventArgs e)
+        private void MusicControllerKitkat_MediaPlaybackChanged(object sender, MediaPlaybackStateChangedEventArgs e)
         {
+            Console.WriteLine("MEDIA PLAYBACK CHANGED, FRAGMENT");
+            playbackStateKitkat = e.PlaybackStateKitkat;
             Activity?.RunOnUiThread(() =>
             {
-            switch (e.PlaybackState)
-            {
-                case RemoteControlPlayState.Paused:
-                    btnPlayPause.SetImageDrawable(
-                    Build.VERSION.SdkInt <= BuildVersionCodes.LollipopMr1 ?
-                    Resources.GetDrawable(Resource.Drawable.ic_play_arrow_white_24dp) :
-                    Resources.GetDrawable(Resource.Drawable.ic_play_arrow_white_24dp, Resources.NewTheme()));
-                    playbackState = PlaybackStateCode.Paused;
-                    MoveSeekbar(false);
+                switch (e.PlaybackStateKitkat)
+                {
+                    case RemoteControlPlayState.Paused:
+                        btnPlayPause.SetImageDrawable(
+                        Build.VERSION.SdkInt <= BuildVersionCodes.LollipopMr1 ?
+                        Resources.GetDrawable(Resource.Drawable.ic_play_arrow_white_24dp) :
+                        Resources.GetDrawable(Resource.Drawable.ic_play_arrow_white_24dp, Resources.NewTheme()));
 
-                    break;
+                        MoveSeekbar(false);
+                        break;
 
-                case RemoteControlPlayState.Playing:
-                    btnPlayPause.SetImageDrawable(
-                    Build.VERSION.SdkInt <= BuildVersionCodes.LollipopMr1 ?
-                    Resources.GetDrawable(Resource.Drawable.ic_pause_white_24dp) :
-                    Resources.GetDrawable(Resource.Drawable.ic_pause_white_24dp, Resources.NewTheme()));
-                        playbackState = PlaybackStateCode.Playing;
+                    case RemoteControlPlayState.Playing:
+                        btnPlayPause.SetImageDrawable(
+                        Build.VERSION.SdkInt <= BuildVersionCodes.LollipopMr1 ?
+                        Resources.GetDrawable(Resource.Drawable.ic_pause_white_24dp) :
+                        Resources.GetDrawable(Resource.Drawable.ic_pause_white_24dp, Resources.NewTheme()));
+
                         MoveSeekbar(true);
 
                         break;
@@ -466,18 +503,26 @@ namespace LiveDisplay.Fragments
                         Build.VERSION.SdkInt <= BuildVersionCodes.LollipopMr1 ?
                         Resources.GetDrawable(Resource.Drawable.ic_play_arrow_white_24dp) :
                         Resources.GetDrawable(Resource.Drawable.ic_play_arrow_white_24dp, Resources.NewTheme());
-                        playbackState = PlaybackStateCode.Stopped;
+
                         MoveSeekbar(false);
                         break;
 
                     default:
                         break;
                 }
+                if (discardMediaSessionClicked &&
+               e.PlaybackStateKitkat != RemoteControlPlayState.Playing)
+                {
+                    //It means this is the result of a clicking on the discard media session button, and we should hide the controls
+                    ToggleMediaControlsVisibility(false);
+                    discardMediaSessionClicked = false; //reset flag.
+                }
             });
         }
 
         private void MusicControllerKitkat_MediaMetadataChanged(object sender, MediaMetadataChangedKitkatEventArgs e)
         {
+            Console.WriteLine("MEDIA METADATA CHANGED, FRAGMENT");
             Activity?.RunOnUiThread(() =>
             {
                 tvTitle.Text = e.Title;
@@ -508,12 +553,7 @@ namespace LiveDisplay.Fragments
                 tvAlbum.Text = e.MediaMetadata?.GetString(MediaMetadata.MetadataKeyAlbum);
                 tvArtist.Text = e.MediaMetadata?.GetString(MediaMetadata.MetadataKeyArtist);
                 skbSeekSongTime.Max = (int)e.MediaMetadata?.GetLong(MediaMetadata.MetadataKeyDuration); //In ms
-                if (e.AppName != string.Empty)
-                {
-                    sourceApp.Text = string.Format(Resources.GetString(Resource.String.playing_from_template), e.AppName);
-                }
-
-
+                sourceApp.Text = string.Format(Resources.GetString(Resource.String.playing_from_template), e.AppName);
                 ThreadPool.QueueUserWorkItem(m =>
                 {
                     var albumart = e.MediaMetadata?.GetBitmap(MediaMetadata.MetadataKeyAlbumArt);
@@ -528,7 +568,7 @@ namespace LiveDisplay.Fragments
                         BlurLevel = (short)blurLevel,
                         WallpaperPoster = WallpaperPoster.MusicPlayer,
                         SecondsOfAttention = (skbSeekSongTime.Max / 1000) - (skbSeekSongTime.Progress / 1000)
-                    }); ;
+                    });
 
                 });
             });
@@ -538,6 +578,9 @@ namespace LiveDisplay.Fragments
         {
             Activity?.RunOnUiThread(() =>
             {
+                playbackState = e.PlaybackState;
+
+
                 switch (e.PlaybackState)
                 {
                     case PlaybackStateCode.Paused:
@@ -545,7 +588,7 @@ namespace LiveDisplay.Fragments
                         Build.VERSION.SdkInt <= BuildVersionCodes.LollipopMr1 ?
                         Resources.GetDrawable(Resource.Drawable.ic_play_arrow_white_24dp) :
                         Resources.GetDrawable(Resource.Drawable.ic_play_arrow_white_24dp, Resources.NewTheme()));
-                        playbackState = PlaybackStateCode.Paused;
+                        
                         //Start timeout to hide the MusicFragment (but only if the music method chosen is 'Pick a MediaSession' (0)
                         //Otherwise, the Music Widget can only disappear when the notification is removed. (which is the correct behavior)
                         if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetMethod, "1") == "0")
@@ -554,7 +597,6 @@ namespace LiveDisplay.Fragments
                         }
                         MoveSeekbar(false);
                         Console.WriteLine("PLAYBACK PAUSED");
-                        
                         break;
 
                     case PlaybackStateCode.Playing:
@@ -562,8 +604,6 @@ namespace LiveDisplay.Fragments
                         Build.VERSION.SdkInt <= BuildVersionCodes.LollipopMr1 ?
                         Resources.GetDrawable(Resource.Drawable.ic_pause_white_24dp) :
                         Resources.GetDrawable(Resource.Drawable.ic_pause_white_24dp, Resources.NewTheme()));
-
-                        playbackState = PlaybackStateCode.Playing;
                         //StartTimeout(false);
                         MoveSeekbar(true);
                         ToggleMediaControlsVisibility(true);
@@ -576,9 +616,6 @@ namespace LiveDisplay.Fragments
                         Build.VERSION.SdkInt <= BuildVersionCodes.LollipopMr1 ?
                         Resources.GetDrawable(Resource.Drawable.ic_play_arrow_white_24dp) :
                         Resources.GetDrawable(Resource.Drawable.ic_play_arrow_white_24dp, Resources.NewTheme()));
-
-                        playbackState = PlaybackStateCode.Stopped;
-
                         Console.WriteLine("STOPPED!!");
                         MoveSeekbar(false);
                         break;
@@ -595,6 +632,14 @@ namespace LiveDisplay.Fragments
                         break;
                 }
                 skbSeekSongTime.SetProgress((int)e.CurrentTime, true);
+                
+                if (discardMediaSessionClicked &&
+                e.PlaybackState != PlaybackStateCode.Playing)
+                {
+                    //It means this is the result of a clicking on the discard media session button, and we should hide the controls
+                    ToggleMediaControlsVisibility(false);
+                    discardMediaSessionClicked = false; //reset flag.
+                }
             });
         }
 
@@ -617,6 +662,7 @@ namespace LiveDisplay.Fragments
             maincontainer = view.FindViewById<LinearLayout>(Resource.Id.container);
             noMediaPlaying = view.FindViewById<TextView>(Resource.Id.no_media_playing);
             discardMediaSession = view.FindViewById<ImageButton>(Resource.Id.discard_media_session);
+
         }
         private void UnbindViews()
         {
