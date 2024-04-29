@@ -36,7 +36,6 @@ namespace LiveDisplay.Servicios.Music
         {
             MusicControlsKitkat.GetInstance().MediaEvent += MusicControlsKitkat_MediaEvent;
             TransportControls = remoteController;
-            //TransportControls.SetSynchronizationMode(SynchronizationPosition.Check);
         }
         public static MediaEventsPublisherKitkat Initialize(RemoteController remoteController)
         {
