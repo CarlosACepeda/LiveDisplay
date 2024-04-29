@@ -10,6 +10,7 @@
     using Android.Widget;
     using AndroidX.Activity.Result;
     using AndroidX.AppCompat.App;
+    using AndroidX.AppCompat.Widget;
     using LiveDisplay.BroadcastReceivers;
     using LiveDisplay.Misc;
     using LiveDisplay.Servicios;
@@ -17,8 +18,6 @@
 
     //for CI.
     using Microsoft.AppCenter;
-    using Microsoft.AppCenter.Analytics;
-    using Microsoft.AppCenter.Crashes;
     using System;
     using System.Threading;
     using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
@@ -35,12 +34,12 @@
         ActivityResultLauncher activityResultLauncher;
 
         protected override void OnCreate(Bundle savedInstanceState)
-        {           
-            base.OnCreate(savedInstanceState);
+        {
             SetContentView(Resource.Layout.Main);
             activityResultLauncher = RegisterForActivityResult(new RequestPermission(), this);
             BindViews();
             StartAppCenterMonitoring();
+            base.OnCreate(savedInstanceState);
         }
 
         protected override void OnResume()
@@ -55,7 +54,7 @@
 
         private void AdminReceiver_OnDeviceAdminEnabled(object sender, bool e)
         {
-            using (var adminGivenImageView = FindViewById<ImageView>(Resource.Id.deviceAccessCheckbox))
+            using (var adminGivenImageView = FindViewById<AppCompatImageView>(Resource.Id.deviceAccessCheckbox))
             {
                 RunOnUiThread(()=>
                 {
@@ -80,7 +79,7 @@
 
         private void CheckDeviceAdminAccess()
         {
-            using (var adminGivenImageView = FindViewById<ImageView>(Resource.Id.deviceAccessCheckbox))
+            using (var adminGivenImageView = FindViewById<AppCompatImageView>(Resource.Id.deviceAccessCheckbox))
             {
                 switch (Checkers.IsThisAppADeviceAdministrator())
                 {
@@ -97,7 +96,7 @@
 
         private void CheckNotificationAccess()
         {
-            using (var notificationAccessGivenImageView = FindViewById<ImageView>(Resource.Id.notificationAccessCheckbox))
+            using (var notificationAccessGivenImageView = FindViewById<AppCompatImageView>(Resource.Id.notificationAccessCheckbox))
             {
                 switch (Checkers.IsNotificationListenerEnabled())
                 {
@@ -114,7 +113,7 @@
         }
         private void CheckEnabledNotificationPosting()
         {
-            using (var notificationAccessGivenImageView = FindViewById<ImageView>(Resource.Id.enable_notification_permission_checkbox))
+            using (var notificationAccessGivenImageView = FindViewById<AppCompatImageView>(Resource.Id.enable_notification_permission_checkbox))
             {
 
                 if (Checkers.ThisAppCanPostNotifications())
@@ -190,7 +189,7 @@
                         AwakeHelper.TurnOffScreen();
                         using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())
                         {
-                            var notificationtext = Resources.GetString(Resource.String.testnotificationtext);
+                            var notificationtext = GetString(Resource.String.testnotificationtext);
                             if (Build.VERSION.SdkInt > BuildVersionCodes.NMr1)
                             {
                                 slave.PostNotification(1, "LiveDisplay", notificationtext, true, NotificationImportance.Max);
@@ -239,7 +238,7 @@
             enableDeviceAdmin = FindViewById<RelativeLayout>(Resource.Id.device_access);
             enableNotificationAccess = FindViewById<RelativeLayout>(Resource.Id.notification_access);
             enablePostingNotifications = FindViewById<RelativeLayout>(Resource.Id.post_notifications);
-            if(Build.VERSION.SdkInt>= BuildVersionCodes.Tiramisu)
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
             {
                 enablePostingNotifications.Visibility = ViewStates.Visible;
                 enablePostingNotifications.Click += EnablePostingNotifications_Click;
@@ -265,7 +264,7 @@
             if (Checkers.IsThisAppADeviceAdministrator())
             {
                 ComponentName devAdminReceiver = new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(AdminReceiver)));
-                DevicePolicyManager dpm = (DevicePolicyManager)GetSystemService(Context.DevicePolicyService);
+                DevicePolicyManager dpm = (DevicePolicyManager)GetSystemService(DevicePolicyService);
                 dpm.RemoveActiveAdmin(devAdminReceiver);
             }
             else
@@ -303,8 +302,12 @@
         {
             ThreadPool.QueueUserWorkItem(m =>
             {
+#if DEBUG
                 Console.WriteLine("Start Appcenter here");
-                //AppCenter.Start("0ec5320c-34b4-498b-a9c2-dae7614997fa", typeof(Analytics), typeof(Crashes), typeof(ErrorReport));
+#else
+                Microsoft.AppCenter.AppCenter.Start("0ec5320c-34b4-498b-a9c2-dae7614997fa", typeof(Microsoft.AppCenter.Analytics.Analytics), 
+                typeof(Microsoft.AppCenter.Crashes.Crashes), typeof(Microsoft.AppCenter.Crashes.ErrorReport));
+#endif
             });
         }
 
