@@ -251,11 +251,11 @@ namespace LiveDisplay.Servicios.Music
 
         #region Raising events.
 
-        public void OnMediaPlaybackChanged(EventArgs e)
+        public void OnMediaPlaybackChanged(MediaPlaybackStateChangedEventArgs e)
         { 
             ThreadPool.QueueUserWorkItem(m =>
             {
-                switch (((MediaPlaybackStateChangedEventArgs)e).PlaybackState)
+                switch (e.PlaybackState)
                 {
                     case PlaybackStateCode.Playing:
                         MusicPlaying?.Invoke(this, EventArgs.Empty);
@@ -265,11 +265,12 @@ namespace LiveDisplay.Servicios.Music
                         MusicPaused?.Invoke(this, EventArgs.Empty);
                         break;
                 }
-                MediaPlaybackChanged?.Invoke(this, (MediaPlaybackStateChangedEventArgs)e);
+                MediaPlaybackChanged?.Invoke(this, e);
             });
         }
 
         public void OnMediaMetadataChanged(EventArgs e)
+
         {
             ThreadPool.QueueUserWorkItem(m =>
             {

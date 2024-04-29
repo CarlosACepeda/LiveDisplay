@@ -14,19 +14,17 @@ namespace LiveDisplay.Servicios.Music
     /// For Kitkat only.
     /// </summary>
 
-    internal class MediaEventsPublisherKitkat : IMediaEventsPublisher
+#pragma warning disable CS0618 // Type or member is obsolete
+    internal class MediaEventsPublisherKitkat : IMediaEventsPublisher, IDisposable
     {
-        private bool requestedWidgetStart = false;
         private static MediaEventsPublisherKitkat instance;
-
-        public static RemoteControlPlayState MusicStatus { get; private set; }
         public RemoteControlPlayState PlaybackState { get; set; }
         public RemoteController.MetadataEditor MediaMetadata { get; set; }
         public RemoteController TransportControls { get; set; }
         public long CurrentMediaPosition { get; set; }
 
 
-        public static event EventHandler<MediaPlaybackStateChangedKitkatEventArgs> MediaPlaybackChanged;
+        public static event EventHandler<MediaPlaybackStateChangedEventArgs> MediaPlaybackChanged;
 
         public static event EventHandler<MediaMetadataChangedKitkatEventArgs> MediaMetadataChanged;
 
@@ -38,10 +36,11 @@ namespace LiveDisplay.Servicios.Music
         {
             MusicControlsKitkat.GetInstance().MediaEvent += MusicControlsKitkat_MediaEvent;
             TransportControls = remoteController;
+            //TransportControls.SetSynchronizationMode(SynchronizationPosition.Check);
         }
         public static MediaEventsPublisherKitkat Initialize(RemoteController remoteController)
         {
-           instance= new MediaEventsPublisherKitkat(remoteController);
+           instance??= new MediaEventsPublisherKitkat(remoteController);
             return instance;
         }
         public static MediaEventsPublisherKitkat GetInstance()
@@ -49,48 +48,62 @@ namespace LiveDisplay.Servicios.Music
             if (instance == null) throw new InvalidOperationException("Call Initialize First");
             return instance;
         }
+        public static bool IsInitialized()
+        {
+            return instance != null;
+        }
 
         private void MusicControlsKitkat_MediaEvent(object sender, MediaActionEventArgs e)
         {
+            RemoteControlPlayState simulatedState= RemoteControlPlayState.Error;
             switch (e.MediaActionFlags)
             {
+
                 case MediaActionFlags.Play:
                     TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Down, Keycode.MediaPlay));
                     TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Up, Keycode.MediaPlay));
+                    simulatedState = RemoteControlPlayState.Playing;
                     break;
 
                 case MediaActionFlags.Pause:
                     TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Down, Keycode.MediaPause));
                     TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Up, Keycode.MediaPause));
+                    simulatedState = RemoteControlPlayState.Paused;
                     break;
 
                 case MediaActionFlags.SkipToNext:
                     TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Down, Keycode.MediaNext));
                     TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Up, Keycode.MediaNext));
+                    simulatedState = RemoteControlPlayState.SkippingForwards;
                     break;
 
                 case MediaActionFlags.SkipToPrevious:
                     TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Down, Keycode.MediaPrevious));
                     TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Up, Keycode.MediaPrevious));
+                    simulatedState = RemoteControlPlayState.SkippingBackwards;
                     break;
 
                 case MediaActionFlags.SeekTo:
                     TransportControls.SeekTo(e.Time);
+                    //Test this case
                     break;
 
                 case MediaActionFlags.FastFoward:
                     TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Down, Keycode.MediaFastForward));
                     TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Up, Keycode.MediaFastForward));
+                    simulatedState = RemoteControlPlayState.FastForwarding;
                     break;
 
                 case MediaActionFlags.Rewind:
                     TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Down, Keycode.MediaRewind));
                     TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Up, Keycode.MediaRewind));
+                    simulatedState = RemoteControlPlayState.Rewinding;
                     break;
 
                 case MediaActionFlags.Stop:
                     TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Down, Keycode.MediaStop));
                     TransportControls.SendMediaKeyEvent(new KeyEvent(KeyEventActions.Up, Keycode.MediaStop));
+                    simulatedState = RemoteControlPlayState.Stopped;
 
                     break;
 
@@ -104,44 +117,28 @@ namespace LiveDisplay.Servicios.Music
                         AlbumArt = MediaMetadata.GetBitmap(MediaMetadataEditKey.BitmapKeyArtwork, null),
                         Duration = MediaMetadata.GetLong((MediaMetadataEditKey)MetadataKey.Duration, 0)
                     });
-                    //Send Playbackstate of the media.
-                    OnMediaPlaybackChanged(new MediaPlaybackStateChangedKitkatEventArgs
-                    {
-                        PlaybackState = PlaybackState,
-                        CurrentTime = CurrentMediaPosition,
-                    });
-
                     break;
 
                 default:
                     break;
             }
+            Console.WriteLine("Sending Mediaplayback manually, cuz apparently after sending the key event the media the RemoteController doesn't react");
+            //Send Playbackstate of the media Manually
+            OnMediaPlaybackChanged(new MediaPlaybackStateChangedEventArgs
+            {
+                PlaybackStateKitkat = simulatedState,
+                CurrentTime = TransportControls.EstimatedMediaPosition,
+            });
         }
 
         public void OnPlaybackStateChanged(RemoteControlPlayState state)
         {
             PlaybackState = state;
-            MusicStatus = state;
-            Log.Info("LiveDisplay", "Music state is" + state);
-            OnMediaPlaybackChanged(new MediaPlaybackStateChangedKitkatEventArgs
+            Log.Info("LiveDisplay", "Music state is: " + state);
+            OnMediaPlaybackChanged(new MediaPlaybackStateChangedEventArgs
             {
-                PlaybackState = state
+                PlaybackStateKitkat = state
             });
-            switch (state)
-            {
-                case RemoteControlPlayState.Playing:
-                    if (requestedWidgetStart == false)
-                    {
-                        WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = true, WidgetName = "MusicFragment", Active=true });
-                        requestedWidgetStart = true;
-                    }
-                    MusicPlaying?.Invoke(null, EventArgs.Empty);
-                    break;
-
-                case RemoteControlPlayState.Paused:
-                    MusicPaused?.Invoke(null, EventArgs.Empty);
-                    break;
-            }
         }
 
         public void OnMetadataChanged(RemoteController.MetadataEditor mediaMetadata)
@@ -154,17 +151,23 @@ namespace LiveDisplay.Servicios.Music
                 Album = mediaMetadata.GetString((MediaMetadataEditKey)MetadataKey.Album, ""),
                 AlbumArt = mediaMetadata.GetBitmap(MediaMetadataEditKey.BitmapKeyArtwork, null),
                 Duration = mediaMetadata.GetLong((MediaMetadataEditKey)MetadataKey.Duration, 0)
-            });            
+            });
         }
 
-        public void OnMediaPlaybackChanged(EventArgs e)
+        public void OnMediaPlaybackChanged(MediaPlaybackStateChangedEventArgs e)
         {
-            
+            MediaPlaybackChanged?.Invoke(null, e);
         }
 
         public void OnMediaMetadataChanged(EventArgs e)
         {
-            
+            MediaMetadataChanged?.Invoke(null, (MediaMetadataChangedKitkatEventArgs)e);
+        }
+
+        public void Dispose()
+        {
+            MusicControlsKitkat.GetInstance().MediaEvent -= MusicControlsKitkat_MediaEvent;
         }
     }
+#pragma warning restore CS0618 // Type or member is obsolete
 }
