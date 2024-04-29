@@ -17,16 +17,20 @@ using System.Threading;
 
 namespace LiveDisplay.Servicios
 {
-    [Service(Label = "@string/app_name", Permission = "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE", Exported = true)]
+    [Service(Label = "@string/app_name", Permission = Android.Manifest.Permission.BindNotificationListenerService, Exported = true)]
     [IntentFilter(new[] { ServiceInterface })]
-    
+
+#pragma warning disable CS0618//RemoteController obsolete, for Kitkat, omit this warning
+
     internal class Catcher : NotificationListenerService, RemoteController.IOnClientUpdateListener
     {
+        private RemoteController remoteController;
+#pragma warning restore CS0618
+
         private ScreenOnOffReceiver screenOnOffReceiver;
         private MediaSessionManager mediaSessionManager;
         private MediaEventsPublisherKitkat musicControllerKitkat;
         private ActiveMediaSessionsListener activeMediaSessionsListener;
-        private RemoteController remoteController;
         private AudioManager audioManager;
         private CatcherHelper catcherHelper;
         private OpenNotification lastPostedNotification;
@@ -41,19 +45,27 @@ namespace LiveDisplay.Servicios
             //Workaround for Kitkat to Retrieve Notifications.
             if (Build.VERSION.SdkInt <= BuildVersionCodes.KitkatWatch)
             {
+                Console.WriteLine("ONBIND!");
+
                 ThreadPool.QueueUserWorkItem(o =>
                 {
-                    Thread.Sleep(1000);
+                    Thread.Sleep(2000);
                     RetrieveNotificationFromStatusBar();
+
+                    audioManager = (AudioManager)Application.Context.GetSystemService(AudioService);
+
+#pragma warning disable CS0618//Obsolete for Kitkat, omit this warning
+                    remoteController = new RemoteController(Application.Context, this, MainLooper); //Could leak.
+                    remoteController.SetArtworkConfiguration(Resources.DisplayMetrics.WidthPixels, Resources.DisplayMetrics.HeightPixels);
+                    audioManager.RegisterRemoteController(remoteController);
+#pragma warning restore CS0618
+
+                    musicControllerKitkat = MediaEventsPublisherKitkat.Initialize(remoteController);
                 });
 
                 SubscribeToEvents();
                 RegisterReceivers();
-                remoteController = new RemoteController(Application.Context, this); //Could leak.
-                remoteController.SetArtworkConfiguration(Resources.DisplayMetrics.WidthPixels, Resources.DisplayMetrics.HeightPixels);
-                audioManager = (AudioManager)Application.Context.GetSystemService(AudioService);
-                audioManager.RegisterRemoteController(remoteController);
-                musicControllerKitkat = MediaEventsPublisherKitkat.Initialize(remoteController);
+
             }
             return base.OnBind(intent);
         }
@@ -64,22 +76,6 @@ namespace LiveDisplay.Servicios
             activeMediaSessionsListener = new ActiveMediaSessionsListener();
             //RemoteController Lollipop and Beyond Implementation
             mediaSessionManager = (MediaSessionManager)GetSystemService(MediaSessionService);
-
-            ////Listener para Sesiones
-            //using (var h = new Handler(Looper.MainLooper)) //Using UI Thread because seems to crash in some devices.
-            //    h.Post(() =>
-            //    {
-            //        try
-            //        {
-            //            mediaSessionManager.AddOnActiveSessionsChangedListener(activeMediaSessionsListener, new ComponentName(this, Java.Lang.Class.FromType(typeof(Catcher))));
-            //            Log.Info("LiveDisplay", "Added Media Sess. Changed Listener");
-            //        }
-            //        catch
-            //        {
-            //            Log.Info("LiveDisplay", "Failed to register Media Session Callback");
-            //        }
-            //    });
-
             SubscribeToEvents();
             RegisterReceivers();
             RetrieveNotificationFromStatusBar();
@@ -114,17 +110,20 @@ namespace LiveDisplay.Servicios
         {
             if (Build.VERSION.SdkInt <= BuildVersionCodes.N)
             {
-                catcherHelper.Dispose();
+                catcherHelper?.Dispose();
                 if (Build.VERSION.SdkInt <= BuildVersionCodes.KitkatWatch)
                 {
-                    
-                    UnregisterReceiver(screenOnOffReceiver);
+                    Console.WriteLine("ON UNBIND!");
 #pragma warning disable CS0618 // El tipo o el miembro están obsoletos
-                    audioManager.UnregisterRemoteController(remoteController);
+                    if(remoteController!=null)
+                        audioManager?.UnregisterRemoteController(remoteController);
 #pragma warning restore CS0618 // El tipo o el miembro están obsoletos
                 }
-                mediaSessionManager.RemoveOnActiveSessionsChangedListener(activeMediaSessionsListener);
-                UnregisterReceiver(screenOnOffReceiver);
+                else
+                {
+                    mediaSessionManager.RemoveOnActiveSessionsChangedListener(activeMediaSessionsListener);
+                    UnregisterReceiver(screenOnOffReceiver);
+                }
                 ScreenOnOffReceiver.ReceiverCount--;
             }
 
@@ -162,13 +161,11 @@ namespace LiveDisplay.Servicios
 
         private void RegisterReceivers()
         {
-            using (IntentFilter intentFilter = new IntentFilter())
-            {
-                screenOnOffReceiver = new ScreenOnOffReceiver();
-                intentFilter.AddAction(Intent.ActionScreenOff);
-                intentFilter.AddAction(Intent.ActionScreenOn);
-                RegisterReceiver(screenOnOffReceiver, intentFilter);
-            }
+            using IntentFilter intentFilter = new IntentFilter();
+            screenOnOffReceiver = new ScreenOnOffReceiver();
+            intentFilter.AddAction(Intent.ActionScreenOff);
+            intentFilter.AddAction(Intent.ActionScreenOn);
+            RegisterReceiver(screenOnOffReceiver, intentFilter);
         }
 
         //Events:
@@ -188,9 +185,9 @@ namespace LiveDisplay.Servicios
         {
             try
             {
-#pragma warning disable CS0618 // El tipo o el miembro están obsoletos
+#pragma warning disable CS0618 //Cancel Notification for Kitkat
                 CancelNotification(e.NotificationPackage, e.NotificationTag, e.NotificationId);
-#pragma warning restore CS0618 // El tipo o el miembro están obsoletos
+#pragma warning restore 
             }
             catch (Java.Lang.SecurityException)
             {
@@ -211,24 +208,29 @@ namespace LiveDisplay.Servicios
             }
         }
 
+#pragma warning disable CS0618//RemoteController obsolete, for Kitkat, omit this warning
+
         public void OnClientChange(bool clearing)
         {
-            Log.Info("LiveDisplay", "clearing: " + clearing);
-            musicControllerKitkat = MediaEventsPublisherKitkat.Initialize(remoteController);
+            Log.Info("ONCLIENT CHANGE", "CLEARING: " + clearing);
         }
 
         public void OnClientMetadataUpdate(RemoteController.MetadataEditor metadataEditor)
         {
+#pragma warning restore
+
             musicControllerKitkat.OnMetadataChanged(metadataEditor);
         }
 
         public void OnClientPlaybackStateUpdateSimple([GeneratedEnum] RemoteControlPlayState stateSimple)
         {
+            Console.WriteLine("client PlaybackState UPDATE SSIMPLE");
             musicControllerKitkat.OnPlaybackStateChanged(stateSimple);
         }
 
         public void OnClientPlaybackStateUpdate([GeneratedEnum] RemoteControlPlayState state, long stateChangeTimeMs, long currentPosMs, float speed)
         {
+            Console.WriteLine("client PlaybackState UPDATE");
             musicControllerKitkat.OnPlaybackStateChanged(state);
         }
 

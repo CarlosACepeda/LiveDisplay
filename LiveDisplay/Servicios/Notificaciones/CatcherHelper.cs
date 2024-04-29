@@ -82,13 +82,13 @@ namespace LiveDisplay.Servicios.Notificaciones
                 OpenNotifications.Add(sbn);
 
 
-                OnNotificationPosted(false, sbn, true);
+                OnNotificationPosted(sbn, true);
 
             }
             else
             {
                 OpenNotifications.Add(sbn);
-                OnNotificationPosted(false, sbn, false);
+                OnNotificationPosted(sbn, false);
             }
             
 
@@ -118,7 +118,7 @@ namespace LiveDisplay.Servicios.Notificaciones
                 //if found, then use the Notification to be removed instead. 
                 //the reason is that the 'sbn' coming from this method has less data.
                 //then it makes data that I need from the notification unavailable.
-                notificationToBeRemoved = OpenNotifications[position];
+                notificationToBeRemoved = OpenNotifications?[position];
 
                 OpenNotifications.RemoveAt(position);
             }
@@ -139,9 +139,13 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         public static OpenNotification FindMostRecentMediaNotification()
         {
-            var mediaNotifications = OpenNotifications.Where(n => n.Style() == OpenNotification.MediaStyle);
-            var ordered= mediaNotifications.OrderByDescending(n => n.PostTime()).OrderByDescending(n=> n.IsOnGoing());
-            return ordered.FirstOrDefault();
+            if (OpenNotifications != null && OpenNotifications.Count > 1)
+            {
+                var mediaNotifications = OpenNotifications.Where(n => n.Style() == OpenNotification.MediaStyle);
+                var ordered = mediaNotifications.OrderByDescending(n => n.PostTime()).OrderByDescending(n => n.IsOnGoing());
+                return ordered.FirstOrDefault();
+            }
+            return null;
 
         }
 
@@ -157,9 +161,9 @@ namespace LiveDisplay.Servicios.Notificaciones
             NotificationListSizeChanged?.Invoke(this, e);
         }
 
-        private void OnNotificationPosted(bool shouldCauseWakeup, OpenNotification sbn, bool updatesPreviousNotification)
+        private void OnNotificationPosted(OpenNotification sbn, bool updatesPreviousNotification)
         {
-            Console.WriteLine($"Subscribers: {NotificationPosted?.GetInvocationList()?.Count()} ");
+            //Console.WriteLine($"Subscribers: {NotificationPosted?.GetInvocationList()?.Count()} ");
             NotificationPosted?.Invoke(this, new NotificationPostedEventArgs()
             {
                 ShouldCauseWakeUp = false,
