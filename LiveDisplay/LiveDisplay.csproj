@@ -137,7 +137,6 @@
     <Compile Include="Servicios\Music\MediaEventArgs\MediaMetadataChangedEventArgs.cs" />
     <Compile Include="Servicios\Music\MediaEventArgs\MediaMetadataChangedKitkatEventArgs.cs" />
     <Compile Include="Servicios\Music\MediaEventArgs\MediaPlaybackStateChangedEventArgs.cs" />
-    <Compile Include="Servicios\Music\MediaEventArgs\MediaPlaybackStateChangedKitkatEventArgs.cs" />
     <Compile Include="Servicios\Music\MediaEventsPublisherKitkat.cs" />
     <Compile Include="Servicios\Music\ActiveMediaSessionsListener.cs" />
     <Compile Include="Servicios\Notificaciones\CatcherHelper.cs" />
@@ -329,10 +328,6 @@
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\cLock.axml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
-    </AndroidResource>
-    <AndroidResource Include="Resources\layout\LockScreen.axml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
@@ -629,6 +624,13 @@
     <AndroidResource Include="Resources\drawable-xhdpi\outline_delete_white_24.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\outline_delete_white_24.png" />
     <AndroidResource Include="Resources\drawable-xxxhdpi\outline_delete_white_24.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\outline_more_vert_white_24.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\outline_more_vert_white_24.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\outline_more_vert_white_24.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\outline_more_vert_white_24.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\outline_more_vert_white_24.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
