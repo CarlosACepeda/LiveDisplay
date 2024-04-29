@@ -8,10 +8,7 @@
     using Android.Graphics;
     using Android.Graphics.Drawables;
     using Android.OS;
-    using Android.Provider;
-    using Android.Util;
     using Android.Views;
-    using Android.Views.Animations;
     using Android.Widget;
     using AndroidX.AppCompat.App;
     using AndroidX.RecyclerView.Widget;
@@ -20,11 +17,7 @@
     using LiveDisplay.Misc;
     using LiveDisplay.Servicios;
     using LiveDisplay.Servicios.Awake;
-    using LiveDisplay.Servicios.Keyguard;
-    using LiveDisplay.Servicios.Notificaciones;
-    using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
     using LiveDisplay.Servicios.Wallpaper;
-    using LiveDisplay.Servicios.Widget;
     using System;
     using System.Threading;
 
@@ -34,16 +27,11 @@
 
         private AndroidX.Fragment.App.Fragment clockFragment, musicFragment, notificationFragment;
 
-        private RecyclerView recycler/*, filteredRecyclerView*/;
-        private RecyclerView.LayoutManager layoutManager;
-        
         private LinearLayout lockscreen; //The root linear layout, used to implement double tap to sleep.
         private float firstTouchTime = -1;
         private float finalTouchTime;
         private readonly float threshold = 1000; //1 second of threshold.(used to implement the double tap.)
-        private int halfscreenheight; //To decide the behavior of the double tap.
         private System.Timers.Timer watchDog; //the watchdog simply will start counting down until it gets resetted by OnUserInteraction() override.
-        private string doubletapbehavior;
         private ViewPropertyAnimator viewPropertyAnimator;
         private TextView welcome;
         private ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
@@ -78,18 +66,12 @@
             Console.WriteLine($"THE COUNT IS {MainActivity.StartCount}");
             
             lockscreen = FindViewById<LinearLayout>(Resource.Id.main_container);
-            viewPropertyAnimator = lockscreen.Animate();
-
-            viewPropertyAnimator.SetListener(new LockScreenAnimationHelper(lockscreen));
-
             lockscreen.Touch += Lockscreen_Touch;
 
             watchDog = new System.Timers.Timer
             {
                 AutoReset = false
             };
-
-            halfscreenheight = Resources.DisplayMetrics.HeightPixels / 2;
 
             WallpaperPublisher.NewWallpaperIssued += Wallpaper_NewWallpaperIssued;
             
@@ -108,11 +90,6 @@
         {
             RunOnUiThread(() =>
             {
-                if (configurationManager.RetrieveAValue(ConfigurationParameters.AwakeCausesBlackWallpaper))
-                {
-                    Window.DecorView.SetBackgroundColor(Color.Black);
-                    return;
-                }
                 if (configurationManager.RetrieveAValue(ConfigurationParameters.DisableWallpaperChangeAnim) == false) //If the animation is not disabled.
                 {
                     //Animate only when the activity is visible to the user.
@@ -298,51 +275,28 @@
             int savedblurlevel = configurationManager.RetrieveAValue(ConfigurationParameters.BlurLevel, ConfigurationParameters.DefaultBlurLevel);
             int savedOpacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.OpacityLevel, ConfigurationParameters.DefaultOpacityLevel);
 
-            //switch (configurationManager.RetrieveAValue(ConfigurationParameters.ChangeWallpaper, "0"))
-            //{
-                //case "0":
-
-                //    WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = null, WallpaperPoster = WallpaperPoster.Lockscreen });
-                //    break;
-
-                //default:
-                    try
+            try
+            {
+                WallpaperManager.GetInstance(Application.Context).ForgetLoadedWallpaper();
+                var wallpaper = WallpaperManager.GetInstance(Application.Context).Drawable;
+                WallpaperPublisher.ChangeWallpaper(
+                    new WallpaperChangedEventArgs
                     {
-                        WallpaperManager.GetInstance(Application.Context).ForgetLoadedWallpaper();
-                        var wallpaper = WallpaperManager.GetInstance(Application.Context).Drawable;
-                        WallpaperPublisher.ChangeWallpaper(
-                            new WallpaperChangedEventArgs { 
-                                Wallpaper = (BitmapDrawable)wallpaper, 
-                                OpacityLevel = (short)savedOpacitylevel, 
-                                BlurLevel = (short)savedblurlevel, 
-                                WallpaperPoster = WallpaperPoster.Lockscreen });
-                    }
-                    catch( Exception ex)
-                    {
-                        RunOnUiThread(() => {
-                            Toast.MakeText(Application.Context, "You have set the system wallpaper, but the app can't read it, try to change the Wallpaper option again", ToastLength.Long).Show();
-                            Console.WriteLine(ex);
+                        Wallpaper = (BitmapDrawable)wallpaper,
+                        OpacityLevel = (short)savedOpacitylevel,
+                        BlurLevel = (short)savedblurlevel,
+                        WallpaperPoster = WallpaperPoster.Lockscreen
+                    });
+            }
+            catch (Exception ex)
+            {
+                RunOnUiThread(() =>
+                {
+                    Toast.MakeText(Application.Context, "You have set the system wallpaper, but the app can't read it, try to change the Wallpaper option again", ToastLength.Long).Show();
+                    Console.WriteLine(ex);
 
-                            });
-                    }
-                    //break;
-
-                //case "2":
-
-                //    var imagePath = configurationManager.RetrieveAValue(ConfigurationParameters.ImagePath, "");
-                //    if (imagePath != "")
-                //    {
-                //        ThreadPool.QueueUserWorkItem(m =>
-                //        {
-                //            Bitmap bitmap = BitmapFactory.DecodeFile(configurationManager.RetrieveAValue(ConfigurationParameters.ImagePath, imagePath));
-                //            BlurImage blurImage = new BlurImage(Application.Context);
-                //            blurImage.Load(bitmap).Intensity(savedblurlevel);
-                //            Drawable drawable = new BitmapDrawable(Resources, blurImage.GetImageBlur());
-                //            WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs { Wallpaper = new BitmapDrawable(bitmap), OpacityLevel = (short)savedOpacitylevel, BlurLevel = (short)savedblurlevel, WallpaperPoster = WallpaperPoster.Lockscreen });
-                //        });
-                //    }
-                //    break;
-            //}
+                });
+            }
         }
 
         private void LoadAllFragments()
@@ -402,33 +356,6 @@
                 Window.AddFlags(WindowManagerFlags.DismissKeyguard);
                 Window.AddFlags(WindowManagerFlags.ShowWhenLocked);
             }
-        }
-    }
-
-    public class LockScreenAnimationHelper : Java.Lang.Object, Animator.IAnimatorListener
-    {
-        private LinearLayout lockScreenWindow;
-
-        public LockScreenAnimationHelper(LinearLayout window)
-        {
-            lockScreenWindow = window;
-        }
-
-        public void OnAnimationCancel(Animator animation)
-        {
-        }
-
-        public void OnAnimationEnd(Animator animation)
-        {
-            lockScreenWindow.Animate().SetDuration(100).Alpha(1f);
-        }
-
-        public void OnAnimationRepeat(Animator animation)
-        {
-        }
-
-        public void OnAnimationStart(Animator animation)
-        {
         }
     }
 }
