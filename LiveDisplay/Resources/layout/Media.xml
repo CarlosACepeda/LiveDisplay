@@ -105,14 +105,26 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/btnMediaPrevious"
                 android:background="?android:attr/selectableItemBackground" />
-            <ImageButton
-                android:src="@drawable/ic_play_arrow_white_24dp"
-                android:paddingHorizontal="@dimen/media_widget_controls_horizontal_padding"
-                android:paddingVertical="@dimen/media_widget_controls_vertical_padding"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/btnMediaPlayPlause"
-                android:background="?android:attr/selectableItemBackground" />
+            <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <ImageButton
+                        android:src="@drawable/ic_play_arrow_white_24dp"
+                        android:paddingHorizontal="@dimen/media_widget_controls_horizontal_padding"
+                        android:paddingVertical="@dimen/media_widget_controls_vertical_padding"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/btnMediaPlayPlause"
+                        android:background="?android:attr/selectableItemBackground" />
+              <ProgressBar
+                        android:visibility="invisible"
+                        android:id="@+id/buffering"
+                        android:paddingHorizontal="@dimen/media_widget_controls_horizontal_padding"
+                        android:paddingVertical="@dimen/media_widget_controls_vertical_padding"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+            </FrameLayout>
+            
             <ImageButton
                 android:paddingHorizontal="@dimen/media_widget_controls_horizontal_padding"
                 android:paddingVertical="@dimen/media_widget_controls_vertical_padding"
@@ -130,6 +142,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/btnLaunchNotification"
                 android:background="?android:attr/selectableItemBackground" />
+
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

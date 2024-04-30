@@ -26,27 +26,28 @@ namespace LiveDisplay.Fragments
 {
     public class MediaFragment : Fragment
     {
-        private TextView tvTitle, tvArtist, tvAlbum, sourceApp;
-        private ImageButton btnSkipPrevious, btnPlayPause, btnSkipNext, discardMediaSession;
-        private LinearLayout maincontainer;
-        private TextView noMediaPlaying;
-        private SeekBar skbSeekSongTime;
-        private PendingIntent activityIntent; //A Pending intent if available to start the activity associated with this music fragent.
-        private Timer timer;
-        private Timer fastForwardTimer;
-        private Timer rewindTimer;
-        private bool longPressStarted = false;
-        private ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
-        private OpenNotification currentMediaNotification;
+        TextView tvTitle, tvArtist, tvAlbum, sourceApp;
+        ImageButton btnSkipPrevious, btnPlayPause, btnSkipNext, discardMediaSession;
+        ProgressBar buffering;
+        LinearLayout maincontainer;
+        TextView noMediaPlaying;
+        SeekBar skbSeekSongTime;
+        PendingIntent activityIntent; //A Pending intent if available to start the activity associated with this music fragent.
+        Timer timer;
+        Timer fastForwardTimer;
+        Timer rewindTimer;
+        bool longPressStarted = false;
+        ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
+        OpenNotification currentMediaNotification;
         IMusicControls musicControls;
         float initialX=0;
         float pixelToMoveTo = 0;
-        private bool isPixelWithinBounds;
+        bool isPixelWithinBounds;
         int lowestBoundary, highestBoundary;
         Timer discardMediaSessionButtonTimeOut;
-        private bool discardMediaSessionClicked;
-        private PlaybackStateCode playbackState;
-        private RemoteControlPlayState playbackStateKitkat;
+        bool discardMediaSessionClicked;
+        PlaybackStateCode playbackState;
+        RemoteControlPlayState playbackStateKitkat;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
@@ -123,7 +124,7 @@ namespace LiveDisplay.Fragments
                 else ToggleMediaControlsVisibility(false);
 
             }
-
+          
             base.OnResume();
         }
         public override void OnDestroyView()
@@ -234,9 +235,7 @@ namespace LiveDisplay.Fragments
             maincontainer.LongClick += MusicPlayerContainer_LongClick;
             maincontainer.Click += MusicPlayerContainer_Click;
             maincontainer.Touch += Maincontainer_Touch;
-
             discardMediaSession.Click += DiscardMediaSession_Click;
-            
         }
 
         private void DiscardMediaSession_Click(object sender, EventArgs e)
@@ -329,7 +328,6 @@ namespace LiveDisplay.Fragments
             musicControls.SeekTo(skbSeekSongTime.Progress + 5000); //The timer Elapsed event doesn't fire immmediately, so Ill help it, giving it a kickstart, so to speak.
             fastForwardTimer.Start();
         }
-
 
         private void MusicPlayerContainer_Click(object sender, EventArgs e)
         {
@@ -607,6 +605,8 @@ namespace LiveDisplay.Fragments
                         //StartTimeout(false);
                         MoveSeekbar(true);
                         ToggleMediaControlsVisibility(true);
+                        buffering.Visibility = ViewStates.Gone;
+                        btnPlayPause.Visibility = ViewStates.Visible;
                         Console.WriteLine("PLAYBACK PLAYING");
 
                         break;
@@ -621,8 +621,8 @@ namespace LiveDisplay.Fragments
                         break;
 
                     case PlaybackStateCode.Buffering:
-                        //TODO:Create some sort of animation, or display a text.
-                        Console.WriteLine("BUFFERING!");
+                        buffering.Visibility = ViewStates.Visible;
+                        btnPlayPause.Visibility = ViewStates.Gone;
                         break;
                     case PlaybackStateCode.None:
                         Console.WriteLine("NONE HAPPENED");
@@ -655,6 +655,7 @@ namespace LiveDisplay.Fragments
             btnSkipPrevious = view.FindViewById<ImageButton>(Resource.Id.btnMediaPrevious);
             btnPlayPause = view.FindViewById<ImageButton>(Resource.Id.btnMediaPlayPlause);
             btnSkipNext = view.FindViewById<ImageButton>(Resource.Id.btnMediaNext);
+            buffering= view.FindViewById<ProgressBar>(Resource.Id.buffering);
 
             skbSeekSongTime = view.FindViewById<SeekBar>(Resource.Id.seeksongTime);
 
