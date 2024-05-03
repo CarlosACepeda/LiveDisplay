@@ -12,6 +12,7 @@
     using AndroidX.AppCompat.App;
     using AndroidX.AppCompat.Widget;
     using LiveDisplay.BroadcastReceivers;
+    using LiveDisplay.DataRepository;
     using LiveDisplay.Misc;
     using LiveDisplay.Servicios;
     using LiveDisplay.Servicios.Awake;
@@ -28,7 +29,7 @@
     internal class MainActivity : AppCompatActivity, IActivityResultCallback
     {
         private Toolbar toolbar;
-        private RelativeLayout enableNotificationAccess, enableDeviceAdmin, enablePostingNotifications;
+        private RelativeLayout enableNotificationAccess, enableDeviceAdmin, enablePostingNotifications, enableAccessibilityAccess;
         private bool isApplicationHealthy;
         public static int StartCount = 0;
         ActivityResultLauncher activityResultLauncher;
@@ -47,6 +48,7 @@
             CheckNotificationAccess();
             CheckDeviceAdminAccess();
             CheckEnabledNotificationPosting();
+            CheckAccessibilityAccess();
             IsApplicationHealthy();
             AdminReceiver.OnDeviceAdminEnabled += AdminReceiver_OnDeviceAdminEnabled;
             base.OnResume();
@@ -82,6 +84,22 @@
             using (var adminGivenImageView = FindViewById<AppCompatImageView>(Resource.Id.deviceAccessCheckbox))
             {
                 switch (Checkers.IsThisAppADeviceAdministrator())
+                {
+                    case true:
+                        adminGivenImageView.SetBackgroundResource(Resource.Drawable.outline_check_white_24);
+                        break;
+
+                    case false:
+                        adminGivenImageView.SetBackgroundResource(Resource.Drawable.outline_close_white_24);
+                        break;
+                }
+            }
+        }
+        private void CheckAccessibilityAccess()
+        {
+            using (var adminGivenImageView = FindViewById<AppCompatImageView>(Resource.Id.accesibilityAccessCheckbox))
+            {
+                switch (Checkers.IsAccessibilityEnabled())
                 {
                     case true:
                         adminGivenImageView.SetBackgroundResource(Resource.Drawable.outline_check_white_24);
@@ -236,6 +254,7 @@
             }
 
             enableDeviceAdmin = FindViewById<RelativeLayout>(Resource.Id.device_access);
+            enableAccessibilityAccess = FindViewById<RelativeLayout>(Resource.Id.accessibility_access);
             enableNotificationAccess = FindViewById<RelativeLayout>(Resource.Id.notification_access);
             enablePostingNotifications = FindViewById<RelativeLayout>(Resource.Id.post_notifications);
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
@@ -246,6 +265,7 @@
 
             enableNotificationAccess.Click += EnableNotificationAccess_Click;
             enableDeviceAdmin.Click += EnableDeviceAdmin_Click;
+            enableAccessibilityAccess.Click += EnableAccessibilityAccess_Click;
 
         }
 
@@ -279,6 +299,14 @@
             }
         }
 
+        private void EnableAccessibilityAccess_Click(object sender, EventArgs e)
+        {
+            using Intent intent = new Intent();
+            intent.SetAction(Settings.ActionAccessibilitySettings);
+            StartActivity(intent);
+        }
+
+
         private void OnDialogPositiveButtonEventArgs(object sender, DialogClickEventArgs e)
         {
             ComponentName admin = new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(AdminReceiver)));
@@ -288,14 +316,10 @@
 
         private void EnableNotificationAccess_Click(object sender, EventArgs e)
         {
-            using (Intent intent = new Intent())
-            {
-                string lel = Settings.ActionNotificationListenerSettings;
-
-                intent.AddFlags(ActivityFlags.NewTask);
-                intent.SetAction(lel);
-                StartActivity(intent);
-            }
+            using Intent intent = new Intent();
+            intent.AddFlags(ActivityFlags.NewTask);
+            intent.SetAction(Settings.ActionNotificationListenerSettings);
+            StartActivity(intent);
         }
 
         private void StartAppCenterMonitoring()

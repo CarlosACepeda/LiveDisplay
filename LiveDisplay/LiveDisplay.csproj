@@ -125,6 +125,7 @@
     <Compile Include="Servicios\Awake\AwakeHelper.cs" />
     <Compile Include="Servicios\Battery\BatteryEventArgs\BatteryChangedEventArgs.cs" />
     <Compile Include="Servicios\Blacklist\Blacklist.cs" />
+    <Compile Include="Servicios\BusyEyesAccessibilityService.cs" />
     <Compile Include="Servicios\ConfigurationManager.cs" />
     <Compile Include="Servicios\FloatingNotification\FloatingNotification.cs" />
     <Compile Include="Servicios\Keyguard\KeyguardHelper.cs" />
@@ -135,7 +136,6 @@
     <Compile Include="Servicios\Music\MusicControlsKitkat.cs" />
     <Compile Include="Servicios\Music\MediaEventArgs\MediaActionEventArgs.cs" />
     <Compile Include="Servicios\Music\MediaEventArgs\MediaMetadataChangedEventArgs.cs" />
-    <Compile Include="Servicios\Music\MediaEventArgs\MediaMetadataChangedKitkatEventArgs.cs" />
     <Compile Include="Servicios\Music\MediaEventArgs\MediaPlaybackStateChangedEventArgs.cs" />
     <Compile Include="Servicios\Music\MediaEventsPublisherKitkat.cs" />
     <Compile Include="Servicios\Music\ActiveMediaSessionsListener.cs" />
@@ -631,6 +631,60 @@
     <AndroidResource Include="Resources\drawable-xhdpi\outline_more_vert_white_24.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\outline_more_vert_white_24.png" />
     <AndroidResource Include="Resources\drawable-xxxhdpi\outline_more_vert_white_24.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\xml\accessibility_settings.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\outline_repeat_white_24.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\drawable-mdpi\outline_repeat_white_24.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\drawable-xhdpi\outline_repeat_white_24.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\drawable-xxhdpi\outline_repeat_white_24.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\outline_repeat_white_24.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\outline_repeat_one_white_24.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\drawable-mdpi\outline_repeat_one_white_24.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\drawable-xhdpi\outline_repeat_one_white_24.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\drawable-xxhdpi\outline_repeat_one_white_24.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\outline_repeat_one_white_24.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\outline_repeat_on_white_24.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\drawable-mdpi\outline_repeat_on_white_24.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\drawable-xhdpi\outline_repeat_on_white_24.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\drawable-xxhdpi\outline_repeat_on_white_24.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\outline_repeat_on_white_24.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

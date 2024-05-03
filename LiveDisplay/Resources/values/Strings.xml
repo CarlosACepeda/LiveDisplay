@@ -94,6 +94,7 @@
   <string name="nomediaplaying">There\'s no media playing currently!  \n Let\'s play something!</string>
   <string name="nonallowedtoturnonscreen">Non allowed to turn on screen</string>
   <string name="notavailableyet">Not available... yet.</string>
+  <string name="notenoughpermissions">You don\'t have the required permissions!</string>
   <string name="notificationsettings">Notifications</string>
   <string name="notificationviewvisibilitytime">After clicking the notification hide it after...</string>
   <string name="now_playing">Now Playing:</string>
@@ -139,4 +140,5 @@
   <string name="weatherwidgetenabled">Enable Weather Widget</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
+  <string name="enableaccessibilityaccess">Accessibility Access</string>
 </resources>

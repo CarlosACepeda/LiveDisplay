@@ -76,7 +76,16 @@ namespace LiveDisplay.Misc
             }
             return true;
         }
-
+        public static bool IsAccessibilityEnabled()
+        {
+            ComponentName cn = new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(BusyEyesAccessibilityService)).Name);
+            string flat = Settings.Secure.GetString(Application.Context.ContentResolver, Settings.Secure.EnabledAccessibilityServices);
+            if (flat != null && flat.Contains(cn.FlattenToString()))
+            {
+                return true;
+            }
+            return false;
+        }
         public static bool AreMandatoryPermissionsEnabled()
         {
             return IsNotificationListenerEnabled() && ThisAppCanPostNotifications();

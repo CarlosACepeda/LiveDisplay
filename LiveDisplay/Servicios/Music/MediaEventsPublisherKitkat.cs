@@ -26,7 +26,7 @@ namespace LiveDisplay.Servicios.Music
 
         public static event EventHandler<MediaPlaybackStateChangedEventArgs> MediaPlaybackChanged;
 
-        public static event EventHandler<MediaMetadataChangedKitkatEventArgs> MediaMetadataChanged;
+        public static event EventHandler<MediaMetadataChangedEventArgs> MediaMetadataChanged;
 
         public event EventHandler MusicPlaying;
 
@@ -108,13 +108,9 @@ namespace LiveDisplay.Servicios.Music
 
                 case MediaActionFlags.RetrieveMediaInformation:
                     //Send media information.
-                    OnMediaMetadataChanged(new MediaMetadataChangedKitkatEventArgs
+                    OnMediaMetadataChanged(new MediaMetadataChangedEventArgs
                     {
-                        Title = MediaMetadata.GetString((MediaMetadataEditKey)MetadataKey.Title, ""),
-                        Artist = MediaMetadata.GetString((MediaMetadataEditKey)MetadataKey.Artist, ""),
-                        Album = MediaMetadata.GetString((MediaMetadataEditKey)MetadataKey.Album, ""),
-                        AlbumArt = MediaMetadata.GetBitmap(MediaMetadataEditKey.BitmapKeyArtwork, null),
-                        Duration = MediaMetadata.GetLong((MediaMetadataEditKey)MetadataKey.Duration, 0)
+                        MediaMetadataKitkat= MediaMetadata
                     });
                     break;
 
@@ -143,14 +139,10 @@ namespace LiveDisplay.Servicios.Music
         public void OnMetadataChanged(RemoteController.MetadataEditor mediaMetadata)
         {
             MediaMetadata = mediaMetadata;
-            OnMediaMetadataChanged(new MediaMetadataChangedKitkatEventArgs
+            OnMediaMetadataChanged(new MediaMetadataChangedEventArgs
             {
-                Title = mediaMetadata.GetString((MediaMetadataEditKey)MetadataKey.Title, ""),
-                Artist = mediaMetadata.GetString((MediaMetadataEditKey)MetadataKey.Artist, ""),
-                Album = mediaMetadata.GetString((MediaMetadataEditKey)MetadataKey.Album, ""),
-                AlbumArt = mediaMetadata.GetBitmap(MediaMetadataEditKey.BitmapKeyArtwork, null),
-                Duration = mediaMetadata.GetLong((MediaMetadataEditKey)MetadataKey.Duration, 0)
-            });
+                MediaMetadataKitkat= mediaMetadata
+            });;
         }
 
         public void OnMediaPlaybackChanged(MediaPlaybackStateChangedEventArgs e)
@@ -160,7 +152,7 @@ namespace LiveDisplay.Servicios.Music
 
         public void OnMediaMetadataChanged(EventArgs e)
         {
-            MediaMetadataChanged?.Invoke(null, (MediaMetadataChangedKitkatEventArgs)e);
+            MediaMetadataChanged?.Invoke(null, (MediaMetadataChangedEventArgs)e);
         }
 
         public void Dispose()

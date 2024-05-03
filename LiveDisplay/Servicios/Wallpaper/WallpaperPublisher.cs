@@ -21,21 +21,29 @@ namespace LiveDisplay.Servicios.Wallpaper
 
         public static void ChangeWallpaper(WallpaperChangedEventArgs e)
         {
-            if (wallpaperPosters.FirstOrDefault(w => w.WallpaperPoster == e.WallpaperPoster) == null)
+            var wallpaperPoster = wallpaperPosters.FirstOrDefault(w => w.WallpaperPoster == e.WallpaperPoster);
+            bool posterDoesNotExist =  wallpaperPoster == null;
+            if (posterDoesNotExist)
             {
                 wallpaperPosters.Add(e);
+            }
+            else if (wallpaperPoster.SecondsOfAttention> infiniteSeconds && e.SecondsOfAttention> infiniteSeconds)
+            {
+                //It means that this entity wants to post a new temporal wallpaper without finishing the previous temporal wallpaper
+                Console.WriteLine($"{e.WallpaperPoster} is posting a new TEMPORAL wallpaper without finishing previous TEMPORAL wallpaper, duration {e.SecondsOfAttention} seconds");
+
+                wallpaperPosters.Remove(wallpaperPoster); //let's remove the old one then.
+                timeoutTimer.Stop(); //Prevent the execution of the temporal wallpaper timeout, as we aren't needing it anymore.
+
             }
             Console.WriteLine($"{e.WallpaperPoster} is posting a {(e.SecondsOfAttention > infiniteSeconds ? "Temporal" : "Permanent")} wallpaper, duration {e.SecondsOfAttention} seconds");
 
             if (e.SecondsOfAttention>infiniteSeconds)
             {
                 temporalWallpaperPoster = e;
-
+                wallpaperPosters.Add(temporalWallpaperPoster);
                 StartTimeout(e.SecondsOfAttention * 1000);
-               
             }
-
-
             if (e.BlurLevel >= 0 && e.BlurLevel <= 25)
             {
                 if (e.Wallpaper?.Bitmap != null)

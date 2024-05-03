@@ -32,7 +32,7 @@ namespace LiveDisplay.BroadcastReceivers
         public override void OnReceive(Context context, Intent intent)
         {
 
-            if (notificationManager== null) notificationManager= (NotificationManager)Application.Context.GetSystemService(Context.NotificationService);
+            notificationManager??= (NotificationManager)Application.Context.GetSystemService(Context.NotificationService);
             if (intent.Action == Intent.ActionScreenOn)
             {
                 //Nice easter eggs here, lol.
@@ -85,7 +85,7 @@ namespace LiveDisplay.BroadcastReceivers
                         if (isScheduled == false)
                         {
                             var jobInfo = new JobInfo.Builder(1, new ComponentName(context, Java.Lang.Class.FromType(typeof(MyJob))));
-                            var job = jobInfo.SetPeriodic(1000 * 60 * 15); //Each fifteen minutes
+                            var job = jobInfo.SetPeriodic(1000 * 60 * 15).SetPersisted(true); //Each fifteen minutes
 
                             jobscheduler.Schedule(job.Build());
                             Console.WriteLine("SCHEDULE STARTED");
@@ -135,14 +135,29 @@ namespace LiveDisplay.BroadcastReceivers
     [Service (Label ="Lifeline", Permission = PermissionBind )]
     class MyJob : JobService
     {
+        System.Timers.Timer slackingOffTimer;
+        int maximumTimeInMillis = 1000 * 60* 10;
+        long elapsedTimeInMillis = 0;
         public override bool OnStartJob(JobParameters @params)
         {
             Console.WriteLine("STARTING JOB, SLACKING OFF");
-            return true; //Notify Android that this job is not finished, so it keeps my BroadcastReceiver alive.
+            slackingOffTimer = new System.Timers.Timer { Interval= 1000*10 , AutoReset= true };
+            slackingOffTimer.Start();
+            slackingOffTimer.Elapsed += (sender, e) =>
+            {
+                Console.WriteLine("Pretending I do something each 10 seconds");
+                elapsedTimeInMillis += 10000;
+                if(elapsedTimeInMillis > maximumTimeInMillis)
+                {
+                    JobFinished(null, false);
+                }
+            };
+            return false;
         }
 
         public override bool OnStopJob(JobParameters @params)
         {
+            Console.WriteLine("ON STOP JOB CALLED");
             return false;
         }
     }

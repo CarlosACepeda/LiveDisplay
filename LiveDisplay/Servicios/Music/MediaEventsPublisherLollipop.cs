@@ -7,6 +7,7 @@ using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Music.MediaEventArgs;
 using System;
 using System.Threading;
+using System.Timers;
 
 namespace LiveDisplay.Servicios.Music
 {
@@ -28,28 +29,17 @@ namespace LiveDisplay.Servicios.Music
         string _appname;
         MusicControlsBase _controls;
         static MediaEventsPublisherLollipop instance;
-
         #region events
 
         public static event EventHandler<MediaPlaybackStateChangedEventArgs> MediaPlaybackChanged;
 
         public static event EventHandler<MediaMetadataChangedEventArgs> MediaMetadataChanged;
 
-        public static event EventHandler MusicPlaying;
-
-        public static event EventHandler MusicPaused;
-
         #endregion events
 
         #endregion Class members
 
-        /// <summary>
-        /// Pass a MediaSession.Token to create one MediaController.
-        /// 
-        /// </summary>
-        /// <param name="mediaController"></param>
-        /// <param name="token"></param>
-        /// <returns></returns>
+        
         public static void Initialize(MediaController controller)
         {
             if (instance == null)
@@ -67,7 +57,6 @@ namespace LiveDisplay.Servicios.Music
                 instance = new MediaEventsPublisherLollipop(controller);
                 Console.WriteLine("SUCCESS new MediaSession request, Switching...");
             }
-
         }
         public static void InitializeFromToken(MediaSession.Token token)
         {
@@ -80,7 +69,7 @@ namespace LiveDisplay.Servicios.Music
                 _mediaController = controller;
                 _mediaController.RegisterCallback(this);
                 _token = controller.SessionToken;
-                LoadMediaControllerData(controller);
+                LoadMediaControllerData(_mediaController);
                 _controls = MusicControlsLollipop.GetInstance();
                 _controls.MediaEvent += MediaEvent;
             }
@@ -106,6 +95,11 @@ namespace LiveDisplay.Servicios.Music
                 OnMetadataChanged(controller.Metadata);
                 OnPlaybackStateChanged(controller.PlaybackState);
             }
+        }
+
+        private void Timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            Console.WriteLine("ELAPSED 1 SEC FROM MEDIAPUBLISHER");
         }
 
         public bool IsMediaSessionUsingToken(MediaSession.Token tokenToCheck)
@@ -178,7 +172,7 @@ namespace LiveDisplay.Servicios.Music
                     {
                         MediaMetadata = _mediaMetadata,
                         ActivityIntent = _activityIntent,
-                        AppName= _appname
+                        AppName = _appname
                     });
                     //Send Playbackstate of the media.
                     OnMediaPlaybackChanged(new MediaPlaybackStateChangedEventArgs
@@ -192,17 +186,20 @@ namespace LiveDisplay.Servicios.Music
                 default:
                     break;
             }
+            
         }
-        
+
         public override void OnPlaybackStateChanged(PlaybackState state)
         {
             _playbackState = state;
+
             OnMediaPlaybackChanged(new MediaPlaybackStateChangedEventArgs
             {
                 PlaybackState = state.State,
                 CurrentTime = state.Position
             });
             base.OnPlaybackStateChanged(state);
+
         }
 
         public override void OnMetadataChanged(MediaMetadata metadata)
@@ -219,20 +216,20 @@ namespace LiveDisplay.Servicios.Music
             var albumart = _mediaMetadata?.GetBitmap(MediaMetadata.MetadataKeyAlbumArt);
 
 
-            var title1 = metadata.GetString(MediaMetadata.MetadataKeyTitle);
-            var artist1 = metadata.GetString(MediaMetadata.MetadataKeyArtist);
-            var album1 = metadata.GetString(MediaMetadata.MetadataKeyAlbum);
-            var duration1 = metadata.GetLong(MediaMetadata.MetadataKeyDuration); 
-            var albumart1= metadata?.GetBitmap(MediaMetadata.MetadataKeyAlbumArt);
+            var incomingTitle = metadata.GetString(MediaMetadata.MetadataKeyTitle);
+            var incomingArtist = metadata.GetString(MediaMetadata.MetadataKeyArtist);
+            var incomingAlbum = metadata.GetString(MediaMetadata.MetadataKeyAlbum);
+            var incomingDuration = metadata.GetLong(MediaMetadata.MetadataKeyDuration); 
+            var incomingAlbumArt= metadata?.GetBitmap(MediaMetadata.MetadataKeyAlbumArt);
 
-            var bool1 = title != title1;
-            var bool2 = artist != artist1;
-            var bool3 = album != album1;
-            var bool4 = duration != duration1;
-            var bool5 = albumart!=null && albumart.SameAs(albumart1);
+            var titleDifferent = title != incomingTitle;
+            var artistDifferent = artist != incomingArtist;
+            var albumDifferent = album != incomingAlbum;
+            var durationDifferent = duration != incomingDuration;
+            var albumartDifferent = albumart!=null && albumart.SameAs(incomingAlbumArt);
 
 
-            isAnythingDifferent = bool1 || bool2 || bool3 || bool4 ||bool5;
+            isAnythingDifferent = titleDifferent || artistDifferent || albumDifferent || durationDifferent ||albumartDifferent;
             
             if (isAnythingDifferent)
             {
@@ -255,16 +252,6 @@ namespace LiveDisplay.Servicios.Music
         { 
             ThreadPool.QueueUserWorkItem(m =>
             {
-                switch (e.PlaybackState)
-                {
-                    case PlaybackStateCode.Playing:
-                        MusicPlaying?.Invoke(this, EventArgs.Empty);
-                        break;
-
-                    case PlaybackStateCode.Paused:
-                        MusicPaused?.Invoke(this, EventArgs.Empty);
-                        break;
-                }
                 MediaPlaybackChanged?.Invoke(this, e);
             });
         }

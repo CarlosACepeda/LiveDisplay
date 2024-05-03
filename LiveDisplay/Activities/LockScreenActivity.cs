@@ -8,6 +8,7 @@
     using Android.Graphics;
     using Android.Graphics.Drawables;
     using Android.OS;
+    using Android.Runtime;
     using Android.Views;
     using Android.Widget;
     using AndroidX.AppCompat.App;
@@ -32,7 +33,6 @@
         private float finalTouchTime;
         private readonly float threshold = 1000; //1 second of threshold.(used to implement the double tap.)
         private System.Timers.Timer watchDog; //the watchdog simply will start counting down until it gets resetted by OnUserInteraction() override.
-        private ViewPropertyAnimator viewPropertyAnimator;
         private TextView welcome;
         private ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
 
@@ -56,7 +56,7 @@
                 {
                     RunOnUiThread(() =>
                     {
-                        Toast.MakeText(Application.Context, "You dont have the required permissions", ToastLength.Long).Show();
+                        Toast.MakeText(Application.Context, GetString(Resource.String.notenoughpermissions), ToastLength.Long).Show();
                         Finish();
                     }
                     );
@@ -212,7 +212,6 @@
                 welcome.Touch -= Welcome_Touch;
             }
         }
-        
 
         protected override void OnPause()
         {
@@ -231,7 +230,6 @@
             MainActivity.StartCount--;
             AndroidX.Fragment.App.FragmentTransaction transaction = SupportFragmentManager.BeginTransaction();
             transaction.Remove(musicFragment);
-            viewPropertyAnimator.Dispose();
         }
 
         public override void OnBackPressed()
@@ -261,6 +259,20 @@
             watchDog.Stop();
             watchDog.Start();
         }
+
+        public override bool OnKeyLongPress([GeneratedEnum] Keycode keyCode, KeyEvent e)
+        {
+             Console.WriteLine("PRESSED" + e.KeyCode);
+
+            return base.OnKeyLongPress(keyCode, e);
+        }
+        public override bool OnKeyDown([GeneratedEnum] Keycode keyCode, KeyEvent e)
+        {
+            Console.WriteLine("KEY DOWN" + e.KeyCode);
+
+            return base.OnKeyDown(keyCode, e);
+        }
+
         private void LoadConfiguration()
         {
             //Load configurations based on User configuration.

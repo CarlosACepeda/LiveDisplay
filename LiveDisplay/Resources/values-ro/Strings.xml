@@ -45,6 +45,7 @@
   <string name="musicwidgetenabled">Activează Widget de Muzică</string>
   <string name="never">Niciodată</string>
   <string name="notavailableyet">Nu este disponibil încă ...</string>
+  <string name="notenoughpermissions">Nu ai permisiunile necesare</string>
   <string name="notificationsettings">Notificări</string>
   <string name="now_playing">Acum se redă:</string>
   <string name="onehour">1 oră</string>
@@ -70,4 +71,5 @@
   <string name="weather">Climă</string>
   <string name="weatherwidget">Widget de Climă</string>
   <string name="weatherwidgetenabled">Activează Widget de Climă</string>
+  <string name="enableaccessibilityaccess">Accează acesibilitatea</string>
 </resources>

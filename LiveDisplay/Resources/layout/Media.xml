@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
    >
-    <ImageButton
+    <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/discard_media_session"
         android:paddingHorizontal="@dimen/discard_media_button_horizontal_padding"
         android:visibility="visible" 
@@ -22,7 +22,7 @@
         android:visibility="invisible"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:layout_weight="@dimen/media_widget_horizontal_drag_indicator_weight"
             android:alpha="@dimen/alpha_half_visibility"
             android:src="@drawable/outline_more_vert_white_24"
@@ -97,7 +97,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:id="@+id/mediaControls">
-            <ImageButton
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:src="@drawable/ic_skip_previous_white_24dp"
                 android:paddingHorizontal="@dimen/media_widget_controls_horizontal_padding"
                 android:paddingVertical="@dimen/media_widget_controls_vertical_padding"
@@ -108,7 +108,7 @@
             <FrameLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
-                    <ImageButton
+                    <androidx.appcompat.widget.AppCompatImageButton
                         android:src="@drawable/ic_play_arrow_white_24dp"
                         android:paddingHorizontal="@dimen/media_widget_controls_horizontal_padding"
                         android:paddingVertical="@dimen/media_widget_controls_vertical_padding"
@@ -116,16 +116,15 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/btnMediaPlayPlause"
                         android:background="?android:attr/selectableItemBackground" />
-              <ProgressBar
-                        android:visibility="invisible"
+                    <ProgressBar
+                        android:visibility="visible"
                         android:id="@+id/buffering"
-                        android:paddingHorizontal="@dimen/media_widget_controls_horizontal_padding"
-                        android:paddingVertical="@dimen/media_widget_controls_vertical_padding"
+                        android:layout_gravity="center"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:indeterminate="true"/>
             </FrameLayout>
-            
-            <ImageButton
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:paddingHorizontal="@dimen/media_widget_controls_horizontal_padding"
                 android:paddingVertical="@dimen/media_widget_controls_vertical_padding"
                 android:src="@drawable/ic_skip_next_white_24dp"
@@ -133,16 +132,15 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/btnMediaNext"
                 android:background="?android:attr/selectableItemBackground" />
-            <ImageButton
-                android:visibility="visible"
-                android:src="@drawable/ic_notifications_white_24dp"
-                android:paddingHorizontal="@dimen/media_widget_controls_horizontal_padding"
-                android:paddingVertical="@dimen/media_widget_controls_vertical_padding"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/btnLaunchNotification"
-                android:background="?android:attr/selectableItemBackground" />
-
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:src="@drawable/outline_repeat_white_24"
+                    android:paddingHorizontal="@dimen/media_widget_controls_horizontal_padding"
+                    android:paddingVertical="@dimen/media_widget_controls_vertical_padding"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/repeat"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:visibility="visible" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

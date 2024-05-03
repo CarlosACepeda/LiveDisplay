@@ -91,6 +91,7 @@
   <string name="nomediaplaying">No hay nada reproduciendose por el momento, \n Pon algo de música! </string>
   <string name="nonallowedtoturnonscreen">No permitido para encender la pantalla</string>
   <string name="notavailableyet">No disponible...aún.</string>
+  <string name="notenoughpermissions">No tienes los permisos necesarios</string>
   <string name="notificationsettings">Notificaciones</string>
   <string name="notificationviewvisibilitytime">Después de clicar la notificación esconderla después de...</string>
   <string name="now_playing">Reproduciendo Ahora:</string>
@@ -133,4 +134,5 @@
   <string name="weatherwidgetenabled">Activar el Widget del Clima</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">Diseño del icono de esta app!</string>
+  <string name="enableaccessibilityaccess">Acceso a la accesibilidad</string>
 </resources>
