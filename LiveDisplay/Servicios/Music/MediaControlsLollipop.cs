@@ -9,15 +9,15 @@ namespace LiveDisplay.Servicios.Music
     /// Play/pause/forward/rewind, etc.
     /// for Lollipop and beyond
     /// </summary>
-    internal class MusicControlsLollipop: MusicControlsBase, IMusicControls
+    internal class MediaControlsLollipop: MediaControlsBase, IMediaControls
     {
-        private static MusicControlsLollipop _instance;
-        public static MusicControlsLollipop GetInstance()
+        private static MediaControlsLollipop _instance;
+        public static MediaControlsLollipop GetInstance()
         {
-            _instance ??= new MusicControlsLollipop();
+            _instance ??= new MediaControlsLollipop();
             return _instance;
         }
-        private MusicControlsLollipop()
+        private MediaControlsLollipop()
         {
         }
         public void Play()

@@ -1,9 +1,6 @@
 ﻿using Android.App;
-using Android.App.Job;
 using Android.Content;
 using Android.OS;
-using Android.Widget;
-using LiveDisplay.Activities;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
 using System;
@@ -13,9 +10,6 @@ namespace LiveDisplay.BroadcastReceivers
 {
     //Android 14 (Api Level 34: Upside Down Cake) made this broadcast receiver useless.
     //As it defers the OnReceive method until my app gets out of the cached state, which means the user must open the app to keep this receiver working accordingly.
-    //For now, Target SDK will be that of Android 13.
-    //Maybe the fix is to create a Dummy Job scheduler to make Android believe we are doing some serious work. Ha
-    //So this Broadcast will continue to function correctly
     [BroadcastReceiver(Label = "ScreenOnOffReceiver", Enabled =true, Exported = true, Permission = Android.Manifest.Permission.UseFullScreenIntent)]
     [IntentFilter(new[] { Intent.ActionScreenOff })]
     [IntentFilter(new[] { Intent.ActionScreenOn })]
@@ -26,8 +20,6 @@ namespace LiveDisplay.BroadcastReceivers
         private ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
         private NotificationManager notificationManager = null;
         public static int ReceiverCount = 0;
-        JobScheduler jobscheduler = (JobScheduler)Application.Context.GetSystemService(Context.JobSchedulerService);
-        static bool isScheduled = false;
 
         public override void OnReceive(Context context, Intent intent)
         {
@@ -82,24 +74,9 @@ namespace LiveDisplay.BroadcastReceivers
                     //also your app has to have the "FULL_SCREEN_INTENT" and make use of it.
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
                     {
-                        if (isScheduled == false)
-                        {
-                            var jobInfo = new JobInfo.Builder(1, new ComponentName(context, Java.Lang.Class.FromType(typeof(MyJob))));
-                            var job = jobInfo.SetPeriodic(1000 * 60 * 15).SetPersisted(true); //Each fifteen minutes
-
-                            jobscheduler.Schedule(job.Build());
-                            Console.WriteLine("SCHEDULE STARTED");
-                            isScheduled = true;
-                        }
-                        else
-                        {
-                            jobscheduler.Cancel(1);
-                        }
-
-
                         Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(LockScreenActivity)));
-                        PendingIntent pendingIntent = PendingIntent.GetActivity(Application.Context, 0, intent, PendingIntentFlags.Immutable);
 
+                        PendingIntent pendingIntent = PendingIntent.GetActivity(Application.Context, 0, intent, PendingIntentFlags.Immutable);
 
                         NotificationChannel notificationChannel = new NotificationChannel("livedisplaynotificationchannel", "LiveDisplay", NotificationImportance.Max);
                         notificationChannel.SetBypassDnd(true);
@@ -115,50 +92,18 @@ namespace LiveDisplay.BroadcastReceivers
                     }
                     else 
                     {
-                        using (Intent lockScreenIntent = new Intent(context, typeof(LockScreenActivity)))
+                        using Intent lockScreenIntent = new Intent(context, typeof(LockScreenActivity));
+                        lockScreenIntent.AddFlags(ActivityFlags.NoAnimation);
+
+                        if (IsScreenOn == false)
                         {
-                            lockScreenIntent.AddFlags(ActivityFlags.NoAnimation);
+                            PendingIntent pendingIntent = PendingIntent.GetActivity(context, 0, lockScreenIntent, PendingIntentFlags.Immutable);
 
-                            if (IsScreenOn == false)
-                            {
-                                PendingIntent pendingIntent = PendingIntent.GetActivity(context, 0, lockScreenIntent, PendingIntentFlags.Immutable);
-
-                                pendingIntent.Send();
-                            }
+                            pendingIntent.Send();
                         }
                     }
                 });
             }
-        }
-    }
-
-    [Service (Label ="Lifeline", Permission = PermissionBind )]
-    class MyJob : JobService
-    {
-        System.Timers.Timer slackingOffTimer;
-        int maximumTimeInMillis = 1000 * 60* 10;
-        long elapsedTimeInMillis = 0;
-        public override bool OnStartJob(JobParameters @params)
-        {
-            Console.WriteLine("STARTING JOB, SLACKING OFF");
-            slackingOffTimer = new System.Timers.Timer { Interval= 1000*10 , AutoReset= true };
-            slackingOffTimer.Start();
-            slackingOffTimer.Elapsed += (sender, e) =>
-            {
-                Console.WriteLine("Pretending I do something each 10 seconds");
-                elapsedTimeInMillis += 10000;
-                if(elapsedTimeInMillis > maximumTimeInMillis)
-                {
-                    JobFinished(null, false);
-                }
-            };
-            return false;
-        }
-
-        public override bool OnStopJob(JobParameters @params)
-        {
-            Console.WriteLine("ON STOP JOB CALLED");
-            return false;
         }
     }
 }

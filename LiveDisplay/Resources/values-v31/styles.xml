@@ -1,0 +1,7 @@
+﻿<resources>
+  <!--Base application theme-->
+  <style name="LockScreenTheme" parent="AppTheme">
+    <!--Window background override to avoid Splash Screen API in Android 12 from changing it-->
+    <item name="android:windowBackground">@color/colorPrimaryDark</item>
+  </style>
+</resources>

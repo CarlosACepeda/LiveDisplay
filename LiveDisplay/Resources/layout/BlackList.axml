@@ -10,7 +10,6 @@
 		android:layout_width="match_parent"
 		android:layout_height="?attr/actionBarSize"
 		android:theme="@style/AppToolbar"
-		a:popupTheme="@style/popupTheme"
 		android:background="?attr/colorPrimary"/>
 	<TextView
 		android:textAppearance="?android:attr/textAppearanceLarge"

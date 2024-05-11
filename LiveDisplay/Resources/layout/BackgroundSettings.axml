@@ -17,8 +17,7 @@
 			android:layout_width="match_parent"
 			android:layout_height="?attr/actionBarSize"
 			android:background="?attr/colorPrimary"
-			android:theme="@style/AppToolbar"
-			a:popupTheme="@style/popupTheme" />
+			android:theme="@style/AppToolbar"/>
         
         <Button
             android:id="@+id/pickwallpaper"

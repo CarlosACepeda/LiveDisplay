@@ -1,5 +1,6 @@
 ﻿using Android.Animation;
 using Android.App;
+using Android.Content;
 using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.Media;
@@ -10,6 +11,7 @@ using Android.Views;
 using Android.Views.Animations;
 using Android.Widget;
 using Java.Lang;
+using LiveDisplay.Activities;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
 using LiveDisplay.Servicios.Music;
@@ -19,7 +21,6 @@ using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
 using LiveDisplay.Servicios.Wallpaper;
 using System;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Timers;
 using Fragment = AndroidX.Fragment.App.Fragment;
 using Timer = System.Timers.Timer;
@@ -47,7 +48,7 @@ namespace LiveDisplay.Fragments
         bool longPressStarted = false;
         ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
         OpenNotification currentMediaNotification;
-        IMusicControls musicControls;
+        IMediaControls musicControls;
         float initialX=0;
         float pixelToMoveTo = 0;
         bool isPixelWithinBounds;
@@ -55,19 +56,14 @@ namespace LiveDisplay.Fragments
         Timer discardMediaSessionButtonTimeOut;
         bool discardMediaSessionClicked;
         PlaybackStateCode playbackState;
-        Handler updateHandler = new Handler();
-
+        AlarmManager alarmManager;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
-
             timer = new Timer
             {
-                Interval = 1000, //1 second.
+                Interval = 1000
             };
-            timer.Disposed += (sender, e)
-                =>
-            Console.WriteLine("MY TIMER GOT DISPOSED");
             fastForwardTimer = new Timer
             {
                 Interval = 1000
@@ -78,14 +74,13 @@ namespace LiveDisplay.Fragments
             };
             if (Build.VERSION.SdkInt <= BuildVersionCodes.KitkatWatch)
             {
-                musicControls = MusicControlsKitkat.GetInstance();
+                musicControls = MediaControlsKitkat.GetInstance();
             }
             else 
             {
-                musicControls = MusicControlsLollipop.GetInstance();
-                
-            }
+                musicControls = MediaControlsLollipop.GetInstance();
 
+            }
             CatcherHelper.NotificationPosted += CatcherHelper_NotificationPosted;
             CatcherHelper.NotificationRemoved += CatcherHelper_NotificationRemoved;
 
@@ -401,7 +396,7 @@ namespace LiveDisplay.Fragments
             {
                 skbSeekSongTime.Progress = e.Progress;
             }
-            if (repeatOptionSet != DontRepeat && skbSeekSongTime.Max - skbSeekSongTime.Progress <= 3000)
+            if (repeatOptionSet != DontRepeat && skbSeekSongTime.Max - skbSeekSongTime.Progress <= 2000)
             {
                 musicControls.Pause();
                 musicControls.SeekTo(0);
@@ -500,10 +495,19 @@ namespace LiveDisplay.Fragments
                 e.MediaMetadataKitkat.GetString((MediaMetadataEditKey)MetadataKey.Artist, string.Empty)
                 : e.MediaMetadata?.GetString(MediaMetadata.MetadataKeyArtist);
 
-
-                skbSeekSongTime.Max = isKitkat?
+                var duration= isKitkat ?
                 (int)e.MediaMetadataKitkat.GetLong((MediaMetadataEditKey)MetadataKey.Duration, 0) :
                 (int)e.MediaMetadata?.GetLong(MediaMetadata.MetadataKeyDuration); //In ms
+
+                if (duration > 0)
+                {
+                    skbSeekSongTime.Max = duration;
+                    skbSeekSongTime.Enabled = true;
+                }
+                else
+                    skbSeekSongTime.Enabled = false;
+
+
                 sourceApp.Text = string.Format(Resources.GetString(Resource.String.playing_from_template), e.AppName);
                 ThreadPool.QueueUserWorkItem(m =>
                 {
@@ -523,7 +527,6 @@ namespace LiveDisplay.Fragments
                         WallpaperPoster = WallpaperPoster.MusicPlayer,
                         SecondsOfAttention = (skbSeekSongTime.Max / 1000) - (skbSeekSongTime.Progress / 1000)
                     });
-
                 });
             });
         }
@@ -652,7 +655,6 @@ namespace LiveDisplay.Fragments
         }
         private void Timer_Elapsed(object sender, EventArgs e)
         {
-            Console.WriteLine("ELAPSED 1 SECOND");
             if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
             {
                 skbSeekSongTime.SetProgress(skbSeekSongTime.Progress + 1000, true);
@@ -661,7 +663,6 @@ namespace LiveDisplay.Fragments
             {
                 skbSeekSongTime.Progress += 1000;
             }
-
         }
 
         void ToggleMediaControlsVisibility(bool mediaPlaying)
@@ -677,6 +678,5 @@ namespace LiveDisplay.Fragments
                 noMediaPlaying.Visibility = ViewStates.Visible;
             }
         }
-
     }
 }

@@ -1,6 +1,6 @@
 ﻿<resources>
   <!--Base application theme-->
-  <style name="LiveDisplayThemeDark" parent="Theme.AppCompat">
+  <style name="BaseAppTheme" parent="Theme.AppCompat.NoActionBar">
     <!-- Main theme colors -->
     <!--   your app branding color for the app bar -->
     <item name="colorPrimary">@color/colorPrimary</item>
@@ -9,18 +9,18 @@
     <!--   theme UI controls like checkboxes and text fields -->
     <item name="colorAccent">@color/colorAccent</item>
     <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
-  </style>
-  <!--the following Style is for No action bar dark-->
-  <style name="LiveDisplayThemeDark.NoActionBar" parent="LiveDisplayThemeDark">
     <item name="windowActionBar">false</item>
     <item name="windowNoTitle">true</item>
   </style>
+  
+  <style name="AppTheme" parent="BaseAppTheme">
+  </style>
+
+  <style name="LockScreenTheme" parent="AppTheme">
+  </style>
 
   <!--Style for toolbar-->
-  <style name="AppToolbar" parent="LiveDisplayThemeDark">
+  <style name="AppToolbar" parent="AppTheme">
     <item name="android:textColorPrimary">@android:color/white</item>
-  </style>
-  <!--Style for Popup menu in overflow menu-->
-  <style name="popupTheme" parent="LiveDisplayThemeDark">
   </style>
 </resources>

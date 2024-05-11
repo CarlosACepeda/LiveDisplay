@@ -1,4 +1,4 @@
-public interface IMusicControls
+public interface IMediaControls
 {
 
     public void Play();

@@ -18,7 +18,7 @@
     using System.Threading;
     using Toolbar = AndroidX.AppCompat.Widget.Toolbar;
 
-    [Activity(Label = "@string/weather", Theme = "@style/LiveDisplayThemeDark.NoActionBar")]
+    [Activity(Label = "@string/weather")]
     public class WeatherSettingsActivity : AppCompatActivity
     {
         private const int Jobid = 56114281;

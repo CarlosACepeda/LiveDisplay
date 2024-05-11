@@ -117,7 +117,7 @@
                         android:id="@+id/btnMediaPlayPlause"
                         android:background="?android:attr/selectableItemBackground" />
                     <ProgressBar
-                        android:visibility="visible"
+                        android:visibility="gone"
                         android:id="@+id/buffering"
                         android:layout_gravity="center"
                         android:layout_width="wrap_content"

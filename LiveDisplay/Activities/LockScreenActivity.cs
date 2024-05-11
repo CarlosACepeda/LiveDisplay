@@ -5,14 +5,13 @@
     using Android.Content;
     using Android.Content.PM;
     using Android.Content.Res;
-    using Android.Graphics;
     using Android.Graphics.Drawables;
     using Android.OS;
     using Android.Runtime;
     using Android.Views;
     using Android.Widget;
     using AndroidX.AppCompat.App;
-    using AndroidX.RecyclerView.Widget;
+    using AndroidX.Core.View;
     using LiveDisplay.Activities;
     using LiveDisplay.Fragments;
     using LiveDisplay.Misc;
@@ -22,7 +21,7 @@
     using System;
     using System.Threading;
 
-    [Activity(Label = "LockScreen",Theme = "@style/LiveDisplayThemeDark.NoActionBar", ShowWhenLocked = true, ScreenOrientation = ScreenOrientation.Portrait, MainLauncher = false, LaunchMode = LaunchMode.SingleInstance, ExcludeFromRecents = true)]
+    [Activity(Label = "LockScreen",Theme = "@style/LockScreenTheme", ScreenOrientation = ScreenOrientation.Portrait, MainLauncher = false, LaunchMode = LaunchMode.SingleInstance, ExcludeFromRecents = true)]
     public class LockScreenActivity : AppCompatActivity
     {
 
@@ -43,10 +42,6 @@
         }
         protected override void OnCreate(Bundle savedInstanceState)
         {
-            if(Build.VERSION.SdkInt>= BuildVersionCodes.Q)
-            {
-                SetShowWhenLocked(true);
-            }
             base.OnCreate(savedInstanceState);
             MainActivity.StartCount++;
             SetContentView(Resource.Layout.LockScreen2);
@@ -74,10 +69,16 @@
             };
 
             WallpaperPublisher.NewWallpaperIssued += Wallpaper_NewWallpaperIssued;
+            WallpaperPublisher.OnZeroPublishersAvailable += WallpaperPublisher_OnZeroPublishersAvailable; ;
             
             
             LoadAllFragments();
             LoadConfiguration();
+        }
+
+        private void WallpaperPublisher_OnZeroPublishersAvailable(object sender, EventArgs e)
+        {
+            lockscreen.Background = null;
         }
 
         private void WatchdogInterval_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -96,14 +97,9 @@
                     Window.DecorView.Animate().SetDuration(100).Alpha(0.5f);
                 }
 
-                if (e.Wallpaper == null)
+                if (e.Wallpaper != null)
                 {
-                    Window.DecorView.SetBackgroundColor(Color.Black);
-                }
-                else
-                {
-                    Window.DecorView.SetBackgroundColor(Color.Black);
-                    Window.DecorView.Background = e.Wallpaper;
+                    lockscreen.Background = e.Wallpaper;
                 }
             });
         }
@@ -225,6 +221,7 @@
             base.OnDestroy();
             
             WallpaperPublisher.NewWallpaperIssued -= Wallpaper_NewWallpaperIssued;
+            WallpaperPublisher.OnZeroPublishersAvailable -= WallpaperPublisher_OnZeroPublishersAvailable;
             lockscreen.Touch -= Lockscreen_Touch;
             watchDog.Dispose();
             MainActivity.StartCount--;
@@ -351,22 +348,19 @@
 
         private void AddFlags()
         {
-            using (var view = Window.DecorView)
+            WindowInsetsControllerCompat insetsControllerCompat = new WindowInsetsControllerCompat(Window, Window.DecorView);
+
+            insetsControllerCompat.Hide(WindowInsetsCompat.Type.SystemBars());
+            insetsControllerCompat.SystemBarsBehavior = (int)WindowInsetsControllerBehavior.ShowTransientBarsBySwipe;
+
+            Window.SetDecorFitsSystemWindows(false);
+            if (Build.VERSION.SdkInt <= BuildVersionCodes.O)
             {
-                if (Build.VERSION.SdkInt > BuildVersionCodes.OMr1)
-                    Window.Attributes.LayoutInDisplayCutoutMode = LayoutInDisplayCutoutMode.ShortEdges;
-
-                var uiOptions = (int)view.SystemUiVisibility;
-                var newUiOptions = uiOptions;
-
-                newUiOptions |= (int)SystemUiFlags.Fullscreen;
-                newUiOptions |= (int)SystemUiFlags.HideNavigation;
-                newUiOptions |= (int)SystemUiFlags.Immersive;
-                // This option will make bars disappear by themselves
-                newUiOptions |= (int)SystemUiFlags.ImmersiveSticky;
-                view.SystemUiVisibility = (StatusBarVisibility)newUiOptions;
-                Window.AddFlags(WindowManagerFlags.DismissKeyguard);
                 Window.AddFlags(WindowManagerFlags.ShowWhenLocked);
+            }
+            else 
+            { 
+                SetShowWhenLocked(true);
             }
         }
     }

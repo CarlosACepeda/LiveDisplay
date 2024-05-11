@@ -28,13 +28,11 @@ namespace LiveDisplay.Servicios.Music
 
         public static event EventHandler<MediaMetadataChangedEventArgs> MediaMetadataChanged;
 
-        public event EventHandler MusicPlaying;
-
-        public event EventHandler MusicPaused;
+        public static event EventHandler<EventArgs> MediaPositionRequested;
 
         private MediaEventsPublisherKitkat(RemoteController remoteController)
         {
-            MusicControlsKitkat.GetInstance().MediaEvent += MusicControlsKitkat_MediaEvent;
+            MediaControlsKitkat.GetInstance().MediaEvent += MusicControlsKitkat_MediaEvent;
             TransportControls = remoteController;
         }
         public static MediaEventsPublisherKitkat Initialize(RemoteController remoteController)
@@ -107,11 +105,6 @@ namespace LiveDisplay.Servicios.Music
                     break;
 
                 case MediaActionFlags.RetrieveMediaInformation:
-                    //Send media information.
-                    OnMediaMetadataChanged(new MediaMetadataChangedEventArgs
-                    {
-                        MediaMetadataKitkat= MediaMetadata
-                    });
                     break;
 
                 default:
@@ -157,7 +150,7 @@ namespace LiveDisplay.Servicios.Music
 
         public void Dispose()
         {
-            MusicControlsKitkat.GetInstance().MediaEvent -= MusicControlsKitkat_MediaEvent;
+            MediaControlsKitkat.GetInstance().MediaEvent -= MusicControlsKitkat_MediaEvent;
         }
     }
 #pragma warning restore CS0618 // Type or member is obsolete

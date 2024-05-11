@@ -27,7 +27,7 @@ namespace LiveDisplay.Servicios.Music
         MediaController _mediaController;
         MediaSession.Token _token;
         string _appname;
-        MusicControlsBase _controls;
+        MediaControlsBase _controls;
         static MediaEventsPublisherLollipop instance;
         #region events
 
@@ -70,7 +70,7 @@ namespace LiveDisplay.Servicios.Music
                 _mediaController.RegisterCallback(this);
                 _token = controller.SessionToken;
                 LoadMediaControllerData(_mediaController);
-                _controls = MusicControlsLollipop.GetInstance();
+                _controls = MediaControlsLollipop.GetInstance();
                 _controls.MediaEvent += MediaEvent;
             }
             catch (Exception ex)
@@ -97,16 +97,10 @@ namespace LiveDisplay.Servicios.Music
             }
         }
 
-        private void Timer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            Console.WriteLine("ELAPSED 1 SEC FROM MEDIAPUBLISHER");
-        }
-
         public bool IsMediaSessionUsingToken(MediaSession.Token tokenToCheck)
         {
             return _mediaController.SessionToken.ToString() == tokenToCheck.ToString();
         }
-
         public static bool IsInitialized()
         {
             return instance!= null && instance.IsActive();
@@ -151,15 +145,18 @@ namespace LiveDisplay.Servicios.Music
                     break;
 
                 case MediaActionFlags.SeekTo:
-                    _transportControls?.SeekTo(e.Time);
+                    if(_mediaMetadata.GetLong(MediaMetadata.MetadataKeyDuration)> 0) //in Live streams this value is 0. so we use it to prevent unwanted seek.
+                        _transportControls?.SeekTo(e.Time);
                     break;
 
                 case MediaActionFlags.FastFoward:
-                    _transportControls?.FastForward();
+                    if (_mediaMetadata.GetLong(MediaMetadata.MetadataKeyDuration) > 0) 
+                        _transportControls?.FastForward();
                     break;
 
                 case MediaActionFlags.Rewind:
-                    _transportControls?.Rewind();
+                    if (_mediaMetadata.GetLong(MediaMetadata.MetadataKeyDuration) > 0) 
+                        _transportControls?.Rewind();
                     break;
 
                 case MediaActionFlags.Stop:
@@ -167,26 +164,12 @@ namespace LiveDisplay.Servicios.Music
                     break;
 
                 case MediaActionFlags.RetrieveMediaInformation:
-                    //Send media information.
-                    OnMediaMetadataChanged(new MediaMetadataChangedEventArgs
-                    {
-                        MediaMetadata = _mediaMetadata,
-                        ActivityIntent = _activityIntent,
-                        AppName = _appname
-                    });
-                    //Send Playbackstate of the media.
-                    OnMediaPlaybackChanged(new MediaPlaybackStateChangedEventArgs
-                    {
-                        PlaybackState = _playbackState.State,
-                        CurrentTime = _playbackState.Position
-                    });
 
                     break;
 
                 default:
                     break;
             }
-            
         }
 
         public override void OnPlaybackStateChanged(PlaybackState state)
@@ -226,10 +209,10 @@ namespace LiveDisplay.Servicios.Music
             var artistDifferent = artist != incomingArtist;
             var albumDifferent = album != incomingAlbum;
             var durationDifferent = duration != incomingDuration;
-            var albumartDifferent = albumart!=null && albumart.SameAs(incomingAlbumArt);
+            var albumartDifferent = albumart!=null && !albumart.SameAs(incomingAlbumArt);
 
 
-            isAnythingDifferent = titleDifferent || artistDifferent || albumDifferent || durationDifferent ||albumartDifferent;
+            isAnythingDifferent = albumartDifferent || titleDifferent || artistDifferent || albumDifferent || durationDifferent;
             
             if (isAnythingDifferent)
             {
@@ -267,10 +250,6 @@ namespace LiveDisplay.Servicios.Music
 
         #endregion Raising events.
 
-        public override void OnSessionEvent(string e, Bundle extras)
-        {            
-            base.OnSessionEvent(e, extras);
-        }
         public bool Finish(MediaSession.Token mediaSessionTokenToFinish)
         {
             if (instance._token.ToString() == mediaSessionTokenToFinish.ToString())

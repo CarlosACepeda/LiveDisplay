@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<FrameLayout xmlns:a="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools" a:layout_width="match_parent" a:id="@+id/lockscreenroot" a:layout_height="match_parent">
+<FrameLayout 
+    xmlns:a="http://schemas.android.com/apk/res/android" 
+    xmlns:app="http://schemas.android.com/apk/res-auto" 
+    xmlns:tools="http://schemas.android.com/tools" 
+    a:layout_width="match_parent" 
+    a:id="@+id/lockscreenroot" 
+    a:layout_height="match_parent">
    <LinearLayout 
         a:id="@+id/main_container" 
         a:orientation="vertical" 

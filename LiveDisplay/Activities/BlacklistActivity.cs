@@ -14,7 +14,7 @@
     using System.Threading;
     using Toolbar = AndroidX.AppCompat.Widget.Toolbar;
 
-    [Activity(Label = "@string/blacklist", Theme = "@style/LiveDisplayThemeDark.NoActionBar")]
+    [Activity(Label = "@string/blacklist")]
     public class BlacklistActivity : AppCompatActivity
     {
         private RecyclerView blacklistRecyclerView;

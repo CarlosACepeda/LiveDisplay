@@ -3,6 +3,7 @@
     using Android.App;
     using Android.App.Admin;
     using Android.Content;
+    using Android.Net;
     using Android.OS;
     using Android.Provider;
     using Android.Runtime;
@@ -25,7 +26,7 @@
     using AlertDialog = AndroidX.AppCompat.App.AlertDialog;
     using Toolbar = AndroidX.AppCompat.Widget.Toolbar;
 
-    [Activity(Label = "@string/app_name", Theme = "@style/LiveDisplayThemeDark.NoActionBar", MainLauncher = true)]
+    [Activity(Label = "@string/app_name", MainLauncher = true)]
     internal class MainActivity : AppCompatActivity, IActivityResultCallback
     {
         private Toolbar toolbar;
@@ -310,16 +311,13 @@
         private void OnDialogPositiveButtonEventArgs(object sender, DialogClickEventArgs e)
         {
             ComponentName admin = new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(AdminReceiver)));
-            using (Intent intent = new Intent(DevicePolicyManager.ActionAddDeviceAdmin).PutExtra(DevicePolicyManager.ExtraDeviceAdmin, admin))
-                StartActivity(intent);
+            using Intent intent = new Intent(DevicePolicyManager.ActionAddDeviceAdmin).PutExtra(DevicePolicyManager.ExtraDeviceAdmin, admin);
+            StartActivity(intent);
         }
 
         private void EnableNotificationAccess_Click(object sender, EventArgs e)
         {
-            using Intent intent = new Intent();
-            intent.AddFlags(ActivityFlags.NewTask);
-            intent.SetAction(Settings.ActionNotificationListenerSettings);
-            StartActivity(intent);
+            StartActivity(new Intent(Settings.ActionNotificationListenerSettings));
         }
 
         private void StartAppCenterMonitoring()

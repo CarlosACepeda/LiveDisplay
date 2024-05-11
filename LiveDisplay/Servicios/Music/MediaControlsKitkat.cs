@@ -4,16 +4,16 @@ using System;
 
 namespace LiveDisplay.Servicios.Music
 {
-    internal class MusicControlsKitkat: MusicControlsBase, IMusicControls
+    internal class MediaControlsKitkat: MediaControlsBase, IMediaControls
     {
 
-        private static MusicControlsKitkat _instance;
-        public static MusicControlsKitkat GetInstance()
+        private static MediaControlsKitkat _instance;
+        public static MediaControlsKitkat GetInstance()
         {
-            _instance ??= new MusicControlsKitkat();
+            _instance ??= new MediaControlsKitkat();
             return _instance;
         }
-        private MusicControlsKitkat()
+        private MediaControlsKitkat()
         {
         }
         public void Play()

@@ -1,7 +1,7 @@
 ﻿using LiveDisplay.Servicios.Music.MediaEventArgs;
 using System;
 
-public class MusicControlsBase
+public class MediaControlsBase
 {
     public event EventHandler<MediaActionEventArgs> MediaEvent;
 

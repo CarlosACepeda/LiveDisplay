@@ -18,7 +18,7 @@
     using System;
     using System.Threading;
 
-    [Activity(Label = "@string/wallpapersettings", Theme = "@style/LiveDisplayThemeDark.NoActionBar")]
+    [Activity(Label = "@string/wallpapersettings")]
     public class BackgroundSettingsActivity : AppCompatActivity
     {
         private Button pickwallpaper;

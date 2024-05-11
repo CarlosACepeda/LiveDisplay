@@ -9,7 +9,7 @@
     using LiveDisplay.Fragments;
     using LiveDisplay.Fragments.Preferences;
 
-    [Activity(Label = "@string/settings", Theme = "@style/LiveDisplayThemeDark.NoActionBar")]
+    [Activity(Label = "@string/settings")]
     public class SettingsActivity : AppCompatActivity, PreferenceFragmentCompat.IOnPreferenceStartFragmentCallback
     {
         private AndroidX.AppCompat.Widget.Toolbar toolbar;
