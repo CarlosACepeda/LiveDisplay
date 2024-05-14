@@ -13,18 +13,7 @@ namespace LiveDisplay.Servicios.Music
     {
         public void OnActiveSessionsChanged(IList<MediaController> controllers)
         {
-            if (new ConfigurationManager(AppPreferences.Default).RetrieveAValue(ConfigurationParameters.MusicWidgetMethod, "0") == "0")
-            {//0 equals 'Media Session'
-                //Pick the best mediacontroller.
-                if (controllers.Count > 0)
-                    foreach (var mediacontroller in controllers)
-                    {
-                        if (mediacontroller?.GetTransportControls() != null)//Ensure that this session has transport controls we can control
-                        {
-                          MediaEventsPublisherLollipop.Initialize(mediacontroller);
-                        }
-                    }
-            }
+
         }
     }
 }
