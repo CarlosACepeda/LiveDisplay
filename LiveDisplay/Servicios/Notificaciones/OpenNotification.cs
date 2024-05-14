@@ -264,7 +264,7 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         internal Icon GetSmallIcon()
         {
-            if (Build.VERSION.SdkInt > BuildVersionCodes.M)
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
             {
                 return statusbarnotification.Notification.SmallIcon;
             }
