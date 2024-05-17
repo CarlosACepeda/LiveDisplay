@@ -5,6 +5,16 @@
   <PreferenceCategory
       android:title="@string/mediawidget"
       app:iconSpaceReserved="false">
+    <SwitchPreference
+     android:defaultValue="false"
+     android:key="key"
+     android:title="pModeSyncWithZenOrDigitalWellbeingMode"
+     app:iconSpaceReserved="false"/>
+    <SwitchPreference
+     android:defaultValue="false"
+     android:key="key"
+     android:title="pSyncWithWeatherMode"
+     app:iconSpaceReserved="false"/>
   </PreferenceCategory>
   <PreferenceCategory
       android:title="@string/advanced"

@@ -11,6 +11,7 @@ using Android.Views;
 using Android.Views.Animations;
 using Android.Widget;
 using AndroidX.AppCompat.Widget;
+using Java.Interop;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
 using LiveDisplay.Servicios.Music;
@@ -45,6 +46,8 @@ namespace LiveDisplay.Fragments
         float initialX=0;
         float pixelToMoveTo = 0;
         bool isPixelWithinBounds;
+        long touchDownTime;
+
         int lowestBoundary, highestBoundary;
         Timer discardMediaSessionButtonTimeOut;
         bool discardMediaSessionClicked;
@@ -126,7 +129,6 @@ namespace LiveDisplay.Fragments
             Console.WriteLine("FRAGMENT: onDestroView");
             fastForwardTimer.Elapsed -= FastForwardTimer_Elapsed;
             rewindTimer.Elapsed -= RewindTimer_Elapsed;
-            UnbindViewEvents();
 
             base.OnDestroyView();
         }
@@ -158,6 +160,7 @@ namespace LiveDisplay.Fragments
                         MediaEventsPublisherLollipop.InitializeFromToken(mediaSessionToken);
                     }
                     currentMediaNotification = e.OpenNotification;
+                    LoadAdditionalControls(); //Find a better way to update  the additional controls without reloading all of them
                 }
             }
         }
@@ -207,22 +210,6 @@ namespace LiveDisplay.Fragments
         }
 
         #region Fragment Views events
-        private void UnbindViewEvents()
-        {
-            btnSkipPrevious.Click -= BtnSkipPrevious_Click;
-            btnSkipPrevious.Touch -= BtnSkipPrevious_Touch;
-            btnSkipPrevious.LongClick -= BtnSkipPrevious_LongClick;
-            btnPlayPause.Click -= BtnPlayPause_Click;
-            btnSkipNext.Click -= BtnSkipNext_Click;
-            btnSkipNext.Touch -= BtnSkipNext_Touch;
-            btnSkipNext.LongClick -= BtnSkipNext_LongClick;
-            skbSeekSongTime.ProgressChanged -= SkbSeekSongTime_ProgressChanged;
-            skbSeekSongTime.StopTrackingTouch -= SkbSeekSongTime_StopTrackingTouch;
-            maincontainer.LongClick -= MusicPlayerContainer_LongClick;
-            maincontainer.Click -= MusicPlayerContainer_Click;
-            discardMediaSession.Click -= DiscardMediaSession_Click;
-
-        }
         private void BindViewEvents()
         {
             btnSkipPrevious.Click += BtnSkipPrevious_Click;
@@ -310,21 +297,22 @@ namespace LiveDisplay.Fragments
             {
                 case MotionEventActions.Down:
                     initialX = e.Event.GetX();
+                    touchDownTime = Java.Lang.JavaSystem.CurrentTimeMillis();
                     break;
                 case MotionEventActions.Move:
                     {
                         Rect discardMediaSesisonButtonXWidth = new Rect();
                         discardMediaSession.GetDrawingRect(discardMediaSesisonButtonXWidth);
 
-                        
+
                         lowestBoundary = discardMediaSesisonButtonXWidth.Left;
                         highestBoundary = discardMediaSesisonButtonXWidth.Right;
 
-                        pixelToMoveTo =  e.Event.RawX - initialX;
+                        pixelToMoveTo = e.Event.RawX - initialX;
 
                         isPixelWithinBounds = pixelToMoveTo < highestBoundary && pixelToMoveTo > lowestBoundary;
 
-                        if(pixelToMoveTo> highestBoundary)
+                        if (pixelToMoveTo > highestBoundary)
                         {
                             pixelToMoveTo = highestBoundary;
                             if (discardMediaSessionButtonTimeOut == null || !discardMediaSessionButtonTimeOut.Enabled)
@@ -341,14 +329,13 @@ namespace LiveDisplay.Fragments
                                 {
                                     HideMediaDiscardButton(highestBoundary, new AnticipateOvershootInterpolator(), 1000);
                                 };
-                                //NotificationSlave.NotificationSlaveInstance().CancelNotification(currentNotif.GetUnderlyingStatusBarNotification().Key);
                             }
                         }
-                        else if( pixelToMoveTo< lowestBoundary)
+                        else if (pixelToMoveTo < lowestBoundary)
                         {
                             pixelToMoveTo = lowestBoundary;
                         }
-                        else if(isPixelWithinBounds)
+                        else if (isPixelWithinBounds)
                         {
                             if (discardMediaSessionButtonTimeOut != null && discardMediaSessionButtonTimeOut.Enabled)
                             {
@@ -362,6 +349,13 @@ namespace LiveDisplay.Fragments
                     }
                     break;
                 case MotionEventActions.Up:
+
+                    int Xdiff = (int)(e.Event.RawX - initialX);
+                    if (Java.Lang.JavaSystem.CurrentTimeMillis() - touchDownTime < 100 && (Xdiff < 10))
+                    {
+                        maincontainer.PerformClick();
+                    }
+
                     if (isPixelWithinBounds)
                     {
                         Console.WriteLine("UP, Pixel within bounds");
@@ -387,7 +381,10 @@ namespace LiveDisplay.Fragments
         private void MusicPlayerContainer_Click(object sender, EventArgs e)
         {
             try { activityIntent.Send(); }
-            catch { Log.Info("LiveDisplay", "Failed to send the Music pending intent"); }
+            catch (PendingIntent.CanceledException ex)
+            {   Console.WriteLine($"Failed Sending PendingIntent: {ex.Message}");
+                currentMediaNotification.ClickNotification();
+            }
         }
 
         private void BtnSkipPrevious_Touch(object sender, View.TouchEventArgs e)

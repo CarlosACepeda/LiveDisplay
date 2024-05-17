@@ -1,6 +1,8 @@
 ﻿using Android.App;
+using Android.Content;
 using Android.Content.PM;
 using Android.OS;
+using System;
 
 namespace LiveDisplay.Misc
 {
@@ -27,6 +29,11 @@ namespace LiveDisplay.Misc
             return package;
 
 
+        }
+
+        public static Intent GetAppPendingIntent(string packageName)
+        {
+            return packageManager.GetLaunchIntentForPackage(packageName);
         }
     }
 }

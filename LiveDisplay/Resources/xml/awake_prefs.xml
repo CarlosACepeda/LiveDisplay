@@ -8,6 +8,8 @@
       android:key="enableawake?"
       android:title="@string/enableawake"
       app:iconSpaceReserved="false">
+      
+    
     </SwitchPreference>
     <SwitchPreference
       android:defaultValue="false"

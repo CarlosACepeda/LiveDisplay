@@ -95,7 +95,7 @@ namespace LiveDisplay.Servicios.Music
             if (controller != null)
             {
                 _transportControls = controller.GetTransportControls();
-                _activityIntent = controller.SessionActivity;
+                _activityIntent = controller.SessionActivity ?? PendingIntent.GetActivity(Application.Context, 0, PackageUtils.GetAppPendingIntent(controller.PackageName), PendingIntentFlags.Immutable | PendingIntentFlags.OneShot);
                 _appname = PackageUtils.GetTheAppName(controller.PackageName);
                 //Invoke MediaMetadata, MediaPlayback, RepeatOption changed events, so all listeners will get notified of
                 //the new Loaded mediacontroller.
