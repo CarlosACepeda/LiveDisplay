@@ -7,7 +7,6 @@ using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Music.MediaEventArgs;
 using System;
 using System.Threading;
-using System.Timers;
 
 namespace LiveDisplay.Servicios.Music
 {
@@ -18,8 +17,6 @@ namespace LiveDisplay.Servicios.Music
     /// </summary>
     internal class MediaEventsPublisherLollipop : MediaController.Callback, IMediaEventsPublisher
     {
-        #region Class members
-
         PlaybackState _playbackState;
         MediaController.TransportControls _transportControls;
         MediaMetadata _mediaMetadata;
@@ -29,17 +26,24 @@ namespace LiveDisplay.Servicios.Music
         string _appname;
         MediaControlsBase _controls;
         static MediaEventsPublisherLollipop instance;
-        #region events
+        const int MillisToRepeat = 2500;
+        const int OneSecondInMillis = 1000;
+        long currentProgress = 0;
+        long totalProgress = 0;
+
+
+        System.Timers.Timer progressTimer= new System.Timers.Timer();
+
+        private int optionSet;
 
         public static event EventHandler<MediaPlaybackStateChangedEventArgs> MediaPlaybackChanged;
 
         public static event EventHandler<MediaMetadataChangedEventArgs> MediaMetadataChanged;
 
-        #endregion events
+        public static event EventHandler<MediaProgressChangedEventArgs> MediaProgressChanged;
 
-        #endregion Class members
+        public static event EventHandler<int> MediaRepeatOptionChanged;
 
-        
         public static void Initialize(MediaController controller)
         {
             if (instance == null)
@@ -72,6 +76,9 @@ namespace LiveDisplay.Servicios.Music
                 LoadMediaControllerData(_mediaController);
                 _controls = MediaControlsLollipop.GetInstance();
                 _controls.MediaEvent += MediaEvent;
+                progressTimer.Interval = OneSecondInMillis;
+                progressTimer.Elapsed += OnProgressTimerElapsed;
+
             }
             catch (Exception ex)
             {
@@ -90,10 +97,11 @@ namespace LiveDisplay.Servicios.Music
                 _transportControls = controller.GetTransportControls();
                 _activityIntent = controller.SessionActivity;
                 _appname = PackageUtils.GetTheAppName(controller.PackageName);
-                //Invoke MediaMetadata and MediaPlayback changed events, so all listeners will get notified of
+                //Invoke MediaMetadata, MediaPlayback, RepeatOption changed events, so all listeners will get notified of
                 //the new Loaded mediacontroller.
                 OnMetadataChanged(controller.Metadata);
                 OnPlaybackStateChanged(controller.PlaybackState);
+                OnMediaRepeatOptionChanged(optionSet);
             }
         }
 
@@ -103,7 +111,7 @@ namespace LiveDisplay.Servicios.Music
         }
         public static bool IsInitialized()
         {
-            return instance!= null && instance.IsActive();
+            return instance != null;
         }
         public bool IsActive()
         {
@@ -129,6 +137,7 @@ namespace LiveDisplay.Servicios.Music
             switch (e.MediaActionFlags)
             {
                 case MediaActionFlags.Play:
+
                     _transportControls?.Play();
                     break;
 
@@ -166,7 +175,10 @@ namespace LiveDisplay.Servicios.Music
                 case MediaActionFlags.RetrieveMediaInformation:
 
                     break;
-
+                case MediaActionFlags.CycleRepeatOption:
+                    CycleRepeatOption();
+                    OnMediaRepeatOptionChanged(optionSet);
+                    break;
                 default:
                     break;
             }
@@ -175,11 +187,12 @@ namespace LiveDisplay.Servicios.Music
         public override void OnPlaybackStateChanged(PlaybackState state)
         {
             _playbackState = state;
+            TrackProgress(state.Position);
 
             OnMediaPlaybackChanged(new MediaPlaybackStateChangedEventArgs
             {
                 PlaybackState = state.State,
-                CurrentTime = state.Position
+                CurrentTime = state.Position,
             });
             base.OnPlaybackStateChanged(state);
 
@@ -217,6 +230,7 @@ namespace LiveDisplay.Servicios.Music
             if (isAnythingDifferent)
             {
                 _mediaMetadata = metadata;
+                totalProgress = incomingDuration;
 
                 OnMediaMetadataChanged(new MediaMetadataChangedEventArgs
                 {
@@ -228,8 +242,6 @@ namespace LiveDisplay.Servicios.Music
 
             base.OnMetadataChanged(_mediaMetadata);
         }
-
-        #region Raising events.
 
         public void OnMediaPlaybackChanged(MediaPlaybackStateChangedEventArgs e)
         { 
@@ -248,8 +260,6 @@ namespace LiveDisplay.Servicios.Music
             });
         }
 
-        #endregion Raising events.
-
         public bool Finish(MediaSession.Token mediaSessionTokenToFinish)
         {
             if (instance._token.ToString() == mediaSessionTokenToFinish.ToString())
@@ -258,6 +268,8 @@ namespace LiveDisplay.Servicios.Music
                 {
                     instance._mediaController.UnregisterCallback(instance);
                     _controls.MediaEvent -= MediaEvent;
+                    progressTimer.Elapsed -= OnProgressTimerElapsed;
+
                     return true;
                 }
                 catch (Exception ex)
@@ -273,6 +285,63 @@ namespace LiveDisplay.Servicios.Music
             Console.WriteLine("SessionDestroyed CALLED");
 
             base.OnSessionDestroyed();
+        }
+
+        void TrackProgress(long currentPos)
+        {
+            currentProgress = currentPos;
+            switch(_playbackState.State)
+            {
+                case PlaybackStateCode.Playing:
+                    progressTimer.Start();
+                    break;
+                default:
+                    progressTimer.Stop();
+                    break;
+            }
+        }
+        public void OnProgressTimerElapsed(object sender, EventArgs e)
+        {
+            currentProgress += 1000;
+            OnMediaProgressChanged(new MediaProgressChangedEventArgs
+            {
+                CurrentProgress = currentProgress,
+                TotalProgress = _mediaMetadata.GetLong(MediaMetadata.MetadataKeyDuration)
+            });
+            if (optionSet != IMediaEventsPublisher.DontRepeat)
+            {
+                if (totalProgress - currentProgress <= MillisToRepeat)
+                {
+                    var mediaControls = MediaControlsLollipop.GetInstance();
+                    mediaControls?.Pause();
+                    mediaControls?.SeekTo(0);
+                    mediaControls?.Play();
+
+                    if (optionSet == IMediaEventsPublisher.RepeatOnce)
+                    {
+                        optionSet = IMediaEventsPublisher.DontRepeat;
+                    }
+                    OnMediaRepeatOptionChanged(optionSet);
+                    Console.WriteLine("REPEATING!!!");
+                }
+            }
+        }
+
+        public void OnMediaProgressChanged(MediaProgressChangedEventArgs e)
+        {
+            MediaProgressChanged?.Invoke(null, e);
+        }
+        public void CycleRepeatOption()
+        {
+            optionSet++;
+            if(optionSet > IMediaEventsPublisher.RepeatForever)
+            {
+                optionSet = IMediaEventsPublisher.DontRepeat;
+            }
+        }
+        public void OnMediaRepeatOptionChanged(int newOption)
+        {
+            MediaRepeatOptionChanged?.Invoke(null, newOption);
         }
     }
 }

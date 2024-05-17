@@ -91,12 +91,25 @@
                 android:alpha="@dimen/alpha_half_visibility"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
-            <LinearLayout
-                android:orientation="horizontal"
+            <HorizontalScrollView
+                android:scrollbars="none"
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_gravity="center"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:id="@+id/mediaControls">
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:src="@drawable/ic_arrow_down_24dp"
+                android:paddingHorizontal="@dimen/media_widget_controls_horizontal_padding"
+                android:paddingVertical="@dimen/media_widget_controls_vertical_padding"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/toggle_additional_controls"
+                android:background="?android:attr/selectableItemBackground" />
             <androidx.appcompat.widget.AppCompatImageButton
                 android:src="@drawable/ic_skip_previous_white_24dp"
                 android:paddingHorizontal="@dimen/media_widget_controls_horizontal_padding"
@@ -141,6 +154,32 @@
                     android:id="@+id/repeat"
                     android:background="?android:attr/selectableItemBackground"
                     android:visibility="visible" />
+            </LinearLayout>
+           </HorizontalScrollView>
+            <LinearLayout
+                android:id="@+id/additional_media_controls"
+                android:visibility="invisible"
+                tools:visibility="visible"
+                android:animateLayoutChanges="true"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <androidx.appcompat.widget.AppCompatImageButton
+                android:alpha="@dimen/alpha_half_visibility"
+                tools:src="@drawable/ic_cloud_white_24dp"
+                android:paddingHorizontal="@dimen/media_widget_secondary_controls_horizontal_padding"
+                android:paddingVertical="@dimen/media_widget_secondary_controls_vertical_padding"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground" />
+                <androidx.appcompat.widget.AppCompatImageButton
+                android:alpha="@dimen/alpha_half_visibility"
+                tools:src="@drawable/ic_awake_24dp"
+                android:paddingHorizontal="@dimen/media_widget_secondary_controls_horizontal_padding"
+                android:paddingVertical="@dimen/media_widget_secondary_controls_vertical_padding"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

@@ -1,0 +1,13 @@
+﻿<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                  xmlns:app="http://schemas.android.com/apk/res-auto"
+      android:title="@string/mediawidget"
+      android:icon="@drawable/ic_music_widget_24dp">
+  <PreferenceCategory
+      android:title="@string/mediawidget"
+      app:iconSpaceReserved="false">
+  </PreferenceCategory>
+  <PreferenceCategory
+      android:title="@string/advanced"
+      app:iconSpaceReserved="false">
+  </PreferenceCategory>
+</PreferenceScreen>

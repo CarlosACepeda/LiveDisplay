@@ -88,5 +88,13 @@ namespace LiveDisplay.Servicios.Music
                 MediaActionFlags = MediaActionFlags.RetrieveMediaInformation
             });
         }
+
+        public void CycleRepeatOption()
+        {
+            OnMediaEvent(new MediaActionEventArgs
+            {
+                MediaActionFlags = MediaActionFlags.CycleRepeatOption
+            });
+        }
     }
 }

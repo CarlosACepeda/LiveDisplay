@@ -190,9 +190,9 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
         }
 
-        public List<Notification.Action> RetrieveActions()
+        public List<OpenAction> RetrieveActions()
         {
-            return statusbarnotification.Notification.Actions?.ToList();
+            return statusbarnotification.Notification.Actions?.Select((x) => new OpenAction(x)).ToList();
         }
 
         internal bool IsClearable()
@@ -420,7 +420,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
         }
 
-        internal int[] CompactViewActionsIndices()
+        public int[] CompactViewActionsIndices()
         {
             return statusbarnotification.Notification.Extras.GetIntArray(Notification.ExtraCompactActions);
         }
@@ -492,7 +492,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             return false;
         }
 
-        public Drawable GetActionIcon(Color color)
+        public Drawable GetActionIcon()
         {            
             Drawable actionIcon;
             try
@@ -510,10 +510,10 @@ namespace LiveDisplay.Servicios.Notificaciones
             {
                 return null;
             }
-            if (color!= null)
-            {
-                actionIcon.SetColorFilter(color, PorterDuff.Mode.Multiply);
-            }
+            //if (color!= null)
+            //{
+            //    actionIcon.SetColorFilter(color, PorterDuff.Mode.Multiply);
+            //}
             return actionIcon;
         }
 

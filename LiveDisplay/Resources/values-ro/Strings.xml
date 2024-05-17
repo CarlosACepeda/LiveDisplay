@@ -20,6 +20,7 @@
   <string name="dialogcancelbutton">închide</string>
   <string name="doubletaptosleep">Dublă apăsare pentru închidere</string>
   <string name="enable_posting_notifications_permission">Activează notificarile din acesta app</string>
+  <string name="enableaccessibilityaccess">Accează acesibilitatea</string>
   <string name="enablenotificationlistener">Accează notificarile</string>
   <string name="enabletestsetting">Activează \&lt;test\&gt; opțiuni</string>
   <string name="eng">Engleză</string>
@@ -41,8 +42,6 @@
   <string name="lockonboot">Blocați ecranul la pornire</string>
   <string name="musiccontrolledfrommediasession">Alegeți cea mai bună sesiune multimedia</string>
   <string name="musiccontrolledfromnotification">Folosiți cea mai recentă notificare care reprezintă redarea multimedia</string>
-  <string name="musicwidgetcontrolmethod">Metoda de control a Muzicii</string>
-  <string name="musicwidgetenabled">Activează Widget de Muzică</string>
   <string name="never">Niciodată</string>
   <string name="notavailableyet">Nu este disponibil încă ...</string>
   <string name="notenoughpermissions">Nu ai permisiunile necesare</string>
@@ -56,7 +55,6 @@
   <string name="saveweathersettings">Salvați</string>
   <string name="searchapptitle">Cautați o app</string>
   <string name="settings">Setările</string>
-  <string name="showalbumart">Arată coperta albumului</string>
   <string name="sixhours">6 ore</string>
   <string name="tenseconds">10 secunde</string>
   <string name="testnotificationtext">Es Ține apăsat pe o notificare din listă o presiona X pentru a o elimina</string>
@@ -71,5 +69,4 @@
   <string name="weather">Climă</string>
   <string name="weatherwidget">Widget de Climă</string>
   <string name="weatherwidgetenabled">Activează Widget de Climă</string>
-  <string name="enableaccessibilityaccess">Accează acesibilitatea</string>
 </resources>

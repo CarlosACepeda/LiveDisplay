@@ -47,6 +47,7 @@
   <string name="doubletaptosleep">Double tap to sleep</string>
   <string name="doubletaptosleepdesc">Touch twice anywhere on the lock screen to turn off the screen</string>
   <string name="enable_posting_notifications_permission">Enable Notifications for this app</string>
+  <string name="enableaccessibilityaccess">Accessibility Access</string>
   <string name="enableawake">Enable Awake service</string>
   <string name="enabledeviceaccess">Enable device Access</string>
   <string name="enablefloatingpermission">Display over other apps</string>
@@ -82,14 +83,10 @@
   <string name="lockonboot">Lock the screen on device boot up</string>
   <string name="lockscreensettings">Lockscreen</string>
   <string name="m_widgetcontrolmethodnotification">Use the Notification that represents media playing</string>
-  <string name="m_widgetcontrolmethodsession">Grab automatically the best Media Session from a list of current Media Sessions on the device.</string>
-  <string name="m_widgethidenotificationwhenmediaplaying">Hide the Notification</string>
   <string name="me">Carlos Cepeda</string>
   <string name="musiccontrolledfrommediasession">Pick the best Media Session (more stable)</string>
   <string name="musiccontrolledfromnotification">Use the most recent Notification that represents current media playing (quicker)</string>
-  <string name="musicwidget">Music Widget</string>
-  <string name="musicwidgetcontrolmethod">Music Control Method</string>
-  <string name="musicwidgetenabled">Enable Music Widget</string>
+  <string name="mediawidget">Media Widget</string>
   <string name="never">Never</string>
   <string name="nomediaplaying">There\'s no media playing currently!  \n Let\'s play something!</string>
   <string name="nonallowedtoturnonscreen">Non allowed to turn on screen</string>
@@ -113,7 +110,6 @@
   <string name="secretmessageplaceholder">Enter the secret keyword</string>
   <string name="sendtestnotification">Send test notification</string>
   <string name="settings">Settings</string>
-  <string name="showalbumart">Show media cover art</string>
   <string name="sixhours">6 Hours</string>
   <string name="tenseconds">10 seconds</string>
   <string name="testnotificationtext">Long press a notification from the list or press the X button to clear it</string>
@@ -140,5 +136,4 @@
   <string name="weatherwidgetenabled">Enable Weather Widget</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
-  <string name="enableaccessibilityaccess">Accessibility Access</string>
 </resources>

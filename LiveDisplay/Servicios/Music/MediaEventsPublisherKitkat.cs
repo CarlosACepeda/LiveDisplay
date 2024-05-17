@@ -1,10 +1,11 @@
 ﻿using Android.Media;
+using Android.Media.Session;
 using Android.Util;
 using Android.Views;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios.Music.MediaEventArgs;
-using LiveDisplay.Servicios.Widget;
 using System;
+
 
 namespace LiveDisplay.Servicios.Music
 {
@@ -14,10 +15,17 @@ namespace LiveDisplay.Servicios.Music
     /// For Kitkat only.
     /// </summary>
 
-#pragma warning disable CS0618 // Type or member is obsolete
     internal class MediaEventsPublisherKitkat : IMediaEventsPublisher, IDisposable
     {
         private static MediaEventsPublisherKitkat instance;
+        private int optionSet;
+        long currentProgress;
+        long totalProgress;
+        const int MillisToRepeat = 2500;
+        const int OneSecondInMillis = 1000;
+        System.Timers.Timer progressTimer = new System.Timers.Timer();
+
+
         public RemoteControlPlayState PlaybackState { get; set; }
         public RemoteController.MetadataEditor MediaMetadata { get; set; }
         public RemoteController TransportControls { get; set; }
@@ -28,11 +36,14 @@ namespace LiveDisplay.Servicios.Music
 
         public static event EventHandler<MediaMetadataChangedEventArgs> MediaMetadataChanged;
 
-        public static event EventHandler<EventArgs> MediaPositionRequested;
+        public static event EventHandler<MediaProgressChangedEventArgs> MediaProgressChanged;
+        public static event EventHandler<int> MediaRepeatOptionChanged;
 
         private MediaEventsPublisherKitkat(RemoteController remoteController)
         {
             MediaControlsKitkat.GetInstance().MediaEvent += MusicControlsKitkat_MediaEvent;
+            progressTimer.Interval = OneSecondInMillis;
+            progressTimer.Elapsed += OnProgressTimerElapsed;
             TransportControls = remoteController;
         }
         public static MediaEventsPublisherKitkat Initialize(RemoteController remoteController)
@@ -107,6 +118,11 @@ namespace LiveDisplay.Servicios.Music
                 case MediaActionFlags.RetrieveMediaInformation:
                     break;
 
+                case MediaActionFlags.CycleRepeatOption:
+                    CycleRepeatOption();
+                    OnMediaRepeatOptionChanged(optionSet);
+                    break;
+
                 default:
                     break;
             }
@@ -122,6 +138,8 @@ namespace LiveDisplay.Servicios.Music
         public void OnPlaybackStateChanged(RemoteControlPlayState state)
         {
             PlaybackState = state;
+            TrackProgress(TransportControls.EstimatedMediaPosition);
+
             Log.Info("LiveDisplay", "Music state is: " + state);
             OnMediaPlaybackChanged(new MediaPlaybackStateChangedEventArgs
             {
@@ -148,10 +166,70 @@ namespace LiveDisplay.Servicios.Music
             MediaMetadataChanged?.Invoke(null, (MediaMetadataChangedEventArgs)e);
         }
 
+        void TrackProgress(long currentPos)
+        {
+            currentProgress = currentPos;
+            switch (PlaybackState)
+            {
+                case RemoteControlPlayState.Playing:
+                    progressTimer.Start();
+                    break;
+                default:
+                    progressTimer.Stop();
+                    break;
+            }
+        }
+        public void OnProgressTimerElapsed(object sender, EventArgs e)
+        {
+            currentProgress += 1000;
+            OnMediaProgressChanged(new MediaProgressChangedEventArgs
+            {
+                CurrentProgress = currentProgress,
+                TotalProgress = MediaMetadata.GetLong((MediaMetadataEditKey)MetadataKey.Duration, 0)
+            });
+            if (optionSet != IMediaEventsPublisher.DontRepeat)
+            {
+                if (totalProgress - currentProgress <= MillisToRepeat)
+                {
+                    var mediaControls = MediaControlsLollipop.GetInstance();
+                    mediaControls?.Pause();
+                    mediaControls?.SeekTo(0);
+                    mediaControls?.Play();
+
+                    if (optionSet == IMediaEventsPublisher.RepeatOnce)
+                    {
+                        optionSet = IMediaEventsPublisher.DontRepeat;
+                    }
+                    OnMediaRepeatOptionChanged(optionSet);
+                    Console.WriteLine("REPEATING!!!");
+                }
+            }
+        }
+
+        public void OnMediaProgressChanged(MediaProgressChangedEventArgs e)
+        {
+            MediaProgressChanged?.Invoke(null, e);
+        }
+
         public void Dispose()
         {
             MediaControlsKitkat.GetInstance().MediaEvent -= MusicControlsKitkat_MediaEvent;
+            progressTimer.Elapsed -= OnProgressTimerElapsed;
+
+        }
+
+        public void CycleRepeatOption()
+        {
+            optionSet++;
+            if (optionSet > IMediaEventsPublisher.RepeatForever)
+            {
+                optionSet = IMediaEventsPublisher.DontRepeat;
+            }
+        }
+
+        public void OnMediaRepeatOptionChanged(int newOption)
+        {
+            MediaRepeatOptionChanged?.Invoke(null, newOption);
         }
     }
-#pragma warning restore CS0618 // Type or member is obsolete
 }

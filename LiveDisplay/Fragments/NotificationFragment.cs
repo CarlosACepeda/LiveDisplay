@@ -82,20 +82,6 @@ namespace LiveDisplay.Fragments
             if (e.ShouldCauseWakeUp && configurationManager.RetrieveAValue(ConfigurationParameters.TurnOnUserMovement))
                 AwakeHelper.TurnOnScreen();
 
-            if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetMethod, "0") == "1") //1:"Use a notification to spawn the Music Widget"
-            {
-                if (e.OpenNotification.RepresentsMediaPlaying())
-                {
-                    MediaEventsPublisherLollipop.InitializeFromToken(e.OpenNotification.GetMediaSessionToken());
-
-                    maincontainer.Visibility = ViewStates.Invisible;
-                    WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "NotificationFragment" });
-
-                    //Also start the Widget to control the playback.
-                    WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = true, WidgetName = "MusicFragment", Active = true });
-                    return;
-                }
-            }
 
 
             //if the current notification widget does not have a tag, let's set it.
@@ -200,17 +186,6 @@ namespace LiveDisplay.Fragments
         {
             Activity?.RunOnUiThread(() =>
             {
-                if (configurationManager.RetrieveAValue(ConfigurationParameters.MusicWidgetMethod, "0") == "1")
-                {
-                    if (e.OpenNotification.RepresentsMediaPlaying())
-                    {
-                        if (MediaEventsPublisherLollipop.GetInstance().Finish(e.OpenNotification.GetMediaSessionToken())) //Returns true if the Playback was stopped succesfully
-                        {
-                            //In that case, order MusicWidget to stop.
-                            WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "MusicFragment", Active = false });
-                        }
-                    }
-                }
                 
                 WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "NotificationFragment" });
 

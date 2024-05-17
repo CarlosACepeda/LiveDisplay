@@ -1,24 +1,25 @@
 ﻿<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-  <Preference
+  <!--<Preference
         android:fragment="LockScreenSettingsFragment"
           android:title="@string/lockscreensettings"
-          android:icon="@drawable/ic_lockscreen_24dp" />
-  <Preference
+          android:icon="@drawable/ic_lockscreen_24dp" />-->
+ <!-- <Preference
         android:fragment="NotificationSettingsFragment"
           android:title="@string/notificationsettings"
           android:icon="@drawable/ic_notifications_white_24dp" />
-  <Preference
+-->
+ <!-- <Preference
         android:fragment="AwakeSettingsFragment"
           android:title="@string/awakesettings"
-          android:icon="@drawable/ic_awake_24dp" />
+          android:icon="@drawable/ic_awake_24dp" /> -->
   <Preference
-        android:fragment="MusicWidgetSettingsFragment"
-          android:title="@string/musicwidget"
+        android:fragment="MediaWidgetSettingsFragment"
+          android:title="@string/mediawidget"
           android:icon="@drawable/ic_music_widget_24dp" />
-  <Preference
+<!--  <Preference
         android:fragment="WeatherSettingsActivity"
           android:title="@string/weather"
-          android:icon="@drawable/ic_cloud_white_24dp" />
+          android:icon="@drawable/ic_cloud_white_24dp" />-->
   <Preference
         android:fragment="AboutFragment"
           android:title="@string/about"

@@ -284,60 +284,60 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
             if (notification.HasActions())
             {
                 var actions = notification.RetrieveActions();
-                foreach (Notification.Action action in actions)
-                {
-                    OpenAction openAction = new OpenAction(action);
-                    Button actionButton = new Button(Application.Context);
-                    float weight = 1f / actions.Count;
-                    actionButton.LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MatchParent, weight);
-                    if (notificationViewType == NotificationViewType.OnLockscreen)
-                    {
-                        actionButton.SetTextColor(Color.White); //Should change in MediaStyle (?)
-                    }
-                    else 
-                    {
-                        actionButton.SetTextColor(Color.Black); //Should change in MediaStyle (?)
+                //foreach (Notification.Action action in actions)
+                //{
+                //    OpenAction openAction = new OpenAction(action);
+                //    Button actionButton = new Button(Application.Context);
+                //    float weight = 1f / actions.Count;
+                //    actionButton.LayoutParameters = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MatchParent, weight);
+                //    if (notificationViewType == NotificationViewType.OnLockscreen)
+                //    {
+                //        actionButton.SetTextColor(Color.White); //Should change in MediaStyle (?)
+                //    }
+                //    else 
+                //    {
+                //        actionButton.SetTextColor(Color.Black); //Should change in MediaStyle (?)
 
-                    }
-                    actionButton.SetTag(DefaultActionIdentificator, openAction);
-                    actionButton.Click += AnActionButton_Click;
-                    actionButton.Gravity = actionButtonsGravity;
-                    actionButton.SetMaxLines(actiontextMaxLines);
-                    TypedValue outValue = new TypedValue();
-                    Application.Context.Theme.ResolveAttribute(Android.Resource.Attribute.SelectableItemBackground, outValue, true);
-                    actionButton.SetBackgroundResource(outValue.ResourceId);
-                    actionButton.SetTypeface(Typeface.Create(actionTextsTypeface, TypefaceStyle.Normal), TypefaceStyle.Normal);
-                    //notificationActions.SetGravity(actionButtonsContainerGravity);
+                //    }
+                //    actionButton.SetTag(DefaultActionIdentificator, openAction);
+                //    actionButton.Click += AnActionButton_Click;
+                //    actionButton.Gravity = actionButtonsGravity;
+                //    actionButton.SetMaxLines(actiontextMaxLines);
+                //    TypedValue outValue = new TypedValue();
+                //    Application.Context.Theme.ResolveAttribute(Android.Resource.Attribute.SelectableItemBackground, outValue, true);
+                //    actionButton.SetBackgroundResource(outValue.ResourceId);
+                //    actionButton.SetTypeface(Typeface.Create(actionTextsTypeface, TypefaceStyle.Normal), TypefaceStyle.Normal);
+                //    //notificationActions.SetGravity(actionButtonsContainerGravity);
 
-                    Log.Info("LiveDisplay", openAction.Title());
+                //    Log.Info("LiveDisplay", openAction.Title());
 
-                    if (notification.Style() != MediaStyle)
-                        actionButton.Text = openAction.Title();
+                //    if (notification.Style() != MediaStyle)
+                //        actionButton.Text = openAction.Title();
 
-                    if (actionTextsAreinCapitalLetters == false)
-                    {
-                        actionButton.TransformationMethod = null; //Disables all caps text.
-                    }
-                    Color actionbuttonsColor;
-                    if (notificationViewType == NotificationViewType.OnLockscreen)
-                    {
-                        actionbuttonsColor = Color.White;
-                    }
-                    else 
-                    {
-                        actionbuttonsColor = Color.Black;
-                    }
-                    Handler looper = new Handler(Looper.MainLooper);
-                    looper.Post(() =>
-                        {
-                            if (shouldShowIcons || notification.Style() == MediaStyle) //The MediaStyle allows icons to be shown.
-                            {
-                                actionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction.GetActionIcon(actionbuttonsColor), null, null, null);
-                            }
+                //    if (actionTextsAreinCapitalLetters == false)
+                //    {
+                //        actionButton.TransformationMethod = null; //Disables all caps text.
+                //    }
+                //    Color actionbuttonsColor;
+                //    if (notificationViewType == NotificationViewType.OnLockscreen)
+                //    {
+                //        actionbuttonsColor = Color.White;
+                //    }
+                //    else 
+                //    {
+                //        actionbuttonsColor = Color.Black;
+                //    }
+                //    Handler looper = new Handler(Looper.MainLooper);
+                //    looper.Post(() =>
+                //        {
+                //            if (shouldShowIcons || notification.Style() == MediaStyle) //The MediaStyle allows icons to be shown.
+                //            {
+                //                actionButton.SetCompoundDrawablesRelativeWithIntrinsicBounds(openAction.GetActionIcon(actionbuttonsColor), null, null, null);
+                //            }
 
-                            notificationActions.AddView(actionButton);
-                        });
-                }
+                //            notificationActions.AddView(actionButton);
+                //        });
+                //}
             }
         }
 

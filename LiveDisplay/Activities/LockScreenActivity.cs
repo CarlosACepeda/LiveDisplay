@@ -1,11 +1,10 @@
 ﻿namespace LiveDisplay
 {
-    using Android.Animation;
     using Android.App;
     using Android.Content;
     using Android.Content.PM;
     using Android.Content.Res;
-    using Android.Graphics.Drawables;
+    using Android.Graphics;
     using Android.OS;
     using Android.Runtime;
     using Android.Views;
@@ -69,7 +68,7 @@
             };
 
             WallpaperPublisher.NewWallpaperIssued += Wallpaper_NewWallpaperIssued;
-            WallpaperPublisher.OnZeroPublishersAvailable += WallpaperPublisher_OnZeroPublishersAvailable; ;
+            WallpaperPublisher.OnZeroPublishersAvailable += WallpaperPublisher_OnZeroPublishersAvailable;
             
             
             LoadAllFragments();
@@ -78,7 +77,7 @@
 
         private void WallpaperPublisher_OnZeroPublishersAvailable(object sender, EventArgs e)
         {
-            lockscreen.Background = null;
+            lockscreen.SetBackgroundColor(Color.Black);
         }
 
         private void WatchdogInterval_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -94,11 +93,12 @@
                 if (configurationManager.RetrieveAValue(ConfigurationParameters.DisableWallpaperChangeAnim) == false) //If the animation is not disabled.
                 {
                     //Animate only when the activity is visible to the user.
-                    Window.DecorView.Animate().SetDuration(100).Alpha(0.5f);
+                    //Window.DecorView.Animate().SetDuration(100).Alpha(0.5f);
                 }
 
                 if (e.Wallpaper != null)
                 {
+                    lockscreen.SetBackgroundColor(Color.Black);
                     lockscreen.Background = e.Wallpaper;
                 }
             });
@@ -286,16 +286,17 @@
 
             try
             {
-                WallpaperManager.GetInstance(Application.Context).ForgetLoadedWallpaper();
-                var wallpaper = WallpaperManager.GetInstance(Application.Context).Drawable;
-                WallpaperPublisher.ChangeWallpaper(
-                    new WallpaperChangedEventArgs
-                    {
-                        Wallpaper = (BitmapDrawable)wallpaper,
-                        OpacityLevel = (short)savedOpacitylevel,
-                        BlurLevel = (short)savedblurlevel,
-                        WallpaperPoster = WallpaperPoster.Lockscreen
-                    });
+                //WallpaperManager.GetInstance(Application.Context).ForgetLoadedWallpaper();
+                //var wallpaper = WallpaperManager.GetInstance(Application.Context).Drawable;
+                //WallpaperPublisher.ChangeWallpaper(
+                //    new WallpaperChangedEventArgs
+                //    {
+                //        Wallpaper = (BitmapDrawable)wallpaper,
+                //        OpacityLevel = (short)savedOpacitylevel,
+                //        BlurLevel = (short)savedblurlevel,
+                //        WallpaperPoster = WallpaperPos
+                //        ter.Lockscreen
+                //    });
             }
             catch (Exception ex)
             {

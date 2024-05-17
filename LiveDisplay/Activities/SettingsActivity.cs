@@ -58,17 +58,8 @@
             {
                 switch (pref.Fragment)
                 {
-                    case "LockScreenSettingsFragment":
-                        fragmentQualifiedName = Java.Lang.Class.FromType(typeof(LockScreenSettingsFragment)).Name;
-                        break;
-                    case "NotificationSettingsFragment":
-                        fragmentQualifiedName = Java.Lang.Class.FromType(typeof(NotificationSettingsFragment)).Name;
-                        break;
-                    case "AwakeSettingsFragment":
-                        fragmentQualifiedName = Java.Lang.Class.FromType(typeof(AwakeSettingsFragment)).Name;
-                        break;
-                    case "MusicWidgetSettingsFragment":
-                        fragmentQualifiedName = Java.Lang.Class.FromType(typeof(MusicWidgetSettingsFragment)).Name;
+                    case "MediaWidgetSettingsFragment":
+                        fragmentQualifiedName = Java.Lang.Class.FromType(typeof(MediaWidgetSettingsFragment)).Name;
                         break;
                     case "AboutFragment":
                         fragmentQualifiedName = Java.Lang.Class.FromType(typeof(AboutFragment)).Name;
@@ -97,10 +88,8 @@
                         activityQualifiedName = Java.Lang.Class.FromType(typeof(WeatherSettingsActivity)).Name;
                         break;
                 }
-                using (Intent intent = new Intent(Application.Context, Java.Lang.Class.ForName(activityQualifiedName)))
-                {
-                    StartActivity(intent);
-                }
+                using Intent intent = new Intent(Application.Context, Java.Lang.Class.ForName(activityQualifiedName));
+                StartActivity(intent);
             }
             return true;
         }
