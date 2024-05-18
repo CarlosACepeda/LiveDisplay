@@ -30,6 +30,7 @@ namespace LiveDisplay.Servicios.Music
         const int OneSecondInMillis = 1000;
         long currentProgress = 0;
         long totalProgress = 0;
+        bool resendingMediaMetadata = false;
 
 
         System.Timers.Timer progressTimer= new System.Timers.Timer();
@@ -51,6 +52,7 @@ namespace LiveDisplay.Servicios.Music
             else if (controller.SessionToken.ToString() == instance._token.ToString())
             {
                 //it's initialized, so lets send the media  metadata instead.
+                instance.resendingMediaMetadata = true;
                 instance.OnMetadataChanged(controller.Metadata);
                 instance.OnPlaybackStateChanged(controller.PlaybackState);
             }
@@ -72,7 +74,7 @@ namespace LiveDisplay.Servicios.Music
             {
                 _mediaController = controller;
                 _mediaController.RegisterCallback(this);
-                _token = controller.SessionToken;
+                _token = _mediaController.SessionToken;
                 LoadMediaControllerData(_mediaController);
                 _controls = MediaControlsLollipop.GetInstance();
                 _controls.MediaEvent += MediaEvent;
@@ -102,6 +104,11 @@ namespace LiveDisplay.Servicios.Music
                 OnMetadataChanged(controller.Metadata);
                 OnPlaybackStateChanged(controller.PlaybackState);
                 OnMediaRepeatOptionChanged(optionSet);
+
+            }
+            else
+            {
+                throw new InvalidOperationException("How's this even possible?");
             }
         }
 
@@ -227,7 +234,7 @@ namespace LiveDisplay.Servicios.Music
 
             isAnythingDifferent = albumartDifferent || titleDifferent || artistDifferent || albumDifferent || durationDifferent;
             
-            if (isAnythingDifferent)
+            if (isAnythingDifferent || resendingMediaMetadata)
             {
                 _mediaMetadata = metadata;
                 totalProgress = incomingDuration;
@@ -238,6 +245,8 @@ namespace LiveDisplay.Servicios.Music
                     MediaMetadata = _mediaMetadata,
                     AppName = _appname
                 });
+
+                if(resendingMediaMetadata) resendingMediaMetadata = false;
             }
 
             base.OnMetadataChanged(_mediaMetadata);
@@ -269,7 +278,7 @@ namespace LiveDisplay.Servicios.Music
                     instance._mediaController.UnregisterCallback(instance);
                     _controls.MediaEvent -= MediaEvent;
                     progressTimer.Elapsed -= OnProgressTimerElapsed;
-
+                    instance = null;
                     return true;
                 }
                 catch (Exception ex)
