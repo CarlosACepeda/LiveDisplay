@@ -10,7 +10,6 @@ using Android.Util;
 using Java.Util;
 using LiveDisplay.Factories;
 using LiveDisplay.Misc;
-using LiveDisplay.Servicios.Music;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -309,39 +308,25 @@ namespace LiveDisplay.Servicios.Notificaciones
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
                 return (NotificationImportance)(-1);
 
-            var channel = GetNotificationChannel();
-
-            return channel!=null? channel.Importance: NotificationImportance.Unspecified;
+            return  NotificationImportance.Unspecified; //No way to retrieve the Notification Channel for Any app except mine.
         }
 
-        private NotificationChannel GetNotificationChannel()
+        public string GetNotificationChannelId()
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
                 return null;
 
-            var channelId = statusbarnotification.Notification.ChannelId;
-            return null;
+            return  statusbarnotification.Notification.ChannelId;
         }
 
         internal string Style()
         {
-            try
-            {
-                return statusbarnotification.Notification.Extras.GetString(Notification.ExtraTemplate);
-            }
-            catch
-            {
-                return string.Empty;
-            }
+            return statusbarnotification.Notification.Extras.GetString(Notification.ExtraTemplate);
         }
 
         public bool IsAutoCancellable()
         {
-            if (statusbarnotification.Notification.Flags.HasFlag(NotificationFlags.AutoCancel) == true)
-            {
-                return true;
-            }
-            return false;
+            return statusbarnotification.Notification.Flags.HasFlag(NotificationFlags.AutoCancel);
         }
 
         //<test only, check if this notification is part of a group or is a group summary or any info related with group notifications.>
@@ -386,38 +371,17 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         internal int GetProgress()
         {
-            try
-            {
-                return statusbarnotification.Notification.Extras.GetInt(Notification.ExtraProgress);
-            }
-            catch
-            {
-                return -2;
-            }
+            return statusbarnotification.Notification.Extras.GetInt(Notification.ExtraProgress);
         }
 
         internal int GetProgressMax()
         {
-            try
-            {
-                return statusbarnotification.Notification.Extras.GetInt(Notification.ExtraProgressMax);
-            }
-            catch
-            {
-                return -2;
-            }
+            return statusbarnotification.Notification.Extras.GetInt(Notification.ExtraProgressMax);
         }
 
         internal bool IsProgressIndeterminate()
         {
-            try
-            {
-                return statusbarnotification.Notification.Extras.GetBoolean(Notification.ExtraProgressIndeterminate);
-            }
-            catch
-            {
-                return false;
-            }
+            return statusbarnotification.Notification.Extras.GetBoolean(Notification.ExtraProgressIndeterminate);
         }
 
         public int[] CompactViewActionsIndices()
@@ -444,20 +408,11 @@ namespace LiveDisplay.Servicios.Notificaciones
         public OpenAction(Notification.Action action)
         {
             this.action = action;
-            //var test1 = action.Extras;
-            //var test2 = action.Extras.KeySet();
         }
 
         public string Title()
         {
-            try
-            {
-                return action.Title.ToString();
-            }
-            catch
-            {
-                return string.Empty;
-            }
+            return action.Title.ToString();
         }
 
         public void ClickAction()
@@ -475,7 +430,7 @@ namespace LiveDisplay.Servicios.Notificaciones
         public bool ActionRepresentDirectReply()
         {
             //Direct reply action is a new feature in Nougat, so when called on Marshmallow and backwards, so in those cases an Action will never represent a Direct Reply.
-            if (Build.VERSION.SdkInt < BuildVersionCodes.N) return false;
+            if (Build.VERSION.SdkInt <= BuildVersionCodes.M) return false;
 
             remoteInputs = action.GetRemoteInputs();
             if (remoteInputs == null || remoteInputs?.Length == 0) return false;
@@ -493,7 +448,7 @@ namespace LiveDisplay.Servicios.Notificaciones
         }
 
         public Drawable GetActionIcon()
-        {            
+        {
             Drawable actionIcon;
             try
             {
@@ -510,23 +465,17 @@ namespace LiveDisplay.Servicios.Notificaciones
             {
                 return null;
             }
-            //if (color!= null)
-            //{
-            //    actionIcon.SetColorFilter(color, PorterDuff.Mode.Multiply);
-            //}
             return actionIcon;
         }
 
         public string GetPlaceholderTextForInlineResponse()
         {
-            //Direct reply action is a new feature in Nougat, so this method call is invalid in Marshmallow and backwards, let's return empty.
-            if (Build.VERSION.SdkInt < BuildVersionCodes.N) return string.Empty;
+            if (Build.VERSION.SdkInt <= BuildVersionCodes.M) return string.Empty;
 
             return remoteInputDirectReply.Label;
             
         }
 
-        //Since API 24 Nougat.
         public bool SendInlineResponse(string responseText)
         {
             try

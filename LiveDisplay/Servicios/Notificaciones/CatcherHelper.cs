@@ -1,9 +1,4 @@
-﻿using Android.App;
-using Android.OS;
-using Android.Service.Notification;
-using Android.Service.VR;
-using LiveDisplay.Adapters;
-using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
+﻿using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +16,11 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         public static event EventHandler<NotificationListSizeChangedEventArgs> NotificationListSizeChanged;
 
+        public static event EventHandler<bool> EnteredZenMode;
+
+        const string LiveDisplayAlertWindowNotificationTag= "com.android.server.wm.AlertWindowNotification - com.underground.livedisplay";
+        const string AndroidPackageName = "android";
+        const string LiveDisplayPackage = "com.underground.livedisplay";
         //So it can grab it from here.
 
         /// <summary>
@@ -43,12 +43,10 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         public void OnNotificationPosted(OpenNotification sbn)
         {
-            var importance = sbn.GetNotificationImportance();
-
             if (sbn == null) { return; }
             //This is the notification of 'LiveDisplay is showing above other apps' when using floating windows.
             //Simply let's ignore it, because it's annoying. (Anyway, the user couldn't care less about this notification tbh)
-            if (sbn.GetPackageName() == "android" && sbn.GetTag() == "com.android.server.wm.AlertWindowNotification - com.underground.livedisplay")
+            if (sbn.GetPackageName() == AndroidPackageName && sbn.GetTag() == LiveDisplayAlertWindowNotificationTag)
                 return;
 
 
@@ -65,10 +63,9 @@ namespace LiveDisplay.Servicios.Notificaciones
 
             
             //To see how it works please go to ScreenOnOffReceiver, this broadcast works as the one starting this whole workaround
-            if(sbn.GetPackageName()=="com.underground.livedisplay" && sbn.GetId()==100)
+            if(sbn.GetPackageName()== LiveDisplayPackage&& sbn.GetId()==100)
             {
-                var lockscreenShowNotificationHelper = sbn;
-                lockscreenShowNotificationHelper.ClickNotification();
+                sbn.ClickNotification();
 
             }
 
@@ -102,12 +99,11 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         public void OnNotificationRemoved(OpenNotification sbn)
         {
-            //(channel = zen_mode_notification_channel)
            
-            if (sbn.GetPackageName() == "android" && sbn.GetTag() == "com.android.server.wm.AlertWindowNotification - com.underground.livedisplay")
+            if (sbn.GetPackageName() == AndroidPackageName && sbn.GetTag() == LiveDisplayAlertWindowNotificationTag)
                 return;
 
-            if (sbn.GetPackageName() == "com.underground.livedisplay" && sbn.GetId() == 100) //This is the workaround notification, we don't need it for anything
+            if (sbn.GetPackageName() == LiveDisplayPackage && sbn.GetId() == 100) //This is the workaround notification, we don't need it for anything
                 return;
 
             int position = GetNotificationPosition(sbn);
@@ -163,13 +159,16 @@ namespace LiveDisplay.Servicios.Notificaciones
 
         private void OnNotificationPosted(OpenNotification sbn, bool updatesPreviousNotification)
         {
-            //Console.WriteLine($"Subscribers: {NotificationPosted?.GetInvocationList()?.Count()} ");
             NotificationPosted?.Invoke(this, new NotificationPostedEventArgs()
             {
                 ShouldCauseWakeUp = false,
                 OpenNotification = sbn,
                 UpdatesPreviousNotification = updatesPreviousNotification
             });
+        }
+        public void OnZenModeChanged(bool active)
+        {
+            EnteredZenMode?.Invoke(this, active);
         }
     }
 }
