@@ -27,6 +27,8 @@ namespace LiveDisplay.Servicios.Music.MediaEventArgs
 
         public long CurrentTime { get; set; }
 
+        public int RepeatOptionSet { get; set; }
+
         private PlaybackStateCode GetPlaybackStateCodeFromRemoteControlPlayState(RemoteControlPlayState playbackState)
         {
             return playbackState switch

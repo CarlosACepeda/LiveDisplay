@@ -55,6 +55,8 @@ namespace LiveDisplay.Servicios.Music
                 instance.resendingMediaMetadata = true;
                 instance.OnMetadataChanged(controller.Metadata);
                 instance.OnPlaybackStateChanged(controller.PlaybackState);
+                Log.Warn("LiveDisplay", "RESENDING DATA, ALREADY INIT");
+
             }
             else
             {
@@ -62,6 +64,8 @@ namespace LiveDisplay.Servicios.Music
                 instance.Finish(instance._token); //Finishing old
                 instance = new MediaEventsPublisherLollipop(controller);
                 Console.WriteLine("SUCCESS new MediaSession request, Switching...");
+                Log.Warn("LiveDisplay", "SWITCHING");
+
             }
         }
         public static void InitializeFromToken(MediaSession.Token token)
@@ -80,6 +84,8 @@ namespace LiveDisplay.Servicios.Music
                 _controls.MediaEvent += MediaEvent;
                 progressTimer.Interval = OneSecondInMillis;
                 progressTimer.Elapsed += OnProgressTimerElapsed;
+                Log.Warn("LiveDisplay", "CTOR SUCCESS");
+
 
             }
             catch (Exception ex)
@@ -97,7 +103,7 @@ namespace LiveDisplay.Servicios.Music
             if (controller != null)
             {
                 _transportControls = controller.GetTransportControls();
-                _activityIntent = controller.SessionActivity ?? PendingIntent.GetActivity(Application.Context, 0, PackageUtils.GetAppPendingIntent(controller.PackageName), PendingIntentFlags.Immutable | PendingIntentFlags.OneShot);
+                _activityIntent = controller.SessionActivity ?? PendingIntent.GetActivity(Application.Context, (int)Result.Ok, PackageUtils.GetAppIntent(controller.PackageName), PendingIntentFlags.Immutable | PendingIntentFlags.OneShot);
                 _appname = PackageUtils.GetTheAppName(controller.PackageName);
                 //Invoke MediaMetadata, MediaPlayback, RepeatOption changed events, so all listeners will get notified of
                 //the new Loaded mediacontroller.
@@ -200,6 +206,7 @@ namespace LiveDisplay.Servicios.Music
             {
                 PlaybackState = state.State,
                 CurrentTime = state.Position,
+                RepeatOptionSet= optionSet
             });
             base.OnPlaybackStateChanged(state);
 
@@ -271,28 +278,28 @@ namespace LiveDisplay.Servicios.Music
 
         public bool Finish(MediaSession.Token mediaSessionTokenToFinish)
         {
-            if (instance._token.ToString() == mediaSessionTokenToFinish.ToString())
+            if (_token?.ToString() == mediaSessionTokenToFinish.ToString())
             {
                 try
                 {
-                    instance._mediaController.UnregisterCallback(instance);
+                    _mediaController.UnregisterCallback(instance);
                     _controls.MediaEvent -= MediaEvent;
                     progressTimer.Elapsed -= OnProgressTimerElapsed;
-                    instance = null;
-                    return true;
                 }
                 catch (Exception ex)
                 {
                     Log.Warn("LiveDisplay", $"Failed Finishing!! {ex.Message}");
-                    return false;
                 }
+                instance = null;
+                return true;
             }
             return false;
         }
         public override void OnSessionDestroyed()
         {
             Console.WriteLine("SessionDestroyed CALLED");
-
+            //Self destroy instance in this case.
+            instance?.Finish(_token);
             base.OnSessionDestroyed();
         }
 
