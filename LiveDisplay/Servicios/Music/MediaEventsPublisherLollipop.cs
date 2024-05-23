@@ -70,28 +70,20 @@ namespace LiveDisplay.Servicios.Music
         }
         public static void InitializeFromToken(MediaSession.Token token)
         {
+            if (token == null) throw new ArgumentNullException("Token can't be null!!");
             Initialize(new MediaController(Application.Context, token));
         }
         private MediaEventsPublisherLollipop(MediaController controller)
         {
-            try
-            {
-                _mediaController = controller;
-                _mediaController.RegisterCallback(this);
-                _token = _mediaController.SessionToken;
-                LoadMediaControllerData(_mediaController);
-                _controls = MediaControlsLollipop.GetInstance();
-                _controls.MediaEvent += MediaEvent;
-                progressTimer.Interval = OneSecondInMillis;
-                progressTimer.Elapsed += OnProgressTimerElapsed;
-                Log.Warn("LiveDisplay", "CTOR SUCCESS");
-
-
-            }
-            catch (Exception ex)
-            {
-                Log.Warn("LiveDisplay", $"Failed MusicController#ctor: {ex}");
-            }
+            _mediaController = controller;
+            _mediaController.RegisterCallback(this);
+            _token = _mediaController.SessionToken;
+            LoadMediaControllerData(_mediaController);
+            _controls = MediaControlsLollipop.GetInstance();
+            _controls.MediaEvent += MediaEvent;
+            progressTimer.Interval = OneSecondInMillis;
+            progressTimer.Elapsed += OnProgressTimerElapsed;
+            Log.Warn("LiveDisplay", "CTOR SUCCESS");
         }
         public static MediaEventsPublisherLollipop GetInstance()
         {
@@ -110,7 +102,7 @@ namespace LiveDisplay.Servicios.Music
                 OnMetadataChanged(controller.Metadata);
                 OnPlaybackStateChanged(controller.PlaybackState);
                 OnMediaRepeatOptionChanged(optionSet);
-
+                TrackProgress(_playbackState.Position);
             }
             else
             {
@@ -120,7 +112,7 @@ namespace LiveDisplay.Servicios.Music
 
         public bool IsMediaSessionUsingToken(MediaSession.Token tokenToCheck)
         {
-            return _mediaController.SessionToken.ToString() == tokenToCheck.ToString();
+            return _mediaController.SessionToken.ToString() == tokenToCheck?.ToString();
         }
         public static bool IsInitialized()
         {
@@ -278,6 +270,7 @@ namespace LiveDisplay.Servicios.Music
 
         public bool Finish(MediaSession.Token mediaSessionTokenToFinish)
         {
+            if (mediaSessionTokenToFinish == null) return false; 
             if (_token?.ToString() == mediaSessionTokenToFinish.ToString())
             {
                 try
@@ -299,7 +292,7 @@ namespace LiveDisplay.Servicios.Music
         {
             Console.WriteLine("SessionDestroyed CALLED");
             //Self destroy instance in this case.
-            instance?.Finish(_token);
+            Finish(_token);
             base.OnSessionDestroyed();
         }
 
