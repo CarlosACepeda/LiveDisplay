@@ -1,15 +1,16 @@
 ﻿namespace LiveDisplay
 {
+    using Android.Animation;
     using Android.App;
     using Android.Content;
     using Android.Content.PM;
     using Android.Content.Res;
-    using Android.Graphics;
     using Android.OS;
     using Android.Runtime;
     using Android.Views;
     using Android.Widget;
     using AndroidX.AppCompat.App;
+    using AndroidX.AppCompat.Widget;
     using AndroidX.Core.View;
     using LiveDisplay.Activities;
     using LiveDisplay.Fragments;
@@ -21,12 +22,13 @@
     using System.Threading;
 
     [Activity(Label = "LockScreen",Theme = "@style/LockScreenTheme", ScreenOrientation = ScreenOrientation.Portrait, MainLauncher = false, LaunchMode = LaunchMode.SingleInstance, ExcludeFromRecents = true)]
-    public class LockScreenActivity : AppCompatActivity
+    public class LockScreenActivity : AppCompatActivity, View.IOnApplyWindowInsetsListener
     {
 
-        private AndroidX.Fragment.App.Fragment clockFragment, musicFragment, notificationFragment;
+        private AndroidX.Fragment.App.Fragment quickGlanceFragment, mediaFragment, notificationFragment;
 
-        private LinearLayout lockscreen; //The root linear layout, used to implement double tap to sleep.
+        private RelativeLayout lockscreen; //The root linear layout, used to implement double tap to sleep.
+        private AppCompatImageView lockscreen_wallpaper;
         private float firstTouchTime = -1;
         private float finalTouchTime;
         private readonly float threshold = 1000; //1 second of threshold.(used to implement the double tap.)
@@ -59,7 +61,8 @@
 
             Console.WriteLine($"THE COUNT IS {MainActivity.StartCount}");
             
-            lockscreen = FindViewById<LinearLayout>(Resource.Id.main_container);
+            lockscreen = FindViewById<RelativeLayout>(Resource.Id.main_container);
+            lockscreen_wallpaper = FindViewById<AppCompatImageView>(Resource.Id.wallpaper);
             lockscreen.Touch += Lockscreen_Touch;
 
             watchDog = new System.Timers.Timer
@@ -69,15 +72,16 @@
 
             WallpaperPublisher.NewWallpaperIssued += Wallpaper_NewWallpaperIssued;
             WallpaperPublisher.OnZeroPublishersAvailable += WallpaperPublisher_OnZeroPublishersAvailable;
-            
+
             
             LoadAllFragments();
             LoadConfiguration();
+            Window.DecorView.SetOnApplyWindowInsetsListener(this);
         }
 
         private void WallpaperPublisher_OnZeroPublishersAvailable(object sender, EventArgs e)
         {
-            lockscreen.SetBackgroundColor(Color.Black);
+            //lockscreen_wallpaper.SetBackgroundColor(Color.Black);
         }
 
         private void WatchdogInterval_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -98,12 +102,13 @@
 
                 if (e.Wallpaper != null)
                 {
-                    lockscreen.SetBackgroundColor(Color.Black);
-                    lockscreen.Background = e.Wallpaper;
+                    //TODO: Offer the user a choice regarding scale type.
+                    //Fit XY or Center Crop
+                    lockscreen_wallpaper.SetScaleType(ImageView.ScaleType.CenterCrop);
+                    lockscreen_wallpaper.SetImageDrawable(e.Wallpaper);
                 }
             });
         }
-
         private void Lockscreen_Touch(object sender, View.TouchEventArgs e)
         {
             if (e.Event.Action == MotionEventActions.Down)
@@ -122,61 +127,16 @@
                     }
                     else if (firstTouchTime + threshold > finalTouchTime)
                     {
-
+                        //ValueAnimator v = ValueAnimator.OfFloat(0, 300);
+                        //v.SetInterpolator(new OvershootInterpolator());
+                        //v.SetDuration(2000);
+                        //v.Start();
+                        //v.Update += (sender, e) =>
+                        //{
+                        //    widgetContainer.SetY((float)e.Animation.AnimatedValue);
+                        //};
+                       
                         MoveTaskToBack(true);
-
-                        ////0 Equals: Normal Behavior
-                        //if (doubletapbehavior == "0")
-                        //{
-                        //    if (e.Event.RawY < halfscreenheight)
-                        //    {
-                        //        AwakeHelper.TurnOffScreen();
-                        //    }
-                        //    else
-                        //    {
-                        //        //Finish();
-                        //        //using (Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(TransparentActivity))))
-                        //        //{
-                        //        //    intent.AddFlags(ActivityFlags.NewTask | ActivityFlags.);
-                        //        //    StartActivity(intent);
-                        //        //}
-                        //        MoveTaskToBack(true);
-                        //    }
-                        //}
-                        ////The other value is "1" which means Inverted.
-                        //else
-                        //{
-                        //    if (e.Event.RawY < halfscreenheight)
-                        //    {
-                        //        //Finish();
-                        //        //using (Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(TransparentActivity))))
-                        //        //{
-                        //        //    intent.AddFlags(ActivityFlags.NewTask | ActivityFlags.MultipleTask);
-                        //        //    StartActivity(intent);
-                        //        //}
-                        //        MoveTaskToBack(true);
-
-                        //        //try
-                        //        //{
-                        //        //    ValueAnimator valueAnimator = ValueAnimator.OfFloat(0, 100);
-                        //        //    valueAnimator.SetDuration(1000);
-                        //        //    valueAnimator.Start();
-                        //        //    valueAnimator.Update += (sender, e) =>
-                        //        //    {
-                        //        //        musicFragment.View.SetY((float)e.Animation.AnimatedValue);
-                        //        //    };
-                        //        //}
-                        //        //catch (Exception ex)
-                        //        //{
-                        //        //    Console.WriteLine(ex);
-                        //        //}
-                                
-                        //    }
-                        //    else
-                        //    {
-                        //        AwakeHelper.TurnOffScreen();
-                        //    }
-                        //}
                     }
                     //Reset the values of touch
                     firstTouchTime = -1;
@@ -187,7 +147,7 @@
 
         protected override void OnResume()
         {
-            base.OnResume();
+            
             AddFlags();
             watchDog.Stop();
             watchDog.Start();
@@ -198,6 +158,7 @@
                 welcome.Visibility = ViewStates.Visible;
                 welcome.Touch += Welcome_Touch;
             }
+            base.OnResume();
         }
         private void Welcome_Touch(object sender, View.TouchEventArgs e)
         {
@@ -226,7 +187,7 @@
             watchDog.Dispose();
             MainActivity.StartCount--;
             AndroidX.Fragment.App.FragmentTransaction transaction = SupportFragmentManager.BeginTransaction();
-            transaction.Remove(musicFragment);
+            transaction.Remove(mediaFragment);
         }
 
         public override void OnBackPressed()
@@ -312,8 +273,9 @@
         private void LoadAllFragments()
         {
             AndroidX.Fragment.App.FragmentTransaction transaction = SupportFragmentManager.BeginTransaction();
-            transaction.Add(Resource.Id.WidgetPlaceholder, CreateFragment("music_fragment"), "music_fragment");
-            transaction.Commit();
+            transaction.Add(Resource.Id.WidgetPlaceholder, CreateFragment("media_fragment"), "media_fragment");
+            transaction.Add(Resource.Id.mini_widget_container, CreateFragment("quick_glance"), "quick_glance");
+            transaction.CommitNow();
 
         }
         private AndroidX.Fragment.App.Fragment CreateFragment(string tag)
@@ -321,13 +283,13 @@
             AndroidX.Fragment.App.Fragment result = null;
             switch (tag)
             {
-                case "clock_fragment":
+                case "quick_glance":
 
-                    if (clockFragment == null)
+                    if (quickGlanceFragment == null)
                     {
-                        clockFragment = new ClockFragment();
+                        quickGlanceFragment = new QuickGlanceFragment();
                     }
-                    result = clockFragment;
+                    result = quickGlanceFragment;
                     break;
                 case "notification_fragment":
                     if (notificationFragment == null)
@@ -336,12 +298,12 @@
                     }
                     result = notificationFragment;
                     break;
-                case "music_fragment":
-                    if (musicFragment == null)
+                case "media_fragment":
+                    if (mediaFragment == null)
                     {
-                        musicFragment = new MediaFragment();
+                        mediaFragment = new MediaFragment();
                     }
-                    result = musicFragment;
+                    result = mediaFragment;
                     break;
             }
             return result;
@@ -363,6 +325,13 @@
             { 
                 SetShowWhenLocked(true);
             }
+        }
+
+        public WindowInsets OnApplyWindowInsets(View v, WindowInsets insets)
+        {
+            Console.WriteLine(insets.DisplayCutout.SafeInsetTop);
+            lockscreen?.SetPadding(0, insets.DisplayCutout.SafeInsetTop, 0, 0);
+            return insets;
         }
     }
 }

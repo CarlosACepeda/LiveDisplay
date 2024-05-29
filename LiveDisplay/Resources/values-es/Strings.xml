@@ -81,9 +81,9 @@
   <string name="lockonboot">Bloquear la pantalla al iniciar</string>
   <string name="lockscreensettings">Lockscreen</string>
   <string name="m_widgetcontrolmethodnotification">Usar la notificación que representa reproducción de medios</string>
+  <string name="mediawidget">Widget de Medios</string>
   <string name="musiccontrolledfrommediasession">Elegir la mejor Sesión de Multimedia (más estable) </string>
   <string name="musiccontrolledfromnotification">Usar la notification más reciente que represente la reproducción de multimedia (más rapido)</string>
-  <string name="mediawidget">Widget de Medios</string>
   <string name="never">Nunca</string>
   <string name="nomediaplaying">No hay nada reproduciendose por el momento, \n Pon algo de música! </string>
   <string name="nonallowedtoturnonscreen">No permitido para encender la pantalla</string>
@@ -130,4 +130,15 @@
   <string name="weatherwidgetenabled">Activar el Widget del Clima</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">Diseño del icono de esta app!</string>
+  <string name="permission_explanation_activity_label">Permiso</string>
+  <string name="accept_permission">Aceptar!</string>
+  <string name="deny_permission">Denegar</string>
+  <string name="read_notifications_title">Leer Notificaciones</string>
+  <string name="read_notifications_explanation">Para mostrarte controles de multimedia, debemos leer las notificaciones que representen multimedia</string>
+  <string name="post_notifications_explanation">Mostrarte actualizaciones y enriquecer la experiencia de usuario mostrandote los controles de LiveDisplay directamente en tus notificaciones</string>
+  <string name="enable_accessibility_explanation">Usa los controles enriquecidos de LiveDisplay cuando la pantalla esta apagada, este servicio los detecta cuando apagas la pantalla</string>
+  <string name="post_notifications_title">Enviarte notificaciones</string>
+  <string name="enable_accessibility_title">Detectar presiones de boton</string>
+  <string name="device_admin_title">Apagar la pantalla por ti</string>
+  <string name="device_admin_explanation">LiveDisplay apagará la pantalla automaticamente cuando se active el modo No Molestar o cuando haya una regla personalizada, etc</string>
 </resources>

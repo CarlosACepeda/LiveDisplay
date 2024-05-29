@@ -27,22 +27,22 @@
 	<ScrollView
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
-			android:layout_margin="10dp">
+			android:layout_margin="@dimen/main_scroll_view_margin">
 		<LinearLayout
 				android:orientation="vertical"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content">
 			<TextView
-					android:layout_marginVertical="5dp"
+					android:paddingVertical="@dimen/permissions_default_text_vertical_margin"
 					android:fontFamily="sans-serif-condensed-light"
 					android:text="@string/livedisplay_mandatory_permissions"
 					android:textAppearance="?android:attr/textAppearanceSmall"
 					android:layout_width="match_parent"
-					android:layout_height="wrap_content"					
+					android:layout_height="wrap_content"
 				/>
 			<RelativeLayout
-					android:layout_marginVertical="10dp"
-					android:id="@+id/notification_access"
+					android:paddingVertical="@dimen/permissions_default_text_vertical_margin"
+					android:id="@+id/read_notifications_permission"
 					android:background="?android:attr/selectableItemBackground"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content">
@@ -55,12 +55,12 @@
 				<androidx.appcompat.widget.AppCompatImageView
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
-						android:id="@+id/notificationAccessCheckbox"
+						android:id="@+id/read_notifications_permission_checkbox"
 						android:layout_alignParentRight="true" />
 			</RelativeLayout>
 			<RelativeLayout
 					android:id="@+id/display_overlays"
-					android:layout_marginVertical="10dp"
+					android:paddingVertical="@dimen/permissions_default_text_vertical_margin"
 					tools:visibility="visible"
 					android:visibility="gone"
 					android:background="?android:attr/selectableItemBackground"
@@ -73,16 +73,15 @@
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"/>
 				<androidx.appcompat.widget.AppCompatImageView
-						tools:src="@drawable/outline_check_white_24"
 						android:layout_width="wrap_content"
 						android:layout_height="match_parent"
-						android:id="@+id/drawOverOtherAppsAccessCheckbox"
+						android:id="@+id/display_overlays_permission_checkbox"
 						android:layout_centerVertical="true"
 						android:layout_alignParentRight="true" />
 			</RelativeLayout>
 			<RelativeLayout
-					android:id="@+id/post_notifications"
-					android:layout_marginVertical="10dp"
+					android:id="@+id/post_notifications_permission"
+					android:paddingVertical="@dimen/permissions_default_text_vertical_margin"
 					tools:visibility="visible"
 					android:visibility="gone"
 					android:background="?android:attr/selectableItemBackground"
@@ -93,16 +92,15 @@
 						android:text="@string/enable_posting_notifications_permission"
 						android:textAppearance="?android:attr/textAppearanceLarge"
 						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:id="@+id/enable_notification_permission"/>
+						android:layout_height="wrap_content"/>
 				<androidx.appcompat.widget.AppCompatImageView
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
-						android:id="@+id/enable_notification_permission_checkbox"
+						android:id="@+id/post_notifications_permission_checkbox"
 						android:layout_alignParentRight="true" />
 			</RelativeLayout>
 			<TextView
-					android:layout_marginVertical="10dp"
+					android:layout_marginVertical="@dimen/permissions_default_text_vertical_margin"
 					android:fontFamily="sans-serif-condensed"
 					android:textAppearance="?android:attr/textAppearanceSmall"
 					android:layout_width="match_parent"
@@ -110,7 +108,7 @@
 					android:id="@+id/health" />
 			<!-- OPTIONAL PERMISSIONS SECTION -->
 			<TextView
-					android:layout_marginVertical="10dp"
+					android:paddingVertical="@dimen/permissions_default_text_vertical_margin"
 					android:fontFamily="sans-serif-condensed-light"
 					android:text="@string/livedisplay_optional_permissions"
 					android:textAppearance="?android:attr/textAppearanceSmall"
@@ -118,8 +116,8 @@
 					android:layout_height="wrap_content"
 				/>
 			<RelativeLayout
-					android:id="@+id/accessibility_access"
-					android:layout_marginVertical="10dp"
+					android:id="@+id/accessibility_access_permission"
+					android:paddingVertical="@dimen/permissions_default_text_vertical_margin"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content">
 				<TextView
@@ -131,12 +129,12 @@
 				<androidx.appcompat.widget.AppCompatImageView
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
-						android:id="@+id/accesibilityAccessCheckbox"
+						android:id="@+id/accessibility_access_permission_checkbox"
 						android:layout_alignParentRight="true" />
 			</RelativeLayout>
 			<RelativeLayout
-					android:id="@+id/device_access"
-					android:layout_marginVertical="10dp"
+					android:id="@+id/device_access_permission"
+					android:paddingVertical="@dimen/permissions_default_text_vertical_margin"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content">
 				<TextView
@@ -148,7 +146,7 @@
 				<androidx.appcompat.widget.AppCompatImageView
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
-						android:id="@+id/deviceAccessCheckbox"
+						android:id="@+id/device_access_permission_checkbox"
 						android:layout_alignParentRight="true" />
 			</RelativeLayout>
 		</LinearLayout>

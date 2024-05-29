@@ -8,8 +8,6 @@ using System.Threading;
 
 namespace LiveDisplay.BroadcastReceivers
 {
-    //Android 14 (Api Level 34: Upside Down Cake) made this broadcast receiver useless.
-    //As it defers the OnReceive method until my app gets out of the cached state, which means the user must open the app to keep this receiver working accordingly.
     [BroadcastReceiver(Label = "ScreenOnOffReceiver", Enabled =true, Exported = true, Permission = Android.Manifest.Permission.UseFullScreenIntent)]
     [IntentFilter(new[] { Intent.ActionScreenOff })]
     [IntentFilter(new[] { Intent.ActionScreenOn })]
@@ -44,12 +42,8 @@ namespace LiveDisplay.BroadcastReceivers
                     ScreenTurnedOffWhileInVertical = false;
                 }
 
-                int delaytolockscreen = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.StartLockscreenDelayTime, "0"));
-                Console.WriteLine($"Delay turn off: {delaytolockscreen}");
-
                 ThreadPool.QueueUserWorkItem(m =>
                 {
-                    Thread.Sleep(delaytolockscreen);//Seconds of delay before locking screen(Start the LockScreen Activity)
                                                     //The reason to check if the Screen is turned off is because User can Turn off device screen,
                                                     //then turn it on before the delay to lock screen is finished.
                                                     //So, the Activity will start even if the screen is On, so,
@@ -79,7 +73,7 @@ namespace LiveDisplay.BroadcastReceivers
                         PendingIntent pendingIntent = PendingIntent.GetActivity(Application.Context, 0, intent, PendingIntentFlags.Immutable);
 
                         NotificationChannel notificationChannel = new NotificationChannel("livedisplaynotificationchannel", "LiveDisplay", NotificationImportance.Max);
-                        notificationChannel.SetBypassDnd(true);
+                        notificationChannel.SetBypassDnd(true); //so it works in Zen Mode
                         notificationManager.CreateNotificationChannel(notificationChannel);
                         Notification.Builder builder = new Notification.Builder(Application.Context, "livedisplaynotificationchannel");
                         builder.SetContentTitle("");

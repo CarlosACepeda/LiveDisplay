@@ -168,7 +168,6 @@
                 android:alpha="@dimen/alpha_half_visibility"
                 tools:src="@drawable/ic_cloud_white_24dp"
                 android:paddingHorizontal="@dimen/media_widget_secondary_controls_horizontal_padding"
-                android:paddingVertical="@dimen/media_widget_secondary_controls_vertical_padding"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="?android:attr/selectableItemBackground" />
@@ -176,7 +175,6 @@
                 android:alpha="@dimen/alpha_half_visibility"
                 tools:src="@drawable/ic_awake_24dp"
                 android:paddingHorizontal="@dimen/media_widget_secondary_controls_horizontal_padding"
-                android:paddingVertical="@dimen/media_widget_secondary_controls_vertical_padding"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="?android:attr/selectableItemBackground" />

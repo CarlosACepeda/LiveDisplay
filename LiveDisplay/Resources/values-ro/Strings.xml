@@ -69,4 +69,7 @@
   <string name="weather">Climă</string>
   <string name="weatherwidget">Widget de Climă</string>
   <string name="weatherwidgetenabled">Activează Widget de Climă</string>
+  <string name="permission_explanation_activity_label">Permisiune</string>
+  <string name="accept_permission">Acept!</string>
+  <string name="read_notifications_title">Citesc Notificarile</string>
 </resources>

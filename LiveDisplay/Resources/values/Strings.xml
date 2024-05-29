@@ -84,9 +84,9 @@
   <string name="lockscreensettings">Lockscreen</string>
   <string name="m_widgetcontrolmethodnotification">Use the Notification that represents media playing</string>
   <string name="me">Carlos Cepeda</string>
+  <string name="mediawidget">Media Widget</string>
   <string name="musiccontrolledfrommediasession">Pick the best Media Session (more stable)</string>
   <string name="musiccontrolledfromnotification">Use the most recent Notification that represents current media playing (quicker)</string>
-  <string name="mediawidget">Media Widget</string>
   <string name="never">Never</string>
   <string name="nomediaplaying">There\'s no media playing currently!  \n Let\'s play something!</string>
   <string name="nonallowedtoturnonscreen">Non allowed to turn on screen</string>
@@ -136,4 +136,15 @@
   <string name="weatherwidgetenabled">Enable Weather Widget</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
+  <string name="permission_explanation_activity_label">Permission</string>
+  <string name="accept_permission">Accept!</string>
+  <string name="deny_permission">Deny</string>
+  <string name="read_notifications_title">Read Notifications</string>
+  <string name="read_notifications_explanation">In order to display and control your media we need to read the notifications that represent Media playing</string>
+  <string name="post_notifications_explanation">Show you updates, and offer a richer experience bringing LiveDisplay controls to your notifications</string>
+  <string name="enable_accessibility_explanation">Use LiveDisplay controls with your screen off</string>
+  <string name="post_notifications_title">Send you notifications</string>
+  <string name="enable_accessibility_title">Detect button presses</string>
+  <string name="device_admin_title">Turn off the screen for you</string>
+  <string name="device_admin_explanation">LiveDisplay will turn off the screen in many conditions, when the Do Not Disturb Mode, when a custom rule is set, etc.</string>
 </resources>

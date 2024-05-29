@@ -1,0 +1,44 @@
+
+<LinearLayout xmlns:a="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+    a:layout_width="wrap_content"
+    a:layout_height="wrap_content"
+	a:id="@+id/container"
+	a:orientation="horizontal"
+    a:gravity="center">
+	<TextView
+		tools:text="3/11 "
+        a:layout_width="wrap_content"
+		a:textSize="@dimen/date_text_size"
+        a:alpha="@dimen/alpha_half_visibility"
+        a:layout_height="wrap_content"
+		a:fontFamily="sans-serif-condensed-light"
+        a:paddingHorizontal="@dimen/mini_widget_items_padding"
+        a:id="@+id/date" />
+    <TextClock
+        a:id="@+id/clock"
+        tools:text="8:45 p.m."
+        a:background="?android:selectableItemBackground"
+        a:layout_width="wrap_content"
+        a:layout_height="wrap_content"
+        a:textSize="@dimen/clock_text_size"
+        a:alpha="@dimen/alpha_half_visibility"
+        a:fontFamily="sans-serif-condensed-light"
+        a:paddingHorizontal="@dimen/mini_widget_items_padding"
+        />
+	<androidx.appcompat.widget.AppCompatImageView
+        a:id="@+id/batteryIcon"
+        a:alpha="@dimen/alpha_half_visibility"
+        a:paddingHorizontal="@dimen/mini_widget_items_padding"
+        a:layout_width="wrap_content"
+        a:layout_height="wrap_content" />
+    <TextView
+		tools:text="75%"
+        a:id="@+id/batteryLevel"
+		a:fontFamily="sans-serif-condensed-light"
+        a:layout_width="wrap_content"
+        a:layout_height="wrap_content" 
+        a:alpha="@dimen/alpha_half_visibility"
+        a:paddingHorizontal="@dimen/mini_widget_items_padding"
+		a:textSize="@dimen/battery_level_text_size"/>
+</LinearLayout>

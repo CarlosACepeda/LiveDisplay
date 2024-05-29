@@ -14,10 +14,22 @@
      android:defaultValue="false"
      android:key="key"
      android:title="pSyncWithWeatherMode"
+     android:summary=""
+     app:iconSpaceReserved="false"/>
+    <SwitchPreference
+     android:defaultValue="false"
+     android:key="key"
+     android:title="pShowLyrics"
      app:iconSpaceReserved="false"/>
   </PreferenceCategory>
   <PreferenceCategory
       android:title="@string/advanced"
       app:iconSpaceReserved="false">
+    <SwitchPreference
+     android:defaultValue="false"
+     android:key="key"
+     android:title="pUseAllTheTime"
+     android:summary="pUse it even when Media is not playing"
+     app:iconSpaceReserved="false"/>
   </PreferenceCategory>
 </PreferenceScreen>

@@ -1,0 +1,45 @@
+﻿<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/explanation_screen_content_padding">
+    
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
+        <TextView
+        android:id="@+id/permission_title"
+        android:textAlignment="center"
+        android:textSize="@dimen/explanation_title_text_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+        <TextView
+        android:id="@+id/permission_explanation"
+        android:textAlignment="center"
+        android:textSize="@dimen/explanation_description_text_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+     </LinearLayout>
+    <LinearLayout
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+            <Button
+                android:id="@+id/accept_permission"
+                android:text="@string/accept_permission"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/deny_permission"
+                android:text="@string/deny_permission"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+    </LinearLayout>
+</RelativeLayout>

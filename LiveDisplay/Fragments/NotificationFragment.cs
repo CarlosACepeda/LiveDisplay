@@ -7,7 +7,6 @@ using LiveDisplay.Adapters;
 using LiveDisplay.Misc;
 using LiveDisplay.Servicios;
 using LiveDisplay.Servicios.Awake;
-using LiveDisplay.Servicios.Music;
 using LiveDisplay.Servicios.Notificaciones;
 using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
 using LiveDisplay.Servicios.Notificaciones.NotificationStyle;
@@ -23,7 +22,6 @@ namespace LiveDisplay.Fragments
         private OpenNotification openNotification; //the current OpenNotification instance active.
         private LinearLayout maincontainer;
         private bool timeoutStarted = false;
-        private NotificationStyleApplier styleApplier;
         private ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
         #region Lifecycle events
 
@@ -31,28 +29,18 @@ namespace LiveDisplay.Fragments
         {
             base.OnCreate(savedInstanceState);
             NotificationAdapterViewHolder.ItemClicked += ItemClicked;
-            // Create your fragment here
-            WidgetStatusPublisher.OnWidgetStatusChanged += WidgetStatusPublisher_OnWidgetStatusChanged;
-
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            View v = inflater.Inflate(Resource.Layout.NotificationFrag, container, false);
+            View v = inflater.Inflate(Resource.Layout.Notification, container, false);
             maincontainer = v.FindViewById<LinearLayout>(Resource.Id.container);
-            styleApplier = new NotificationStyleApplier(ref maincontainer, this, NotificationViewType.OnLockscreen);
             maincontainer.Drag += Notification_Drag;
             maincontainer.Click += LlNotification_Click;
             NotificationAdapterViewHolder.ItemLongClicked += ItemLongClicked;
             CatcherHelper.NotificationPosted += CatcherHelper_NotificationPosted;
             CatcherHelper.NotificationRemoved += CatcherHelper_NotificationRemoved;
             NotificationStyleApplier.SendInlineResponseAvailabityChanged += NotificationStyleApplier_SendInlineResponseAvailabityChanged;
-
-            //if (openNotification == null) //We don't have a notification to show here, so...
-            //{
-            //    //...Now ask Catcher to send us the last notification posted to fill the views..
-            //    NotificationSlave.NotificationSlaveInstance().RetrieveLastNotification();
-            //}
             return v;
         }
         public override void OnPause()
@@ -91,15 +79,6 @@ namespace LiveDisplay.Fragments
                 //maincontainer.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
             }
 
-            if (configurationManager.RetrieveAValue(ConfigurationParameters.TestEnabled))
-            {
-                Toast.MakeText(Application.Context, "Progress Indeterminate?: " + openNotification.IsProgressIndeterminate().ToString() + "\n"
-                    + "Current Progress: " + openNotification.GetProgress().ToString() + "\n"
-                    + "Max Progress: " + openNotification.GetProgressMax().ToString() + "\n"
-                    + openNotification.GetGroupInfo()
-                    , ToastLength.Short).Show();
-            }
-
             if (e.UpdatesPreviousNotification)
             {
                 Activity?.RunOnUiThread(() =>
@@ -132,7 +111,6 @@ namespace LiveDisplay.Fragments
             {
                 Activity?.RunOnUiThread(() =>
                 {
-                    styleApplier?.ApplyStyle(openNotification);
                     //maincontainer.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
                     if (maincontainer.Visibility != ViewStates.Visible)
                     {
@@ -161,21 +139,7 @@ namespace LiveDisplay.Fragments
             
 
             NotificationAdapterViewHolder.ItemClicked -= ItemClicked;
-            WidgetStatusPublisher.OnWidgetStatusChanged -= WidgetStatusPublisher_OnWidgetStatusChanged;
-            styleApplier = null;
             base.OnDestroy();
-        }
-
-        private void WidgetStatusPublisher_OnWidgetStatusChanged(object sender, WidgetStatusEventArgs e)
-        {
-            if (e.WidgetName == "MusicFragment")
-            {
-                if (e.Show == true)
-                {
-                    if (maincontainer != null)
-                        maincontainer.Visibility = ViewStates.Invisible;
-                }
-            }
         }
 
         #endregion Lifecycle events
@@ -277,35 +241,26 @@ namespace LiveDisplay.Fragments
             
             //If the timeout has started, then cancel the action, and start again.
 
-            if (stop)
-            {
-                maincontainer?.RemoveCallbacks(HideNotification); //Stop counting.
-                return;
-            }
-            else
-            {
-                if (timeoutStarted == true)
-                {
-                    maincontainer?.RemoveCallbacks(HideNotification);
-                    maincontainer?.PostDelayed(HideNotification,7000);
-                }
-                //If not, simply wait 5 seconds then hide the notification, in that span of time, the timeout is
-                //marked as Started(true)
-                else
-                {
-                    timeoutStarted = true;
-                    maincontainer?.PostDelayed(HideNotification, 7000);
-                }
-            }
-        }
-        void HideNotification()
-        {
-            if (maincontainer != null)
-            {
-                maincontainer.Visibility = ViewStates.Gone;
-                timeoutStarted = false;
-                WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "NotificationFragment" });
-            }
+            //if (stop)
+            //{
+            //    maincontainer?.RemoveCallbacks(HideNotification); //Stop counting.
+            //    return;
+            //}
+            //else
+            //{
+            //    if (timeoutStarted == true)
+            //    {
+            //        maincontainer?.RemoveCallbacks(HideNotification);
+            //        maincontainer?.PostDelayed(HideNotification,7000);
+            //    }
+            //    //If not, simply wait 5 seconds then hide the notification, in that span of time, the timeout is
+            //    //marked as Started(true)
+            //    else
+            //    {
+            //        timeoutStarted = true;
+            //        maincontainer?.PostDelayed(HideNotification, 7000);
+            //    }
+            //}
         }
     }
 }

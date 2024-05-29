@@ -167,7 +167,7 @@ namespace LiveDisplay.Fragments
         {
             if(currentMediaNotification == null) return false;
             var compactViewIndices = currentMediaNotification.CompactViewActionsIndices();
-            var notificationActions = currentMediaNotification.RetrieveActions();
+            var notificationActions = currentMediaNotification.Actions;
             if (notificationActions.Count == 0) return false;
 
             int actionPosition = 0;
@@ -184,7 +184,7 @@ namespace LiveDisplay.Fragments
         {
             var imageButton= additionalMediaControls.GetChildAt(position) as AppCompatImageButton;
 
-            imageButton.SetImageDrawable(action.GetActionIcon());
+            imageButton.SetImageDrawable(action.Icon);
             imageButton.Click += (sender, e) =>
             {
                 action.ClickAction();
@@ -254,7 +254,7 @@ namespace LiveDisplay.Fragments
                         switch (visibility)
                         {
                             case ViewStates.Visible:
-                                additionalMediaControls.Visibility = ViewStates.Gone;
+                                additionalMediaControls.Visibility = ViewStates.Invisible;
                                 break;
                             default:
                                 additionalMediaControls.Visibility = ViewStates.Visible;

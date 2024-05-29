@@ -4,24 +4,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto" 
     xmlns:tools="http://schemas.android.com/tools" 
     a:layout_width="match_parent" 
-    a:id="@+id/lockscreenroot" 
     a:layout_height="match_parent">
-   <LinearLayout 
-        a:id="@+id/main_container" 
-        a:orientation="vertical" 
-        a:layout_width="match_parent" 
+    <androidx.appcompat.widget.AppCompatImageView
+        a:id="@+id/wallpaper"
         a:layout_height="match_parent"
-        a:gravity="center">
-         <LinearLayout
-                a:orientation="vertical"
-                a:layout_gravity="center"
-                a:layout_width="match_parent" 
-                a:layout_height="wrap_content" 
-                a:id="@+id/WidgetPlaceholder" />
-   </LinearLayout>
-   <include 
-        a:id="@+id/welcomeoverlay" 
-        layout="@layout/welcome" 
+        a:layout_width="match_parent"
+        />
+    <RelativeLayout
+        a:id="@+id/main_container" 
         a:layout_width="match_parent" 
-        a:layout_height="match_parent" />
+        a:layout_height="match_parent">
+        <LinearLayout
+            a:id="@+id/mini_widget_container"
+            a:orientation="horizontal"
+            a:layout_alignParentTop="true"
+            a:layout_centerHorizontal="true"
+            a:layout_width="wrap_content"
+            a:layout_height="wrap_content"/>
+    <LinearLayout
+        a:layout_centerInParent="true"
+        a:orientation="vertical"
+        a:layout_width="match_parent" 
+        a:layout_height="wrap_content" 
+        a:id="@+id/WidgetPlaceholder" />
+    </RelativeLayout>
 </FrameLayout>

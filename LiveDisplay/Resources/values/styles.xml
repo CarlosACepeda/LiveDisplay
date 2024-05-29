@@ -17,6 +17,7 @@
   </style>
 
   <style name="LockScreenTheme" parent="AppTheme">
+      <item name="android:windowBackground">@color/colorPrimaryDark</item>
   </style>
 
   <!--Style for toolbar-->

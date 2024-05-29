@@ -1,0 +1,155 @@
+﻿using Android.App;
+using Android.App.Admin;
+using Android.Content;
+using Android.OS;
+using Android.Provider;
+using Android.Runtime;
+using Android.Widget;
+using AndroidX.Activity.Result;
+using AndroidX.AppCompat.App;
+using Java.Lang;
+using LiveDisplay;
+using LiveDisplay.BroadcastReceivers;
+using LiveDisplay.Misc;
+using LiveDisplay.Servicios;
+using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
+
+[Activity(Label = "@string/permission_explanation_activity_label")]
+public class PermissionExplanationActivity: AppCompatActivity, IActivityResultCallback
+{
+    int _permissionToSetRequestCode = Permissions.None;
+    int permissionBeingSetForResult = Permissions.None;
+    ActivityResultLauncher activityResultLauncher;
+
+
+    Button accept_permission, deny_permission;
+    TextView permission_title, permission_explanation;
+    protected override void OnCreate(Bundle savedInstanceState)
+    {
+        SetContentView(Resource.Layout.permission_explanation);
+
+        activityResultLauncher = RegisterForActivityResult(new RequestPermission(), this);
+
+
+        accept_permission = FindViewById<Button>(Resource.Id.accept_permission);
+        deny_permission = FindViewById<Button>(Resource.Id.deny_permission);
+        permission_title = FindViewById<TextView>(Resource.Id.permission_title);
+        permission_explanation = FindViewById<TextView>(Resource.Id.permission_explanation);
+
+        accept_permission.Click += Accept_permission_Click;
+        deny_permission.Click += Deny_permission_Click;
+
+        _permissionToSetRequestCode = Intent.Extras.GetInt(Permissions.PermissionKey);
+
+        SetExplanation();
+
+        base.OnCreate(savedInstanceState);
+    }
+
+    private void Deny_permission_Click(object sender, System.EventArgs e)
+    {
+        SetPermissionResult(false);
+    }
+
+    private void Accept_permission_Click(object sender, System.EventArgs e)
+    {
+        var intent = new Intent();
+
+        switch (_permissionToSetRequestCode)
+        {
+            case Permissions.PostNotifications:
+                activityResultLauncher.Launch(Android.Manifest.Permission.PostNotifications); //Asking for a runtime permission
+                permissionBeingSetForResult = _permissionToSetRequestCode;
+                break;
+
+            case Permissions.ReadNotifications:
+                ComponentName readNotifications = new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(Catcher)));
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.R)
+                {
+                    intent = new Intent(Settings.ActionNotificationListenerSettings);
+                }
+                else
+                {
+                    intent = new Intent(Settings.ActionNotificationListenerDetailSettings);
+                    intent.PutExtra(Settings.ExtraNotificationListenerComponentName, readNotifications.FlattenToString());
+                }
+                break;
+            case Permissions.EnableAccessibilityService:
+                intent.SetAction(Settings.ActionAccessibilitySettings);
+                break;
+            case Permissions.DeviceAdmin:
+
+                ComponentName admin = new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(AdminReceiver)));
+                intent = new Intent(DevicePolicyManager.ActionAddDeviceAdmin).PutExtra(DevicePolicyManager.ExtraDeviceAdmin, admin);
+                break;
+        }
+        //To prevent launching activity twice, as asking for Runtime permissions is made by Activity Result Launcher
+        if (permissionBeingSetForResult == Permissions.None)
+            StartActivityForResult(intent, _permissionToSetRequestCode);
+    }
+    protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
+    {
+        //Only for activities started, not for requested Manifest Runtime Permissions, such as posting notifications.
+        switch (requestCode)
+        {
+            case Permissions.ReadNotifications:
+                SetPermissionResult(Checkers.IsNotificationListenerEnabled());
+                break;
+            case Permissions.DeviceAdmin:
+                SetPermissionResult(Checkers.IsThisAppADeviceAdministrator());
+                break;
+            case Permissions.EnableAccessibilityService:
+                SetPermissionResult(Checkers.IsAccessibilityEnabled());
+                break;
+        }
+
+        base.OnActivityResult(requestCode, resultCode, data);
+    }
+    public void OnActivityResult(Object result)
+    {
+        switch (permissionBeingSetForResult)
+        {
+            case Permissions.PostNotifications:
+                SetPermissionResult(Checkers.ThisAppCanPostNotifications());
+                break;
+        }
+    }
+
+    void SetPermissionResult(bool permissionResult)
+    {
+        var resultIntent = new Intent();
+        var extras = new Bundle();
+        extras.PutBoolean(Permissions.PermissionKey, permissionResult);
+        permissionBeingSetForResult = Permissions.None;
+        resultIntent.PutExtras(extras);
+        SetResult(Android.App.Result.Ok, resultIntent);
+        Finish();
+    }
+
+    public void SetExplanation()
+    {
+        string title= string.Empty;
+        string explanation= string.Empty;
+        switch(_permissionToSetRequestCode)
+        {
+            case Permissions.ReadNotifications:
+                title = GetString(Resource.String.read_notifications_title);
+                explanation = GetString(Resource.String.read_notifications_explanation);
+                break;
+            case Permissions.PostNotifications:
+                title = GetString(Resource.String.post_notifications_title);
+                explanation = GetString(Resource.String.post_notifications_explanation);
+                break;
+            case Permissions.EnableAccessibilityService:
+                title = GetString(Resource.String.enable_accessibility_title);
+                explanation = GetString(Resource.String.enable_accessibility_explanation);
+                break;
+            case Permissions.DeviceAdmin:
+                title = GetString(Resource.String.device_admin_title);
+                explanation = GetString(Resource.String.device_admin_explanation);
+                break;
+        }
+        permission_title.Text= title;
+        permission_explanation.Text= explanation;
+    }
+}

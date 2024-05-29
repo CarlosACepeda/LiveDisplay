@@ -24,21 +24,11 @@ namespace LiveDisplay.Servicios.Notificaciones
         public const string MessagingStyle = "android.app.Notification$MessagingStyle"; //Only available on API Level 24 and up.
         public const string BigTextStyle = "android.app.Notification$BigTextStyle";
         public const string DecoratedCustomViewStyle = "android.app.Notification$DecoratedCustomViewStyle";
-        private StatusBarNotification statusbarnotification;
+        private readonly StatusBarNotification statusbarnotification;
 
         public OpenNotification(StatusBarNotification sbn)
         {
             statusbarnotification = sbn;
-            try
-            {
-                //var context = Application.Context.CreatePackageContext(sbn.PackageName, PackageContextFlags.Restricted);
-                //notificationManager = (NotificationManager)context.GetSystemService(Context.NotificationService);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
-
         }
 
         public StatusBarNotification GetUnderlyingStatusBarNotification()
@@ -52,7 +42,16 @@ namespace LiveDisplay.Servicios.Notificaciones
 
             return string.Empty;
         }
-
+        //public string Key
+        //{
+        //    get
+        //    {
+        //        if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
+        //            return statusbarnotification.Key;
+        //        return string.Empty;
+        //    }
+        //    set { }
+        //}
         public int GetId()
         {
             return statusbarnotification.Id;
@@ -189,10 +188,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
         }
 
-        public List<OpenAction> RetrieveActions()
-        {
-            return statusbarnotification.Notification.Actions?.Select((x) => new OpenAction(x)).ToList();
-        }
+        public List<OpenAction> Actions => statusbarnotification.Notification.Actions?.Select((x) => new OpenAction(x)).ToList(); 
 
         internal bool IsClearable()
         {
@@ -410,10 +406,8 @@ namespace LiveDisplay.Servicios.Notificaciones
             this.action = action;
         }
 
-        public string Title()
-        {
-            return action.Title.ToString();
-        }
+        public string Title=> action.Title.ToString();
+
 
         public void ClickAction()
         {
@@ -447,34 +441,36 @@ namespace LiveDisplay.Servicios.Notificaciones
             return false;
         }
 
-        public Drawable GetActionIcon()
+        public Drawable Icon 
         {
-            Drawable actionIcon;
-            try
+            get
             {
+                Drawable actionIcon;
                 if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1)
                 {
-                    actionIcon= IconFactory.ReturnActionIconDrawable(action.Icon, action.ActionIntent.CreatorPackage);
+                    actionIcon = IconFactory.ReturnActionIconDrawable(action.Icon, action.ActionIntent.CreatorPackage);
                 }
                 else
                 {
                     actionIcon = IconFactory.ReturnActionIconDrawable(action.JniPeerMembers.InstanceFields.GetInt32Value("icon.I", action), action.ActionIntent.CreatorPackage);
                 }
+
+                return actionIcon;
             }
-            catch
-            {
-                return null;
-            }
-            return actionIcon;
         }
 
-        public string GetPlaceholderTextForInlineResponse()
+
+        public string PlaceholderTextForInlineResponse 
         {
-            if (Build.VERSION.SdkInt <= BuildVersionCodes.M) return string.Empty;
+            get
+            {
+                if (Build.VERSION.SdkInt <= BuildVersionCodes.M) return string.Empty;
 
-            return remoteInputDirectReply.Label;
-            
+                return remoteInputDirectReply.Label;
+
+            }
         }
+
 
         public bool SendInlineResponse(string responseText)
         {

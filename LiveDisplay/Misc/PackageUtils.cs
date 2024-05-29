@@ -31,7 +31,7 @@ namespace LiveDisplay.Misc
 
         }
 
-        public static Intent GetAppPendingIntent(string packageName)
+        public static Intent GetAppIntent(string packageName)
         {
             return packageManager.GetLaunchIntentForPackage(packageName);
         }

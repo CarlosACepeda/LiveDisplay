@@ -8,12 +8,19 @@
   <dimen name="media_widget_controls_horizontal_padding">20dp</dimen>
   <dimen name="media_widget_secondary_controls_horizontal_padding">10dp</dimen>
   <dimen name="media_widget_controls_vertical_padding">20dp</dimen>
-  <dimen name="media_widget_secondary_controls_vertical_padding">10dp</dimen>
   <dimen name="layout_width_for_weight_sum">0dp</dimen>
   <dimen name="media_widget_weight">29</dimen>
   <dimen name="media_widget_horizontal_drag_indicator_weight">1</dimen>
   <dimen name="media_title_text_size">25dp</dimen>
   <dimen name="media_artist_text_size">19dp</dimen>
   <dimen name="media_album_text_size">17dp</dimen>
-
+  <dimen name="date_text_size">10dp</dimen>
+  <dimen name="battery_level_text_size">10dp</dimen>
+  <dimen name="clock_text_size">10dp</dimen>
+  <dimen name="permissions_default_text_vertical_margin">10dp</dimen>
+  <dimen name="mini_widget_items_padding">5dp</dimen>
+  <dimen name="main_scroll_view_margin">10dp</dimen>
+  <dimen name="explanation_title_text_size">50dp</dimen>
+  <dimen name="explanation_description_text_size">20dp</dimen>
+  <dimen name="explanation_screen_content_padding">10dp</dimen>
 </resources>

@@ -246,7 +246,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                         imm.ToggleSoftInput(ShowFlags.Forced, 0);
                         //TODO: Keyboard doesn't work in floating windows. :/
                     }
-                    inlineresponse.Hint = openAction.GetPlaceholderTextForInlineResponse();
+                    //inlineresponse.Hint = openAction.PlaceholderTextForInlineResponse;
                     sendinlineresponse.SetTag(DefaultActionIdentificator, openAction);
                     sendinlineresponse.Click += Sendinlineresponse_Click;
 
@@ -283,7 +283,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
             notificationActions?.RemoveAllViews();
             if (notification.HasActions())
             {
-                var actions = notification.RetrieveActions();
+                //var actions = notification.RetrieveActions();
                 //foreach (Notification.Action action in actions)
                 //{
                 //    OpenAction openAction = new OpenAction(action);
