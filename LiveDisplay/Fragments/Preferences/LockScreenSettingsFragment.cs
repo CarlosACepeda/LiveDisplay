@@ -16,12 +16,12 @@ namespace LiveDisplay.Fragments.Preferences
 
         public override void OnCreatePreferences(Bundle savedInstanceState, string rootKey)
         {
-            AddPreferencesFromResource(Resource.Xml.lockscreen_prefs);
-            PreferenceManager.SetDefaultValues(Application.Context, Resource.Xml.lockscreen_prefs, true);
+            AddPreferencesFromResource(Resource.Xml.appearance_prefs);
+            PreferenceManager.SetDefaultValues(Application.Context, Resource.Xml.appearance_prefs, true);
 
-            Preference wallpapersettingspreference = FindPreference("wallpapersettings");
+            //Preference wallpapersettingspreference = FindPreference("wallpapersettings");
 
-            wallpapersettingspreference.PreferenceClick += WallpaperSettingsPreference_PreferenceClick;
+            //wallpapersettingspreference.PreferenceClick += WallpaperSettingsPreference_PreferenceClick;
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)

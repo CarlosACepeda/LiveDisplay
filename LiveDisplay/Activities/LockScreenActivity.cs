@@ -151,13 +151,13 @@
             AddFlags();
             watchDog.Stop();
             watchDog.Start();
-            if (configurationManager.RetrieveAValue(ConfigurationParameters.TutorialRead) == false)
-            {
-                welcome = FindViewById<TextView>(Resource.Id.welcomeoverlay);
-                welcome.Text = Resources.GetString(Resource.String.tutorialtext);
-                welcome.Visibility = ViewStates.Visible;
-                welcome.Touch += Welcome_Touch;
-            }
+            //if (configurationManager.RetrieveAValue(ConfigurationParameters.TutorialRead) == false)
+            //{
+            //    welcome = FindViewById<TextView>(Resource.Id.welcomeoverlay);
+            //    welcome.Text = Resources.GetString(Resource.String.tutorialtext);
+            //    welcome.Visibility = ViewStates.Visible;
+            //    welcome.Touch += Welcome_Touch;
+            //}
             base.OnResume();
         }
         private void Welcome_Touch(object sender, View.TouchEventArgs e)

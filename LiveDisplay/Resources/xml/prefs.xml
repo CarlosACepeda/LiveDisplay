@@ -1,8 +1,8 @@
 ﻿<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-  <!--<Preference
-        android:fragment="LockScreenSettingsFragment"
-          android:title="@string/lockscreensettings"
-          android:icon="@drawable/ic_lockscreen_24dp" />-->
+  <Preference
+        android:fragment="AppearanceSettingsFragment"
+          android:title="@string/appearance"
+          android:icon="@drawable/ic_lockscreen_24dp" />
  <!-- <Preference
         android:fragment="NotificationSettingsFragment"
           android:title="@string/notificationsettings"

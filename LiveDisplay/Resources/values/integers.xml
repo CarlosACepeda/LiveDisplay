@@ -1,0 +1,4 @@
+﻿<resources>
+  <integer name="center_crop">0</integer>
+  <integer name="fit_xy">1</integer>
+</resources>

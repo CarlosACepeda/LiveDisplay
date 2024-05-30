@@ -60,16 +60,11 @@ namespace LiveDisplay.Servicios
 
         public void PostNotification(int notifid, string title, string text, bool autoCancellable, NotificationPriority notificationPriority)
         {
-#pragma warning disable CS0618 // 'Notification.Builder(Context) está obsoleto
             Notification.Builder builder = new Notification.Builder(Application.Context);
-#pragma warning restore
             builder.SetContentTitle(title);
             builder.SetContentText(text);
             builder.SetAutoCancel(autoCancellable);
-#pragma warning disable CS0618 // 'Notification.Builder.SetPriority(int)' está obsoleto: 'deprecated'
             builder.SetPriority(Convert.ToInt32(notificationPriority));
-#pragma warning restore CS0618 // 'Notification.Builder.SetPriority(int)' está obsoleto: 'deprecated'
-
             builder.SetSmallIcon(Resource.Drawable.ic_stat_default_appicon);
             notificationManager.Notify(notifid, builder.Build());
         }
@@ -103,11 +98,9 @@ namespace LiveDisplay.Servicios
             Notification.Builder builder;
             if (Build.VERSION.SdkInt < BuildVersionCodes.NMr1)
             {
-#pragma warning disable CS0618 // 'Notification.Builder.SetPriority(int)' está obsoleto: 'deprecated'
 
                 builder = new Notification.Builder(Application.Context);
                 builder.SetPriority(Convert.ToInt32(NotificationPriority.Max));
-#pragma warning restore CS0618 // 'Notification.Builder.SetPriority(int)' está obsoleto: 'deprecated'
             }
             else
             {
@@ -115,7 +108,6 @@ namespace LiveDisplay.Servicios
                 notificationManager.CreateNotificationChannel(notificationChannel);
                 builder = new Notification.Builder(Application.Context, "livedisplaynotificationchannel");
             }
-#pragma warning restore
             builder.SetContentTitle("");
             builder.SetContentText("");
             builder.SetAutoCancel(true);

@@ -1,0 +1,18 @@
+﻿<!--This is the first preference screen-->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                  xmlns:app="http://schemas.android.com/apk/res-auto">
+  <PreferenceCategory android:title="@string/appearance"
+                      app:iconSpaceReserved="false">
+    <ListPreference
+          android:enabled="false"
+          android:selectable="true"
+          android:persistent="true"
+          android:defaultValue="@integer/center_crop"
+          android:key="@id/wallpaper_scale_type"
+          android:title="@string/wallpaper_appearance"
+          android:summary="@string/wallpaper_appearance_summary"
+          android:entries="@array/entries_wallpaper_appearance"
+          android:entryValues="@array/values_wallpaper_appearance"
+          app:iconSpaceReserved="false" />
+  </PreferenceCategory>
+</PreferenceScreen>

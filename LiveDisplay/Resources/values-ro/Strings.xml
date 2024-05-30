@@ -9,12 +9,10 @@
   <string name="beta">Versiune Premilinară</string>
   <string name="blacklist">Listă Neagră</string>
   <string name="blacklisted">Pe lista neagră</string>
-  <string name="blackwallpaper">Negru</string>
   <string name="changewallpaper">Schimbă fundalul ecranului</string>
   <string name="changeweatherpreferences">Schimbă preferințele de climă</string>
   <string name="clearallnotifications">Șterge toate</string>
   <string name="contributetoprojectdesc">LiveDIsplay pe Github</string>
-  <string name="defaultwallpaper">Fundal default</string>
   <string name="defaultwallpaperappearance">Fundal</string>
   <string name="dialogallowbutton">Permite</string>
   <string name="dialogcancelbutton">închide</string>
@@ -50,7 +48,6 @@
   <string name="onehour">1 oră</string>
   <string name="opciones">Opțiuni</string>
   <string name="partiallyblocked">Numai pe app</string>
-  <string name="pickwallpaper">Selectează </string>
   <string name="playing_from_template">Din {0}</string>
   <string name="saveweathersettings">Salvați</string>
   <string name="searchapptitle">Cautați o app</string>
@@ -72,4 +69,7 @@
   <string name="permission_explanation_activity_label">Permisiune</string>
   <string name="accept_permission">Acept!</string>
   <string name="read_notifications_title">Citesc Notificarile</string>
+  <string name="appearance">Aparienta</string>
+  <string name="sync_with_zen_mode">Sincronizare cu modul Nu Deranja</string>
+  <string name="sync_with_weather">Sincronizare cu clima</string>
 </resources>

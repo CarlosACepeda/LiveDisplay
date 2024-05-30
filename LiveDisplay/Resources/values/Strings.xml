@@ -21,7 +21,6 @@
   <string name="blacklist">Blacklist</string>
   <string name="blacklistdesc">Don\'t show notifications from the apps selected.</string>
   <string name="blacklisted">Blacklisted</string>
-  <string name="blackwallpaper">Black</string>
   <string name="changewallpaper">Change wallpaper</string>
   <string name="changewallpaperappearance">Wallpaper appearance</string>
   <string name="changewallpaperdesc">By default, current system wallpaper is used</string>
@@ -31,7 +30,6 @@
   <string name="contributetoprojectdesc">LiveDisplay on Github</string>
   <string name="currentwallpaper">Current Wallpaper</string>
   <string name="defaulttag">idk</string>
-  <string name="defaultwallpaper">Default wallpaper</string>
   <string name="defaultwallpaperappearance">Wallpaper</string>
   <string name="dialogallowbutton">Allow</string>
   <string name="dialogcancelbutton">Cancel</string>
@@ -99,7 +97,6 @@
   <string name="onehour">1 Hour</string>
   <string name="opciones">Options</string>
   <string name="partiallyblocked">Block only in the app</string>
-  <string name="pickwallpaper">Pick one</string>
   <string name="placeholder">Insert a string here</string>
   <string name="playing_from_template">From {0}</string>
   <string name="rus">Russian</string>
@@ -147,4 +144,17 @@
   <string name="enable_accessibility_title">Detect button presses</string>
   <string name="device_admin_title">Turn off the screen for you</string>
   <string name="device_admin_explanation">LiveDisplay will turn off the screen in many conditions, when the Do Not Disturb Mode, when a custom rule is set, etc.</string>
+  <string name="wallpaper_appearance">Wallpaper appearance</string>
+  <string name="wallpaper_appearance_summary">How does the wallpaper appear where it can be shown</string>
+  <string name="fit_xy">Fit Height and Width to screen</string>
+  <string name="center_crop">Center and Crop</string>
+  <string name="appearance">Appearance</string>
+  <string name="sync_with_zen_mode">Sync with Do Not Disturb Mode</string>
+  <string name="sync_with_zen_mode_summary">Lowers Media volume, lowers brightness of the Media Widget, etc</string>
+  <string name="sync_with_weather">Sync with Weather Changes</string>
+  <string name="sync_with_weather_summary">Changes color scheme</string>
+  <string name="show_lyrics">Show lyrics</string>
+  <string name="show_lyrics_summary">Enrich your experience in Media Control! Show lyrics whenever possible!</string>
+  <string name="use_as_permanent_lock_screen">Show Media Widget permanently</string>
+  <string name="use_as_permanent_lock_screen_summary">Even if media isn\'t playing show the widget over lock screen</string>
 </resources>

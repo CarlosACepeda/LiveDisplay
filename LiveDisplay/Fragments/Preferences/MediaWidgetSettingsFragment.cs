@@ -7,7 +7,7 @@ using LiveDisplay.Misc;
 
 namespace LiveDisplay.Fragments.Preferences
 {
-    public class MediaWidgetSettingsFragment : PreferenceFragmentCompat, ISharedPreferencesOnSharedPreferenceChangeListener
+    public class MediaWidgetSettingsFragment : PreferenceFragmentCompat
     {
         private ISharedPreferences sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
         public override void OnCreate(Bundle savedInstanceState)
@@ -19,22 +19,14 @@ namespace LiveDisplay.Fragments.Preferences
         {
             AddPreferencesFromResource(Resource.Xml.media_widget_prefs);
             PreferenceManager.SetDefaultValues(Application.Context, Resource.Xml.media_widget_prefs, true);
-
-            sharedPreferences.RegisterOnSharedPreferenceChangeListener(this);
         }
         public override void OnResume()
         {
-            sharedPreferences.RegisterOnSharedPreferenceChangeListener(this);
             base.OnResume();
         }
         public override void OnPause()
         {
-            sharedPreferences.UnregisterOnSharedPreferenceChangeListener(this);
             base.OnPause();
-        }
-
-        public void OnSharedPreferenceChanged(ISharedPreferences sharedPreferences, string key)
-        {
         }
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {

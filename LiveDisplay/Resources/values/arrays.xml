@@ -1,20 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <resources>
-  <string-array name="listentrieschangewallpaper">
-    <item>@string/blackwallpaper</item>
-    <item>@string/defaultwallpaper</item>
-    <item>@string/pickwallpaper</item>
+  <string-array name="entries_wallpaper_appearance">
+    <item>@string/center_crop</item>
+    <item>@string/fit_xy</item>
   </string-array>
+  
+  <string-array name="values_wallpaper_appearance">
+    <item>0</item>
+    <item>1</item>
+  </string-array>
+
+
+
+
   <string-array name="listentriescurrentwallpapersetting">
     <item>@string/defaultwallpaperappearance</item>
     <item>@string/albumartappearancesetting</item>
   </string-array>
 
-  <string-array name="listvalueschangewallpaper">
-    <item>0</item>
-    <item>1</item>
-    <item>2</item>
-  </string-array>
+  
   <string-array name="listentrieschangedoubletapbehavior">
     <item>@string/doubletapnormalbehavior</item>
     <item>@string/doubletapinvertedbehavior</item>

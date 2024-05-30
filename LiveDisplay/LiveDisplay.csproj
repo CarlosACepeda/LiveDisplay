@@ -549,7 +549,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\xml\lockscreen_prefs.xml" />
+    <AndroidResource Include="Resources\xml\appearance_prefs.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\xml\notification_prefs.xml" />
@@ -683,6 +683,14 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\permission_explanation.xml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\values\integers.xml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\values\preference_keys.xml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
   </ItemGroup>

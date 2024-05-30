@@ -6,30 +6,35 @@
       android:title="@string/mediawidget"
       app:iconSpaceReserved="false">
     <SwitchPreference
+      android:enabled="false"
      android:defaultValue="false"
-     android:key="key"
-     android:title="pModeSyncWithZenOrDigitalWellbeingMode"
+     android:key="sync_with_zen_mode"
+     android:title="@string/sync_with_zen_mode"
+     android:summary="@string/sync_with_zen_mode_summary"
      app:iconSpaceReserved="false"/>
     <SwitchPreference
+      android:enabled="false"
      android:defaultValue="false"
-     android:key="key"
-     android:title="pSyncWithWeatherMode"
-     android:summary=""
+     android:key="sync_with_weather"
+     android:title="@string/sync_with_weather"
+     android:summary="@string/sync_with_weather_summary"
      app:iconSpaceReserved="false"/>
     <SwitchPreference
+      android:enabled="false"
      android:defaultValue="false"
-     android:key="key"
-     android:title="pShowLyrics"
+     android:key="show_lyrics"
+     android:title="@string/show_lyrics"
+     android:summary="@string/show_lyrics_summary"
      app:iconSpaceReserved="false"/>
   </PreferenceCategory>
   <PreferenceCategory
       android:title="@string/advanced"
       app:iconSpaceReserved="false">
     <SwitchPreference
-     android:defaultValue="false"
-     android:key="key"
-     android:title="pUseAllTheTime"
-     android:summary="pUse it even when Media is not playing"
+      android:enabled="false"
+     android:key="use_as_permanent_lock_screen"
+     android:title="@string/use_as_permanent_lock_screen"
+     android:summary="@string/use_as_permanent_lock_screen_summary"
      app:iconSpaceReserved="false"/>
   </PreferenceCategory>
 </PreferenceScreen>
