@@ -88,9 +88,9 @@ namespace LiveDisplay.Fragments
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
             {
                 currentMediaNotification = CatcherHelper.FindMostRecentMediaNotification();
-                if (currentMediaNotification != null && currentMediaNotification.GetMediaSessionToken()!= null)
+                if (currentMediaNotification != null && currentMediaNotification.MediaSessionToken!= null)
                 {
-                    MediaEventsPublisherLollipop.InitializeFromToken(currentMediaNotification.GetMediaSessionToken());
+                    MediaEventsPublisherLollipop.InitializeFromToken(currentMediaNotification.MediaSessionToken);
                 }
             }
 
@@ -144,17 +144,17 @@ namespace LiveDisplay.Fragments
         {
             //In Kitkat, a notification can never be a MediaStyle, that's why we instance the MediaEventsPublisherLollipop directly
 
-            if(e.OpenNotification.Style()== OpenNotification.MediaStyle)
+            if(e.OpenNotification.Style== OpenNotification.MediaStyle)
             {
-                var mediaSessionToken= e.OpenNotification.GetMediaSessionToken();
-                if(e.OpenNotification.IsOnGoing() || !e.OpenNotification.IsAutoCancellable())
+                var mediaSessionToken= e.OpenNotification.MediaSessionToken;
+                if(e.OpenNotification.IsOngoing || !e.OpenNotification.IsAutoCancellable)
                 {
                     if (MediaEventsPublisherLollipop.IsInitialized() && 
                         MediaEventsPublisherLollipop.GetInstance().IsMediaSessionUsingToken(mediaSessionToken))
                         ToggleMediaControlsVisibility(true);
                     else
                     {
-                        Console.WriteLine($"Trying initializing Media for: {e.OpenNotification.AppName()}");
+                        Console.WriteLine($"Trying initializing Media for: {e.OpenNotification.AppName}");
                         MediaEventsPublisherLollipop.InitializeFromToken(mediaSessionToken);
                     }
                     currentMediaNotification = e.OpenNotification;
@@ -166,7 +166,7 @@ namespace LiveDisplay.Fragments
         private bool LoadAdditionalControls()
         {
             if(currentMediaNotification == null) return false;
-            var compactViewIndices = currentMediaNotification.CompactViewActionsIndices();
+            var compactViewIndices = currentMediaNotification.CompactViewActionsIndices;
             var notificationActions = currentMediaNotification.Actions;
             if (notificationActions.Count == 0) return false;
 
@@ -187,18 +187,18 @@ namespace LiveDisplay.Fragments
             imageButton.SetImageDrawable(action.Icon);
             imageButton.Click += (sender, e) =>
             {
-                action.ClickAction();
+                NotificationSlave.GetInstance().ClickAction(action);
             };
         }
 
         private void CatcherHelper_NotificationRemoved(object sender, NotificationRemovedEventArgs e)
         {
-            if (e.OpenNotification.Style() == OpenNotification.MediaStyle)
+            if (e.OpenNotification.Style == OpenNotification.MediaStyle)
             {
                 if (MediaEventsPublisherLollipop.IsInitialized() &&
-                    MediaEventsPublisherLollipop.GetInstance().IsMediaSessionUsingToken(e.OpenNotification.GetMediaSessionToken()))
+                    MediaEventsPublisherLollipop.GetInstance().IsMediaSessionUsingToken(e.OpenNotification.MediaSessionToken))
                 {
-                    if(MediaEventsPublisherLollipop.GetInstance().Finish(e.OpenNotification.GetMediaSessionToken()))
+                    if(MediaEventsPublisherLollipop.GetInstance().Finish(e.OpenNotification.MediaSessionToken))
                     {
                         ToggleMediaControlsVisibility(false);
                         currentMediaNotification = null;
@@ -283,7 +283,7 @@ namespace LiveDisplay.Fragments
             mediaControls.Pause();
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop) //In kitkat ther's not a notification attached to the Media playing
             {
-                NotificationSlave.NotificationSlaveInstance().CancelNotification(currentMediaNotification?.GetKey()); //Now it should let us remove the notification.
+                NotificationSlave.GetInstance().CancelNotification(currentMediaNotification?.Key); //Now it should let us remove the notification.
             }
             discardMediaSessionClicked = true; //Set a flag, for when the Media Session changes its state to paused.
         }
@@ -380,7 +380,8 @@ namespace LiveDisplay.Fragments
             try { activityIntent.Send(); }
             catch (PendingIntent.CanceledException ex)
             {   Console.WriteLine($"Failed Sending PendingIntent: {ex.Message}");
-                currentMediaNotification.ClickNotification();
+
+                NotificationSlave.GetInstance().ClickNotification(currentMediaNotification);
             }
         }
 

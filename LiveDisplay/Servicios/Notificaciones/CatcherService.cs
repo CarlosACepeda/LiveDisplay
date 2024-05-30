@@ -30,6 +30,7 @@ namespace LiveDisplay.Servicios
         private AudioManager audioManager;
         private CatcherHelper catcherHelper;
         private OpenNotification lastPostedNotification;
+        private NotificationSlave notificationSlave;
 
         public override void OnInterruptionFilterChanged([GeneratedEnum] InterruptionFilterType interruptionFilter)
         {
@@ -53,10 +54,9 @@ namespace LiveDisplay.Servicios
                     remoteController.SetArtworkConfiguration(Resources.DisplayMetrics.WidthPixels, Resources.DisplayMetrics.HeightPixels);
                     audioManager.RegisterRemoteController(remoteController);
                     musicControllerKitkat = MediaEventsPublisherKitkat.Initialize(remoteController);
+                    ToggleNotificationSlaveSubscription(true);
+                    RegisterScreenOnOffReceiver();
                 });
-
-                SubscribeToEvents();
-                RegisterReceivers();
 
             }
             return base.OnBind(intent);
@@ -68,8 +68,8 @@ namespace LiveDisplay.Servicios
             activeMediaSessionsListener = new ActiveMediaSessionsListener();
             //RemoteController Lollipop and Beyond Implementation
             mediaSessionManager = (MediaSessionManager)GetSystemService(MediaSessionService);
-            SubscribeToEvents();
-            RegisterReceivers();
+            ToggleNotificationSlaveSubscription(true);
+            RegisterScreenOnOffReceiver();
             RetrieveNotificationFromStatusBar();
         }
 
@@ -91,6 +91,7 @@ namespace LiveDisplay.Servicios
             //mediaSessionManager.RemoveOnActiveSessionsChangedListener(activeMediaSessionsListener);
             if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
             {
+                ToggleNotificationSlaveSubscription(false);
                 UnregisterReceiver(screenOnOffReceiver);
                 ScreenOnOffReceiver.ReceiverCount--;
             }
@@ -99,22 +100,22 @@ namespace LiveDisplay.Servicios
 
         public override bool OnUnbind(Intent intent)
         {
-            if (Build.VERSION.SdkInt <= BuildVersionCodes.N)
+            if (Build.VERSION.SdkInt <= BuildVersionCodes.M)
             {
                 catcherHelper?.Dispose();
                 if (Build.VERSION.SdkInt <= BuildVersionCodes.KitkatWatch)
                 {
                     Console.WriteLine("ON UNBIND!");
-#pragma warning disable CS0618 // El tipo o el miembro están obsoletos
                     if(remoteController!=null)
                         audioManager?.UnregisterRemoteController(remoteController);
-#pragma warning restore CS0618 // El tipo o el miembro están obsoletos
                 }
                 else
                 {
                     mediaSessionManager.RemoveOnActiveSessionsChangedListener(activeMediaSessionsListener);
                     UnregisterReceiver(screenOnOffReceiver);
                 }
+
+                ToggleNotificationSlaveSubscription(false);
                 ScreenOnOffReceiver.ReceiverCount--;
             }
 
@@ -134,15 +135,25 @@ namespace LiveDisplay.Servicios
             catcherHelper = new CatcherHelper(openNotifications);
         }
 
-        //Subscribe to events by Several publishers
-        private void SubscribeToEvents()
+        private void ToggleNotificationSlaveSubscription(bool subscribe)
         {
-            NotificationSlave notificationSlave = NotificationSlave.NotificationSlaveInstance();
-            notificationSlave.AllNotificationsCancelled += NotificationSlave_AllNotificationsCancelled;
-            notificationSlave.NotificationCancelled += NotificationSlave_NotificationCancelled;
-            notificationSlave.NotificationCancelledLollipop += NotificationSlave_NotificationCancelledLollipop;
-            notificationSlave.ResendLastNotificationRequested += NotificationSlave_ResendLastNotificationRequested;
-            
+            notificationSlave = NotificationSlave.GetInstance();
+            if (subscribe)
+            {
+                notificationSlave.AllNotificationsCancelled += NotificationSlave_AllNotificationsCancelled;
+                notificationSlave.NotificationCancelled += NotificationSlave_NotificationCancelled;
+                notificationSlave.NotificationCancelledLollipop += NotificationSlave_NotificationCancelledLollipop;
+                notificationSlave.ResendLastNotificationRequested += NotificationSlave_ResendLastNotificationRequested;
+
+            }
+            else
+            {
+                notificationSlave.AllNotificationsCancelled -= NotificationSlave_AllNotificationsCancelled;
+                notificationSlave.NotificationCancelled -= NotificationSlave_NotificationCancelled;
+                notificationSlave.NotificationCancelledLollipop -= NotificationSlave_NotificationCancelledLollipop;
+                notificationSlave.ResendLastNotificationRequested -= NotificationSlave_ResendLastNotificationRequested;
+            }
+
         }
 
         private void NotificationSlave_ResendLastNotificationRequested(object sender, EventArgs e)
@@ -150,7 +161,7 @@ namespace LiveDisplay.Servicios
             catcherHelper.OnNotificationPosted(lastPostedNotification);
         }
 
-        private void RegisterReceivers()
+        private void RegisterScreenOnOffReceiver()
         {
             using IntentFilter intentFilter = new IntentFilter();
             screenOnOffReceiver = new ScreenOnOffReceiver();

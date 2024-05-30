@@ -120,7 +120,7 @@
                     if (isApplicationHealthy)
                     {
                         AwakeHelper.TurnOffScreen();
-                        using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())
+                        using (NotificationSlave slave = NotificationSlave.GetInstance())
                         {
                             var notificationtext = GetString(Resource.String.testnotificationtext);
                             if (Build.VERSION.SdkInt > BuildVersionCodes.NMr1)

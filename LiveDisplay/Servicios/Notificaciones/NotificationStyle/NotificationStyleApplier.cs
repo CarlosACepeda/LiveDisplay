@@ -125,92 +125,92 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
         public void ApplyStyle(OpenNotification notification)
         {
             //The progress thing does not require a Style to be applied.
-            if (notification.GetProgressMax() > 0)
-            {
-                notificationProgress.Visibility = ViewStates.Visible;
-                if (notification.IsProgressIndeterminate())
-                {
-                    notificationProgress.Indeterminate = true;
-                }
-                else
-                {
-                    notificationProgress.Max = notification.GetProgressMax();
-                    notificationProgress.Progress = notification.GetProgress();
-                }
-            }
-            else
-            {
-                notificationProgress.Visibility = ViewStates.Gone;
-            }
+            //if (notification.GetProgressMax() > 0)
+            //{
+            //    notificationProgress.Visibility = ViewStates.Visible;
+            //    if (notification.IsProgressIndeterminate())
+            //    {
+            //        notificationProgress.Indeterminate = true;
+            //    }
+            //    else
+            //    {
+            //        notificationProgress.Max = notification.GetProgressMax();
+            //        notificationProgress.Progress = notification.GetProgress();
+            //    }
+            //}
+            //else
+            //{
+            //    notificationProgress.Visibility = ViewStates.Gone;
+            //}
 
-            title.Text = notification.Title();
-            text.Text = notification.Text();
-            applicationName.Text = notification.AppName();
-            subtext.Text = notification.SubText();
-            when.Text = notification.When();
-            closenotificationbutton.SetTag(DefaultActionIdentificator, notification);
-            closenotificationbutton.Visibility = notification.IsClearable() ? ViewStates.Visible : ViewStates.Invisible;
-            notificationActions.Visibility = notification.HasActions() ? ViewStates.Visible : ViewStates.Gone;
-            inlineNotificationContainer.Visibility = ViewStates.Invisible;
+            //title.Text = notification.Title();
+            //text.Text = notification.Text();
+            //applicationName.Text = notification.AppName();
+            //subtext.Text = notification.SubText();
+            //when.Text = notification.When();
+            //closenotificationbutton.SetTag(DefaultActionIdentificator, notification);
+            //closenotificationbutton.Visibility = notification.IsClearable() ? ViewStates.Visible : ViewStates.Invisible;
+            //notificationActions.Visibility = notification.HasActions() ? ViewStates.Visible : ViewStates.Gone;
+            //inlineNotificationContainer.Visibility = ViewStates.Invisible;
 
-            switch (notification.Style())
-            {
-                case BigPictureStyle:
+            //switch (notification.Style())
+            //{
+            //    case BigPictureStyle:
 
-                    if (notificationViewType == NotificationViewType.OnLockscreen)
-                    {
-                        var notificationBigPicture = new BitmapDrawable(notification.BigPicture());
-                        WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
-                        {
-                            BlurLevel = 1,
-                            OpacityLevel = 125,
-                            SecondsOfAttention = 5,
-                            Wallpaper = notificationBigPicture,
-                            WallpaperPoster = WallpaperPoster.Notification,
-                        });
-                    }
-                    break;
+            //        if (notificationViewType == NotificationViewType.OnLockscreen)
+            //        {
+            //            var notificationBigPicture = new BitmapDrawable(notification.BigPicture());
+            //            WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
+            //            {
+            //                BlurLevel = 1,
+            //                OpacityLevel = 125,
+            //                SecondsOfAttention = 5,
+            //                Wallpaper = notificationBigPicture,
+            //                WallpaperPoster = WallpaperPoster.Notification,
+            //            });
+            //        }
+            //        break;
 
-                case InboxStyle:
-                    text.SetMaxLines(6); //Should be configurable(?)
-                    break;
+            //    case InboxStyle:
+            //        text.SetMaxLines(6); //Should be configurable(?)
+            //        break;
 
-                case BigTextStyle:
+            //    case BigTextStyle:
 
-                    text.SetMaxLines(9); //Shoud be configurable(?)
-                    text.Text = notification.GetBigText();
-                    ApplyActionsStyle(notification);
-                    break;
+            //        text.SetMaxLines(9); //Shoud be configurable(?)
+            //        text.Text = notification.GetBigText();
+            //        ApplyActionsStyle(notification);
+            //        break;
 
-                case MediaStyle:
-                    when.Text = string.Empty; //The MediaStyle shouldn't show a timestamp.
-                                              //notification.StartMediaCallback();
-                    if (notificationViewType == NotificationViewType.OnLockscreen)
-                    {
-                        var notificationMediaArtwork = new BitmapDrawable(Application.Context.Resources, notification.MediaArtwork());
-                        WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
-                        {
-                            BlurLevel = 1,
-                            OpacityLevel = 125,
-                            SecondsOfAttention = 5,
-                            Wallpaper = notificationMediaArtwork,
-                            WallpaperPoster = WallpaperPoster.Notification,
-                        });
-                    }
-                    break;
+            //    case MediaStyle:
+            //        when.Text = string.Empty; //The MediaStyle shouldn't show a timestamp.
+            //                                  //notification.StartMediaCallback();
+            //        if (notificationViewType == NotificationViewType.OnLockscreen)
+            //        {
+            //            //var notificationMediaArtwork = new BitmapDrawable(Application.Context.Resources, notification.MediaArtwork());
+            //            //WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
+            //            //{
+            //            //    BlurLevel = 1,
+            //            //    OpacityLevel = 125,
+            //            //    SecondsOfAttention = 5,
+            //            //    Wallpaper = notificationMediaArtwork,
+            //            //    WallpaperPoster = WallpaperPoster.Notification,
+            //            //});
+            //        }
+            //        break;
 
-                case MessagingStyle:
-                    break;
+            //    case MessagingStyle:
+            //        break;
 
-                case DecoratedCustomViewStyle:
-                    //todo
-                    break;
+            //    case DecoratedCustomViewStyle:
+            //        //todo
+            //        break;
 
-                default:
-                    //Do nothing, yet.
-                    break;
-            }
-            ApplyActionsStyle(notification);
+            //    default:
+            //        //Do nothing, yet.
+            //        break;
+            //}
+            //ApplyActionsStyle(notification);
         }
 
         private void Togglenotificationcollapse_Click(object sender, EventArgs e)
@@ -222,7 +222,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
         {
             ImageButton closenotificationbutton = sender as ImageButton;
             OpenNotification openNotification = closenotificationbutton.GetTag(DefaultActionIdentificator) as OpenNotification;
-            openNotification.Cancel();
+            //openNotification.Cancel();
             //notificationView.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
             WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "NotificationFragment" }); 
             notificationView.Visibility = ViewStates.Invisible;
@@ -233,7 +233,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
             Button actionButton = sender as Button;
             OpenAction openAction = actionButton.GetTag(DefaultActionIdentificator) as OpenAction;
 
-            if (openAction.ActionRepresentDirectReply())
+            if (openAction.IsDirectReply)
             {
                 if (new ConfigurationManager(AppPreferences.Default).RetrieveAValue(ConfigurationParameters.EnableQuickReply))
                 {
@@ -255,7 +255,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
             }
             else
             {
-                openAction.ClickAction();
+                //openAction.ClickAction();
                 SendInlineResponseAvailabityChanged?.Invoke(null, false); //Here I assume the send inline textbox is not present, because the action simply does not represent a direct reply.
             }
         }
@@ -264,7 +264,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
         {
             ImageButton actionButton = sender as ImageButton;
             OpenAction openAction = actionButton.GetTag(DefaultActionIdentificator) as OpenAction;
-            openAction.SendInlineResponse(inlineresponse.Text);
+            //openAction.SendInlineResponse(inlineresponse.Text);
             inlineresponse.Text = string.Empty;
             notificationActions.Visibility = ViewStates.Visible;
             inlineNotificationContainer.Visibility = ViewStates.Invisible;
@@ -281,8 +281,8 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
         public void ApplyActionsStyle(OpenNotification notification)
         {
             notificationActions?.RemoveAllViews();
-            if (notification.HasActions())
-            {
+            //if (notification.HasActions())
+            //{
                 //var actions = notification.RetrieveActions();
                 //foreach (Notification.Action action in actions)
                 //{
@@ -338,7 +338,7 @@ namespace LiveDisplay.Servicios.Notificaciones.NotificationStyle
                 //            notificationActions.AddView(actionButton);
                 //        });
                 //}
-            }
+            //}
         }
 
         public void ToggleExtendedActions(bool extended)

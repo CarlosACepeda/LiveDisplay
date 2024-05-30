@@ -16,7 +16,7 @@ using System.Linq;
 
 namespace LiveDisplay.Servicios.Notificaciones
 {
-    public class OpenNotification : Java.Lang.Object, PendingIntent.IOnFinished
+    public class OpenNotification : Java.Lang.Object
     {
         public const string BigPictureStyle = "android.app.Notification$BigPictureStyle";
         public const string InboxStyle = "android.app.Notification$InboxStyle";
@@ -31,201 +31,56 @@ namespace LiveDisplay.Servicios.Notificaciones
             statusbarnotification = sbn;
         }
 
-        public StatusBarNotification GetUnderlyingStatusBarNotification()
+        public StatusBarNotification UnderlyingStatusBarNotification => statusbarnotification;
+        public string Key
         {
-            return statusbarnotification;
-        }
-        public string GetKey()
-        {
-            if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
-                return statusbarnotification.Key;
-
-            return string.Empty;
-        }
-        //public string Key
-        //{
-        //    get
-        //    {
-        //        if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
-        //            return statusbarnotification.Key;
-        //        return string.Empty;
-        //    }
-        //    set { }
-        //}
-        public int GetId()
-        {
-            return statusbarnotification.Id;
-        }
-
-        public void Cancel()
-        {
-            if (IsClearable())
-                using (NotificationSlave slave = NotificationSlave.NotificationSlaveInstance())
-                {
-                    if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
-                    {
-                        slave.CancelNotification(GetPackageName(), GetTag(), GetId());
-                    }
-                    else
-                    {
-                        slave.CancelNotification(GetKey());
-                    }
-                }
-        }
-
-        public string GetTag() => statusbarnotification.Tag;
-
-        public string GetPackageName() => statusbarnotification.PackageName;
-
-        public string Title()
-        {
-            try
+            get
             {
-                return statusbarnotification.Notification.Extras.GetString(Notification.ExtraTitle);
-            }
-            catch
-            {
-                return "";
-            }
-        }
-
-        public string Text()
-        {
-            try
-            {
-                return statusbarnotification.Notification.Extras.GetString(Notification.ExtraText);
-            }
-            catch
-            {
+                if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
+                    return statusbarnotification.Key;
                 return string.Empty;
             }
         }
+        public int Id => statusbarnotification.Id;
 
-        public string GetSummaryText()
-        {
-            try
-            {
-                return statusbarnotification.Notification.Extras.GetString(Notification.ExtraSummaryText);
-            }
-            catch
-            {
-                return string.Empty;
-            }
-        }
+        public string Tag => statusbarnotification.Tag;
 
-        public string GetTextLines()
-        {
-            try
-            {
-                string textlinesformatted = string.Empty;
-                var textLines = statusbarnotification.Notification.Extras.GetCharSequenceArray(Notification.ExtraTextLines);
-                foreach (var line in textLines)
-                {
-                    textlinesformatted = textlinesformatted + line + " \n"; //Add new line.
-                }
-                return textlinesformatted;
-            }
-            catch
-            {
-                return null;
-            }
-        }
+        public string PackageName => statusbarnotification.PackageName;
 
-        public string GetBigText()
-        {
-            try
-            {
-                return statusbarnotification.Notification.Extras.GetString(Notification.ExtraBigText);
-            }
-            catch
-            {
-                return string.Empty;
-            }
-        }
+        public string Title => statusbarnotification.Notification.Extras.GetString(Notification.ExtraTitle);
 
-        public string SubText()
-        {
-            try
-            {
-                return statusbarnotification.Notification.Extras.GetCharSequence(Notification.ExtraSubText).ToString();
-            }
-            catch
-            {
-                return string.Empty;
-            }
-        }
+        public string Text => statusbarnotification.Notification.Extras.GetString(Notification.ExtraText);
 
-        public void ClickNotification()
-        {
-            try
-            {
-                var intent = statusbarnotification.Notification.ContentIntent;
-                intent ??= statusbarnotification.Notification.FullScreenIntent;
+        public string SummaryText => statusbarnotification.Notification.Extras.GetString(Notification.ExtraSummaryText);
 
-                //This is part of a Workaround to make LockScreen show on Android Q devices and above:
-                //Please check CatcherHelper#OnNotificationPosted() to get an idea of how it works.
+        public string[] TextLines => statusbarnotification.Notification.Extras.GetCharSequenceArray(Notification.ExtraTextLines);
+        public string BigText => statusbarnotification.Notification.Extras.GetString(Notification.ExtraBigText);
 
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.Q && GetPackageName() == "com.underground.livedisplay" /*Only act on notifications sent by this app*/)
-                {
-                    //Causes a FullScreenIntent that's contained within a Notification matchig the if statement to be sent correctly.
-                    //For some unknown reason the usual "Send()" method doesn't work if the screen is locked.
-                    intent.Send(Result.Ok, this, new Handler());
-                    Cancel(); //ignoring documentation: if we leave this notification alive after performing the previous line intent.Send(...),
-                              //then after if the same notification gets posted without the previous one being removed then the intent.Send(...) won't succeed.
-                              //and the lockscreen won't show.
-                              //Android is weird.
-                }
-                intent.Send();
-                //Android Docs: For NotificationListeners: When implementing a custom click for notification
-                //Cancel the notification after it was clicked when this notification is autocancellable.
-                if (IsAutoCancellable())
-                    Cancel();
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Click Notification failed, fail in pending intent {ex.Message}");
-            }
-        }
+        public string SubText => statusbarnotification.Notification.Extras.GetCharSequence(Notification.ExtraSubText);
 
         public List<OpenAction> Actions => statusbarnotification.Notification.Actions?.Select((x) => new OpenAction(x)).ToList(); 
 
-        internal bool IsClearable()
-        {
-            return statusbarnotification.IsClearable;
-        }
+        internal bool IsClearable => statusbarnotification.IsClearable;
 
-        public bool HasActions()
+        public bool HasActions
         {
-            if (statusbarnotification.Notification.Actions != null)
+            get
             {
-                return true;
+                if (statusbarnotification.Notification.Actions != null)
+                {
+                    return true;
+                }
+                return false;
             }
-            return false;
         }
 
-        public MediaSession.Token GetMediaSessionToken()
-        {
-            try
-            {
-                return statusbarnotification.Notification.Extras.GetParcelable(
+        public MediaSession.Token MediaSessionToken =>
+                 statusbarnotification.Notification.Extras.GetParcelable(
                     Notification.ExtraMediaSession, Java.Lang.Class.FromType(typeof(MediaSession.Token))) as MediaSession.Token;
-            }
-            catch
-            {
-                return null;
-            }
-        }
 
-        public bool RepresentsMediaPlaying()
+        internal string When
         {
-            var mediaSessionToken = GetMediaSessionToken();
-            return mediaSessionToken != null;
-        }
-
-        internal string When()
-        {
-            try
+            get
             {
                 if (statusbarnotification.Notification.Extras.GetBoolean(Notification.ExtraShowWhen) == true)
                 {
@@ -235,258 +90,88 @@ namespace LiveDisplay.Servicios.Notificaciones
                 }
                 return string.Empty;
             }
-            catch
-            {
-                return string.Empty;
-            }
         }
-        internal long PostTime()
-        {
-            return statusbarnotification.PostTime;
-        }
+        public long PostTime => statusbarnotification.PostTime;
 
-        internal string AppName()
-        {
-            try
-            {
-                return PackageUtils.GetTheAppName(statusbarnotification.PackageName);
-            }
-            catch
-            {
-                return string.Empty;
-            }
-        }
+        public string AppName => PackageUtils.GetTheAppName(statusbarnotification.PackageName);
 
-        internal Icon GetSmallIcon()
+        public Icon SmallIcon
         {
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
+            get 
             {
-                return statusbarnotification.Notification.SmallIcon;
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
+                {
+                    return statusbarnotification.Notification.SmallIcon;
+                }
+                else
+                {
+                    return Icon.CreateWithResource(
+                        new Application().CreatePackageContext(PackageName, PackageContextFlags.Restricted), statusbarnotification.Notification.Icon);
+                }
             }
-            else
-            {
-                return Icon.CreateWithResource(
-                    new Application().CreatePackageContext(GetPackageName(), PackageContextFlags.Restricted), statusbarnotification.Notification.Icon);
+        }
+        public Bitmap BigPicture=> statusbarnotification.Notification.Extras.GetParcelable(Notification.ExtraPicture, Java.Lang.Class.FromType(typeof(Bitmap))) as Bitmap;
+
+        internal Bitmap LargeIcon
+        {
+            get {
+                if (Build.VERSION.SdkInt < BuildVersionCodes.O)
+                    return statusbarnotification.Notification.Extras.GetParcelable(Notification.ExtraLargeIcon, Java.Lang.Class.FromType(typeof(Bitmap))) as Bitmap;
+
+                return statusbarnotification.Notification.LargeIcon;
             }
         }
-        internal Bitmap BigPicture()
-        {
-            return statusbarnotification.Notification.Extras.GetParcelable(Notification.ExtraPicture, Java.Lang.Class.FromType(typeof(Bitmap))) as Bitmap;
-        }
-
-        internal Bitmap MediaArtwork()
-        {
-            if(Build.VERSION.SdkInt< BuildVersionCodes.O)
-                return statusbarnotification.Notification.Extras.GetParcelable(Notification.ExtraLargeIcon, Java.Lang.Class.FromType(typeof(Bitmap))) as Bitmap;
-
-            return statusbarnotification.Notification.LargeIcon;
-        }
+        public PendingIntent ContentIntent => statusbarnotification.Notification.ContentIntent;
+        public PendingIntent FullScreenIntent => statusbarnotification.Notification.FullScreenIntent;
+        
         //internal Bitmap GetPersonAvatar()
         //{
         //    if (Style() != "android.app.Notification$MessagingStyle" || Build.VERSION.SdkInt < BuildVersionCodes.P)
         //        return null;
 
         //}
-        internal NotificationPriority GetNotificationPriority()
-        {
-            try
-            {
-                return (NotificationPriority)statusbarnotification.Notification.Priority;
-            }
-            catch
-            {
-                return (NotificationPriority)(-155);
-            }
-        }
+        internal NotificationPriority NotificationPriority=>(NotificationPriority)statusbarnotification.Notification.Priority;
 
-        internal NotificationImportance GetNotificationImportance()
-        {
-            if (Build.VERSION.SdkInt < BuildVersionCodes.O)
-                return (NotificationImportance)(-1);
-
-            return  NotificationImportance.Unspecified; //No way to retrieve the Notification Channel for Any app except mine.
-        }
-
-        public string GetNotificationChannelId()
-        {
-            if (Build.VERSION.SdkInt < BuildVersionCodes.O)
-                return null;
-
-            return  statusbarnotification.Notification.ChannelId;
-        }
-
-        internal string Style()
-        {
-            return statusbarnotification.Notification.Extras.GetString(Notification.ExtraTemplate);
-        }
-
-        public bool IsAutoCancellable()
-        {
-            return statusbarnotification.Notification.Flags.HasFlag(NotificationFlags.AutoCancel);
-        }
-
-        //<test only, check if this notification is part of a group or is a group summary or any info related with group notifications.>
-        internal string GetGroupInfo()
-        {
-            string result = "";
-            if (statusbarnotification.Notification.Flags.HasFlag(NotificationFlags.GroupSummary) == true)
-            {
-                result += " This is summary!";
-            }
-            else
-            {
-                result += " This is NOT summary!";
-            }
-
-            if (Style() != null)
-                result = result + "The Style is+ " + Style();
-            else
-                result += " It does not have Style!";
-
-            if (statusbarnotification.IsGroup)
-                result += " Is Group";
-            else
-                result += " Is not group";
-
-            result += "\n" + "Package: " + GetPackageName() + " Id: " + GetId() + " Tag :" + GetTag()
-                + " Importance: " + GetNotificationImportance() + " Priority: " + GetNotificationPriority();
-            return result;
-        }
-
-        public bool BelongsToGroup()
-        {
-            if (Build.VERSION.SdkInt <= BuildVersionCodes.N) return false;
-            else return statusbarnotification.IsGroup;
-        }
-
-        public bool IsSummary()
-        {
-            if (Build.VERSION.SdkInt <= BuildVersionCodes.Kitkat) return false;
-            else return statusbarnotification.Notification.Flags.HasFlag(NotificationFlags.GroupSummary);
-        }
-
-        internal int GetProgress()
-        {
-            return statusbarnotification.Notification.Extras.GetInt(Notification.ExtraProgress);
-        }
-
-        internal int GetProgressMax()
-        {
-            return statusbarnotification.Notification.Extras.GetInt(Notification.ExtraProgressMax);
-        }
-
-        internal bool IsProgressIndeterminate()
-        {
-            return statusbarnotification.Notification.Extras.GetBoolean(Notification.ExtraProgressIndeterminate);
-        }
-
-        public int[] CompactViewActionsIndices()
-        {
-            return statusbarnotification.Notification.Extras.GetIntArray(Notification.ExtraCompactActions);
-        }
-        internal bool IsOnGoing()
-        {
-            return statusbarnotification.IsOngoing;
-        }
-
-        public void OnSendFinished(PendingIntent pendingIntent, Intent intent, [GeneratedEnum] Result resultCode, string resultData, Bundle resultExtras)
-        {
-            Console.WriteLine($"Android Q background activity launch was defeated by me (debug info, FullScreenIntent result):  {resultCode} || {resultData}");
-        }
-    }
-
-    public class OpenAction : Java.Lang.Object
-    {
-        private Notification.Action action;
-        private RemoteInput remoteInputDirectReply;
-        private RemoteInput[] remoteInputs;
-
-        public OpenAction(Notification.Action action)
-        {
-            this.action = action;
-        }
-
-        public string Title=> action.Title.ToString();
-
-
-        public void ClickAction()
-        {
-            try
-            {
-                action.ActionIntent.Send();
-            }
-            catch
-            {
-                Log.Info("LiveDisplay", "Click notification action failed");
-            }
-        }
-
-        public bool ActionRepresentDirectReply()
-        {
-            //Direct reply action is a new feature in Nougat, so when called on Marshmallow and backwards, so in those cases an Action will never represent a Direct Reply.
-            if (Build.VERSION.SdkInt <= BuildVersionCodes.M) return false;
-
-            remoteInputs = action.GetRemoteInputs();
-            if (remoteInputs == null || remoteInputs?.Length == 0) return false;
-
-            //In order to consider an action representing a Direct Reply we check for the ResultKey of that remote input.
-            foreach (var remoteInput in remoteInputs)
-            {
-                if (remoteInput.ResultKey != null)
-                {
-                    remoteInputDirectReply = remoteInput;
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public Drawable Icon 
+        internal NotificationImportance NotificationImportance
         {
             get
             {
-                Drawable actionIcon;
-                if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1)
-                {
-                    actionIcon = IconFactory.ReturnActionIconDrawable(action.Icon, action.ActionIntent.CreatorPackage);
-                }
-                else
-                {
-                    actionIcon = IconFactory.ReturnActionIconDrawable(action.JniPeerMembers.InstanceFields.GetInt32Value("icon.I", action), action.ActionIntent.CreatorPackage);
-                }
+                if (Build.VERSION.SdkInt < BuildVersionCodes.O)
+                    return (NotificationImportance)(-1);
 
-                return actionIcon;
+                return NotificationImportance.Unspecified; //No way to retrieve the Notification Channel for Any app except mine.
+
             }
         }
 
-
-        public string PlaceholderTextForInlineResponse 
+        public string NotificationChannelId
         {
             get
             {
-                if (Build.VERSION.SdkInt <= BuildVersionCodes.M) return string.Empty;
+                if (Build.VERSION.SdkInt < BuildVersionCodes.O)
+                    return null;
 
-                return remoteInputDirectReply.Label;
-
+                return statusbarnotification.Notification.ChannelId;
             }
+
         }
 
+        internal string Style => statusbarnotification.Notification.Extras.GetString(Notification.ExtraTemplate);
 
-        public bool SendInlineResponse(string responseText)
-        {
-            try
-            {
-                Bundle bundle = new Bundle();
-                Intent intent = new Intent();
-                bundle.PutCharSequence(remoteInputDirectReply.ResultKey, responseText);
-                RemoteInput.AddResultsToIntent(remoteInputs, intent, bundle);
-                action.ActionIntent.Send(Application.Context, Result.Ok, intent);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
+        public bool IsAutoCancellable =>statusbarnotification.Notification.Flags.HasFlag(NotificationFlags.AutoCancel);
+
+        public bool BelongsToGroup =>Build.VERSION.SdkInt >= BuildVersionCodes.M && statusbarnotification.IsGroup;
+
+        public bool IsSummary => Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop && statusbarnotification.Notification.Flags.HasFlag(NotificationFlags.GroupSummary);
+
+        internal int Progress => statusbarnotification.Notification.Extras.GetInt(Notification.ExtraProgress);
+
+        internal int ProgressMax => statusbarnotification.Notification.Extras.GetInt(Notification.ExtraProgressMax);
+
+        internal bool IsProgressIndeterminate => statusbarnotification.Notification.Extras.GetBoolean(Notification.ExtraProgressIndeterminate);
+
+        public int[] CompactViewActionsIndices=> statusbarnotification.Notification.Extras.GetIntArray(Notification.ExtraCompactActions);
+        internal bool IsOngoing=> statusbarnotification.IsOngoing;
+
     }
 }

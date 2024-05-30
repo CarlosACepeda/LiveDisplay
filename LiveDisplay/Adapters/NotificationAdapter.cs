@@ -31,7 +31,7 @@
                 //Cast
                 NotificationAdapterViewHolder viewHolder = holder as NotificationAdapterViewHolder;
 
-                viewHolder.Icono.Background = notifications[position].GetSmallIcon().LoadDrawable(Application.Context);
+                viewHolder.Icono.Background = notifications[position].SmallIcon.LoadDrawable(Application.Context);
                 if (selectedItem == position)
                 {
                     viewHolder.Icono.Alpha = 0.5f;

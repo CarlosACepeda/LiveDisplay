@@ -165,11 +165,11 @@ namespace LiveDisplay.Servicios.FloatingNotification
 
             if (configurationManager.RetrieveAValue(ConfigurationParameters.TestEnabled))
             {
-                Toast.MakeText(floatingNotificationView.Context, "Progress Indeterminate?: " + openNotification.IsProgressIndeterminate().ToString() + "\n"
-                    + "Current Progress: " + openNotification.GetProgress().ToString() + "\n"
-                    + "Max Progress: " + openNotification.GetProgressMax().ToString() + "\n"
-                    + openNotification.GetGroupInfo()
-                    , ToastLength.Short).Show();
+                //Toast.MakeText(floatingNotificationView.Context, "Progress Indeterminate?: " + openNotification.IsProgressIndeterminate().ToString() + "\n"
+                //    + "Current Progress: " + openNotification.GetProgress().ToString() + "\n"
+                //    + "Max Progress: " + openNotification.GetProgressMax().ToString() + "\n"
+                //    + openNotification.GetGroupInfo()
+                //    , ToastLength.Short).Show();
             }
 
             if (e.UpdatesPreviousNotification)
@@ -207,7 +207,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
         private void NotificationAdapterViewHolder_ItemLongClicked(object sender, NotificationItemClickedEventArgs e)
         {
             openNotification =e.OpenNotification;
-            openNotification.Cancel();
+            //openNotification.Cancel();
             floatingNotificationView.Visibility = ViewStates.Gone;
         }
 
@@ -217,11 +217,11 @@ namespace LiveDisplay.Servicios.FloatingNotification
 
             if (configurationManager.RetrieveAValue(ConfigurationParameters.TestEnabled))
             {
-                Toast.MakeText(floatingNotificationView.Context, "Progress Indeterminate?: " + openNotification.IsProgressIndeterminate().ToString() + "\n"
-                    + "Current Progress: " + openNotification.GetProgress().ToString() + "\n"
-                    + "Max Progress: " + openNotification.GetProgressMax().ToString() + "\n"
-                    + openNotification.GetGroupInfo()
-                    , ToastLength.Short).Show();
+                //Toast.MakeText(floatingNotificationView.Context, "Progress Indeterminate?: " + openNotification.IsProgressIndeterminate().ToString() + "\n"
+                //    + "Current Progress: " + openNotification.GetProgress().ToString() + "\n"
+                //    + "Max Progress: " + openNotification.GetProgressMax().ToString() + "\n"
+                //    + openNotification.GetGroupInfo()
+                //    , ToastLength.Short).Show();
             }
             //Only do this process if the notification that I want to show is different than the one that
             //the Floating Notification Widget has.
@@ -243,7 +243,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
 
         private void FloatingNotificationView_Click(object sender, EventArgs e)
         {
-            openNotification.ClickNotification();
+            //openNotification.ClickNotification();
             floatingNotificationView.Visibility = ViewStates.Gone;
         }
 
@@ -276,7 +276,7 @@ namespace LiveDisplay.Servicios.FloatingNotification
             }
             else if (e.Action == MotionEventActions.Up)
             {
-                openNotification.ClickNotification();
+                //openNotification.ClickNotification();
                 floatingNotificationView.Visibility = ViewStates.Gone;
             }
             return true;

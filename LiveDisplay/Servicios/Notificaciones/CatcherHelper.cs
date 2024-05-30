@@ -46,7 +46,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             if (sbn == null) { return; }
             //This is the notification of 'LiveDisplay is showing above other apps' when using floating windows.
             //Simply let's ignore it, because it's annoying. (Anyway, the user couldn't care less about this notification tbh)
-            if (sbn.GetPackageName() == AndroidPackageName && sbn.GetTag() == LiveDisplayAlertWindowNotificationTag)
+            if (sbn.PackageName == AndroidPackageName && sbn.Tag == LiveDisplayAlertWindowNotificationTag)
                 return;
 
 
@@ -63,10 +63,9 @@ namespace LiveDisplay.Servicios.Notificaciones
 
             
             //To see how it works please go to ScreenOnOffReceiver, this broadcast works as the one starting this whole workaround
-            if(sbn.GetPackageName()== LiveDisplayPackage&& sbn.GetId()==100)
+            if(sbn.PackageName== LiveDisplayPackage&& sbn.Id==100)
             {
-                sbn.ClickNotification();
-
+                NotificationSlave.GetInstance().ClickNotification(sbn);
             }
 
             int index = GetNotificationPosition(sbn); //Tries to get the index of a possible already existing notification in the list of notif.
@@ -100,10 +99,10 @@ namespace LiveDisplay.Servicios.Notificaciones
         public void OnNotificationRemoved(OpenNotification sbn)
         {
            
-            if (sbn.GetPackageName() == AndroidPackageName && sbn.GetTag() == LiveDisplayAlertWindowNotificationTag)
+            if (sbn.PackageName == AndroidPackageName && sbn.Tag == LiveDisplayAlertWindowNotificationTag)
                 return;
 
-            if (sbn.GetPackageName() == LiveDisplayPackage && sbn.GetId() == 100) //This is the workaround notification, we don't need it for anything
+            if (sbn.PackageName == LiveDisplayPackage && sbn.Id == 100) //This is the workaround notification, we don't need it for anything
                 return;
 
             int position = GetNotificationPosition(sbn);
@@ -120,7 +119,7 @@ namespace LiveDisplay.Servicios.Notificaciones
             }
             OnNotificationListSizeChanged(new NotificationListSizeChangedEventArgs
             {
-                ThereAreNotifications = !(OpenNotifications.Where(n => n.IsClearable()).ToList().Count==0)
+                ThereAreNotifications = !(OpenNotifications.Where(n => n.IsClearable).ToList().Count==0)
             });
             NotificationRemoved?.Invoke(this, new NotificationRemovedEventArgs()
             {
@@ -137,8 +136,8 @@ namespace LiveDisplay.Servicios.Notificaciones
         {
             if (OpenNotifications != null && OpenNotifications.Count > 1)
             {
-                var mediaNotifications = OpenNotifications.Where(n => n.Style() == OpenNotification.MediaStyle);
-                var ordered = mediaNotifications.OrderByDescending(n => n.PostTime()).OrderByDescending(n => n.IsOnGoing());
+                var mediaNotifications = OpenNotifications.Where(n => n.Style == OpenNotification.MediaStyle);
+                var ordered = mediaNotifications.OrderByDescending(n => n.PostTime).OrderByDescending(n => n.IsOngoing);
                 return ordered.FirstOrDefault();
             }
             return null;
@@ -148,8 +147,8 @@ namespace LiveDisplay.Servicios.Notificaciones
         private int GetNotificationPosition(OpenNotification sbn)
         {
             return OpenNotifications.IndexOf(OpenNotifications.FirstOrDefault
-                (o => o.GetId() == sbn.GetId() && 
-                o.GetPackageName() == sbn.GetPackageName()));
+                (o => o.Id == sbn.Id && 
+                o.PackageName == sbn.PackageName));
         }
 
         private void OnNotificationListSizeChanged(NotificationListSizeChangedEventArgs e)

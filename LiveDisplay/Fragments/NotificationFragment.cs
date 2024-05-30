@@ -164,19 +164,19 @@ namespace LiveDisplay.Fragments
         {
             Activity?.RunOnUiThread(() =>
             {
-                try
-                {
-                    Activity?.RunOnUiThread(() => openNotification.ClickNotification());
-                    if (openNotification.IsAutoCancellable())
-                    {
-                        WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "NotificationFragment" });
-                        maincontainer.Visibility = ViewStates.Invisible;
-                    }
-                }
-                catch
-                {
-                    Log.Wtf("OnNotificationClicked", "Metodo falla porque no existe una notificacion con esta acción");
-                }
+                //try
+                //{
+                //    Activity?.RunOnUiThread(() => openNotification.ClickNotification());
+                //    if (openNotification.IsAutoCancellable())
+                //    {
+                //        WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "NotificationFragment" });
+                //        maincontainer.Visibility = ViewStates.Invisible;
+                //    }
+                //}
+                //catch
+                //{
+                //    Log.Wtf("OnNotificationClicked", "Metodo falla porque no existe una notificacion con esta acción");
+                //}
             });
         }
 
@@ -184,7 +184,7 @@ namespace LiveDisplay.Fragments
         {
             maincontainer.Visibility = ViewStates.Visible;
             openNotification = e.OpenNotification;
-            openNotification.Cancel();
+            //openNotification.Cancel();
             WidgetStatusPublisher.RequestShow(new WidgetStatusEventArgs { Show = false, WidgetName = "NotificationFragment" });
             maincontainer.Visibility = ViewStates.Invisible;
         }
@@ -202,11 +202,11 @@ namespace LiveDisplay.Fragments
 
             if (configurationManager.RetrieveAValue(ConfigurationParameters.TestEnabled))
             {
-                Toast.MakeText(Application.Context, "Progress Indeterminate?: " + openNotification.IsProgressIndeterminate().ToString() + "\n"
-                    + "Current Progress: " + openNotification.GetProgress().ToString() + "\n"
-                    + "Max Progress: " + openNotification.GetProgressMax().ToString() + "\n"
-                    + openNotification.GetGroupInfo()
-                    , ToastLength.Short).Show();
+                //Toast.MakeText(Application.Context, "Progress Indeterminate?: " + openNotification.IsProgressIndeterminate().ToString() + "\n"
+                //    + "Current Progress: " + openNotification.GetProgress().ToString() + "\n"
+                //    + "Max Progress: " + openNotification.GetProgressMax().ToString() + "\n"
+                //    + openNotification.GetGroupInfo()
+                //    , ToastLength.Short).Show();
             }
 
             //Only do this process if the notification that I want to show is different than the one that
