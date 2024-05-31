@@ -2,7 +2,7 @@
 using Android.Content;
 using Android.OS;
 using LiveDisplay.Misc;
-using LiveDisplay.Servicios;
+using LiveDisplay.Services;
 using System;
 using System.Threading;
 

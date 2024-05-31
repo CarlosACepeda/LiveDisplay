@@ -2,7 +2,7 @@
 using Android.Content;
 using Android.Graphics.Drawables;
 using Android.OS;
-using LiveDisplay.Servicios.Battery.BatteryEventArgs;
+using LiveDisplay.Services.Battery.BatteryEventArgs;
 using System;
 
 namespace LiveDisplay.BroadcastReceivers

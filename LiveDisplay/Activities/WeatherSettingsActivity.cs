@@ -12,8 +12,8 @@
     using AndroidX.AppCompat.Widget;
     using AndroidX.Work;
     using LiveDisplay.Misc;
-    using LiveDisplay.Servicios;
-    using LiveDisplay.Servicios.Weather;
+    using LiveDisplay.Services;
+    using LiveDisplay.Services.Weather;
     using System;
     using System.Threading;
     using Toolbar = AndroidX.AppCompat.Widget.Toolbar;

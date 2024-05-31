@@ -15,9 +15,9 @@
     using LiveDisplay.Activities;
     using LiveDisplay.Fragments;
     using LiveDisplay.Misc;
-    using LiveDisplay.Servicios;
-    using LiveDisplay.Servicios.Awake;
-    using LiveDisplay.Servicios.Wallpaper;
+    using LiveDisplay.Services;
+    using LiveDisplay.Services.Awake;
+    using LiveDisplay.Services.Wallpaper;
     using System;
     using System.Threading;
 
@@ -275,6 +275,7 @@
             AndroidX.Fragment.App.FragmentTransaction transaction = SupportFragmentManager.BeginTransaction();
             transaction.Add(Resource.Id.WidgetPlaceholder, CreateFragment("media_fragment"), "media_fragment");
             transaction.Add(Resource.Id.mini_widget_container, CreateFragment("quick_glance"), "quick_glance");
+            //transaction.Add(Resource.Id.WidgetPlaceholder, CreateFragment("notification_fragment"), "notification_fragment");
             transaction.CommitNow();
 
         }

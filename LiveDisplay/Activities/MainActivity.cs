@@ -1,21 +1,16 @@
 ﻿namespace LiveDisplay.Activities
 {
     using Android.App;
-    using Android.App.Admin;
     using Android.Content;
-    using Android.Net;
     using Android.OS;
-    using Android.Provider;
     using Android.Runtime;
     using Android.Views;
     using Android.Widget;
-    using AndroidX.Activity.Result;
     using AndroidX.AppCompat.App;
     using AndroidX.AppCompat.Widget;
-    using LiveDisplay.BroadcastReceivers;
     using LiveDisplay.Misc;
-    using LiveDisplay.Servicios;
-    using LiveDisplay.Servicios.Awake;
+    using LiveDisplay.Services;
+    using LiveDisplay.Services.Awake;
 
     //for CI.
     using Microsoft.AppCenter;

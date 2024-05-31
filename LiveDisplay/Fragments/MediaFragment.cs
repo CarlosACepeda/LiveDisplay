@@ -10,12 +10,12 @@ using Android.Views.Animations;
 using Android.Widget;
 using AndroidX.AppCompat.Widget;
 using LiveDisplay.Misc;
-using LiveDisplay.Servicios;
-using LiveDisplay.Servicios.Music;
-using LiveDisplay.Servicios.Music.MediaEventArgs;
-using LiveDisplay.Servicios.Notificaciones;
-using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
-using LiveDisplay.Servicios.Wallpaper;
+using LiveDisplay.Services;
+using LiveDisplay.Services.Media;
+using LiveDisplay.Services.Media.MediaEventArgs;
+using LiveDisplay.Services.Notifications;
+using LiveDisplay.Services.Notifications.NotificationEventArgs;
+using LiveDisplay.Services.Wallpaper;
 using System;
 using System.Linq;
 using System.Threading;
@@ -567,8 +567,6 @@ namespace LiveDisplay.Fragments
             Activity?.RunOnUiThread(() =>
             {
                 bool isKitkat = Build.VERSION.SdkInt <= BuildVersionCodes.KitkatWatch;
-
-                activityIntent = e.ActivityIntent;
 
                 tvTitle.Text = isKitkat ? 
                 e.MediaMetadataKitkat.GetString((MediaMetadataEditKey)MetadataKey.Title, string.Empty): 

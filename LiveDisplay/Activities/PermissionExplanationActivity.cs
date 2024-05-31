@@ -11,7 +11,7 @@ using Java.Lang;
 using LiveDisplay;
 using LiveDisplay.BroadcastReceivers;
 using LiveDisplay.Misc;
-using LiveDisplay.Servicios;
+using LiveDisplay.Services;
 using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
 
 [Activity(Label = "@string/permission_explanation_activity_label")]

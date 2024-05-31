@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
+	android:padding="@dimen/notification_widget_content_padding"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -16,28 +17,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 			<TextView
-				android:text="Spotify"
+				tools:text="Spotify"
 				android:fontFamily="sans-serif-condensed"
 				android:textColor="@color/primary_text_default_material_dark"
 				android:textStyle="italic"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:id="@+id/app_name"
-				android:textSize="14dp" />
+				android:id="@+id/app_name"/>
 			<TextView
-				android:text="8:13 PM"
+				tools:text="8:13 PM"
 				android:fontFamily="sans-serif-condensed"
 				android:textAppearance="?android:attr/textAppearanceSmall"
 				android:textColor="@color/primary_text_default_material_dark"
 				android:textStyle="italic"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:textSize="14dp"
 				android:id="@+id/when" />
 			<TextView
-				android:text="Trap Workout"
+				tools:text="Trap Workout"
                 android:fontFamily="sans-serif-condensed"
-                android:textSize="14dp"
                 android:id="@+id/subtext"
                 android:maxLines="1"
 				android:textAppearance="?android:attr/textAppearanceSmall"
@@ -46,8 +44,7 @@
                 android:layout_height="wrap_content"/>
 		</LinearLayout>
 		<TextView
-		android:textSize="22dp"
-		android:text="One by One - Hunter Siegel Remix"
+		tools:text="One by One - Hunter Siegel Remix"
         android:fontFamily="sans-serif-condensed"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@android:color/white"
@@ -55,15 +52,13 @@
         android:layout_height="wrap_content"
         android:id="@+id/title" />
 		<TextView
-		android:text="GG Magree, Hunter Segel"
+		tools:text="GG Magree, Hunter Segel"
         android:fontFamily="sans-serif-condensed"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="@color/primary_text_default_material_dark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/text"
-		android:textSize="19dp"
-        android:maxLines="6"/>
+        android:id="@+id/text"/>
 		<ProgressBar
         android:visibility="gone"
 		tools:visibility="visible"
@@ -78,8 +73,7 @@
 		<LinearLayout
         android:orientation="horizontal"
         android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:visibility="visible">
+		android:layout_height="wrap_content">
 			<androidx.appcompat.widget.AppCompatImageButton
 				android:id="@+id/action1"
 				android:background="?android:attr/selectableItemBackground"
@@ -110,11 +104,10 @@
 			android:id="@+id/inline_response_container"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:visibility="gone"
-				tools:visibility="visible"
+			android:visibility="visible"
+			tools:visibility="visible"
 			>
 			<EditText
-				android:textSize="15dp"
                 android:inputType="text"
                 android:fontFamily="sans-serif-condensed"
 				android:id="@+id/inline_response_text"

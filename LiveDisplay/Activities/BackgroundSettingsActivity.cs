@@ -13,8 +13,8 @@
     using AndroidX.AppCompat.Widget;
     using LiveDisplay.Factories;
     using LiveDisplay.Misc;
-    using LiveDisplay.Servicios;
-    using LiveDisplay.Servicios.Wallpaper;
+    using LiveDisplay.Services;
+    using LiveDisplay.Services.Wallpaper;
     using System;
     using System.Threading;
 

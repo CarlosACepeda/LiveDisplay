@@ -7,7 +7,7 @@ using Android.Widget;
 using AndroidX.Preference;
 using LiveDisplay.Activities;
 using LiveDisplay.Misc;
-using LiveDisplay.Servicios;
+using LiveDisplay.Services;
 using System;
 
 namespace LiveDisplay.Fragments.Preferences

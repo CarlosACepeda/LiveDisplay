@@ -4,8 +4,8 @@ using Android.Telephony;
 using Android.Views;
 using Android.Widget;
 using LiveDisplay.Misc;
-using LiveDisplay.Servicios;
-using LiveDisplay.Servicios.Weather;
+using LiveDisplay.Services;
+using LiveDisplay.Services.Weather;
 using System.Threading;
 using Fragment = AndroidX.Fragment.App.Fragment;
 

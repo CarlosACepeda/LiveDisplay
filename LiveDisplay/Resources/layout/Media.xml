@@ -154,6 +154,14 @@
                     android:id="@+id/repeat"
                     android:background="?android:attr/selectableItemBackground"
                     android:visibility="visible" />
+                    <!--<androidx.appcompat.widget.AppCompatImageButton
+                    android:src="@drawable/outline_visibility_off_white_24"
+                    android:paddingHorizontal="@dimen/media_widget_controls_horizontal_padding"
+                    android:paddingVertical="@dimen/media_widget_controls_vertical_padding"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ignore"
+                    android:background="?android:attr/selectableItemBackground"/>-->
             </LinearLayout>
            </HorizontalScrollView>
             <LinearLayout

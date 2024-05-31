@@ -6,8 +6,8 @@ using Android.Widget;
 using AndroidX.Preference;
 using LiveDisplay.Activities;
 using LiveDisplay.Misc;
-using LiveDisplay.Servicios;
-using LiveDisplay.Servicios.Awake;
+using LiveDisplay.Services;
+using LiveDisplay.Services.Awake;
 using System;
 
 namespace LiveDisplay.Fragments.Preferences

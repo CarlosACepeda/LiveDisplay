@@ -8,8 +8,8 @@
     using Android.Widget;
     using AndroidX.RecyclerView.Widget;
     using LiveDisplay.Factories;
-    using LiveDisplay.Servicios.Notificaciones;
-    using LiveDisplay.Servicios.Notificaciones.NotificationEventArgs;
+    using LiveDisplay.Services.Notifications;
+    using LiveDisplay.Services.Notifications.NotificationEventArgs;
     using System;
     using System.Collections.Generic;
 

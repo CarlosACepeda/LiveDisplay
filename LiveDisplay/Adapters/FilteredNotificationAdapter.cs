@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Android.Views;
 using Android.Widget;
 using AndroidX.RecyclerView.Widget;
-using LiveDisplay.Servicios.Notificaciones;
+using LiveDisplay.Services.Notifications;
 
 namespace LiveDisplay.Adapters
 {

@@ -4,7 +4,7 @@ using Android.Content;
 using Android.OS;
 using Android.Provider;
 using LiveDisplay.BroadcastReceivers;
-using LiveDisplay.Servicios;
+using LiveDisplay.Services;
 
 namespace LiveDisplay.Misc
 {

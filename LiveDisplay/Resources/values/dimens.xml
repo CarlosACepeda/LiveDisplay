@@ -23,4 +23,5 @@
   <dimen name="explanation_title_text_size">50dp</dimen>
   <dimen name="explanation_description_text_size">20dp</dimen>
   <dimen name="explanation_screen_content_padding">10dp</dimen>
+  <dimen name="notification_widget_content_padding">10dp</dimen>
 </resources>

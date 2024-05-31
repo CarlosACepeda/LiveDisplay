@@ -47,7 +47,7 @@
             base.OnDestroyView();
         }
 
-        private void BatteryReceiver_BatteryInfoChanged(object sender, Servicios.Battery.BatteryEventArgs.BatteryChangedEventArgs e)
+        private void BatteryReceiver_BatteryInfoChanged(object sender, Services.Battery.BatteryEventArgs.BatteryChangedEventArgs e)
         {
             battery.Text = e.BatteryLevel.ToString() + "%";
             batteryIcon.SetBackgroundDrawable(e.BatteryIcon);

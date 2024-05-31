@@ -2152,52 +2152,55 @@ namespace LiveDisplay
 			public const int notification_top_pad_large_text = 2131165327;
 			
 			// aapt resource value: 0x7F070090
-			public const int permissions_default_text_vertical_margin = 2131165328;
-			
-			// aapt resource value: 0x7F070096
-			public const int preferences_detail_width = 2131165334;
-			
-			// aapt resource value: 0x7F070097
-			public const int preferences_header_width = 2131165335;
+			public const int notification_widget_content_padding = 2131165328;
 			
 			// aapt resource value: 0x7F070091
-			public const int preference_dropdown_padding_start = 2131165329;
+			public const int permissions_default_text_vertical_margin = 2131165329;
 			
-			// aapt resource value: 0x7F070092
-			public const int preference_icon_minWidth = 2131165330;
-			
-			// aapt resource value: 0x7F070093
-			public const int preference_seekbar_padding_horizontal = 2131165331;
-			
-			// aapt resource value: 0x7F070094
-			public const int preference_seekbar_padding_vertical = 2131165332;
-			
-			// aapt resource value: 0x7F070095
-			public const int preference_seekbar_value_minWidth = 2131165333;
+			// aapt resource value: 0x7F070097
+			public const int preferences_detail_width = 2131165335;
 			
 			// aapt resource value: 0x7F070098
-			public const int tooltip_corner_radius = 2131165336;
+			public const int preferences_header_width = 2131165336;
+			
+			// aapt resource value: 0x7F070092
+			public const int preference_dropdown_padding_start = 2131165330;
+			
+			// aapt resource value: 0x7F070093
+			public const int preference_icon_minWidth = 2131165331;
+			
+			// aapt resource value: 0x7F070094
+			public const int preference_seekbar_padding_horizontal = 2131165332;
+			
+			// aapt resource value: 0x7F070095
+			public const int preference_seekbar_padding_vertical = 2131165333;
+			
+			// aapt resource value: 0x7F070096
+			public const int preference_seekbar_value_minWidth = 2131165334;
 			
 			// aapt resource value: 0x7F070099
-			public const int tooltip_horizontal_padding = 2131165337;
+			public const int tooltip_corner_radius = 2131165337;
 			
 			// aapt resource value: 0x7F07009A
-			public const int tooltip_margin = 2131165338;
+			public const int tooltip_horizontal_padding = 2131165338;
 			
 			// aapt resource value: 0x7F07009B
-			public const int tooltip_precise_anchor_extra_offset = 2131165339;
+			public const int tooltip_margin = 2131165339;
 			
 			// aapt resource value: 0x7F07009C
-			public const int tooltip_precise_anchor_threshold = 2131165340;
+			public const int tooltip_precise_anchor_extra_offset = 2131165340;
 			
 			// aapt resource value: 0x7F07009D
-			public const int tooltip_vertical_padding = 2131165341;
+			public const int tooltip_precise_anchor_threshold = 2131165341;
 			
 			// aapt resource value: 0x7F07009E
-			public const int tooltip_y_offset_non_touch = 2131165342;
+			public const int tooltip_vertical_padding = 2131165342;
 			
 			// aapt resource value: 0x7F07009F
-			public const int tooltip_y_offset_touch = 2131165343;
+			public const int tooltip_y_offset_non_touch = 2131165343;
+			
+			// aapt resource value: 0x7F0700A0
+			public const int tooltip_y_offset_touch = 2131165344;
 			
 			static Dimension()
 			{
@@ -2615,16 +2618,19 @@ namespace LiveDisplay
 			public const int outline_repeat_white_24 = 2131230853;
 			
 			// aapt resource value: 0x7F080086
-			public const int preference_list_divider_material = 2131230854;
+			public const int outline_visibility_off_white_24 = 2131230854;
 			
 			// aapt resource value: 0x7F080087
-			public const int test_level_drawable = 2131230855;
+			public const int preference_list_divider_material = 2131230855;
 			
 			// aapt resource value: 0x7F080088
-			public const int tooltip_frame_dark = 2131230856;
+			public const int test_level_drawable = 2131230856;
 			
 			// aapt resource value: 0x7F080089
-			public const int tooltip_frame_light = 2131230857;
+			public const int tooltip_frame_dark = 2131230857;
+			
+			// aapt resource value: 0x7F08008A
+			public const int tooltip_frame_light = 2131230858;
 			
 			static Drawable()
 			{
