@@ -95,7 +95,15 @@ namespace LiveDisplay.Servicios.Music
             if (controller != null)
             {
                 _transportControls = controller.GetTransportControls();
-                _activityIntent = controller.SessionActivity ?? PendingIntent.GetActivity(Application.Context, (int)Result.Ok, PackageUtils.GetAppIntent(controller.PackageName), PendingIntentFlags.Immutable | PendingIntentFlags.OneShot);
+
+                try
+                {
+                    _activityIntent = controller.SessionActivity ?? PendingIntent.GetActivity(Application.Context, (int)Result.Ok, PackageUtils.GetAppIntent(controller.PackageName), PendingIntentFlags.Immutable | PendingIntentFlags.OneShot);
+                }
+                catch( Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
                 _appname = PackageUtils.GetTheAppName(controller.PackageName);
                 //Invoke MediaMetadata, MediaPlayback, RepeatOption changed events, so all listeners will get notified of
                 //the new Loaded mediacontroller.
@@ -184,8 +192,23 @@ namespace LiveDisplay.Servicios.Music
                     CycleRepeatOption();
                     OnMediaRepeatOptionChanged(optionSet);
                     break;
+                case MediaActionFlags.OpenRelatedActivity:
+                    OpenRelatedActivity();
+                    break;
                 default:
                     break;
+            }
+        }
+
+        private void OpenRelatedActivity()
+        {
+            try
+            {
+                _activityIntent?.Send();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine($"Couldn't launch related activity: {ex}");
             }
         }
 

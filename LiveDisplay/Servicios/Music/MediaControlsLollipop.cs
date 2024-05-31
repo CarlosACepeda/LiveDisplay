@@ -100,5 +100,13 @@ namespace LiveDisplay.Servicios.Music
                 MediaActionFlags= MediaActionFlags.CycleRepeatOption,
             });
         }
+
+        public void OpenRelatedActivity()
+        {
+            OnMediaEvent(new MediaActionEventArgs
+            {
+                MediaActionFlags = MediaActionFlags.OpenRelatedActivity
+            });
+        }
     }
 }

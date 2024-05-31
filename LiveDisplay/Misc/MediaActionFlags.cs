@@ -11,6 +11,7 @@
         Rewind = 7,
         Stop = 8,
         RetrieveMediaInformation = 9,
-        CycleRepeatOption=10
+        CycleRepeatOption=10,
+        OpenRelatedActivity=11,
     }
 }

@@ -10,4 +10,5 @@ public interface IMediaControls
     public void SeekTo(long msec);
     public void CycleRepeatOption();
     public void RetrieveMediaInformation();
+    public void OpenRelatedActivity();
 }

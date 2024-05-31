@@ -52,6 +52,8 @@ namespace LiveDisplay.Servicios
                     audioManager = (AudioManager)Application.Context.GetSystemService(AudioService);
                     remoteController = new RemoteController(Application.Context, this, MainLooper); //Could leak.
                     remoteController.SetArtworkConfiguration(Resources.DisplayMetrics.WidthPixels, Resources.DisplayMetrics.HeightPixels);
+                    RemoteControlClient client = new RemoteControlClient(null, MainLooper);
+                    var session= client.MediaSession;
                     audioManager.RegisterRemoteController(remoteController);
                     musicControllerKitkat = MediaEventsPublisherKitkat.Initialize(remoteController);
                     ToggleNotificationSlaveSubscription(true);

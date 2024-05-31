@@ -34,7 +34,6 @@ namespace LiveDisplay.Fragments
         LinearLayout maincontainer, additionalMediaControls;
         TextView noMediaPlaying;
         SeekBar skbSeekSongTime;
-        PendingIntent activityIntent; //A Pending intent if available to start the activity associated with this music fragent.
         Timer fastForwardTimer;
         Timer rewindTimer;
         bool longPressStarted = false;
@@ -377,10 +376,11 @@ namespace LiveDisplay.Fragments
 
         private void MusicPlayerContainer_Click(object sender, EventArgs e)
         {
-            try { activityIntent.Send(); }
+            try { mediaControls.OpenRelatedActivity(); }
             catch (PendingIntent.CanceledException ex)
             {   Console.WriteLine($"Failed Sending PendingIntent: {ex.Message}");
 
+                if(currentMediaNotification!= null)
                 NotificationSlave.GetInstance().ClickNotification(currentMediaNotification);
             }
         }

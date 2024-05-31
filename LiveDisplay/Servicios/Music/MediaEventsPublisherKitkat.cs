@@ -1,4 +1,5 @@
-﻿using Android.Media;
+﻿using Android.App;
+using Android.Media;
 using Android.Media.Session;
 using Android.Util;
 using Android.Views;
@@ -24,6 +25,7 @@ namespace LiveDisplay.Servicios.Music
         const int MillisToRepeat = 2500;
         const int OneSecondInMillis = 1000;
         System.Timers.Timer progressTimer = new System.Timers.Timer();
+        PendingIntent _activityIntent;
 
 
         public RemoteControlPlayState PlaybackState { get; set; }
@@ -122,7 +124,9 @@ namespace LiveDisplay.Servicios.Music
                     CycleRepeatOption();
                     OnMediaRepeatOptionChanged(optionSet);
                     break;
-
+                case MediaActionFlags.OpenRelatedActivity:
+                    OpenRelatedActivity();
+                    break;
                 default:
                     break;
             }
@@ -132,9 +136,20 @@ namespace LiveDisplay.Servicios.Music
             {
                 PlaybackStateKitkat = simulatedState,
                 CurrentTime = TransportControls.EstimatedMediaPosition,
+                RepeatOptionSet= optionSet
             });
         }
-
+        private void OpenRelatedActivity()
+        {
+            try
+            {
+                _activityIntent?.Send();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Couldn't launch related activity: {ex}");
+            }
+        }
         public void OnPlaybackStateChanged(RemoteControlPlayState state)
         {
             PlaybackState = state;
