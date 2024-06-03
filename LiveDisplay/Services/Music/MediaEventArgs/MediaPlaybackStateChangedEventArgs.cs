@@ -29,6 +29,8 @@ namespace LiveDisplay.Services.Media.MediaEventArgs
 
         public int RepeatOptionSet { get; set; }
 
+        public MediaSessionSupportedActionsFlags SupportedActions { get; set; } = MediaSessionSupportedActionsFlags.None;
+
         private PlaybackStateCode GetPlaybackStateCodeFromRemoteControlPlayState(RemoteControlPlayState playbackState)
         {
             return playbackState switch

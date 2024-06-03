@@ -6,6 +6,7 @@ using Android.Util;
 using LiveDisplay.Misc;
 using LiveDisplay.Services.Media.MediaEventArgs;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace LiveDisplay.Services.Media
@@ -221,10 +222,49 @@ namespace LiveDisplay.Services.Media
             {
                 PlaybackState = state.State,
                 CurrentTime = state.Position,
-                RepeatOptionSet= optionSet
+                RepeatOptionSet= optionSet,
+                SupportedActions= GetSupportedActions()
             });
             base.OnPlaybackStateChanged(state);
 
+        }
+        public MediaSessionSupportedActionsFlags GetSupportedActions()
+        {
+            var supportedFlags = MediaSessionSupportedActionsFlags.None;
+
+            Dictionary<long, string> actions = new Dictionary<long, string>
+            {
+                { PlaybackState.ActionStop, "ActionStop" },
+                { PlaybackState.ActionPause, "ActionPause" },
+                { PlaybackState.ActionPlay, "ActionPlay" },
+                { PlaybackState.ActionRewind, "ActionRewind" },
+                { PlaybackState.ActionSkipToPrevious, "ActionSkipToPrevious" },
+                { PlaybackState.ActionSkipToNext, "ActionSkipToNext" },
+                { PlaybackState.ActionFastForward, "ActionFastForward" },
+                { PlaybackState.ActionSetRating, "ActionSetRating" },
+                { PlaybackState.ActionSeekTo, "ActionSeekTo" },
+                { PlaybackState.ActionPlayPause, "ActionPlayPause" },
+                { PlaybackState.ActionPlayFromMediaId, "ActionPlayFromMediaId" },
+                { PlaybackState.ActionPlayFromSearch, "ActionPlayFromSearch" },
+                { PlaybackState.ActionSkipToQueueItem, "ActionSkipToQueueItem" },
+                { PlaybackState.ActionPlayFromUri, "ActionPlayFromUri" },
+                { PlaybackState.ActionPrepare, "ActionPrepare" },
+                { PlaybackState.ActionPrepareFromMediaId, "ActionPrepareFromMediaId" },
+                { PlaybackState.ActionPrepareFromSearch, "ActionPrepareFromSearch" },
+                { PlaybackState.ActionPrepareFromUri, "ActionPrepareFromUri" },
+                { PlaybackState.ActionSetPlaybackSpeed, "ActionSetPlaybackSpeed" },
+
+            };
+
+            foreach (var action in actions)
+            {
+                if ((_playbackState.Actions & action.Key) == action.Key)
+                {
+                    Console.WriteLine($"{action.Value} is supported");
+                    supportedFlags |= (MediaSessionSupportedActionsFlags)action.Key;
+                }
+            }
+            return supportedFlags;
         }
 
         public override void OnMetadataChanged(MediaMetadata metadata)

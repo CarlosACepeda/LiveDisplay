@@ -88,6 +88,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Activities\PermissionExplanationActivity.cs" />
+    <Compile Include="Misc\MediaSessionSupportedActionsFlags.cs" />
     <Compile Include="Misc\Permissions.cs" />
     <Compile Include="Services\ActivityEvents\ActivityLifecycleHelper.cs" />
     <Compile Include="Activities\BackgroundSettingsActivity.cs" />

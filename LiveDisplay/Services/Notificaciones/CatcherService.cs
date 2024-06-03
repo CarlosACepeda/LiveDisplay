@@ -25,7 +25,7 @@ namespace LiveDisplay.Services
         private RemoteController remoteController;
         private ScreenOnOffReceiver screenOnOffReceiver;
         private MediaSessionManager mediaSessionManager;
-        private MediaEventsPublisherKitkat musicControllerKitkat;
+        private MediaEventsPublisherKitkat mediaControllerKitkat;
         private ActiveMediaSessionsListener activeMediaSessionsListener;
         private AudioManager audioManager;
         private CatcherHelper catcherHelper;
@@ -55,7 +55,7 @@ namespace LiveDisplay.Services
                     RemoteControlClient client = new RemoteControlClient(null, MainLooper);
                     var session= client.MediaSession;
                     audioManager.RegisterRemoteController(remoteController);
-                    musicControllerKitkat = MediaEventsPublisherKitkat.Initialize(remoteController);
+                    mediaControllerKitkat = MediaEventsPublisherKitkat.Initialize(remoteController);
                     ToggleNotificationSlaveSubscription(true);
                     RegisterScreenOnOffReceiver();
                 });
@@ -217,24 +217,25 @@ namespace LiveDisplay.Services
 
         public void OnClientMetadataUpdate(RemoteController.MetadataEditor metadataEditor)
         {
-            musicControllerKitkat.OnMetadataChanged(metadataEditor);
+            mediaControllerKitkat.OnMetadataChanged(metadataEditor);
         }
 
         public void OnClientPlaybackStateUpdateSimple([GeneratedEnum] RemoteControlPlayState stateSimple)
         {
             Console.WriteLine("client PlaybackState UPDATE SSIMPLE");
-            musicControllerKitkat.OnPlaybackStateChanged(stateSimple);
+            mediaControllerKitkat.OnPlaybackStateChanged(stateSimple);
         }
 
         public void OnClientPlaybackStateUpdate([GeneratedEnum] RemoteControlPlayState state, long stateChangeTimeMs, long currentPosMs, float speed)
         {
             Console.WriteLine("client PlaybackState UPDATE");
-            musicControllerKitkat.OnPlaybackStateChanged(state);
+            mediaControllerKitkat.OnPlaybackStateChanged(state);
         }
 
         public void OnClientTransportControlUpdate([GeneratedEnum] RemoteControlFlags transportControlFlags)
         {
             Log.Info("Livedisplay", "TransportControl update" + transportControlFlags);
+            mediaControllerKitkat.OnTransportControlsUpdate(transportControlFlags);
         }
 
         public void OnSharedPreferenceChanged(ISharedPreferences sharedPreferences, string key)

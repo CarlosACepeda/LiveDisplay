@@ -623,6 +623,7 @@ namespace LiveDisplay.Fragments
                 playbackState = e.PlaybackState;
 
                 SetRepeatOption(e.RepeatOptionSet);
+                SetAvailableControls(e.SupportedActions);
 
                 switch (e.PlaybackState)
                 {
@@ -677,6 +678,28 @@ namespace LiveDisplay.Fragments
             });
         }
 
+        void SetAvailableControls(MediaSessionSupportedActionsFlags supportedActionsFlags)
+        {
+            SetControlAvailability(btnSkipNext, supportedActionsFlags, MediaSessionSupportedActionsFlags.SkipToNext);
+            SetControlAvailability(btnSkipPrevious, supportedActionsFlags, MediaSessionSupportedActionsFlags.SkipToPrevious);
+            SetControlAvailability(btnPlayPause, supportedActionsFlags, 
+                MediaSessionSupportedActionsFlags.Play| 
+                MediaSessionSupportedActionsFlags.Pause | 
+                MediaSessionSupportedActionsFlags.PlayPause
+                );
+        }
+
+
+        void SetControlAvailability(View control, MediaSessionSupportedActionsFlags supportedActionFlags, MediaSessionSupportedActionsFlags toCheck)
+        {
+            SetControlVisibility(control, supportedActionFlags.HasFlag(toCheck));
+        }
+
+
+        void SetControlVisibility(View control, bool visible)
+        {
+            control.Visibility = visible ? ViewStates.Visible : ViewStates.Gone;
+        }
 
         private void BindViews(View view)
         {

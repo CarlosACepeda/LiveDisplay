@@ -12,4 +12,6 @@ public interface IMediaEventsPublisher
 
     public void OnMediaProgressChanged(MediaProgressChangedEventArgs e);
     public void OnMediaRepeatOptionChanged(int newOption);
+
+    public MediaSessionSupportedActionsFlags GetSupportedActions();
 }

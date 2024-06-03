@@ -1,11 +1,11 @@
 ﻿using Android.App;
 using Android.Media;
-using Android.Media.Session;
 using Android.Util;
 using Android.Views;
 using LiveDisplay.Misc;
 using LiveDisplay.Services.Media.MediaEventArgs;
 using System;
+using System.Collections.Generic;
 
 
 namespace LiveDisplay.Services.Media
@@ -26,7 +26,7 @@ namespace LiveDisplay.Services.Media
         const int OneSecondInMillis = 1000;
         System.Timers.Timer progressTimer = new System.Timers.Timer();
         PendingIntent _activityIntent;
-
+        private RemoteControlFlags _remoteControlFlags;
 
         public RemoteControlPlayState PlaybackState { get; set; }
         public RemoteController.MetadataEditor MediaMetadata { get; set; }
@@ -150,6 +150,10 @@ namespace LiveDisplay.Services.Media
                 Console.WriteLine($"Couldn't launch related activity: {ex}");
             }
         }
+        public void OnTransportControlsUpdate(RemoteControlFlags remoteControlFlags)
+        {
+            _remoteControlFlags = remoteControlFlags;
+        }
         public void OnPlaybackStateChanged(RemoteControlPlayState state)
         {
             PlaybackState = state;
@@ -158,7 +162,8 @@ namespace LiveDisplay.Services.Media
             Log.Info("LiveDisplay", "Music state is: " + state);
             OnMediaPlaybackChanged(new MediaPlaybackStateChangedEventArgs
             {
-                PlaybackStateKitkat = state
+                PlaybackStateKitkat = state,
+                SupportedActions= GetSupportedActions()
             });
         }
 
@@ -245,6 +250,45 @@ namespace LiveDisplay.Services.Media
         public void OnMediaRepeatOptionChanged(int newOption)
         {
             MediaRepeatOptionChanged?.Invoke(null, newOption);
+        }
+
+        public MediaSessionSupportedActionsFlags GetSupportedActions()
+        {
+            var supportedFlags = MediaSessionSupportedActionsFlags.None;
+            switch(_remoteControlFlags)
+            {
+                case RemoteControlFlags.Previous:
+                    supportedFlags |= MediaSessionSupportedActionsFlags.SkipToPrevious;
+                    break;
+                case RemoteControlFlags.Rewind:
+                    supportedFlags |= MediaSessionSupportedActionsFlags.Rewind;
+                    break;
+                case RemoteControlFlags.Play:
+                    supportedFlags |= MediaSessionSupportedActionsFlags.Play;
+                    break;
+                case RemoteControlFlags.PlayPause:
+                    supportedFlags |= MediaSessionSupportedActionsFlags.PlayPause;
+                    break;
+                case RemoteControlFlags.Pause:
+                    supportedFlags |= MediaSessionSupportedActionsFlags.Pause;
+                    break;
+                case RemoteControlFlags.Stop:
+                    supportedFlags |= MediaSessionSupportedActionsFlags.Stop;
+                    break;
+                case RemoteControlFlags.FastForward:
+                    supportedFlags |= MediaSessionSupportedActionsFlags.FastForward;
+                    break;
+                case RemoteControlFlags.Next:
+                    supportedFlags |= MediaSessionSupportedActionsFlags.SkipToNext;
+                    break;
+                case RemoteControlFlags.PositionUpdate:
+                    supportedFlags |= MediaSessionSupportedActionsFlags.SeekTo;
+                    break;
+                case RemoteControlFlags.Rating:
+                    supportedFlags |= MediaSessionSupportedActionsFlags.SetRating;
+                    break;
+            }
+            return supportedFlags;
         }
     }
 }
