@@ -21,7 +21,14 @@
     using System;
     using System.Threading;
 
-    [Activity(Label = "LockScreen",Theme = "@style/LockScreenTheme", ScreenOrientation = ScreenOrientation.Portrait, MainLauncher = false, LaunchMode = LaunchMode.SingleInstance, ExcludeFromRecents = true)]
+    [Activity(Label = "LockScreen",
+        Theme = "@style/LockScreenTheme", 
+        ScreenOrientation = ScreenOrientation.Portrait, 
+        ConfigurationChanges = 
+        ConfigChanges.Navigation 
+        | ConfigChanges.KeyboardHidden,
+        LaunchMode = LaunchMode.SingleInstance, 
+        ExcludeFromRecents = true)]
     public class LockScreenActivity : AppCompatActivity, View.IOnApplyWindowInsetsListener
     {
 
@@ -73,7 +80,7 @@
             WallpaperPublisher.NewWallpaperIssued += Wallpaper_NewWallpaperIssued;
             WallpaperPublisher.OnZeroPublishersAvailable += WallpaperPublisher_OnZeroPublishersAvailable;
 
-            
+
             LoadAllFragments();
             LoadConfiguration();
             Window.DecorView.SetOnApplyWindowInsetsListener(this);
@@ -179,8 +186,6 @@
 
         protected override void OnDestroy()
         {
-            base.OnDestroy();
-            
             WallpaperPublisher.NewWallpaperIssued -= Wallpaper_NewWallpaperIssued;
             WallpaperPublisher.OnZeroPublishersAvailable -= WallpaperPublisher_OnZeroPublishersAvailable;
             lockscreen.Touch -= Lockscreen_Touch;
@@ -188,6 +193,11 @@
             MainActivity.StartCount--;
             AndroidX.Fragment.App.FragmentTransaction transaction = SupportFragmentManager.BeginTransaction();
             transaction.Remove(mediaFragment);
+            transaction.Remove(quickGlanceFragment);
+            transaction.CommitNowAllowingStateLoss();
+
+            base.OnDestroy();
+
         }
 
         public override void OnBackPressed()
