@@ -27,9 +27,9 @@ namespace LiveDisplay.Fragments
 {
     public class MediaFragment : Fragment
     {
-        TextView tvTitle, tvArtist, tvAlbum, sourceApp;
-        ImageButton btnSkipPrevious, 
-            btnPlayPause, btnSkipNext, discardMediaSession, repeat, toggleAdditionalControls;
+        TextView title, artist, album, sourceApp;
+        ImageButton skipToPrevious,
+            playPause, skipToNext, discardMediaSession, repeat, toggleAdditionalControls, stop;
         ProgressBar buffering;
         LinearLayout maincontainer, additionalMediaControls;
         TextView noMediaPlaying;
@@ -133,9 +133,9 @@ namespace LiveDisplay.Fragments
         public override void OnDestroy()
         {
             Console.WriteLine("FRAGMENT: onDestroy");
-            tvAlbum = null;
-            tvArtist = null;
-            tvTitle = null;
+            album = null;
+            artist = null;
+            title = null;
             skbSeekSongTime = null;
             base.OnDestroy();
         }
@@ -209,20 +209,26 @@ namespace LiveDisplay.Fragments
         #region Fragment Views events
         private void BindViewEvents()
         {
-            btnSkipPrevious.Click += BtnSkipPrevious_Click;
-            btnSkipPrevious.Touch += BtnSkipPrevious_Touch;
-            btnSkipPrevious.LongClick += BtnSkipPrevious_LongClick;
-            btnPlayPause.Click += BtnPlayPause_Click;
-            btnSkipNext.Click += BtnSkipNext_Click;
-            btnSkipNext.Touch += BtnSkipNext_Touch;
-            btnSkipNext.LongClick += BtnSkipNext_LongClick;
+            skipToPrevious.Click += BtnSkipPrevious_Click;
+            skipToPrevious.Touch += BtnSkipPrevious_Touch;
+            skipToPrevious.LongClick += BtnSkipPrevious_LongClick;
+            playPause.Click += BtnPlayPause_Click;
+            skipToNext.Click += BtnSkipNext_Click;
+            skipToNext.Touch += BtnSkipNext_Touch;
+            skipToNext.LongClick += BtnSkipNext_LongClick;
             skbSeekSongTime.StopTrackingTouch += SkbSeekSongTime_StopTrackingTouch;
             maincontainer.LongClick += MusicPlayerContainer_LongClick;
             maincontainer.Click += MusicPlayerContainer_Click;
             maincontainer.Touch += Maincontainer_Touch;
             discardMediaSession.Click += DiscardMediaSession_Click;
             repeat.Click += Repeat_Click;
+            stop.Click += Stop_Click;
             toggleAdditionalControls.Click += ToggleAdditionalControls_Click;
+        }
+
+        private void Stop_Click(object sender, EventArgs e)
+        {
+            mediaControls.Stop();
         }
 
         private void ToggleAdditionalControls_Click(object sender, EventArgs e)
@@ -506,15 +512,15 @@ namespace LiveDisplay.Fragments
         {
             if (Build.VERSION.SdkInt <= BuildVersionCodes.KitkatWatch)
             {
-                MediaEventsPublisherKitkat.MediaPlaybackChanged += MusicController_MediaPlaybackChanged;
-                MediaEventsPublisherKitkat.MediaMetadataChanged += MusicController_MediaMetadataChanged;
+                MediaEventsPublisherKitkat.MediaPlaybackChanged += MediaController_MediaPlaybackChanged;
+                MediaEventsPublisherKitkat.MediaMetadataChanged += MediaController_MediaMetadataChanged;
                 MediaEventsPublisherKitkat.MediaProgressChanged += MediaEventsPublisherKitkat_MediaProgressChanged;
                 MediaEventsPublisherKitkat.MediaRepeatOptionChanged += MediaEventsPublisherKitkat_MediaRepeatOptionChanged;
             }
             else
             {
-                MediaEventsPublisherLollipop.MediaPlaybackChanged += MusicController_MediaPlaybackChanged;
-                MediaEventsPublisherLollipop.MediaMetadataChanged += MusicController_MediaMetadataChanged;
+                MediaEventsPublisherLollipop.MediaPlaybackChanged += MediaController_MediaPlaybackChanged;
+                MediaEventsPublisherLollipop.MediaMetadataChanged += MediaController_MediaMetadataChanged;
                 MediaEventsPublisherLollipop.MediaProgressChanged += MediaEventsPublisherLollipop_MediaProgressChanged;
                 MediaEventsPublisherLollipop.MediaRepeatOptionChanged += MediaEventsPublisherLollipop_MediaRepeatOptionChanged;
             }
@@ -523,15 +529,15 @@ namespace LiveDisplay.Fragments
         {
             if (Build.VERSION.SdkInt <= BuildVersionCodes.KitkatWatch)
             {
-                MediaEventsPublisherKitkat.MediaPlaybackChanged -= MusicController_MediaPlaybackChanged;
-                MediaEventsPublisherKitkat.MediaMetadataChanged -= MusicController_MediaMetadataChanged;
+                MediaEventsPublisherKitkat.MediaPlaybackChanged -= MediaController_MediaPlaybackChanged;
+                MediaEventsPublisherKitkat.MediaMetadataChanged -= MediaController_MediaMetadataChanged;
                 MediaEventsPublisherKitkat.MediaProgressChanged -= MediaEventsPublisherKitkat_MediaProgressChanged;
                 MediaEventsPublisherKitkat.MediaRepeatOptionChanged -= MediaEventsPublisherKitkat_MediaRepeatOptionChanged;
             }
             else
             {
-                MediaEventsPublisherLollipop.MediaPlaybackChanged -= MusicController_MediaPlaybackChanged;
-                MediaEventsPublisherLollipop.MediaMetadataChanged -= MusicController_MediaMetadataChanged;
+                MediaEventsPublisherLollipop.MediaPlaybackChanged -= MediaController_MediaPlaybackChanged;
+                MediaEventsPublisherLollipop.MediaMetadataChanged -= MediaController_MediaMetadataChanged;
                 MediaEventsPublisherLollipop.MediaProgressChanged -= MediaEventsPublisherLollipop_MediaProgressChanged;
                 MediaEventsPublisherLollipop.MediaRepeatOptionChanged -= MediaEventsPublisherLollipop_MediaRepeatOptionChanged;
             }
@@ -562,21 +568,21 @@ namespace LiveDisplay.Fragments
             SetSeekbarProgress((int)e.CurrentProgress, (int)e.TotalProgress);
         }
 
-        private void MusicController_MediaMetadataChanged(object sender, MediaMetadataChangedEventArgs e)
+        private void MediaController_MediaMetadataChanged(object sender, MediaMetadataChangedEventArgs e)
         {
             Activity?.RunOnUiThread(() =>
             {
                 bool isKitkat = Build.VERSION.SdkInt <= BuildVersionCodes.KitkatWatch;
 
-                tvTitle.Text = isKitkat ? 
+                title.Text = isKitkat ? 
                 e.MediaMetadataKitkat.GetString((MediaMetadataEditKey)MetadataKey.Title, string.Empty): 
                 e.MediaMetadata?.GetString(MediaMetadata.MetadataKeyTitle);
 
-                tvAlbum.Text =  isKitkat ? 
+                album.Text =  isKitkat ? 
                 e.MediaMetadataKitkat.GetString((MediaMetadataEditKey)MetadataKey.Album, string.Empty):
                 e.MediaMetadata?.GetString(MediaMetadata.MetadataKeyAlbum);
 
-                tvArtist.Text = isKitkat?
+                artist.Text = isKitkat?
                 e.MediaMetadataKitkat.GetString((MediaMetadataEditKey)MetadataKey.Artist, string.Empty)
                 : e.MediaMetadata?.GetString(MediaMetadata.MetadataKeyArtist);
 
@@ -616,7 +622,7 @@ namespace LiveDisplay.Fragments
             });
         }
 
-        private void MusicController_MediaPlaybackChanged(object sender, MediaPlaybackStateChangedEventArgs e)
+        private void MediaController_MediaPlaybackChanged(object sender, MediaPlaybackStateChangedEventArgs e)
         {
             Activity?.RunOnUiThread(() =>
             {
@@ -628,7 +634,7 @@ namespace LiveDisplay.Fragments
                 switch (e.PlaybackState)
                 {
                     case PlaybackStateCode.Paused:
-                        btnPlayPause.SetImageDrawable(
+                        playPause.SetImageDrawable(
                         Build.VERSION.SdkInt <= BuildVersionCodes.LollipopMr1 ?
                         Resources.GetDrawable(Resource.Drawable.ic_play_arrow_white_24dp) :
                         Resources.GetDrawable(Resource.Drawable.ic_play_arrow_white_24dp, Resources.NewTheme()));
@@ -636,19 +642,19 @@ namespace LiveDisplay.Fragments
                         break;
 
                     case PlaybackStateCode.Playing:
-                        btnPlayPause.SetImageDrawable(
+                        playPause.SetImageDrawable(
                         Build.VERSION.SdkInt <= BuildVersionCodes.LollipopMr1 ?
                         Resources.GetDrawable(Resource.Drawable.ic_pause_white_24dp) :
                         Resources.GetDrawable(Resource.Drawable.ic_pause_white_24dp, Resources.NewTheme()));
                         ToggleMediaControlsVisibility(true);
                         buffering.Visibility = ViewStates.Gone;
-                        btnPlayPause.Visibility = ViewStates.Visible;
+                        playPause.Visibility = ViewStates.Visible;
                         Console.WriteLine("PLAYBACK PLAYING");
 
                         break;
 
                     case PlaybackStateCode.Stopped:
-                        btnPlayPause.SetImageDrawable(
+                        playPause.SetImageDrawable(
                         Build.VERSION.SdkInt <= BuildVersionCodes.LollipopMr1 ?
                         Resources.GetDrawable(Resource.Drawable.ic_play_arrow_white_24dp) :
                         Resources.GetDrawable(Resource.Drawable.ic_play_arrow_white_24dp, Resources.NewTheme()));
@@ -657,7 +663,7 @@ namespace LiveDisplay.Fragments
 
                     case PlaybackStateCode.Buffering:
                         buffering.Visibility = ViewStates.Visible;
-                        btnPlayPause.Visibility = ViewStates.Gone;
+                        playPause.Visibility = ViewStates.Gone;
                         break;
                     case PlaybackStateCode.None:
                         //Indicates that the session has no media to play
@@ -683,9 +689,10 @@ namespace LiveDisplay.Fragments
 
             Console.WriteLine($"SupportedActions: {supportedActionsFlags} ");
 
-            SetControlAvailability(btnSkipNext, supportedActionsFlags, MediaSessionSupportedActionsFlags.SkipToNext);
-            SetControlAvailability(btnSkipPrevious, supportedActionsFlags, MediaSessionSupportedActionsFlags.SkipToPrevious);
-            SetControlAvailability(btnPlayPause, supportedActionsFlags,MediaSessionSupportedActionsFlags.PlayPause);
+            SetControlAvailability(skipToNext, supportedActionsFlags, MediaSessionSupportedActionsFlags.SkipToNext);
+            SetControlAvailability(skipToPrevious, supportedActionsFlags, MediaSessionSupportedActionsFlags.SkipToPrevious);
+            SetControlAvailability(playPause, supportedActionsFlags,MediaSessionSupportedActionsFlags.PlayPause);
+            SetControlAvailability(stop, supportedActionsFlags,MediaSessionSupportedActionsFlags.Stop);
         }
 
 
@@ -702,16 +709,17 @@ namespace LiveDisplay.Fragments
 
         private void BindViews(View view)
         {
-            tvTitle = view.FindViewById<TextView>(Resource.Id.tvSongName);
-            tvAlbum = view.FindViewById<TextView>(Resource.Id.tvAlbumName);
-            tvArtist = view.FindViewById<TextView>(Resource.Id.tvArtistName);
+            title = view.FindViewById<TextView>(Resource.Id.tvSongName);
+            album = view.FindViewById<TextView>(Resource.Id.tvAlbumName);
+            artist = view.FindViewById<TextView>(Resource.Id.tvArtistName);
             sourceApp = view.FindViewById<TextView>(Resource.Id.sourceapp);
 
-            btnSkipPrevious = view.FindViewById<ImageButton>(Resource.Id.btnMediaPrevious);
-            btnPlayPause = view.FindViewById<ImageButton>(Resource.Id.btnMediaPlayPlause);
-            btnSkipNext = view.FindViewById<ImageButton>(Resource.Id.btnMediaNext);
+            skipToPrevious = view.FindViewById<ImageButton>(Resource.Id.skip_to_previous);
+            playPause = view.FindViewById<ImageButton>(Resource.Id.play_pause);
+            skipToNext = view.FindViewById<ImageButton>(Resource.Id.skip_to_next);
             buffering= view.FindViewById<ProgressBar>(Resource.Id.buffering);
             repeat= view.FindViewById<ImageButton>(Resource.Id.repeat);
+            stop= view.FindViewById<ImageButton>(Resource.Id.stop);
 
             skbSeekSongTime = view.FindViewById<SeekBar>(Resource.Id.seeksongTime);
 

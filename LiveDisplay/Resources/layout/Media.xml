@@ -116,7 +116,7 @@
                 android:paddingVertical="@dimen/media_widget_controls_vertical_padding"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/btnMediaPrevious"
+                android:id="@+id/skip_to_previous"
                 android:background="?android:attr/selectableItemBackground" />
             <FrameLayout
                     android:layout_width="wrap_content"
@@ -127,7 +127,7 @@
                         android:paddingVertical="@dimen/media_widget_controls_vertical_padding"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/btnMediaPlayPlause"
+                        android:id="@+id/play_pause"
                         android:background="?android:attr/selectableItemBackground" />
                     <ProgressBar
                         android:visibility="gone"
@@ -143,7 +143,7 @@
                 android:src="@drawable/ic_skip_next_white_24dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/btnMediaNext"
+                android:id="@+id/skip_to_next"
                 android:background="?android:attr/selectableItemBackground" />
                 <androidx.appcompat.widget.AppCompatImageButton
                     android:src="@drawable/outline_repeat_white_24"
@@ -154,6 +154,16 @@
                     android:id="@+id/repeat"
                     android:background="?android:attr/selectableItemBackground"
                     android:visibility="visible" />
+               <androidx.appcompat.widget.AppCompatImageButton
+                    android:src="@drawable/baseline_stop_white_24"
+                    android:paddingHorizontal="@dimen/media_widget_controls_horizontal_padding"
+                    android:paddingVertical="@dimen/media_widget_controls_vertical_padding"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/stop"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:visibility="visible" />
+
                     <!--<androidx.appcompat.widget.AppCompatImageButton
                     android:src="@drawable/outline_visibility_off_white_24"
                     android:paddingHorizontal="@dimen/media_widget_controls_horizontal_padding"
