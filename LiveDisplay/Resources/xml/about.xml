@@ -44,23 +44,12 @@
       app:iconSpaceReserved="false">
     </Preference>
     <Preference
+      android:key="askfortranslations"
     android:title="@string/askfortranslations"
     android:summary="@string/contactme"
     android:selectable="true"
     android:persistent="false"
     app:iconSpaceReserved="false">
-      <intent
-        android:action="android.intent.action.VIEW"
-        android:data="mailto:carlosalt5126@hotmail.es">
-        <extra
-          android:name="android.intent.extra.SUBJECT"
-          android:value="Transalations for LiveDisplay">
-        </extra>
-        <extra
-          android:name="android.intent.extra.TEXT"
-          android:value="Hello there, I want to help with translations for [Language you want to translate]">
-        </extra>
-      </intent>
     </Preference>
   </PreferenceCategory>
   <PreferenceCategory android:title="@string/acknowledgments"

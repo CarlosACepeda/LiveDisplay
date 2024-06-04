@@ -1,8 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="accept_permission">Acept!</string>
   <string name="advanced">Avansat</string>
   <string name="allowweatherchangewallpaper">Schimbați tapetul scurt după o actualizare</string>
   <string name="app_name">LiveDisplay</string>
+  <string name="appearance">Aparienta</string>
   <string name="askfortranslations">Vrei să ne ajuți cu traducere?</string>
   <string name="awakecausesblackwall">Ecranul rămâne negru</string>
   <string name="awakecausesblackwall_desc">Ecranul nu arăta nici unul tapet</string>
@@ -48,11 +50,15 @@
   <string name="onehour">1 oră</string>
   <string name="opciones">Opțiuni</string>
   <string name="partiallyblocked">Numai pe app</string>
+  <string name="permission_explanation_activity_label">Permisiune</string>
   <string name="playing_from_template">Din {0}</string>
+  <string name="read_notifications_title">Citesc Notificarile</string>
   <string name="saveweathersettings">Salvați</string>
   <string name="searchapptitle">Cautați o app</string>
   <string name="settings">Setările</string>
   <string name="sixhours">6 ore</string>
+  <string name="sync_with_weather">Sincronizare cu clima</string>
+  <string name="sync_with_zen_mode">Sincronizare cu modul Nu Deranja</string>
   <string name="tenseconds">10 secunde</string>
   <string name="testnotificationtext">Es Ține apăsat pe o notificare din listă o presiona X pentru a o elimina</string>
   <string name="thirtyminutes">30 Minute</string>
@@ -66,10 +72,5 @@
   <string name="weather">Climă</string>
   <string name="weatherwidget">Widget de Climă</string>
   <string name="weatherwidgetenabled">Activează Widget de Climă</string>
-  <string name="permission_explanation_activity_label">Permisiune</string>
-  <string name="accept_permission">Acept!</string>
-  <string name="read_notifications_title">Citesc Notificarile</string>
-  <string name="appearance">Aparienta</string>
-  <string name="sync_with_zen_mode">Sincronizare cu modul Nu Deranja</string>
-  <string name="sync_with_weather">Sincronizare cu clima</string>
+  <string name="email_subject">Traducere pentru LiveDisplay</string>
 </resources>
