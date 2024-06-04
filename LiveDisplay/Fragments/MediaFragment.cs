@@ -680,13 +680,12 @@ namespace LiveDisplay.Fragments
 
         void SetAvailableControls(MediaSessionSupportedActionsFlags supportedActionsFlags)
         {
+
+            Console.WriteLine($"SupportedActions: {supportedActionsFlags} ");
+
             SetControlAvailability(btnSkipNext, supportedActionsFlags, MediaSessionSupportedActionsFlags.SkipToNext);
             SetControlAvailability(btnSkipPrevious, supportedActionsFlags, MediaSessionSupportedActionsFlags.SkipToPrevious);
-            SetControlAvailability(btnPlayPause, supportedActionsFlags, 
-                MediaSessionSupportedActionsFlags.Play| 
-                MediaSessionSupportedActionsFlags.Pause | 
-                MediaSessionSupportedActionsFlags.PlayPause
-                );
+            SetControlAvailability(btnPlayPause, supportedActionsFlags,MediaSessionSupportedActionsFlags.PlayPause);
         }
 
 
