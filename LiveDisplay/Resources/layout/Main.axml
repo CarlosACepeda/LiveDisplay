@@ -113,12 +113,14 @@
 					android:text="@string/livedisplay_optional_permissions"
 					android:textAppearance="?android:attr/textAppearanceSmall"
 					android:layout_width="match_parent"
+					android:visibility="gone"
 					android:layout_height="wrap_content"
 				/>
 			<RelativeLayout
 					android:id="@+id/accessibility_access_permission"
 					android:paddingVertical="@dimen/permissions_default_text_vertical_margin"
 					android:layout_width="match_parent"
+					android:visibility="gone"
 					android:layout_height="wrap_content">
 				<TextView
 						android:fontFamily="sans-serif-condensed"
@@ -133,6 +135,7 @@
 						android:layout_alignParentRight="true" />
 			</RelativeLayout>
 			<RelativeLayout
+				android:visibility="gone"
 					android:id="@+id/device_access_permission"
 					android:paddingVertical="@dimen/permissions_default_text_vertical_margin"
 					android:layout_width="match_parent"

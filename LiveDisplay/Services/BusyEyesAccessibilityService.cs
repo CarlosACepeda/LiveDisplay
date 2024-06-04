@@ -7,7 +7,9 @@ using Android.Views.Accessibility;
 using System;
 using System.Timers;
 
-[Service(Enabled =true, Label = "@string/app_name", Permission = Manifest.Permission.BindAccessibilityService, Exported =true)]
+[Service(Enabled =true, Label = "@string/app_name", 
+    //Permission = Manifest.Permission.BindAccessibilityService, 
+    Exported =true)]
 [IntentFilter(new[] {ServiceInterface})]
 [MetaData(ServiceMetaData, Resource = "@xml/accessibility_settings")]
 class BusyEyesAccessibilityService : AccessibilityService

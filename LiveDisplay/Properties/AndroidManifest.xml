@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.underground.livedisplay" android:installLocation="auto" android:versionName="0.9.2-beta2" android:versionCode="9">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.underground.livedisplay" android:installLocation="auto" android:versionName="1.1.0rc1" android:versionCode="28">
 	<uses-sdk android:minSdkVersion="19" android:targetSdkVersion="34" />
 	<uses-permission android:name="android.permission.WAKE_LOCK" />
 	<uses-permission android:name="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" />
 	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 	<uses-permission android:name="android.permission.BIND_DEVICE_ADMIN" />
 	<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
