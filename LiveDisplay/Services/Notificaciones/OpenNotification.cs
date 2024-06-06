@@ -71,8 +71,7 @@ namespace LiveDisplay.Services.Notifications
         }
 
         public MediaSession.Token MediaSessionToken =>
-                 statusbarnotification.Notification.Extras.GetParcelable(
-                    Notification.ExtraMediaSession, Java.Lang.Class.FromType(typeof(MediaSession.Token))) as MediaSession.Token;
+                 statusbarnotification.Notification.Extras.Get(Notification.ExtraMediaSession) as MediaSession.Token;
 
         internal string When
         {
