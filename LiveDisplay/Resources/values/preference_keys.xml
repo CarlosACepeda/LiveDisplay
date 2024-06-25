@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <resources>
-  <item type="id" name="wallpaper_scale_type"></item>
+  <string name="wallpaper_scale_type_k">wallpaper_scale_type</string>
+  
   <item type="id" name="use_as_permanent_lock_screen_k"></item>
   <item type="id" name="sync_with_zen_mode"></item>
   <item type="id" name="sync_with_weather"></item>

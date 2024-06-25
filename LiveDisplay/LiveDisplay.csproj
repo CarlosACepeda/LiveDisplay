@@ -90,6 +90,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Activities\PermissionExplanationActivity.cs" />
+    <Compile Include="BroadcastReceivers\MediaControlsProviderBroadcastReceiver.cs" />
+    <Compile Include="Misc\IntegerListPreference.cs" />
     <Compile Include="Misc\MediaSessionSupportedActionsFlags.cs" />
     <Compile Include="Misc\Permissions.cs" />
     <Compile Include="Services\ActivityEvents\ActivityLifecycleHelper.cs" />

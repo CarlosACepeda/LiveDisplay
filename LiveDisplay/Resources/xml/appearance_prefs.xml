@@ -3,12 +3,11 @@
                   xmlns:app="http://schemas.android.com/apk/res-auto">
   <PreferenceCategory android:title="@string/appearance"
                       app:iconSpaceReserved="false">
-    <ListPreference
-          android:enabled="false"
+    <livedisplay.misc.IntegerListPreference
           android:selectable="true"
           android:persistent="true"
           android:defaultValue="@integer/center_crop"
-          android:key="@id/wallpaper_scale_type"
+          android:key="@string/wallpaper_scale_type_k"
           android:title="@string/wallpaper_appearance"
           android:summary="@string/wallpaper_appearance_summary"
           android:entries="@array/entries_wallpaper_appearance"
