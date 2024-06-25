@@ -490,6 +490,7 @@ namespace LiveDisplay.Fragments
         {
             switch (playbackState)
             {
+                case PlaybackStateCode.Stopped:
                 case PlaybackStateCode.Paused:
                     mediaControls.Play();
                     break;
