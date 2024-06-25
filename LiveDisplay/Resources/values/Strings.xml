@@ -98,7 +98,7 @@
   <string name="nomediaplaying">There\'s no media playing currently!  \n Let\'s play something!</string>
   <string name="nonallowedtoturnonscreen">Non allowed to turn on screen</string>
   <string name="notavailableyet">Not available... yet.</string>
-  <string name="notenoughpermissions">You don\'t have the required permissions!</string>
+  <string name="not_enough_permissions">You don\'t have the required permissions!</string>
   <string name="notificationsettings">Notifications</string>
   <string name="notificationviewvisibilitytime">After clicking the notification hide it after...</string>
   <string name="now_playing">Now Playing:</string>
@@ -119,8 +119,8 @@
   <string name="searchapptitle">Search for an app</string>
   <string name="secretmessagehint">Wings from Spanish</string>
   <string name="secretmessageplaceholder">Enter the secret keyword</string>
-  <string name="sendtestnotification">Send test notification</string>
   <string name="settings">Settings</string>
+  <string name="show_lock_screen_preview">Show me how it looks!</string>
   <string name="show_lyrics">Show lyrics</string>
   <string name="show_lyrics_summary">Enrich your experience in Media Control! Show lyrics whenever possible!</string>
   <string name="sixhours">6 Hours</string>

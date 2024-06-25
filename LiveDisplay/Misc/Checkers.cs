@@ -1,4 +1,5 @@
-﻿using Android.App;
+﻿using Android;
+using Android.App;
 using Android.App.Admin;
 using Android.Content;
 using Android.OS;
@@ -40,7 +41,7 @@ namespace LiveDisplay.Misc
 
         public static bool ThisAppCanDrawOverlays()
         {
-            if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1)
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
                 return Settings.CanDrawOverlays(Application.Context);
 
             return true;
@@ -49,7 +50,7 @@ namespace LiveDisplay.Misc
         public static bool ThisAppHasReadStoragePermission()
         {
             if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1)
-                if (Application.Context.CheckSelfPermission("android.permission.READ_EXTERNAL_STORAGE") == Android.Content.PM.Permission.Granted)
+                if (Application.Context.CheckSelfPermission(Manifest.Permission.ReadExternalStorage) == Android.Content.PM.Permission.Granted)
                 {
                     return true;
                 }

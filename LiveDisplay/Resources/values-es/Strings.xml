@@ -95,7 +95,7 @@
   <string name="nomediaplaying">No hay nada reproduciendose por el momento, \n Pon algo de música! </string>
   <string name="nonallowedtoturnonscreen">No permitido para encender la pantalla</string>
   <string name="notavailableyet">No disponible...aún.</string>
-  <string name="notenoughpermissions">No tienes los permisos necesarios</string>
+  <string name="not_enough_permissions">No tienes los permisos necesarios</string>
   <string name="notificationsettings">Notificaciones</string>
   <string name="notificationviewvisibilitytime">Después de clicar la notificación esconderla después de...</string>
   <string name="now_playing">Reproduciendo Ahora:</string>
@@ -115,8 +115,8 @@
   <string name="searchappedittexthint">Nombre de la app...</string>
   <string name="searchapptitle">Busca una aplicación</string>
   <string name="secretmessageplaceholder">Ingresa la palabra secreta</string>
-  <string name="sendtestnotification">Enviar notificacion de prueba</string>
   <string name="settings">Ajustes</string>
+  <string name="show_lock_screen_preview">Muestrame como luce!</string>
   <string name="show_lyrics">Mostrar letra</string>
   <string name="show_lyrics_summary">Enriquece tu experiencia, muestra la letra de la cancion cuando esté disponible</string>
   <string name="sixhours">6 Horas</string>

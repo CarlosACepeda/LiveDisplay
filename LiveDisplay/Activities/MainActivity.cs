@@ -24,7 +24,6 @@
     {
         private Toolbar toolbar;
         private RelativeLayout enableNotificationAccess, enableDeviceAdmin, enablePostingNotifications, enableAccessibilityAccess;
-        private bool isApplicationHealthy;
         public static int StartCount = 0;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -69,18 +68,15 @@
         {
             using (var accessestext = FindViewById<TextView>(Resource.Id.health))
             {
-                if (Checkers.IsNotificationListenerEnabled() && 
-                    Checkers.ThisAppCanPostNotifications())
+                if (Checkers.AreMandatoryPermissionsEnabled())
                 {
                     accessestext.SetText(Resource.String.accessesstatusenabled);
                     accessestext.SetTextColor(Android.Graphics.Color.Green);
-                    isApplicationHealthy = true;
                 }
                 else
                 {
                     accessestext.SetText(Resource.String.accessesstatusdisabled);
                     accessestext.SetTextColor(Android.Graphics.Color.Red);
-                    isApplicationHealthy = false;
                 }
             }
         }
@@ -110,9 +106,9 @@
 
                     return true;
 
-                case Resource.Id.action_sendtestnotification:
+                case Resource.Id.show_lock_screen_preview:
 
-                    if (isApplicationHealthy)
+                    if (Checkers.AreMandatoryPermissionsEnabled())
                     {
                         AwakeHelper.TurnOffScreen();
                         using (NotificationSlave slave = NotificationSlave.GetInstance())
@@ -135,7 +131,7 @@
                     }
                     else
                     {
-                        Toast.MakeText(Application.Context, "You dont have the required permissions yet", ToastLength.Long).Show();
+                        Toast.MakeText(Application.Context, GetString(Resource.String.not_enough_permissions), ToastLength.Long).Show();
                     }
                     break;
 
@@ -227,24 +223,6 @@
 
             StartActivityForResult(intent, Permissions.DeviceAdmin);
 
-
-
-            //if (Checkers.IsThisAppADeviceAdministrator())
-            //{
-            //    ComponentName devAdminReceiver = new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(AdminReceiver)));
-            //    DevicePolicyManager dpm = (DevicePolicyManager)GetSystemService(DevicePolicyService);
-            //    dpm.RemoveActiveAdmin(devAdminReceiver);
-            //}
-            //else
-            //{
-            //    using (AlertDialog.Builder builder = new AlertDialog.Builder(this))
-            //    {
-            //        builder.SetMessage(Resource.String.dialogfordeviceaccessdescription);
-            //        builder.SetPositiveButton(Resource.String.dialogallowbutton, new EventHandler<DialogClickEventArgs>(OnDialogPositiveButtonEventArgs));
-            //        builder.SetNegativeButton(Resource.String.dialogcancelbutton, null as EventHandler<DialogClickEventArgs>);
-            //        builder.Show();
-            //    }
-            //}
         }
 
         private void EnableAccessibilityAccess_Click(object sender, EventArgs e)
