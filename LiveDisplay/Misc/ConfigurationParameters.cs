@@ -1,7 +1,15 @@
-﻿namespace LiveDisplay.Misc
+﻿using Android.App;
+using Android.Content.Res;
+
+namespace LiveDisplay.Misc
 {
     internal sealed class ConfigurationParameters
     {
+        public static readonly string WallpaperScaleType = Application.Context.GetString(Resource.String.wallpaper_scale_type_k);
+
+
+
+
         public const string ImagePath = "imagePath";
         public const string ChangeWallpaper = "changewallpaper";
         public const string BlurLevel = "blurlevel";
@@ -58,7 +66,6 @@
         //By default it is the clock. (possible values: "clock", "music", "notification")
         //When there's not an active widget.
         public const string StartingWidget = "clock";
-
 
     }
 }
