@@ -60,7 +60,7 @@
                 {
                     RunOnUiThread(() =>
                     {
-                        Toast.MakeText(Application.Context, GetString(Resource.String.notenoughpermissions), ToastLength.Long).Show();
+                        Toast.MakeText(Application.Context, GetString(Resource.String.not_enough_permissions), ToastLength.Long).Show();
                         Finish();
                     }
                     );
