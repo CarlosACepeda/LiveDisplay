@@ -138,10 +138,7 @@
     <Compile Include="Services\FloatingNotification\FloatingNotification.cs" />
     <Compile Include="Services\Keyguard\KeyguardHelper.cs" />
     <Compile Include="Services\Music\IMediaEventsPublisher.cs" />
-    <Compile Include="Services\Music\IMediaControls.cs" />
     <Compile Include="Services\Music\MediaControlsBase.cs" />
-    <Compile Include="Services\Music\MediaControlsLollipop.cs" />
-    <Compile Include="Services\Music\MediaControlsKitkat.cs" />
     <Compile Include="Services\Music\MediaEventArgs\MediaActionEventArgs.cs" />
     <Compile Include="Services\Music\MediaEventArgs\MediaMetadataChangedEventArgs.cs" />
     <Compile Include="Services\Music\MediaEventArgs\MediaPlaybackStateChangedEventArgs.cs" />

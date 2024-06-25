@@ -13,5 +13,7 @@
         RetrieveMediaInformation = 9,
         CycleRepeatOption=10,
         OpenRelatedActivity=11,
+        SendCustomAction=12,
+        SendCompactedAction=13
     }
 }

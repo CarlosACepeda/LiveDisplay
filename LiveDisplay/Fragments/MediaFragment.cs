@@ -39,7 +39,7 @@ namespace LiveDisplay.Fragments
         bool longPressStarted = false;
         ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
         OpenNotification currentMediaNotification;
-        IMediaControls mediaControls;
+        MediaControlsBase mediaControls;
         float initialX=0;
         float pixelToMoveTo = 0;
         bool isPixelWithinBounds;
@@ -59,7 +59,7 @@ namespace LiveDisplay.Fragments
             {
                 Interval = 1000
             };
-            if (Build.VERSION.SdkInt <= BuildVersionCodes.KitkatWatch)
+            mediaControls = MediaControlsBase.Instance;
             {
                 mediaControls = MediaControlsKitkat.GetInstance();
             }
