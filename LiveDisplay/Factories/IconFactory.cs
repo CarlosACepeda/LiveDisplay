@@ -7,31 +7,27 @@
 
     internal class IconFactory
     {
-        public static Drawable ReturnIconDrawable(int iconInt, string paquete)
+        public static Drawable ReturnIconDrawable(int iconInt, string package)
         {
-            Context remotePackageContext = Application.Context.CreatePackageContext(paquete, 0);
+            Context remotePackageContext = Application.Context.CreatePackageContext(package, 0);
             Drawable icon = ContextCompat.GetDrawable(remotePackageContext, iconInt);
             return icon;
         }
-        public static Drawable ReturnIconDrawable(Icon icon, string paquete)
+        public static Drawable ReturnIconDrawable(Icon icon, string package)
         {
-            Context remotePackageContext = Application.Context.CreatePackageContext(paquete, 0);
+            Context remotePackageContext = Application.Context.CreatePackageContext(package, 0);
             return icon.LoadDrawable(remotePackageContext);
         }
 
-        public static Drawable ReturnActionIconDrawable(Icon icon, string paquete)
+        public static Drawable ReturnActionIconDrawable(Icon icon, string package)
         {
-            Context remotePackageContext = Application.Context.CreatePackageContext(paquete, 0);
+            Context remotePackageContext = Application.Context.CreatePackageContext(package, 0);
             return icon.LoadDrawable(remotePackageContext);
         }
-
-        //Overload for Retrieving Action Buttons in Lollipop and less.
-        public static Drawable ReturnActionIconDrawable(int icon, string paquete)
+        public static Drawable ReturnActionIconDrawable(int icon, string package)
         {
-            Context remotePackageContext = Application.Context.CreatePackageContext(paquete, 0);
-#pragma warning disable CS0618 // El tipo o el miembro están obsoletos
+            Context remotePackageContext = Application.Context.CreatePackageContext(package, 0);
             return remotePackageContext.Resources.GetDrawable(icon);
-#pragma warning restore CS0618 // El tipo o el miembro están obsoletos
         }
     }
 }
