@@ -8,7 +8,7 @@ namespace LiveDisplay.Services.Notifications
     internal class CatcherHelper : Java.Lang.Object
     {
 
-        public static List<OpenNotification> OpenNotifications { get; internal set; }
+        private static List<OpenNotification> OpenNotifications { get; set; }
 
         public static event EventHandler<NotificationRemovedEventArgs> NotificationRemoved;
 

@@ -74,8 +74,8 @@
 
         private void ItemView_LongClick(object sender, View.LongClickEventArgs e)
         {
-            var statusBarNotification = CatcherHelper.OpenNotifications[LayoutPosition];
-            OnItemLongClicked(LayoutPosition, statusBarNotification);
+            //var statusBarNotification = CatcherHelper.OpenNotifications[LayoutPosition];
+            //OnItemLongClicked(LayoutPosition, statusBarNotification);
         }
 
         private void ItemView_Click(object sender, EventArgs e)
@@ -83,8 +83,8 @@
             //Simply indicates which item was clicked and after that call NotifyDataSetChanged to changes take effect.
             NotificationAdapter.selectedItem = LayoutPosition;
             //CatcherHelper.notificationAdapter.NotifyDataSetChanged();
-            var statusBarNotification = CatcherHelper.OpenNotifications[LayoutPosition];
-            OnItemClicked(LayoutPosition, statusBarNotification);
+            //var statusBarNotification = CatcherHelper.OpenNotifications[LayoutPosition];
+            //OnItemClicked(LayoutPosition, statusBarNotification);
             //try
             //{
             //    var view = sender as View;
