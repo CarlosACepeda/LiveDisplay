@@ -12,6 +12,7 @@
     using AndroidX.AppCompat.App;
     using AndroidX.AppCompat.Widget;
     using AndroidX.Core.View;
+    using AndroidX.Preference;
     using LiveDisplay.Activities;
     using LiveDisplay.Fragments;
     using LiveDisplay.Misc;
@@ -79,11 +80,28 @@
 
             WallpaperPublisher.NewWallpaperIssued += Wallpaper_NewWallpaperIssued;
             WallpaperPublisher.OnZeroPublishersAvailable += WallpaperPublisher_OnZeroPublishersAvailable;
-
+            SharedPreferenceListenerService.ConfigurationChanged += SharedPreferenceListenerService_ConfigurationChanged;
 
             LoadAllFragments();
             LoadConfiguration();
             Window.DecorView.SetOnApplyWindowInsetsListener(this);
+        }
+
+        private void SharedPreferenceListenerService_ConfigurationChanged(object sender, Services.Configuration.ConfigurationChangedEventArgs e)
+        {
+            if(e.Key== ConfigurationParameters.WallpaperScaleType)
+            {
+                int centerCrop= Resources.GetInteger(Resource.Integer.center_crop);
+                int fitXy= Resources.GetInteger(Resource.Integer.fit_xy);
+                if((int)e.Value == centerCrop)
+                {
+                    lockscreen_wallpaper.SetScaleType(ImageView.ScaleType.CenterCrop);
+                }
+                else if((int)e.Value == fitXy)
+                {
+                    lockscreen_wallpaper.SetScaleType(ImageView.ScaleType.FitXy);
+                }
+            }
         }
 
         private void WallpaperPublisher_OnZeroPublishersAvailable(object sender, EventArgs e)
@@ -109,9 +127,15 @@
 
                 if (e.Wallpaper != null)
                 {
-                    //TODO: Offer the user a choice regarding scale type.
-                    //Fit XY or Center Crop
-                    lockscreen_wallpaper.SetScaleType(ImageView.ScaleType.CenterCrop);
+                    int fitXy = Resources.GetInteger(Resource.Integer.fit_xy);
+                    int centerCrop = Resources.GetInteger(Resource.Integer.center_crop);
+
+                    if (configurationManager.RetrieveAValue(ConfigurationParameters.WallpaperScaleType, centerCrop) == centerCrop)
+                        lockscreen_wallpaper.SetScaleType(ImageView.ScaleType.CenterCrop);
+                    else
+                        lockscreen_wallpaper.SetScaleType(ImageView.ScaleType.FitXy);
+
+
                     lockscreen_wallpaper.SetImageDrawable(e.Wallpaper);
                 }
             });
@@ -142,7 +166,7 @@
                         //{
                         //    widgetContainer.SetY((float)e.Animation.AnimatedValue);
                         //};
-                       
+
                         MoveTaskToBack(true);
                     }
                     //Reset the values of touch
