@@ -56,7 +56,7 @@ namespace LiveDisplay.Services.Notifications
 
         public List<OpenAction> Actions => statusbarnotification.Notification.Actions?.Select((x) => new OpenAction(x)).ToList(); 
 
-        internal bool IsClearable => statusbarnotification.IsClearable;
+        public bool IsClearable => statusbarnotification.IsClearable;
 
         public bool HasActions
         {
@@ -107,7 +107,7 @@ namespace LiveDisplay.Services.Notifications
         }
         public Bitmap BigPicture=> statusbarnotification.Notification.Extras.GetParcelable(Notification.ExtraPicture, Java.Lang.Class.FromType(typeof(Bitmap))) as Bitmap;
 
-        internal Bitmap LargeIcon
+        public Bitmap LargeIcon
         {
             get {
                 if (Build.VERSION.SdkInt < BuildVersionCodes.O)
@@ -125,9 +125,9 @@ namespace LiveDisplay.Services.Notifications
         //        return null;
 
         //}
-        internal NotificationPriority NotificationPriority=>(NotificationPriority)statusbarnotification.Notification.Priority;
+        public NotificationPriority NotificationPriority=>(NotificationPriority)statusbarnotification.Notification.Priority;
 
-        internal NotificationImportance NotificationImportance
+        public NotificationImportance NotificationImportance
         {
             get
             {
@@ -151,7 +151,7 @@ namespace LiveDisplay.Services.Notifications
 
         }
 
-        internal string Style => statusbarnotification.Notification.Extras.GetString(Notification.ExtraTemplate);
+        public string Style => statusbarnotification.Notification.Extras.GetString(Notification.ExtraTemplate);
 
         public bool IsAutoCancellable =>statusbarnotification.Notification.Flags.HasFlag(NotificationFlags.AutoCancel);
 
@@ -159,14 +159,13 @@ namespace LiveDisplay.Services.Notifications
 
         public bool IsSummary => Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop && statusbarnotification.Notification.Flags.HasFlag(NotificationFlags.GroupSummary);
 
-        internal int Progress => statusbarnotification.Notification.Extras.GetInt(Notification.ExtraProgress);
+        public int Progress => statusbarnotification.Notification.Extras.GetInt(Notification.ExtraProgress);
 
-        internal int ProgressMax => statusbarnotification.Notification.Extras.GetInt(Notification.ExtraProgressMax);
+        public int ProgressMax => statusbarnotification.Notification.Extras.GetInt(Notification.ExtraProgressMax);
 
-        internal bool IsProgressIndeterminate => statusbarnotification.Notification.Extras.GetBoolean(Notification.ExtraProgressIndeterminate);
+        public bool IsProgressIndeterminate => statusbarnotification.Notification.Extras.GetBoolean(Notification.ExtraProgressIndeterminate);
 
         public int[] CompactViewActionsIndices=> statusbarnotification.Notification.Extras.GetIntArray(Notification.ExtraCompactActions);
-        internal bool IsOngoing=> statusbarnotification.IsOngoing;
-
+        public bool IsOngoing=> statusbarnotification.IsOngoing;
     }
 }
