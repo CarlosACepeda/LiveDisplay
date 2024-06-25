@@ -15,7 +15,6 @@ namespace LiveDisplay.BroadcastReceivers
     {
         public static bool IsScreenOn { get; set; } = true;
         public static bool ScreenTurnedOffWhileInVertical { get; set; } = true; //most of the times when one turns off the phone the same is vertical.
-        private ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
         private NotificationManager notificationManager = null;
         public static int ReceiverCount = 0;
 
