@@ -132,6 +132,7 @@
     <Compile Include="Services\Blacklist\Blacklist.cs" />
     <Compile Include="Services\BusyEyesAccessibilityService.cs" />
     <Compile Include="Services\ConfigurationManager.cs" />
+    <Compile Include="Services\Configuration\ConfigurationChangedEventArgs.cs" />
     <Compile Include="Services\FloatingNotification\FloatingNotification.cs" />
     <Compile Include="Services\Keyguard\KeyguardHelper.cs" />
     <Compile Include="Services\Music\IMediaEventsPublisher.cs" />
@@ -158,6 +159,7 @@
     <Compile Include="Services\Notificaciones\NotificationEventArgs\NotificationCancelledEventArgsLollipop.cs" />
     <Compile Include="Services\Notificaciones\NotificationEventArgs\NotificationPostedEventArgs.cs" />
     <Compile Include="Services\Notificaciones\NotificationSlave.cs" />
+    <Compile Include="Services\SharedPreferencesListenerService.cs" />
     <Compile Include="Services\Wallpaper\BlurImage.cs" />
     <Compile Include="Services\Wallpaper\CurrentWallpaperClearedEventArgs.cs" />
     <Compile Include="Services\Wallpaper\WallpaperChangedEventArgs.cs" />
