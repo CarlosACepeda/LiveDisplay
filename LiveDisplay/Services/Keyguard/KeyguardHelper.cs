@@ -16,7 +16,6 @@ namespace LiveDisplay.Services.Keyguard
         }
         public static bool IsDeviceCurrentlyLocked()
         {
-            KeyguardManager myKM = (KeyguardManager)Application.Context.GetSystemService(Context.KeyguardService);
             if (myKM.IsKeyguardLocked)
                 return true;
             return false;
