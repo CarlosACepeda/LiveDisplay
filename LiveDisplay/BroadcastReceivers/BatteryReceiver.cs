@@ -17,20 +17,18 @@ namespace LiveDisplay.BroadcastReceivers
 
         public override void OnReceive(Context context, Intent intent)
         {
-            int batterylevel = intent.GetIntExtra(BatteryManager.ExtraLevel, 0);
-            int batteryIcon = intent.GetIntExtra(BatteryManager.ExtraIconSmall, 100);
+            int batterylevel = intent.GetIntExtra(BatteryManager.ExtraLevel, -1);
+            int batteryIcon = intent.GetIntExtra(BatteryManager.ExtraIconSmall, -1);
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
             {
                 levelListDrawable = Application.Context.Resources.GetDrawable(batteryIcon, Application.Context.Resources.NewTheme()) as LevelListDrawable;
             }
             else
             {
-#pragma warning disable
                 levelListDrawable = Application.Context.Resources.GetDrawable(batteryIcon) as LevelListDrawable;
-#pragma warning restore
             }
-
-            OnBatteryInfoChanged(batterylevel, levelListDrawable);
+            levelListDrawable.SetLevel(batterylevel);
+            OnBatteryInfoChanged(batterylevel, levelListDrawable.Current);
         }
 
         private void OnBatteryInfoChanged(int batterylevel, Drawable batteryIcon)
