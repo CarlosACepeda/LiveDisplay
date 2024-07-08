@@ -110,19 +110,6 @@
 
                     if (Checkers.AreMandatoryPermissionsEnabled())
                     {
-                        AwakeHelper.TurnOffScreen();
-                        using (NotificationSlave slave = NotificationSlave.GetInstance())
-                        {
-                            var notificationtext = GetString(Resource.String.testnotificationtext);
-                            if (Build.VERSION.SdkInt > BuildVersionCodes.NMr1)
-                            {
-                                slave.PostNotification(1, "LiveDisplay", notificationtext, true, NotificationImportance.Max);
-                            }
-                            else
-                            {
-                                slave.PostNotification(1, "LiveDisplay", notificationtext, true, NotificationPriority.Max);
-                            }
-                        }
                         using (Intent intent = new Intent(Application.Context, typeof(LockScreenActivity)))
                         {
                             StartActivity(intent);
