@@ -27,7 +27,8 @@
         ScreenOrientation = ScreenOrientation.Portrait, 
         ConfigurationChanges = 
         ConfigChanges.Navigation 
-        | ConfigChanges.KeyboardHidden,
+        | ConfigChanges.KeyboardHidden
+        | ConfigChanges.UiMode,
         LaunchMode = LaunchMode.SingleInstance, 
         ExcludeFromRecents = true)]
     public class LockScreenActivity : AppCompatActivity, View.IOnApplyWindowInsetsListener
