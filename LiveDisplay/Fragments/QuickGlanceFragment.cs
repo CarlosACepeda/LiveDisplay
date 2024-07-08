@@ -7,13 +7,18 @@
     using Android.Widget;
     using Java.Util;
     using LiveDisplay.BroadcastReceivers;
+    using LiveDisplay.Services.Notifications;
+    using LiveDisplay.Services.Notifications.NotificationEventArgs;
+    using System;
     using Fragment = AndroidX.Fragment.App.Fragment;
 
     public class QuickGlanceFragment : Fragment
     {
-        private TextView date, battery;
+        private TextView date, battery, messages_counter;
         private ImageView batteryIcon;
+        private ImageButton message_indicator;
         private BatteryReceiver batteryReceiver;
+        private int messages_counter_i = 0;
         
         public override void OnCreate(Bundle savedInstanceState)
         {
@@ -34,12 +39,43 @@
             date = v.FindViewById<TextView>(Resource.Id.date);
             battery = v.FindViewById<TextView>(Resource.Id.batteryLevel);
             batteryIcon = v.FindViewById<ImageView>(Resource.Id.batteryIcon);
+            messages_counter = v.FindViewById<TextView>(Resource.Id.messages_counter);
+            message_indicator = v.FindViewById<ImageButton>(Resource.Id.message_indicator);
             LoadDate();
             RegisterBatteryReceiver();
+
+            message_indicator.Click += Message_indicator_Click;
+
             BatteryReceiver.BatteryInfoChanged += BatteryReceiver_BatteryInfoChanged;
+            CatcherHelper.NotificationPosted += CatcherHelper_NotificationPosted;
+            CatcherHelper.NotificationRemoved += CatcherHelper_NotificationRemoved;
 
             return v;
         }
+
+        private void Message_indicator_Click(object sender, EventArgs e)
+        {
+            //Send a beacon lol, asking the notification fragment to show.
+        }
+
+        private void CatcherHelper_NotificationRemoved(object sender, NotificationRemovedEventArgs e)
+        {
+            if (e.OpenNotification.Style == OpenNotification.MessagingStyle || (Build.VERSION.SdkInt <= BuildVersionCodes.M && e.OpenNotification.Style == OpenNotification.InboxStyle))
+                messages_counter.Text = ((--messages_counter_i)<0? 0: messages_counter_i).ToString();
+        }
+
+        private void CatcherHelper_NotificationPosted(object sender, Services.Notifications.NotificationEventArgs.NotificationPostedEventArgs e)
+        {
+            if (!e.UpdatesPreviousNotification)
+                if (e.OpenNotification.Style == OpenNotification.MessagingStyle || (Build.VERSION.SdkInt <= BuildVersionCodes.M && e.OpenNotification.Style == OpenNotification.InboxStyle))
+                {
+                    messages_counter.Text = (++messages_counter_i).ToString();
+                }
+        }
+
+
+
+
         public override void OnDestroyView()
         {
             Application.Context.UnregisterReceiver(batteryReceiver);
@@ -50,7 +86,7 @@
         private void BatteryReceiver_BatteryInfoChanged(object sender, Services.Battery.BatteryEventArgs.BatteryChangedEventArgs e)
         {
             battery.Text = e.BatteryLevel.ToString() + "%";
-            batteryIcon.SetBackgroundDrawable(e.BatteryIcon);
+            batteryIcon.Background= e.BatteryIcon;
         }
 
         private void LoadDate()

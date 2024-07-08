@@ -48,6 +48,8 @@
   <string name="doubletaptopactioninverteddesc">Tocar dos veces la mitad superior de la pantalla de bloqueo desbloquea el dispositivo</string>
   <string name="doubletaptosleep">Doble pulsación para suspender</string>
   <string name="doubletaptosleepdesc">Pulsa dos veces en la pantalla de bloqueo para apagar la pantalla</string>
+  <string name="email_subject">Traducciones para LiveDisplay</string>
+  <string name="email_text">Hola, me gustaría ayudar con las traducciones para [idioma con el que quieras ayudar]</string>
   <string name="enable_accessibility_explanation">Usa los controles enriquecidos de LiveDisplay cuando la pantalla esta apagada, este servicio los detecta cuando apagas la pantalla</string>
   <string name="enable_accessibility_title">Detectar presiones de boton</string>
   <string name="enable_posting_notifications_permission">Activa las notificaciones de esta app</string>
@@ -92,6 +94,7 @@
   <string name="musiccontrolledfrommediasession">Elegir la mejor Sesión de Multimedia (más estable) </string>
   <string name="musiccontrolledfromnotification">Usar la notification más reciente que represente la reproducción de multimedia (más rapido)</string>
   <string name="never">Nunca</string>
+  <string name="no_activity_found_to_handle_email">No se encontró una app de correo electrónico, enviame un correo desde otro lugar</string>
   <string name="nomediaplaying">No hay nada reproduciendose por el momento, \n Pon algo de música! </string>
   <string name="nonallowedtoturnonscreen">No permitido para encender la pantalla</string>
   <string name="notavailableyet">No disponible...aún.</string>
@@ -151,7 +154,9 @@
   <string name="weatherwidgetenabled">Activar el Widget del Clima</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">Diseño del icono de esta app!</string>
-  <string name="no_activity_found_to_handle_email">No se encontró una app de correo electrónico, enviame un correo desde otro lugar</string>
-  <string name="email_subject">Traducciones para LiveDisplay</string>
-  <string name="email_text">Hola, me gustaría ayudar con las traducciones para [idioma con el que quieras ayudar]</string>
+  <string name="not_repeating">No se repite</string>
+  <string name="repeating_once">Se repite una vez</string>
+  <string name="always_repeating">Se repite siempre</string>
+  <string name="stop">Detener</string>
+  <string name="extended_controls_for">Controles Extendidos para: </string>
 </resources>

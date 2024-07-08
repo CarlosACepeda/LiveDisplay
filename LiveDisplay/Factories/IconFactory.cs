@@ -2,32 +2,51 @@
 {
     using Android.App;
     using Android.Content;
+    using Android.Graphics;
     using Android.Graphics.Drawables;
-    using AndroidX.Core.Content;
 
     internal class IconFactory
     {
-        public static Drawable ReturnIconDrawable(int iconInt, string package)
+        Context remotePackageContext;
+        Drawable currentDrawable;
+
+        public IconFactory(int iconInt, string package) 
         {
-            Context remotePackageContext = Application.Context.CreatePackageContext(package, 0);
-            Drawable icon = ContextCompat.GetDrawable(remotePackageContext, iconInt);
-            return icon;
+            remotePackageContext = Application.Context.CreatePackageContext(package, 0);
+            currentDrawable = remotePackageContext.GetDrawable(iconInt);
         }
-        public static Drawable ReturnIconDrawable(Icon icon, string package)
+        public IconFactory(Icon icon, string package)
         {
-            Context remotePackageContext = Application.Context.CreatePackageContext(package, 0);
-            return icon.LoadDrawable(remotePackageContext);
+            remotePackageContext = Application.Context.CreatePackageContext(package, 0);
+            currentDrawable = icon.LoadDrawable(remotePackageContext);
         }
 
-        public static Drawable ReturnActionIconDrawable(Icon icon, string package)
+        public IconFactory ApplyColorFilter(Color color)
         {
-            Context remotePackageContext = Application.Context.CreatePackageContext(package, 0);
-            return icon.LoadDrawable(remotePackageContext);
+            currentDrawable.SetColorFilter(new BlendModeColorFilter(color, BlendMode.SrcAtop));
+            return this;
         }
-        public static Drawable ReturnActionIconDrawable(int icon, string package)
+        public IconFactory ResizeDrawable(int widthInPixels, int heigthInPixels) 
         {
-            Context remotePackageContext = Application.Context.CreatePackageContext(package, 0);
-            return remotePackageContext.Resources.GetDrawable(icon);
+            Bitmap bitmap = DrawableToBitmap(currentDrawable);
+            Drawable d = new BitmapDrawable(remotePackageContext.Resources, Bitmap.CreateScaledBitmap(bitmap, widthInPixels, heigthInPixels, true));
+            currentDrawable = d;
+            return this;
+        }
+        Bitmap DrawableToBitmap(Drawable drawable)
+        {
+            Bitmap bitmap = Bitmap.CreateBitmap(drawable.IntrinsicWidth,
+                    drawable.IntrinsicHeight, Bitmap.Config.Argb8888);
+            Canvas canvas = new Canvas(bitmap);
+            drawable.SetBounds(0, 0, canvas.Width, canvas.Height);
+            drawable.Draw(canvas);
+
+            return bitmap;
+        }
+
+        public Drawable Build()
+        {
+            return currentDrawable;
         }
     }
 }

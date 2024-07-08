@@ -1,4 +1,9 @@
 ﻿<resources>
   <integer name="center_crop">0</integer>
   <integer name="fit_xy">1</integer>
+  <integer name="slot1">1</integer>
+  <integer name="slot2">2</integer>
+  <integer name="slot3">3</integer>
+  <integer name="slot4">4</integer>
+  <integer name="slot5">5</integer>
 </resources>

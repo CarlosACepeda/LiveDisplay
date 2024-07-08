@@ -1,11 +1,14 @@
 ﻿using Android.App;
+using Android.Graphics;
 using Android.Media;
 using Android.Util;
 using Android.Views;
 using LiveDisplay.Misc;
+using LiveDisplay.Services.Media.Enums;
 using LiveDisplay.Services.Media.MediaEventArgs;
+using LiveDisplay.Services.Notifications;
 using System;
-using System.Collections.Generic;
+using System.Runtime.Remoting.Messaging;
 
 
 namespace LiveDisplay.Services.Media
@@ -19,7 +22,7 @@ namespace LiveDisplay.Services.Media
     internal class MediaEventsPublisherKitkat : IMediaEventsPublisher, IDisposable
     {
         private static MediaEventsPublisherKitkat instance;
-        private int optionSet;
+        private int repeatOptionSet;
         long currentProgress;
         long totalProgress;
         const int MillisToRepeat = 2500;
@@ -31,8 +34,6 @@ namespace LiveDisplay.Services.Media
         public RemoteControlPlayState PlaybackState { get; set; }
         public RemoteController.MetadataEditor MediaMetadata { get; set; }
         public RemoteController TransportControls { get; set; }
-        public long CurrentMediaPosition { get; set; }
-
 
         public static event EventHandler<MediaPlaybackStateChangedEventArgs> MediaPlaybackChanged;
 
@@ -40,10 +41,11 @@ namespace LiveDisplay.Services.Media
 
         public static event EventHandler<MediaProgressChangedEventArgs> MediaProgressChanged;
         public static event EventHandler<int> MediaRepeatOptionChanged;
+        public static event EventHandler<ControlsAvailabilityChangedEventArgs> ControlsAvailabilityChanged;
 
         private MediaEventsPublisherKitkat(RemoteController remoteController)
         {
-            MediaControlsKitkat.GetInstance().MediaEvent += MusicControlsKitkat_MediaEvent;
+            MediaControlsBase.Instance.MediaEvent += MusicControlsKitkat_MediaEvent;
             progressTimer.Interval = OneSecondInMillis;
             progressTimer.Elapsed += OnProgressTimerElapsed;
             TransportControls = remoteController;
@@ -122,7 +124,7 @@ namespace LiveDisplay.Services.Media
 
                 case MediaActionFlags.CycleRepeatOption:
                     CycleRepeatOption();
-                    OnMediaRepeatOptionChanged(optionSet);
+                    OnMediaRepeatOptionChanged(repeatOptionSet);
                     break;
                 case MediaActionFlags.OpenRelatedActivity:
                     OpenRelatedActivity();
@@ -130,13 +132,13 @@ namespace LiveDisplay.Services.Media
                 default:
                     break;
             }
-            Console.WriteLine("Sending Mediaplayback manually, cuz apparently after sending the key event the media the RemoteController doesn't react");
+            Console.WriteLine("Sending Mediaplayback Event manually, cuz apparently after sending the key event the media the RemoteController doesn't react");
             //Send Playbackstate of the media Manually
             OnMediaPlaybackChanged(new MediaPlaybackStateChangedEventArgs
             {
                 PlaybackStateKitkat = simulatedState,
                 CurrentTime = TransportControls.EstimatedMediaPosition,
-                RepeatOptionSet= optionSet
+                RepeatOptionSet= repeatOptionSet
             });
         }
         private void OpenRelatedActivity()
@@ -163,7 +165,15 @@ namespace LiveDisplay.Services.Media
             OnMediaPlaybackChanged(new MediaPlaybackStateChangedEventArgs
             {
                 PlaybackStateKitkat = state,
-                SupportedActions= GetSupportedActions()
+                CurrentTime= TransportControls.EstimatedMediaPosition,
+                RepeatOptionSet= repeatOptionSet,
+            });
+            OnControlsAvailabilityChanged(new ControlsAvailabilityChangedEventArgs
+            {
+                AvailableControls = SetAvailableControls(GetSupportedActions()),
+                CustomActions = null,
+                TakeCustomActionsFromNotification = true, //In kitkat will never have another way of retrieving custom actions.
+                OpenNotification = null//openNotification //TODO
             });
         }
 
@@ -172,8 +182,12 @@ namespace LiveDisplay.Services.Media
             MediaMetadata = mediaMetadata;
             OnMediaMetadataChanged(new MediaMetadataChangedEventArgs
             {
-                MediaMetadataKitkat= mediaMetadata
-            });;
+                MediaTitle= GetStringValue(MetadataKey.Title),
+                MediaArtist= GetStringValue(MetadataKey.Artist),
+                MediaAlbum= GetStringValue(MetadataKey.Album),
+                MediaDuration= GetLongValue(MetadataKey.Duration),
+                MediaArtwork= GetBitmap(MediaMetadataEditKey.BitmapKeyArtwork)
+            });
         }
 
         public void OnMediaPlaybackChanged(MediaPlaybackStateChangedEventArgs e)
@@ -184,6 +198,11 @@ namespace LiveDisplay.Services.Media
         public void OnMediaMetadataChanged(EventArgs e)
         {
             MediaMetadataChanged?.Invoke(null, (MediaMetadataChangedEventArgs)e);
+        }
+
+        public void OnControlsAvailabilityChanged(ControlsAvailabilityChangedEventArgs e)
+        {
+            ControlsAvailabilityChanged?.Invoke(null, e);
         }
 
         void TrackProgress(long currentPos)
@@ -207,20 +226,20 @@ namespace LiveDisplay.Services.Media
                 CurrentProgress = currentProgress,
                 TotalProgress = MediaMetadata.GetLong((MediaMetadataEditKey)MetadataKey.Duration, 0)
             });
-            if (optionSet != IMediaEventsPublisher.DontRepeat)
+            if (repeatOptionSet != IMediaEventsPublisher.DontRepeat)
             {
                 if (totalProgress - currentProgress <= MillisToRepeat)
                 {
-                    var mediaControls = MediaControlsLollipop.GetInstance();
+                    var mediaControls = MediaControlsBase.Instance;
                     mediaControls?.Pause();
                     mediaControls?.SeekTo(0);
                     mediaControls?.Play();
 
-                    if (optionSet == IMediaEventsPublisher.RepeatOnce)
+                    if (repeatOptionSet == IMediaEventsPublisher.RepeatOnce)
                     {
-                        optionSet = IMediaEventsPublisher.DontRepeat;
+                        repeatOptionSet = IMediaEventsPublisher.DontRepeat;
                     }
-                    OnMediaRepeatOptionChanged(optionSet);
+                    OnMediaRepeatOptionChanged(repeatOptionSet);
                     Console.WriteLine("REPEATING!!!");
                 }
             }
@@ -233,17 +252,17 @@ namespace LiveDisplay.Services.Media
 
         public void Dispose()
         {
-            MediaControlsKitkat.GetInstance().MediaEvent -= MusicControlsKitkat_MediaEvent;
+            MediaControlsBase.Instance.MediaEvent -= MusicControlsKitkat_MediaEvent;
             progressTimer.Elapsed -= OnProgressTimerElapsed;
 
         }
 
         public void CycleRepeatOption()
         {
-            optionSet++;
-            if (optionSet > IMediaEventsPublisher.RepeatForever)
+            repeatOptionSet++;
+            if (repeatOptionSet > IMediaEventsPublisher.RepeatForever)
             {
-                optionSet = IMediaEventsPublisher.DontRepeat;
+                repeatOptionSet = IMediaEventsPublisher.DontRepeat;
             }
         }
 
@@ -289,6 +308,42 @@ namespace LiveDisplay.Services.Media
                     break;
             }
             return supportedFlags;
+        }
+
+        public string GetStringValue<TKey>(TKey metadataKey)
+        {
+            MetadataKey key = (MetadataKey)(object)metadataKey;
+            return MediaMetadata.GetString((MediaMetadataEditKey)key, string.Empty);
+        }
+        public long GetLongValue<TKey>(TKey metadataKey) 
+        {
+            MetadataKey key = (MetadataKey)(object)metadataKey;
+            return MediaMetadata.GetLong((MediaMetadataEditKey)key, 0);
+        }
+        public Bitmap GetBitmap<TKey>(TKey metadataKey)
+        {
+            MediaMetadataEditKey key = (MediaMetadataEditKey)(object)metadataKey;
+            return MediaMetadata.GetBitmap(key, null);
+        }
+
+        public AvailableControls SetAvailableControls(MediaSessionSupportedActionsFlags supportedActionsFlags)
+        {
+           //In Kitkat we don't have any sort of logic regarding the available controls.
+           //Though we can set our own, for now we just set all the available controls.
+            var availableControls = new AvailableControls();
+
+            if (PlaybackState.HasFlag(RemoteControlPlayState.Buffering))
+                availableControls |= AvailableControls.Buffering;
+
+
+            return availableControls |=
+                AvailableControls.PlayPause |
+                AvailableControls.SkipToPrevious |
+                AvailableControls.SkipToNext |
+                AvailableControls.CustomActionOne |
+                AvailableControls.CustomActionTwo |
+                AvailableControls.Stop |
+                AvailableControls.Repeat;
         }
     }
 }

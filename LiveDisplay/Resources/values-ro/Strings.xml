@@ -19,6 +19,7 @@
   <string name="dialogallowbutton">Permite</string>
   <string name="dialogcancelbutton">închide</string>
   <string name="doubletaptosleep">Dublă apăsare pentru închidere</string>
+  <string name="email_subject">Traducere pentru LiveDisplay</string>
   <string name="enable_posting_notifications_permission">Activează notificarile din acesta app</string>
   <string name="enableaccessibilityaccess">Accează acesibilitatea</string>
   <string name="enablenotificationlistener">Accează notificarile</string>
@@ -72,5 +73,7 @@
   <string name="weather">Climă</string>
   <string name="weatherwidget">Widget de Climă</string>
   <string name="weatherwidgetenabled">Activează Widget de Climă</string>
-  <string name="email_subject">Traducere pentru LiveDisplay</string>
+  <string name="not_repeating">Nu se repeta</string>
+  <string name="repeating_once">Se repeta o data</string>
+  <string name="always_repeating">Se repeta intotdeauna</string>
 </resources>

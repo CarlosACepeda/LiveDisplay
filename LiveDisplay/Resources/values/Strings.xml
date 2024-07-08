@@ -50,6 +50,8 @@
   <string name="doubletaptopactioninverteddesc">Double tapping on the half top of the lockscreen unlocks the device</string>
   <string name="doubletaptosleep">Double tap to sleep</string>
   <string name="doubletaptosleepdesc">Touch twice anywhere on the lock screen to turn off the screen</string>
+  <string name="email_subject">Translations for LiveDisplay</string>
+  <string name="email_text">Hi there! I want to help with translations for [Language you want to translate]</string>
   <string name="enable_accessibility_explanation">Use LiveDisplay controls with your screen off</string>
   <string name="enable_accessibility_title">Detect button presses</string>
   <string name="enable_posting_notifications_permission">Enable Notifications for this app</string>
@@ -95,6 +97,7 @@
   <string name="musiccontrolledfrommediasession">Pick the best Media Session (more stable)</string>
   <string name="musiccontrolledfromnotification">Use the most recent Notification that represents current media playing (quicker)</string>
   <string name="never">Never</string>
+  <string name="no_activity_found_to_handle_email">Couldn\'t find an app to send me an e-mail, try it from your PC</string>
   <string name="nomediaplaying">There\'s no media playing currently!  \n Let\'s play something!</string>
   <string name="nonallowedtoturnonscreen">Non allowed to turn on screen</string>
   <string name="notavailableyet">Not available... yet.</string>
@@ -157,7 +160,9 @@
   <string name="weatherwidgetenabled">Enable Weather Widget</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
-  <string name="no_activity_found_to_handle_email">Couldn\'t find an app to send me an e-mail, try it from your PC</string>
-  <string name="email_subject">Translations for LiveDisplay</string>
-  <string name="email_text">Hi there! I want to help with translations for [Language you want to translate]</string>
+  <string name="not_repeating">Not repeating</string>
+  <string name="repeating_once">Repeating once</string>
+  <string name="always_repeating">Always repeating</string>
+  <string name="stop">Stop</string>
+  <string name="extended_controls_for">Extended Controls for </string>
 </resources>

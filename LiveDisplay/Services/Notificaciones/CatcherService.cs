@@ -20,7 +20,7 @@ namespace LiveDisplay.Services
     [Service(Label = "@string/app_name", Permission = Android.Manifest.Permission.BindNotificationListenerService, Exported = true)]
     [IntentFilter(new[] { ServiceInterface })]
 
-    internal class Catcher : NotificationListenerService, RemoteController.IOnClientUpdateListener, ISharedPreferencesOnSharedPreferenceChangeListener
+    internal class Catcher : NotificationListenerService, RemoteController.IOnClientUpdateListener
     {
         private RemoteController remoteController;
         private ScreenOnOffReceiver screenOnOffReceiver;
@@ -31,6 +31,7 @@ namespace LiveDisplay.Services
         private CatcherHelper catcherHelper;
         private OpenNotification lastPostedNotification;
         private NotificationSlave notificationSlave;
+        private const int MillisUntilSafeCallsKitkat= 2000;
 
         public override void OnInterruptionFilterChanged([GeneratedEnum] InterruptionFilterType interruptionFilter)
         {
@@ -42,37 +43,44 @@ namespace LiveDisplay.Services
             //Workaround for Kitkat to Retrieve Notifications.
             if (Build.VERSION.SdkInt <= BuildVersionCodes.KitkatWatch)
             {
-                Console.WriteLine("ONBIND!");
-
-                ThreadPool.QueueUserWorkItem(o =>
-                {
-                    Thread.Sleep(2000);
-                    RetrieveNotificationFromStatusBar();
-
-                    audioManager = (AudioManager)Application.Context.GetSystemService(AudioService);
-                    remoteController = new RemoteController(Application.Context, this, MainLooper); //Could leak.
-                    remoteController.SetArtworkConfiguration(Resources.DisplayMetrics.WidthPixels, Resources.DisplayMetrics.HeightPixels);
-                    RemoteControlClient client = new RemoteControlClient(null, MainLooper);
-                    var session= client.MediaSession;
-                    audioManager.RegisterRemoteController(remoteController);
-                    mediaControllerKitkat = MediaEventsPublisherKitkat.Initialize(remoteController);
-                    ToggleNotificationSlaveSubscription(true);
-                    RegisterScreenOnOffReceiver();
-                });
-
+                OnListenerConnectedKitkat();
             }
             return base.OnBind(intent);
         }
 
+        public void OnListenerConnectedKitkat()
+        {
+            Console.WriteLine("ONBIND!");
+
+            ThreadPool.QueueUserWorkItem(o =>
+            {
+                Thread.Sleep(MillisUntilSafeCallsKitkat);
+                InitializeCatcherHelper(); //Must come first, subsequent calls depend on this initialization.
+
+                audioManager = (AudioManager)Application.Context.GetSystemService(AudioService);
+                remoteController = new RemoteController(Application.Context, this, MainLooper); //Could leak.
+                remoteController.SetArtworkConfiguration(Resources.DisplayMetrics.WidthPixels, Resources.DisplayMetrics.HeightPixels);
+                RemoteControlClient client = new RemoteControlClient(null, MainLooper);
+                var session = client.MediaSession;
+                audioManager.RegisterRemoteController(remoteController);
+                mediaControllerKitkat = MediaEventsPublisherKitkat.Initialize(remoteController);
+                ToggleNotificationSlaveSubscription(true);
+                RegisterScreenOnOffReceiver();
+                ToggleListeningForConfigurationChanges(true);
+                TryToInitializeMediaEventsListener();
+            });
+        }
+
+
         public override void OnListenerConnected()
         {
+            InitializeCatcherHelper(); //Must come first, subsequent calls depend on this initialization.
             ScreenOnOffReceiver.ReceiverCount++;
-            activeMediaSessionsListener = new ActiveMediaSessionsListener();
             //RemoteController Lollipop and Beyond Implementation
-            mediaSessionManager = (MediaSessionManager)GetSystemService(MediaSessionService);
             ToggleNotificationSlaveSubscription(true);
             RegisterScreenOnOffReceiver();
-            RetrieveNotificationFromStatusBar();
+            ToggleListeningForConfigurationChanges(true);
+            TryToInitializeMediaEventsListener();
         }
 
         public override void OnNotificationPosted(StatusBarNotification sbn)
@@ -80,51 +88,61 @@ namespace LiveDisplay.Services
             var openNotification = new OpenNotification(sbn);
             lastPostedNotification = openNotification;
             catcherHelper.OnNotificationPosted(openNotification);
+            ToggleMediaEventsPublisherAvailability(openNotification, true);
         }
 
         public override void OnNotificationRemoved(StatusBarNotification sbn)
         {
-            catcherHelper.OnNotificationRemoved(new OpenNotification(sbn));
+            var openNotification = new OpenNotification(sbn);
+            catcherHelper.OnNotificationRemoved(openNotification);
+            ToggleMediaEventsPublisherAvailability(openNotification, false);
         }
 
-        public override void OnListenerDisconnected()
+        public override void OnListenerDisconnected() //Nougat and beyond.
         {
+            ToggleNotificationSlaveSubscription(false);
+            ToggleListeningForConfigurationChanges(false);
+            UnregisterReceiver(screenOnOffReceiver);
+            FinalizeMediaEventsListener();
             catcherHelper.Dispose();
-            //mediaSessionManager.RemoveOnActiveSessionsChangedListener(activeMediaSessionsListener);
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
-            {
-                ToggleNotificationSlaveSubscription(false);
-                UnregisterReceiver(screenOnOffReceiver);
-                ScreenOnOffReceiver.ReceiverCount--;
-            }
+            ScreenOnOffReceiver.ReceiverCount--;
             base.OnListenerDisconnected();
+        }
+        public void OnListenerDisconnectedMarshmallow()
+        {
+            ToggleNotificationSlaveSubscription(false);
+            ToggleListeningForConfigurationChanges(false);
+            UnregisterReceiver(screenOnOffReceiver);
+            FinalizeMediaEventsListener();
+            catcherHelper.Dispose();
+            ScreenOnOffReceiver.ReceiverCount--;
+        }
+        public void OnListenerDisconnectedKitkat()
+        {
+            if (remoteController != null)
+                audioManager?.UnregisterRemoteController(remoteController);
+
+            UnregisterReceiver(screenOnOffReceiver);
+            ToggleNotificationSlaveSubscription(false);
+            ToggleListeningForConfigurationChanges(false);
         }
 
         public override bool OnUnbind(Intent intent)
         {
-            if (Build.VERSION.SdkInt <= BuildVersionCodes.M)
+            Console.WriteLine("ON UNBIND!");
+            if (Build.VERSION.SdkInt <= BuildVersionCodes.M && Build.VERSION.SdkInt>= BuildVersionCodes.Lollipop)
             {
-                catcherHelper?.Dispose();
-                if (Build.VERSION.SdkInt <= BuildVersionCodes.KitkatWatch)
-                {
-                    Console.WriteLine("ON UNBIND!");
-                    if(remoteController!=null)
-                        audioManager?.UnregisterRemoteController(remoteController);
-                }
-                else
-                {
-                    mediaSessionManager.RemoveOnActiveSessionsChangedListener(activeMediaSessionsListener);
-                    UnregisterReceiver(screenOnOffReceiver);
-                }
-
-                ToggleNotificationSlaveSubscription(false);
-                ScreenOnOffReceiver.ReceiverCount--;
+                OnListenerDisconnectedMarshmallow();
+            }
+            else if(Build.VERSION.SdkInt <= BuildVersionCodes.KitkatWatch)
+            {
+                OnListenerDisconnectedKitkat();
             }
 
             return base.OnUnbind(intent);
         }
 
-        private void RetrieveNotificationFromStatusBar()
+        private List<OpenNotification> RetrieveNotificationFromStatusBar()
         {
             List<OpenNotification> openNotifications = new List<OpenNotification>();
             foreach (var notification in GetActiveNotifications()?.ToList())
@@ -133,10 +151,28 @@ namespace LiveDisplay.Services
                 openNotifications.Add(openNotification);
                 lastPostedNotification = openNotification;
             }
-
-            catcherHelper = new CatcherHelper(openNotifications);
+            return openNotifications;
         }
-
+        void InitializeCatcherHelper()
+        {
+            if(catcherHelper== null)
+            {
+                var openNotifications = RetrieveNotificationFromStatusBar();
+                catcherHelper = new CatcherHelper(openNotifications);
+            }
+        }
+        void TryToInitializeMediaEventsListener()
+        {
+            foreach (var openNotification in RetrieveNotificationFromStatusBar())
+            {
+                ToggleMediaEventsPublisherAvailability(openNotification, true);
+            }
+        }
+        void FinalizeMediaEventsListener()
+        {
+            if(MediaEventsPublisherLollipop.IsInitialized())
+                MediaEventsPublisherLollipop.GetInstance().Finish();
+        }
         private void ToggleNotificationSlaveSubscription(bool subscribe)
         {
             notificationSlave = NotificationSlave.GetInstance();
@@ -146,6 +182,7 @@ namespace LiveDisplay.Services
                 notificationSlave.NotificationCancelled += NotificationSlave_NotificationCancelled;
                 notificationSlave.NotificationCancelledLollipop += NotificationSlave_NotificationCancelledLollipop;
                 notificationSlave.ResendLastNotificationRequested += NotificationSlave_ResendLastNotificationRequested;
+                notificationSlave.RequestedOpenNotification += NotificationSlave_RequestedOpenNotification;
 
             }
             else
@@ -153,9 +190,55 @@ namespace LiveDisplay.Services
                 notificationSlave.AllNotificationsCancelled -= NotificationSlave_AllNotificationsCancelled;
                 notificationSlave.NotificationCancelled -= NotificationSlave_NotificationCancelled;
                 notificationSlave.NotificationCancelledLollipop -= NotificationSlave_NotificationCancelledLollipop;
-                notificationSlave.ResendLastNotificationRequested -= NotificationSlave_ResendLastNotificationRequested;
+                notificationSlave.ResendLastNotificationRequested -= NotificationSlave_ResendLastNotificationRequested; 
+                notificationSlave.RequestedOpenNotification -= NotificationSlave_RequestedOpenNotification; 
+
             }
 
+        }
+
+        private void ToggleMediaEventsPublisherAvailability(OpenNotification openNotification, bool setAvailable)
+        {
+            if (setAvailable)
+            {
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+                {
+                    if (openNotification.Style == OpenNotification.MediaStyle)
+                    {
+                        var mediaSessionToken = openNotification.MediaSessionToken;
+                        if (openNotification.IsOngoing || !openNotification.IsAutoCancellable)
+                        {
+                            if (!MediaEventsPublisherLollipop.IsInitialized() || !MediaEventsPublisherLollipop.GetInstance().IsMediaSessionUsingToken(mediaSessionToken))
+                            {
+                                Console.WriteLine($"CATCHER: Trying initializing Media for: {openNotification.AppName}");
+                                MediaEventsPublisherLollipop.Initialize(mediaSessionToken);
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if(MediaEventsPublisherLollipop.IsInitialized() && 
+                    MediaEventsPublisherLollipop.GetInstance().IsMediaSessionUsingToken(openNotification.MediaSessionToken))
+                {
+                    MediaEventsPublisherLollipop.GetInstance().Finish();
+                }
+            }
+        }
+
+        private void NotificationSlave_RequestedOpenNotification(object sender, OpenNotificationRequestedEventArgs e)
+        {
+            catcherHelper.OnOpenNotificationRequested(e.Predicate);
+        }
+
+        private void ToggleListeningForConfigurationChanges(bool listening)
+        {
+            var serviceIntent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(SharedPreferenceListenerService)));
+            if (listening)
+                StartService(serviceIntent);
+            else
+                StopService(serviceIntent);
         }
 
         private void NotificationSlave_ResendLastNotificationRequested(object sender, EventArgs e)
@@ -170,6 +253,9 @@ namespace LiveDisplay.Services
             intentFilter.AddAction(Intent.ActionScreenOff);
             intentFilter.AddAction(Intent.ActionScreenOn);
             RegisterReceiver(screenOnOffReceiver, intentFilter);
+
+            var serviceIntent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(MediaControlsProviderService)));
+            StartService(serviceIntent);
         }
 
         //Events:
@@ -236,11 +322,6 @@ namespace LiveDisplay.Services
         {
             Log.Info("Livedisplay", "TransportControl update" + transportControlFlags);
             mediaControllerKitkat.OnTransportControlsUpdate(transportControlFlags);
-        }
-
-        public void OnSharedPreferenceChanged(ISharedPreferences sharedPreferences, string key)
-        {
-            
         }
     }
 }

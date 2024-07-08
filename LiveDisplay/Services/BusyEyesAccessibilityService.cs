@@ -69,6 +69,7 @@ class BusyEyesAccessibilityService : AccessibilityService
                 else
                 {
                     longPressTimer.Stop();
+                    elapsed = false;
                 }
             }
         }

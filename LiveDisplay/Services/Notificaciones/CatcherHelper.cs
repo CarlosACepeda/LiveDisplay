@@ -1,4 +1,5 @@
-﻿using LiveDisplay.Services.Notifications.NotificationEventArgs;
+﻿using Android.Media.Session;
+using LiveDisplay.Services.Notifications.NotificationEventArgs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,17 +19,12 @@ namespace LiveDisplay.Services.Notifications
 
         public static event EventHandler<bool> EnteredZenMode;
 
+        public static event EventHandler<OpenNotification> RequestedOpenNotificationResultGenerated;
+
         const string LiveDisplayAlertWindowNotificationTag= "com.android.server.wm.AlertWindowNotification - com.underground.livedisplay";
         const string AndroidPackageName = "android";
         const string LiveDisplayPackage = "com.underground.livedisplay";
-        //So it can grab it from here.
 
-        /// <summary>
-        /// Constructor of the Class
-        /// </summary>
-        /// <param name="statusBarNotifications">This list is sent by Catcher, and is used to fill the Adapter
-        /// that the RecyclerView will use, it is tighly coupled with that adapter.
-        /// </param>
         public CatcherHelper(List<OpenNotification> openNotifications)
         {
             OpenNotifications = openNotifications;
@@ -116,15 +112,20 @@ namespace LiveDisplay.Services.Notifications
                 notificationToBeRemoved = OpenNotifications?[position];
 
                 OpenNotifications.RemoveAt(position);
+                OnNotificationListSizeChanged(new NotificationListSizeChangedEventArgs
+                {
+                    ThereAreNotifications = !(OpenNotifications.Where(n => n.IsClearable).ToList().Count == 0)
+                });
+                NotificationRemoved?.Invoke(this, new NotificationRemovedEventArgs()
+                {
+                    OpenNotification = notificationToBeRemoved
+                });
             }
-            OnNotificationListSizeChanged(new NotificationListSizeChangedEventArgs
-            {
-                ThereAreNotifications = !(OpenNotifications.Where(n => n.IsClearable).ToList().Count==0)
-            });
-            NotificationRemoved?.Invoke(this, new NotificationRemovedEventArgs()
-            {
-                OpenNotification = notificationToBeRemoved
-            });
+        }
+
+        public void OnOpenNotificationRequested(Func<OpenNotification, bool> predicate)
+        {
+            RequestedOpenNotificationResultGenerated?.Invoke(this,OpenNotifications.Where(predicate).FirstOrDefault());
         }
 
         public void CancelAllNotifications()
@@ -134,7 +135,7 @@ namespace LiveDisplay.Services.Notifications
 
         public static OpenNotification FindMostRecentMediaNotification()
         {
-            if (OpenNotifications != null && OpenNotifications.Count > 1)
+            if (OpenNotifications != null && OpenNotifications.Count >= 1)
             {
                 var mediaNotifications = OpenNotifications.Where(n => n.Style == OpenNotification.MediaStyle);
                 var ordered = mediaNotifications.OrderByDescending(n => n.PostTime).OrderByDescending(n => n.IsOngoing);

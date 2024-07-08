@@ -1,7 +1,9 @@
 ﻿using Android.Media;
 using Android.Media.Session;
 using Android.OS;
+using LiveDisplay.Services.Notifications;
 using System;
+using System.Collections.Generic;
 
 namespace LiveDisplay.Services.Media.MediaEventArgs
 {
@@ -28,8 +30,6 @@ namespace LiveDisplay.Services.Media.MediaEventArgs
         public long CurrentTime { get; set; }
 
         public int RepeatOptionSet { get; set; }
-
-        public MediaSessionSupportedActionsFlags SupportedActions { get; set; } = MediaSessionSupportedActionsFlags.None;
 
         private PlaybackStateCode GetPlaybackStateCodeFromRemoteControlPlayState(RemoteControlPlayState playbackState)
         {

@@ -39,11 +39,11 @@ public class OpenAction : Java.Lang.Object
             Drawable actionIcon;
             if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
             {
-                actionIcon = IconFactory.ReturnActionIconDrawable(_action.Icon, _action.ActionIntent.CreatorPackage);
+                actionIcon = new IconFactory(_action.Icon, _action.ActionIntent.CreatorPackage).Build();
             }
             else
             {
-                actionIcon = IconFactory.ReturnActionIconDrawable(_action.JniPeerMembers.InstanceFields.GetInt32Value(EncodedIconFieldMember, _action), _action.ActionIntent.CreatorPackage);
+                actionIcon = new IconFactory(_action.JniPeerMembers.InstanceFields.GetInt32Value(EncodedIconFieldMember, _action), _action.ActionIntent.CreatorPackage).Build();
             }
 
             return actionIcon;

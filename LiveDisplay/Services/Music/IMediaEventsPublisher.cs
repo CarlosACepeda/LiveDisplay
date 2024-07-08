@@ -1,4 +1,6 @@
-﻿using LiveDisplay.Services.Media.MediaEventArgs;
+﻿using Android.Graphics;
+using LiveDisplay.Services.Media.Enums;
+using LiveDisplay.Services.Media.MediaEventArgs;
 using System;
 
 public interface IMediaEventsPublisher
@@ -14,4 +16,9 @@ public interface IMediaEventsPublisher
     public void OnMediaRepeatOptionChanged(int newOption);
 
     public MediaSessionSupportedActionsFlags GetSupportedActions();
+
+    string GetStringValue<TKey>(TKey metadataKey);
+    long GetLongValue<TKey>(TKey metadataKey);
+    Bitmap GetBitmap<TKey>(TKey metadataKey);
+    AvailableControls SetAvailableControls(MediaSessionSupportedActionsFlags supportedActionsFlags);
 }

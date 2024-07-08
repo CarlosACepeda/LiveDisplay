@@ -7,6 +7,7 @@
   <dimen name="media_widget_info_horizontal_padding">10dp</dimen>
   <dimen name="media_widget_controls_horizontal_padding">20dp</dimen>
   <dimen name="media_widget_secondary_controls_horizontal_padding">10dp</dimen>
+  <dimen name="media_widget_secondary_controls_size">24dp</dimen>
   <dimen name="media_widget_controls_vertical_padding">20dp</dimen>
   <dimen name="layout_width_for_weight_sum">0dp</dimen>
   <dimen name="media_widget_weight">29</dimen>
@@ -24,4 +25,5 @@
   <dimen name="explanation_description_text_size">20dp</dimen>
   <dimen name="explanation_screen_content_padding">10dp</dimen>
   <dimen name="notification_widget_content_padding">10dp</dimen>
+  <dimen name="current_messages_counter_text_size">9dp</dimen>
 </resources>

@@ -21,6 +21,7 @@ namespace LiveDisplay.Services
 
         public event EventHandler<NotificationCancelledEventArgsLollipop> NotificationCancelledLollipop;
         public event EventHandler ResendLastNotificationRequested;
+        public event EventHandler<OpenNotificationRequestedEventArgs> RequestedOpenNotification;
 
         public event EventHandler AllNotificationsCancelled;
 
@@ -53,6 +54,10 @@ namespace LiveDisplay.Services
                 Key = key
             });
         }
+        public void CancelOwnNotification(int notificationId)
+        {
+            notificationManager.Cancel(notificationId);
+        }
 
         public void CancelAll()
         {
@@ -61,7 +66,7 @@ namespace LiveDisplay.Services
 
         public void PostNotification(int notifid, string title, string text, bool autoCancellable, NotificationPriority notificationPriority)
         {
-            Android.App.Notification.Builder builder = new Android.App.Notification.Builder(Application.Context);
+            Notification.Builder builder = new Notification.Builder(Application.Context);
             builder.SetContentTitle(title);
             builder.SetContentText(text);
             builder.SetAutoCancel(autoCancellable);
@@ -69,26 +74,30 @@ namespace LiveDisplay.Services
             builder.SetSmallIcon(Resource.Drawable.ic_stat_default_appicon);
             notificationManager.Notify(notifid, builder.Build());
         }
+        public void PostNotification(int notificationId, Notification.Builder builtNotification)
+        {
+            notificationManager.Notify(notificationId, builtNotification.Build());
+        }
 
         public void PostNotification(int notifid,string title, string text, bool autoCancellable, NotificationImportance notificationImportance)
         {
             NotificationChannel notificationChannel = new NotificationChannel("livedisplaynotificationchannel", "LiveDisplay", notificationImportance);
             notificationManager.CreateNotificationChannel(notificationChannel);
-            Android.App.Notification.Builder builder = new Android.App.Notification.Builder(Application.Context, "livedisplaynotificationchannel");
+            Notification.Builder builder = new Notification.Builder(Application.Context, "livedisplaynotificationchannel");
             builder.SetContentTitle(title);
             builder.SetContentText(text);
             builder.SetAutoCancel(autoCancellable);
             builder.SetSmallIcon(Resource.Drawable.ic_stat_default_appicon);
             builder.SetAutoCancel(true);
-            builder.SetStyle(new Android.App.Notification.MessagingStyle("CULO"));
+            builder.SetStyle(new Notification.MessagingStyle("CULO"));
 
-            Android.App.RemoteInput remoteInput = new RemoteInput.Builder("test1").SetLabel("This is the place where you write").Build();
+            RemoteInput remoteInput = new RemoteInput.Builder("test1").SetLabel("This is the place where you write").Build();
 
             Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(SettingsActivity)));
 
             PendingIntent pendingIntent = PendingIntent.GetActivity(Application.Context, 35, intent, PendingIntentFlags.UpdateCurrent | PendingIntentFlags.Mutable );
 
-            Android.App.Notification.Action.Builder action = new Android.App.Notification.Action.Builder(Resource.Drawable.ic_stat_default_appicon, "Answer", pendingIntent).AddRemoteInput(remoteInput);
+            Notification.Action.Builder action = new Notification.Action.Builder(Resource.Drawable.ic_stat_default_appicon, "Answer", pendingIntent).AddRemoteInput(remoteInput);
 
             builder.AddAction(action.Build());
 
@@ -97,18 +106,18 @@ namespace LiveDisplay.Services
 
         public void SendDumbNotification()
         {
-            Android.App.Notification.Builder builder;
+            Notification.Builder builder;
             if (Build.VERSION.SdkInt < BuildVersionCodes.NMr1)
             {
 
-                builder = new Android.App.Notification.Builder(Application.Context);
+                builder = new Notification.Builder(Application.Context);
                 builder.SetPriority(Convert.ToInt32(NotificationPriority.Max));
             }
             else
             {
                 NotificationChannel notificationChannel = new NotificationChannel("livedisplaynotificationchannel", "LiveDisplay", NotificationImportance.Max);
                 notificationManager.CreateNotificationChannel(notificationChannel);
-                builder = new Android.App.Notification.Builder(Application.Context, "livedisplaynotificationchannel");
+                builder = new Notification.Builder(Application.Context, "livedisplaynotificationchannel");
             }
             builder.SetContentTitle("");
             builder.SetContentText("");
@@ -118,6 +127,13 @@ namespace LiveDisplay.Services
             notificationManager.Notify(2, builder.Build());
         }
 
+        public void GetOpenNotification(Func<OpenNotification, bool> predicate)
+        {
+            RequestedOpenNotification?.Invoke(null,new OpenNotificationRequestedEventArgs
+            {
+                Predicate= predicate
+            });
+        }
         public void RetrieveLastNotification() //ask Catcher to resend the last notification posted, (In case it was missed)
         {
             ResendLastNotificationRequested?.Invoke(this, null);
@@ -164,6 +180,12 @@ namespace LiveDisplay.Services
                 else
                 {
                     //Usual behavior.
+
+                    //TODO: if device is locked: Suggest the user to unlock it,
+                    //Declare an event for the case the user unlocks the device, then proceed with the following code.
+                    //This is because this code by itself can't promt the user to unlock the device.
+                    //Iit only sends the pending intent.
+
 
                     intent.Send();
                     //Android Docs: For NotificationListeners: When implementing a custom click for notification

@@ -2,21 +2,21 @@
 using Android.App;
 using Android.Graphics;
 using Android.Graphics.Drawables;
-using Android.Media;
 using Android.Media.Session;
 using Android.OS;
 using Android.Views;
 using Android.Views.Animations;
 using Android.Widget;
-using AndroidX.AppCompat.Widget;
+using LiveDisplay.Factories;
 using LiveDisplay.Misc;
 using LiveDisplay.Services;
 using LiveDisplay.Services.Media;
+using LiveDisplay.Services.Media.Enums;
 using LiveDisplay.Services.Media.MediaEventArgs;
 using LiveDisplay.Services.Notifications;
-using LiveDisplay.Services.Notifications.NotificationEventArgs;
 using LiveDisplay.Services.Wallpaper;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Timers;
@@ -29,7 +29,8 @@ namespace LiveDisplay.Fragments
     {
         TextView title, artist, album, sourceApp;
         ImageButton skipToPrevious,
-            playPause, skipToNext, discardMediaSession, repeat, toggleAdditionalControls, stop;
+            playPause, skipToNext, discardMediaSession, repeat, toggleAdditionalControls, stop,
+            customAction1, customAction2;
         ProgressBar buffering;
         LinearLayout maincontainer, additionalMediaControls;
         TextView noMediaPlaying;
@@ -38,7 +39,7 @@ namespace LiveDisplay.Fragments
         Timer rewindTimer;
         bool longPressStarted = false;
         ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
-        OpenNotification currentMediaNotification;
+        
         MediaControlsBase mediaControls;
         float initialX=0;
         float pixelToMoveTo = 0;
@@ -47,8 +48,9 @@ namespace LiveDisplay.Fragments
 
         int lowestBoundary, highestBoundary;
         Timer discardMediaSessionButtonTimeOut;
-        bool discardMediaSessionClicked;
         PlaybackStateCode playbackState;
+        List<PlaybackState.CustomAction> mediaSessionCustomActions;
+
         public override void OnCreate(Bundle savedInstanceState)
         {
             fastForwardTimer = new Timer
@@ -60,19 +62,16 @@ namespace LiveDisplay.Fragments
                 Interval = 1000
             };
             mediaControls = MediaControlsBase.Instance;
-            {
-                mediaControls = MediaControlsKitkat.GetInstance();
-            }
-            else 
-            {
-                mediaControls = MediaControlsLollipop.GetInstance();
-
-            }
-            CatcherHelper.NotificationPosted += CatcherHelper_NotificationPosted;
-            CatcherHelper.NotificationRemoved += CatcherHelper_NotificationRemoved;
-
             Console.WriteLine("FRAGMENT: onCreate");
             base.OnCreate(savedInstanceState);
+        }
+
+        private void MediaEventsPublisherLollipop_PublisherFinished(object sender, bool wasFinished)
+        {
+            if (wasFinished)
+                ToggleMediaControlsVisibility(false);
+            else
+                Console.WriteLine("MediaEventsPublisher wasn't finished correctly, what can we do?");
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -81,31 +80,31 @@ namespace LiveDisplay.Fragments
             Console.WriteLine("FRAGMENT: onCreateView");
             BindViews(view);
             BindViewEvents();
-            BindMediaControllerEvents();
             fastForwardTimer.Elapsed += FastForwardTimer_Elapsed;
             rewindTimer.Elapsed += RewindTimer_Elapsed;
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
-            {
-                currentMediaNotification = CatcherHelper.FindMostRecentMediaNotification();
-                if (currentMediaNotification != null && currentMediaNotification.MediaSessionToken!= null)
-                {
-                    MediaEventsPublisherLollipop.InitializeFromToken(currentMediaNotification.MediaSessionToken);
-                }
-            }
-
+            BindMediaControllerEvents();
             return view;
+        }
+        public override void OnStart()
+        {
+            Console.WriteLine("FRAGMENT: onStart!");
+            //Here we make sure that the Views are actually loaded and ready to use.
+             //it posts updates that I need to load as soon as I start listening to these events.
+            base.OnStart();
         }
         public override void OnResume()
         {
             Console.WriteLine("FRAGMENT: onResume");
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
             {
-                if (MediaEventsPublisherLollipop.IsInitialized() || currentMediaNotification != null)
+                if (MediaEventsPublisherLollipop.IsInitialized())
                 {
                     Console.WriteLine("CONTROLS NOT VISIBLE, MAKING'EM VISIBLE");
                     ToggleMediaControlsVisibility(true);
                 }
-                else ToggleMediaControlsVisibility(false);
+                else
+                { 
+                    ToggleMediaControlsVisibility(false); }
 
             }
             else
@@ -115,11 +114,19 @@ namespace LiveDisplay.Fragments
                     Console.WriteLine("CONTROLS NOT VISIBLE, MAKING'EM VISIBLE");
                     ToggleMediaControlsVisibility(true);
                 }
-                else ToggleMediaControlsVisibility(false);
+                {
+                    ToggleMediaControlsVisibility(false);
+                }
 
             }
           
             base.OnResume();
+        }
+        public override void OnStop()
+        {
+            Console.WriteLine("FRAGMENT: onStop");
+
+            base.OnStop();
         }
         public override void OnDestroyView()
         {
@@ -133,77 +140,7 @@ namespace LiveDisplay.Fragments
         public override void OnDestroy()
         {
             Console.WriteLine("FRAGMENT: onDestroy");
-            album = null;
-            artist = null;
-            title = null;
-            skbSeekSongTime = null;
             base.OnDestroy();
-        }
-        private void CatcherHelper_NotificationPosted(object sender, NotificationPostedEventArgs e)
-        {
-            //In Kitkat, a notification can never be a MediaStyle, that's why we instance the MediaEventsPublisherLollipop directly
-
-            if(e.OpenNotification.Style== OpenNotification.MediaStyle)
-            {
-                var mediaSessionToken= e.OpenNotification.MediaSessionToken;
-                if(e.OpenNotification.IsOngoing || !e.OpenNotification.IsAutoCancellable)
-                {
-                    if (MediaEventsPublisherLollipop.IsInitialized() && 
-                        MediaEventsPublisherLollipop.GetInstance().IsMediaSessionUsingToken(mediaSessionToken))
-                        ToggleMediaControlsVisibility(true);
-                    else
-                    {
-                        Console.WriteLine($"Trying initializing Media for: {e.OpenNotification.AppName}");
-                        MediaEventsPublisherLollipop.InitializeFromToken(mediaSessionToken);
-                    }
-                    currentMediaNotification = e.OpenNotification;
-                    LoadAdditionalControls(); //Find a better way to update  the additional controls without reloading all of them
-                }
-            }
-        }
-
-        private bool LoadAdditionalControls()
-        {
-            if(currentMediaNotification == null) return false;
-            var compactViewIndices = currentMediaNotification.CompactViewActionsIndices;
-            var notificationActions = currentMediaNotification.Actions;
-            if (notificationActions.Count == 0) return false;
-
-            int actionPosition = 0;
-            for(int i=0; i<notificationActions.Count; i++)
-            {
-                if(!compactViewIndices.Contains(i))
-                {
-                    SetAdditionalControl(notificationActions[i], actionPosition++);
-                }
-            }
-            return true;
-        }
-        void SetAdditionalControl(OpenAction action, int position)
-        {
-            var imageButton= additionalMediaControls.GetChildAt(position) as AppCompatImageButton;
-
-            imageButton.SetImageDrawable(action.Icon);
-            imageButton.Click += (sender, e) =>
-            {
-                NotificationSlave.GetInstance().ClickAction(action);
-            };
-        }
-
-        private void CatcherHelper_NotificationRemoved(object sender, NotificationRemovedEventArgs e)
-        {
-            if (e.OpenNotification.Style == OpenNotification.MediaStyle)
-            {
-                if (MediaEventsPublisherLollipop.IsInitialized() &&
-                    MediaEventsPublisherLollipop.GetInstance().IsMediaSessionUsingToken(e.OpenNotification.MediaSessionToken))
-                {
-                    if(MediaEventsPublisherLollipop.GetInstance().Finish(e.OpenNotification.MediaSessionToken))
-                    {
-                        ToggleMediaControlsVisibility(false);
-                        currentMediaNotification = null;
-                    }
-                }
-            }
         }
 
         #region Fragment Views events
@@ -223,7 +160,20 @@ namespace LiveDisplay.Fragments
             discardMediaSession.Click += DiscardMediaSession_Click;
             repeat.Click += Repeat_Click;
             stop.Click += Stop_Click;
+            customAction1.Click += CustomAction_Click;
+            customAction2.Click += CustomAction_Click;
             toggleAdditionalControls.Click += ToggleAdditionalControls_Click;
+        }
+
+        private void CustomAction_Click(object sender, EventArgs e)
+        {
+            var customActionView = (ImageButton)sender;
+
+            if (customActionView.Tag is PlaybackState.CustomAction customAction)
+                mediaControls.SendCustomAction(customAction);
+            else if (customActionView.Tag is OpenAction openAction)
+                mediaControls.SendCompactedAction(openAction);
+
         }
 
         private void Stop_Click(object sender, EventArgs e)
@@ -237,16 +187,19 @@ namespace LiveDisplay.Fragments
         }
         void AnimateToggleAdditionalControls(ViewStates visibility)
         {
-            int oneEightofASecond = 1000/8;
-            Rect additionalControlsRect= new Rect();
+            bool noLoadedControls = customAction1.Tag == null && customAction2.Tag == null;
+            if (noLoadedControls) return;
+
+            int oneEightofASecond = 1000 / 8;
+            Rect additionalControlsRect = new Rect();
             additionalMediaControls.GetGlobalVisibleRect(additionalControlsRect);
 
             var height = additionalControlsRect.Height();
 
             Activity.RunOnUiThread(() =>
             {
-                ValueAnimator animator = visibility== ViewStates.Visible? ValueAnimator.OfFloat(height*-1, 0):
-                                    ValueAnimator.OfFloat(0, height*- 1);
+                ValueAnimator animator = visibility == ViewStates.Visible ? ValueAnimator.OfFloat(height * -1, 0) :
+                                    ValueAnimator.OfFloat(0, height * -1);
 
                 animator.SetInterpolator(new OvershootInterpolator());
                 animator.SetDuration(oneEightofASecond);
@@ -254,7 +207,7 @@ namespace LiveDisplay.Fragments
                 animator.Update += (sender, e) =>
                 {
                     maincontainer.SetY((float)e.Animation.AnimatedValue);
-                    if((int)e.Animation.AnimatedValue == height || (int)e.Animation.AnimatedValue== 0)
+                    if ((int)e.Animation.AnimatedValue == height || (int)e.Animation.AnimatedValue == 0)
                     {
                         switch (visibility)
                         {
@@ -263,15 +216,10 @@ namespace LiveDisplay.Fragments
                                 break;
                             default:
                                 additionalMediaControls.Visibility = ViewStates.Visible;
-                                var loadedControls= LoadAdditionalControls();
-                                if(!loadedControls)
-                                {
-                                    AnimateToggleAdditionalControls(visibility); //it'll cause to hide itself.
-                                }
                                 break;
                         }
                     }
-                    };
+                };
                 Console.WriteLine("Animating Additional Controls");
             }
             );
@@ -281,16 +229,12 @@ namespace LiveDisplay.Fragments
         {
              mediaControls.CycleRepeatOption();
         }
-
         private void DiscardMediaSession_Click(object sender, EventArgs e)
         {
-            //We can't discard a Media session that's active, let's pause it.
-            mediaControls.Pause();
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop) //In kitkat ther's not a notification attached to the Media playing
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop && MediaEventsPublisherLollipop.IsInitialized()) 
             {
-                NotificationSlave.GetInstance().CancelNotification(currentMediaNotification?.Key); //Now it should let us remove the notification.
+                MediaEventsPublisherLollipop.GetInstance().Finish();
             }
-            discardMediaSessionClicked = true; //Set a flag, for when the Media Session changes its state to paused.
         }
 
         private void Maincontainer_Touch(object sender, View.TouchEventArgs e)
@@ -384,10 +328,8 @@ namespace LiveDisplay.Fragments
         {
             try { mediaControls.OpenRelatedActivity(); }
             catch (PendingIntent.CanceledException ex)
-            {   Console.WriteLine($"Failed Sending PendingIntent: {ex.Message}");
-
-                if(currentMediaNotification!= null)
-                NotificationSlave.GetInstance().ClickNotification(currentMediaNotification);
+            {   
+                Console.WriteLine($"Failed Sending PendingIntent: {ex.Message}");
             }
         }
 
@@ -483,6 +425,13 @@ namespace LiveDisplay.Fragments
 
         private void BtnSkipNext_Click(object sender, EventArgs e)
         {
+            //SkipToNext is susceptible to having a custom action
+            var customAction = GetMainMediaControlCustomAction((ImageButton)sender);
+            if (customAction != null)
+            {
+                mediaControls.SendCustomAction(customAction);
+                return;
+            }
             mediaControls.SkipToNext();
         }
 
@@ -504,7 +453,24 @@ namespace LiveDisplay.Fragments
 
         private void BtnSkipPrevious_Click(object sender, EventArgs e)
         {
+            //SkipToPrevious is susceptible to having a custom action
+            var customAction = GetMainMediaControlCustomAction((ImageButton)sender);
+            if (customAction != null)
+            {
+                mediaControls.SendCustomAction(customAction);
+                return;
+            }
             mediaControls.SkipToPrevious();
+        }
+
+        PlaybackState.CustomAction GetMainMediaControlCustomAction(ImageButton mainMediaControl)
+        {
+            var skipNextButton = mainMediaControl;
+            var skipNextButtonCustomActionTag = skipNextButton.Tag;
+            if(skipNextButtonCustomActionTag!= null)
+                return (PlaybackState.CustomAction)skipNextButtonCustomActionTag;
+
+            return null;
         }
 
         #endregion Fragment Views events
@@ -517,6 +483,8 @@ namespace LiveDisplay.Fragments
                 MediaEventsPublisherKitkat.MediaMetadataChanged += MediaController_MediaMetadataChanged;
                 MediaEventsPublisherKitkat.MediaProgressChanged += MediaEventsPublisherKitkat_MediaProgressChanged;
                 MediaEventsPublisherKitkat.MediaRepeatOptionChanged += MediaEventsPublisherKitkat_MediaRepeatOptionChanged;
+                MediaEventsPublisherKitkat.ControlsAvailabilityChanged += MediaEventsPublisherLollipop_OnControlsAvailabilityChanged;
+
             }
             else
             {
@@ -524,8 +492,37 @@ namespace LiveDisplay.Fragments
                 MediaEventsPublisherLollipop.MediaMetadataChanged += MediaController_MediaMetadataChanged;
                 MediaEventsPublisherLollipop.MediaProgressChanged += MediaEventsPublisherLollipop_MediaProgressChanged;
                 MediaEventsPublisherLollipop.MediaRepeatOptionChanged += MediaEventsPublisherLollipop_MediaRepeatOptionChanged;
+                MediaEventsPublisherLollipop.PublisherFinished += MediaEventsPublisherLollipop_PublisherFinished;
+                MediaEventsPublisherLollipop.ControlsAvailabilityChanged += MediaEventsPublisherLollipop_OnControlsAvailabilityChanged;
+
+            }
+
+        }
+
+        private void MediaEventsPublisherLollipop_OnControlsAvailabilityChanged(object sender, ControlsAvailabilityChangedEventArgs e)
+        {
+            mediaSessionCustomActions = e.CustomActions;
+            Console.WriteLine($"{mediaSessionCustomActions.Count}");
+            Console.WriteLine($"{e.CustomActions.Count}");
+            Console.WriteLine(e.AvailableControls);
+
+            playPause.Visibility = e.AvailableControls.HasFlag(AvailableControls.PlayPause) ? ViewStates.Visible : ViewStates.Gone;
+            buffering.Visibility = e.AvailableControls.HasFlag(AvailableControls.Buffering) ? ViewStates.Visible : ViewStates.Gone;
+            skipToNext.Visibility = e.AvailableControls.HasFlag(AvailableControls.SkipToNext) ? ViewStates.Visible : ViewStates.Gone;
+            skipToPrevious.Visibility = e.AvailableControls.HasFlag(AvailableControls.SkipToPrevious) ? ViewStates.Visible : ViewStates.Gone;
+            stop.Visibility = e.AvailableControls.HasFlag(AvailableControls.Stop) ? ViewStates.Visible : ViewStates.Gone;
+            repeat.Visibility = e.AvailableControls.HasFlag(AvailableControls.Repeat) ? ViewStates.Visible : ViewStates.Gone;
+            if(e.TakeCustomActionsFromNotification)
+            {
+                FillWithCompactedActions(e.OpenNotification);
+            }
+            else
+            {
+                FillWithCustomAction(customAction1, e.OpenNotification);
+                FillWithCustomAction(customAction2, e.OpenNotification);
             }
         }
+
         private void UnbindMediaControllerEvents()
         {
             if (Build.VERSION.SdkInt <= BuildVersionCodes.KitkatWatch)
@@ -534,6 +531,7 @@ namespace LiveDisplay.Fragments
                 MediaEventsPublisherKitkat.MediaMetadataChanged -= MediaController_MediaMetadataChanged;
                 MediaEventsPublisherKitkat.MediaProgressChanged -= MediaEventsPublisherKitkat_MediaProgressChanged;
                 MediaEventsPublisherKitkat.MediaRepeatOptionChanged -= MediaEventsPublisherKitkat_MediaRepeatOptionChanged;
+                MediaEventsPublisherLollipop.ControlsAvailabilityChanged -= MediaEventsPublisherLollipop_OnControlsAvailabilityChanged;
             }
             else
             {
@@ -541,6 +539,8 @@ namespace LiveDisplay.Fragments
                 MediaEventsPublisherLollipop.MediaMetadataChanged -= MediaController_MediaMetadataChanged;
                 MediaEventsPublisherLollipop.MediaProgressChanged -= MediaEventsPublisherLollipop_MediaProgressChanged;
                 MediaEventsPublisherLollipop.MediaRepeatOptionChanged -= MediaEventsPublisherLollipop_MediaRepeatOptionChanged;
+                MediaEventsPublisherLollipop.PublisherFinished -= MediaEventsPublisherLollipop_PublisherFinished;
+                MediaEventsPublisherLollipop.ControlsAvailabilityChanged -= MediaEventsPublisherLollipop_OnControlsAvailabilityChanged;
             }
         }
 
@@ -573,27 +573,12 @@ namespace LiveDisplay.Fragments
         {
             Activity?.RunOnUiThread(() =>
             {
-                bool isKitkat = Build.VERSION.SdkInt <= BuildVersionCodes.KitkatWatch;
-
-                title.Text = isKitkat ? 
-                e.MediaMetadataKitkat.GetString((MediaMetadataEditKey)MetadataKey.Title, string.Empty): 
-                e.MediaMetadata?.GetString(MediaMetadata.MetadataKeyTitle);
-
-                album.Text =  isKitkat ? 
-                e.MediaMetadataKitkat.GetString((MediaMetadataEditKey)MetadataKey.Album, string.Empty):
-                e.MediaMetadata?.GetString(MediaMetadata.MetadataKeyAlbum);
-
-                artist.Text = isKitkat?
-                e.MediaMetadataKitkat.GetString((MediaMetadataEditKey)MetadataKey.Artist, string.Empty)
-                : e.MediaMetadata?.GetString(MediaMetadata.MetadataKeyArtist);
-
-                var duration= isKitkat ?
-                (int)e.MediaMetadataKitkat.GetLong((MediaMetadataEditKey)MetadataKey.Duration, 0) :
-                (int)e.MediaMetadata?.GetLong(MediaMetadata.MetadataKeyDuration); //In ms
-
-                if (duration > 0)
+                title.Text = e.MediaTitle;
+                album.Text = e.MediaAlbum;
+                artist.Text = e.MediaArtist;
+                if (e.MediaDuration > 0)
                 {
-                    skbSeekSongTime.Max = duration;
+                    skbSeekSongTime.Max = (int)e.MediaDuration;
                     skbSeekSongTime.Enabled = true;
                 }
                 else
@@ -603,11 +588,7 @@ namespace LiveDisplay.Fragments
                 sourceApp.Text = string.Format(Resources.GetString(Resource.String.playing_from_template), e.AppName);
                 ThreadPool.QueueUserWorkItem(m =>
                 {
-                    var albumart = isKitkat?
-                    e.MediaMetadataKitkat.GetBitmap(MediaMetadataEditKey.BitmapKeyArtwork, null):
-                    e.MediaMetadata?.GetBitmap(MediaMetadata.MetadataKeyAlbumArt);
-
-                    var wallpaper = new BitmapDrawable(Activity.Resources, albumart);
+                    var wallpaper = new BitmapDrawable(Activity.Resources, e.MediaArtwork);
                     int opacitylevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtOpacityLevel, ConfigurationParameters.DefaultAlbumartOpacityLevel);
                     int blurLevel = configurationManager.RetrieveAValue(ConfigurationParameters.AlbumArtBlurLevel, ConfigurationParameters.DefaultAlbumartBlurLevel);
 
@@ -630,8 +611,6 @@ namespace LiveDisplay.Fragments
                 playbackState = e.PlaybackState;
 
                 SetRepeatOption(e.RepeatOptionSet);
-                SetAvailableControls(e.SupportedActions);
-
                 switch (e.PlaybackState)
                 {
                     case PlaybackStateCode.Paused:
@@ -641,6 +620,7 @@ namespace LiveDisplay.Fragments
                         Resources.GetDrawable(Resource.Drawable.ic_play_arrow_white_24dp, Resources.NewTheme()));
                         Console.WriteLine("PLAYBACK PAUSED");
                         break;
+
 
                     case PlaybackStateCode.Playing:
                         playPause.SetImageDrawable(
@@ -674,39 +654,59 @@ namespace LiveDisplay.Fragments
                     default:
                         break;
                 }
-
-                if (discardMediaSessionClicked &&
-                e.PlaybackState != PlaybackStateCode.Playing)
-                {
-                    //It means this is the result of a clicking on the discard media session button, and we should hide the controls
-                    ToggleMediaControlsVisibility(false);
-                    discardMediaSessionClicked = false; //reset flag.
-                }
             });
         }
 
-        void SetAvailableControls(MediaSessionSupportedActionsFlags supportedActionsFlags)
+        void FillWithCompactedActions(OpenNotification openNotification)
         {
+            if (openNotification == null) return;
 
-            Console.WriteLine($"SupportedActions: {supportedActionsFlags} ");
+            List<OpenAction> actions = openNotification.Actions;
+            int[] compactedViewActionIndices = openNotification.CompactViewActionsIndices;
 
-            SetControlAvailability(skipToNext, supportedActionsFlags, MediaSessionSupportedActionsFlags.SkipToNext);
-            SetControlAvailability(skipToPrevious, supportedActionsFlags, MediaSessionSupportedActionsFlags.SkipToPrevious);
-            SetControlAvailability(playPause, supportedActionsFlags,MediaSessionSupportedActionsFlags.PlayPause);
-            SetControlAvailability(stop, supportedActionsFlags,MediaSessionSupportedActionsFlags.Stop);
+            int compactedActionsCount = actions.Count - compactedViewActionIndices.Length; //It should be 2 always, Android has only allowd a maximum of 5 actions
+            if (actions.Count == 0) return;
+
+            for (int i = 0; i <=  compactedActionsCount; i++) //Only execute two times. (additional actions are always two)
+            {
+                if (!compactedViewActionIndices.Contains(i))
+                {
+                    var view= i==0? customAction1 : customAction2; //ensuring we only take the only two views we have available.
+                    var action = actions[i];
+                    view.SetImageDrawable(action.Icon);
+                    view.Tag = action;
+                }
+            }
         }
-
-
-        void SetControlAvailability(View control, MediaSessionSupportedActionsFlags supportedActionFlags, MediaSessionSupportedActionsFlags toCheck)
+        void FillWithCustomAction(ImageButton view, OpenNotification openNotification)
         {
-            SetControlVisibility(control, supportedActionFlags.HasFlag(toCheck));
-        }
+            if (openNotification == null) return;
+            var nextCustomAction = mediaSessionCustomActions.FirstOrDefault();
+            if (nextCustomAction != null)
+            {
+                Console.WriteLine($"SETTING CUSTOM ACTION {nextCustomAction.Name}");
 
+                int pixels = (int)Resources.GetDimension(Resource.Dimension.media_widget_secondary_controls_size);
 
-        void SetControlVisibility(View control, bool visible)
-        {
-            control.Visibility = visible ? ViewStates.Visible : ViewStates.Gone;
+                Drawable drawable = new IconFactory(nextCustomAction.Icon, openNotification.PackageName)
+                    .ApplyColorFilter(Color.White)
+                    .ResizeDrawable(pixels, pixels)
+                    .Build();
+               
+                mediaSessionCustomActions.Remove(nextCustomAction);
+
+                view.SetImageDrawable(drawable);
+                view.Tag= nextCustomAction;
+                Console.WriteLine($"(CUSTOM ACTION IS NOT NULL )FILL WITH CUSTOM ACTION: TAG IS NULL? {(view.Tag == null ? "true" : "false")} ");
+            }
+            else
+            {
+                
+                view.Tag = null;
+                Console.WriteLine($"(CUSTOM ACTIOn IS NULL )FILL WITH CUSTOM ACTION: TAG IS NULL? {(view.Tag == null? "true": "false")} ");
+            }
         }
+        
 
         private void BindViews(View view)
         {
@@ -719,6 +719,9 @@ namespace LiveDisplay.Fragments
             playPause = view.FindViewById<ImageButton>(Resource.Id.play_pause);
             skipToNext = view.FindViewById<ImageButton>(Resource.Id.skip_to_next);
             buffering= view.FindViewById<ProgressBar>(Resource.Id.buffering);
+            customAction1 = view.FindViewById<ImageButton>(Resource.Id.custom_action_1);
+            customAction2 = view.FindViewById<ImageButton>(Resource.Id.custom_action_2);
+
             repeat= view.FindViewById<ImageButton>(Resource.Id.repeat);
             stop= view.FindViewById<ImageButton>(Resource.Id.stop);
 

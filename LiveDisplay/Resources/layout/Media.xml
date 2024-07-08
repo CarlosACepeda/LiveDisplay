@@ -163,6 +163,15 @@
                     android:background="?android:attr/selectableItemBackground"
                     android:visibility="visible" />
 
+<!--                    <androidx.mediarouter.app.MediaRouteButton
+                    android:paddingHorizontal="@dimen/media_widget_controls_horizontal_padding"
+                    android:paddingVertical="@dimen/media_widget_controls_vertical_padding"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/cast"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:visibility="visible" />-->
+
                     <!--<androidx.appcompat.widget.AppCompatImageButton
                     android:src="@drawable/outline_visibility_off_white_24"
                     android:paddingHorizontal="@dimen/media_widget_controls_horizontal_padding"
@@ -183,18 +192,20 @@
                 android:layout_height="wrap_content">
                 <androidx.appcompat.widget.AppCompatImageButton
                 android:alpha="@dimen/alpha_half_visibility"
+                android:id="@+id/custom_action_1"
                 tools:src="@drawable/ic_cloud_white_24dp"
                 android:paddingHorizontal="@dimen/media_widget_secondary_controls_horizontal_padding"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="?android:attr/selectableItemBackground" />
                 <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/custom_action_2"
                 android:alpha="@dimen/alpha_half_visibility"
                 tools:src="@drawable/ic_awake_24dp"
                 android:paddingHorizontal="@dimen/media_widget_secondary_controls_horizontal_padding"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/selectableItemBackground" />
+                android:background="?android:attr/selectableItemBackground"/>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

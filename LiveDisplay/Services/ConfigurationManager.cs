@@ -1,5 +1,6 @@
 ﻿using Android.App;
 using Android.Content;
+using AndroidX.Preference;
 using System;
 
 namespace LiveDisplay.Services
@@ -10,20 +11,17 @@ namespace LiveDisplay.Services
         private ISharedPreferencesEditor sharedPreferencesEditor;
 
         //Shared preferences.
+        public ConfigurationManager(ISharedPreferences sharedPreferences)
+        {
+            this.sharedPreferences = sharedPreferences;
+            sharedPreferencesEditor = sharedPreferences.Edit();
+        }
+
         public ConfigurationManager(AppPreferences preferences)
         {
-            switch (preferences)
-            {
-                case AppPreferences.Default:
-                    sharedPreferences = AndroidX.Preference.PreferenceManager.GetDefaultSharedPreferences(Application.Context);
-                    break;
-
-                case AppPreferences.Weather:
-                    sharedPreferences = Application.Context.GetSharedPreferences("weatherpreferences", FileCreationMode.Private);
-                    break;
-            }
-            if (sharedPreferences == null) throw new InvalidOperationException("Shared preferences can't be null!");
+            sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
             sharedPreferencesEditor = sharedPreferences.Edit();
+
         }
 
         public void SaveAValue(string key, bool value)
