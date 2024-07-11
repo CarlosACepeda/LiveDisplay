@@ -13,12 +13,12 @@ namespace LiveDisplay.Services.Awake
 {
     public class AwakeHelper : Java.Lang.Object
     {
-        private static ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
+        //private static ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
 
         public AwakeHelper()
         {
             CatcherHelper.NotificationPosted += CatcherHelper_NotificationPosted;
-            CatcherHelper.NotificationListSizeChanged += CatcherHelper_NotificationListSizeChanged;
+            //CatcherHelper.NotificationListSizeChanged += CatcherHelper_NotificationListSizeChanged;
         }
 
         public static void TurnOnScreen()
@@ -73,11 +73,11 @@ namespace LiveDisplay.Services.Awake
                         //neither the automatic screen off. (I don't know how to solve that yet) it is the lesser of two evils.
                         //However it doesn't work sometimes, I guess it is better to simply warn the user about it.
                         //And disable the turn off screen capabilities of LiveDisplay while a fingerprint lock is active.
-                        if (KeyguardHelper.IsDeviceCurrentlyLocked() && KeyguardHelper.IsFingerprintSet()){
-                            //Do nothing.
-                        }
-                        else
-                            policy.LockNow();
+                        //if (KeyguardHelper.IsDeviceCurrentlyLocked() && KeyguardHelper.IsFingerprintSet()){
+                        //    //Do nothing.
+                        //}
+                        //else
+                        //    policy.LockNow();
                     }
                     catch (Exception)
                     {
@@ -101,89 +101,89 @@ namespace LiveDisplay.Services.Awake
                 Application.Context.StopService(awake);
             }
         }
-        public static AwakeStatus GetAwakeStatus()
-        {
-            if (UserHasEnabledAwake() == false && UserHasSetAwakeHours() == false)
-                return AwakeStatus.CompletelyDisabled;
-            if (UserHasEnabledAwake() == false && UserHasSetAwakeHours())
-                return AwakeStatus.DisabledbyUser;
-            if (UserHasEnabledAwake() && IsAwakeUp() && AwakeService.isRunning)
-                return AwakeStatus.Up;
-            if (UserHasEnabledAwake() && IsAwakeUp() && AwakeService.isRunning == false)
-                return AwakeStatus.UpWithDeviceMotionDisabled;
-            if (UserHasEnabledAwake() && IsAwakeUp()== false && AwakeService.isRunning)
-                return AwakeStatus.SleepingWithDeviceMotionEnabled;
-            if (UserHasEnabledAwake() && IsAwakeUp() == false && AwakeService.isRunning == false)
-                return AwakeStatus.Sleeping;
+        //public static AwakeStatus GetAwakeStatus()
+        //{
+        //    if (UserHasEnabledAwake() == false && UserHasSetAwakeHours() == false)
+        //        return AwakeStatus.CompletelyDisabled;
+        //    if (UserHasEnabledAwake() == false && UserHasSetAwakeHours())
+        //        return AwakeStatus.DisabledbyUser;
+        //    if (UserHasEnabledAwake() && IsAwakeUp() && AwakeService.isRunning)
+        //        return AwakeStatus.Up;
+        //    if (UserHasEnabledAwake() && IsAwakeUp() && AwakeService.isRunning == false)
+        //        return AwakeStatus.UpWithDeviceMotionDisabled;
+        //    if (UserHasEnabledAwake() && IsAwakeUp()== false && AwakeService.isRunning)
+        //        return AwakeStatus.SleepingWithDeviceMotionEnabled;
+        //    if (UserHasEnabledAwake() && IsAwakeUp() == false && AwakeService.isRunning == false)
+        //        return AwakeStatus.Sleeping;
 
-            return AwakeStatus.None;
-        }
-        private static bool IsAwakeUp()
-        {
-            //Check the current time and only react if the time this method is called is within the allowed hours.
-            int start = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.StartSleepTime, "-1"));
-            int end = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.FinishSleepTime, "-1"));
-            //Generates the hour as a 4 characters number in 24 hours for example: 2210 (10:10pm)
-            var now = int.Parse(string.Concat(DateTime.Now.Hour.ToString("00"), DateTime.Now.Minute.ToString("00")));
-            Log.Info("LiveDisplay", now.ToString());
+        //    return AwakeStatus.None;
+        //}
+        //private static bool IsAwakeUp()
+        //{
+        //    //Check the current time and only react if the time this method is called is within the allowed hours.
+        //    int start = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.StartSleepTime, "-1"));
+        //    int end = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.FinishSleepTime, "-1"));
+        //    //Generates the hour as a 4 characters number in 24 hours for example: 2210 (10:10pm)
+        //    var now = int.Parse(string.Concat(DateTime.Now.Hour.ToString("00"), DateTime.Now.Minute.ToString("00")));
+        //    Log.Info("LiveDisplay", now.ToString());
 
 
-            if (start <= end) //The times are in the same day.
-            {
-                if (now >= start && now <= end)
-                {
-                    Log.Info("HELLO", "Im Sleeping");
-                    return false;
-                }
-                else
-                {
-                    Log.Info("HELLO", "Im Active");
-                    return true;
-                }
-            }
-            else //The times are in different days.
-            {
-                if (now >= start || now <= end)
-                {
-                    Log.Info("HELLO", "Im Sleeping");
-                    return false;
-                }
-                else
-                {
-                    Log.Info("HELLO", "Im Active");
-                    return true;
-                }
-            }
-        }
-        private static bool UserHasEnabledAwake()
-        {
-            //Check if the user has enabled it in the first place
-            if (configurationManager.RetrieveAValue(ConfigurationParameters.EnableAwakeService) == false)
-            {
-                return false;
-            }
-            return true;
-        }
-        public static bool UserHasSetAwakeHours()
-        {
-            //Check if the user has set  hours in which the Awake functionality isn't working!
-            int start = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.StartSleepTime, "-1")); 
-            int end = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.FinishSleepTime, "-1"));
-            if (start == -1 || end == -1)
-            {
-                return false;
-            }
-            return true;
+        //    if (start <= end) //The times are in the same day.
+        //    {
+        //        if (now >= start && now <= end)
+        //        {
+        //            Log.Info("HELLO", "Im Sleeping");
+        //            return false;
+        //        }
+        //        else
+        //        {
+        //            Log.Info("HELLO", "Im Active");
+        //            return true;
+        //        }
+        //    }
+        //    else //The times are in different days.
+        //    {
+        //        if (now >= start || now <= end)
+        //        {
+        //            Log.Info("HELLO", "Im Sleeping");
+        //            return false;
+        //        }
+        //        else
+        //        {
+        //            Log.Info("HELLO", "Im Active");
+        //            return true;
+        //        }
+        //    }
+        //}
+        //private static bool UserHasEnabledAwake()
+        //{
+        //    //Check if the user has enabled it in the first place
+        //    if (configurationManager.RetrieveAValue(ConfigurationParameters.EnableAwakeService) == false)
+        //    {
+        //        return false;
+        //    }
+        //    return true;
+        //}
+        //public static bool UserHasSetAwakeHours()
+        //{
+        //    //Check if the user has set  hours in which the Awake functionality isn't working!
+        //    int start = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.StartSleepTime, "-1")); 
+        //    int end = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.FinishSleepTime, "-1"));
+        //    if (start == -1 || end == -1)
+        //    {
+        //        return false;
+        //    }
+        //    return true;
 
-        }
-        private void CatcherHelper_NotificationListSizeChanged(object sender, Notifications.NotificationEventArgs.NotificationListSizeChangedEventArgs e)
-        {
-            if (configurationManager.RetrieveAValue(ConfigurationParameters.TurnOffScreenAfterLastNotificationCleared) == true)
-            {
-                if (e.ThereAreNotifications == false)
-                    TurnOffScreen();
-            }
-        }
+        //}
+        //private void CatcherHelper_NotificationListSizeChanged(object sender, Notifications.NotificationEventArgs.NotificationListSizeChangedEventArgs e)
+        //{
+        //    if (configurationManager.RetrieveAValue(ConfigurationParameters.TurnOffScreenAfterLastNotificationCleared) == true)
+        //    {
+        //        if (e.ThereAreNotifications == false)
+        //            TurnOffScreen();
+        //    }
+        //}
 
         private void CatcherHelper_NotificationPosted(object sender, Notifications.NotificationEventArgs.NotificationPostedEventArgs e)
         {
@@ -194,8 +194,8 @@ namespace LiveDisplay.Services.Awake
         protected override void Dispose(bool disposing)
         {
             CatcherHelper.NotificationPosted -= CatcherHelper_NotificationPosted;
-            CatcherHelper.NotificationListSizeChanged -= CatcherHelper_NotificationListSizeChanged;
-            configurationManager.Dispose();
+            //CatcherHelper.NotificationListSizeChanged -= CatcherHelper_NotificationListSizeChanged;
+            //configurationManager.Dispose();
             base.Dispose(disposing);
         }
     }

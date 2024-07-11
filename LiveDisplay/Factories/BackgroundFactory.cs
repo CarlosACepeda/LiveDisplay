@@ -9,7 +9,7 @@
     {
         public string SaveImagePath(Android.Net.Uri uri)
         {
-            ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
+            //ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
             string doc_id = "";
             using (var c1 = Application.Context.ContentResolver.Query(uri, null, null, null, null))
             {
@@ -28,7 +28,7 @@
                 var columnIndex = cursor.GetColumnIndexOrThrow(Android.Provider.MediaStore.Images.Media.InterfaceConsts.Data);
                 cursor.MoveToFirst();
                 path = cursor.GetString(columnIndex);
-                configurationManager.SaveAValue(ConfigurationParameters.ImagePath, path);
+                //configurationManager.SaveAValue(ConfigurationParameters.ImagePath, path);
             }
             return path;
         }

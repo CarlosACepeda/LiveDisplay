@@ -95,47 +95,47 @@ namespace LiveDisplay.Adapters
             bool blacklisted = false;
             bool nonallowedtoturnscreenon = false;
             bool onlyremovesystem = false;
-            using (ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default))
-            {
-                var flag = configurationManager.RetrieveAValue(forWhichApp, 0);
+            //using (ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default))
+            //{
+            //    var flag = configurationManager.RetrieveAValue(forWhichApp, 0);
 
-                switch ((LevelsOfAppBlocking)flag)
-                {
-                    case LevelsOfAppBlocking.Default:
-                        //the booleans are alredy false.
-                        break;
+            //    switch ((LevelsOfAppBlocking)flag)
+            //    {
+            //        case LevelsOfAppBlocking.Default:
+            //            //the booleans are alredy false.
+            //            break;
 
-                    case LevelsOfAppBlocking.Blacklisted:
-                        blacklisted = true;
-                        break;
+            //        case LevelsOfAppBlocking.Blacklisted:
+            //            blacklisted = true;
+            //            break;
 
-                    case LevelsOfAppBlocking.NonAllowedToTurnScreenOn:
-                        nonallowedtoturnscreenon = true;
-                        break;
+            //        case LevelsOfAppBlocking.NonAllowedToTurnScreenOn:
+            //            nonallowedtoturnscreenon = true;
+            //            break;
 
-                    case LevelsOfAppBlocking.BlockInAppOnly:
-                        onlyremovesystem = true;
-                        break;
+            //        case LevelsOfAppBlocking.BlockInAppOnly:
+            //            onlyremovesystem = true;
+            //            break;
 
-                    case LevelsOfAppBlocking.TotallyBlocked:
-                        onlyremovesystem = true;
-                        blacklisted = true;
-                        nonallowedtoturnscreenon = true;
-                        break;
+            //        case LevelsOfAppBlocking.TotallyBlocked:
+            //            onlyremovesystem = true;
+            //            blacklisted = true;
+            //            nonallowedtoturnscreenon = true;
+            //            break;
 
-                    default:
-                        break;
-                }
-            }
+            //        default:
+            //            break;
+            //    }
+            //}
             return new bool[3] { blacklisted, onlyremovesystem, nonallowedtoturnscreenon };
         }
 
         private void OnDialogPositiveButtonEventArgs(object sender, DialogClickEventArgs e)
         {
-            using (ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default))
-            {
-                configurationManager.SaveAValue(currentSelectedAppPackage, (int)levels);
-            }
+            //using (ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default))
+            //{
+            //    configurationManager.SaveAValue(currentSelectedAppPackage, (int)levels);
+            //}
         }
 
         public override int ItemCount => items.Count;

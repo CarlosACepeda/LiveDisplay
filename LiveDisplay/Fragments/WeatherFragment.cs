@@ -24,8 +24,6 @@ namespace LiveDisplay.Fragments
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-
-            configurationManager = new ConfigurationManager(AppPreferences.Weather);
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -50,15 +48,15 @@ namespace LiveDisplay.Fragments
 
             ThreadPool.QueueUserWorkItem(async m =>
             {
-                var weather = await OpenWeatherMapClient.GetWeather(thecity, countryCode, units);
-                Activity.RunOnUiThread(() =>
-                {
-                    temperature.Text = weather?.MainWeather.Temperature.ToString() + temperatureSuffix;
-                    minimumTemperature.Text = "min: " + weather?.MainWeather.MinTemperature.ToString() + temperatureSuffix;
-                    maximumTemperature.Text = "max: " + weather?.MainWeather.MaxTemperature.ToString() + temperatureSuffix;
-                    city.Text = weather?.Name + ": " + weather?.Weather[0].Description;
-                    humidity.Text = Resources.GetString(Resource.String.humidity) + ": " + weather?.MainWeather.Humidity.ToString();
-                });
+                //var weather = await OpenWeatherMapClient.GetWeather(thecity, countryCode, units);
+                //Activity.RunOnUiThread(() =>
+                //{
+                //    temperature.Text = weather?.MainWeather.Temperature.ToString() + temperatureSuffix;
+                //    minimumTemperature.Text = "min: " + weather?.MainWeather.MinTemperature.ToString() + temperatureSuffix;
+                //    maximumTemperature.Text = "max: " + weather?.MainWeather.MaxTemperature.ToString() + temperatureSuffix;
+                //    city.Text = weather?.Name + ": " + weather?.Weather[0].Description;
+                //    humidity.Text = Resources.GetString(Resource.String.humidity) + ": " + weather?.MainWeather.Humidity.ToString();
+                //});
             });
             return v;
         }

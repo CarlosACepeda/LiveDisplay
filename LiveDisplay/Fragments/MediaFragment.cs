@@ -38,7 +38,7 @@ namespace LiveDisplay.Fragments
         Timer fastForwardTimer;
         Timer rewindTimer;
         bool longPressStarted = false;
-        ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
+        ConfigurationManager configurationManager = new ConfigurationManager();
         
         MediaControlsBase mediaControls;
         float initialX=0;

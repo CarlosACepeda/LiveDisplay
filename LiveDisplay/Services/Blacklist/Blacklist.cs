@@ -14,11 +14,11 @@ namespace LiveDisplay.Services
 
             return packageManager.GetInstalledPackages(0).ToList();
         }
-        public static LevelsOfAppBlocking ReturnBlockLevel(string whichApp)
-        {
-            ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
-            return (LevelsOfAppBlocking)configurationManager.RetrieveAValue(whichApp, 0);
-        }        
+        //public static LevelsOfAppBlocking ReturnBlockLevel(string whichApp)
+        //{
+        //    ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
+        //    return (LevelsOfAppBlocking)configurationManager.RetrieveAValue(whichApp, 0);
+        //}        
     }
 
     [Flags]

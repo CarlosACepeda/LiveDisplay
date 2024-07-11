@@ -235,23 +235,23 @@ namespace LiveDisplay.Services.Notifications.NotificationStyle
 
             if (openAction.IsDirectReply)
             {
-                if (new ConfigurationManager(AppPreferences.Default).RetrieveAValue(ConfigurationParameters.EnableQuickReply))
-                {
-                    notificationActions.Visibility = ViewStates.Invisible;
-                    inlineNotificationContainer.Visibility = ViewStates.Visible;
-                    if (notificationViewType == NotificationViewType.Floating)
-                    {                       
-                        sendinlineresponse.RequestFocus(); //The Floating view doesn't have focus, so the keyboard can't spawn.
-                        var imm = Application.Context.GetSystemService(Context.InputMethodService) as InputMethodManager;
-                        imm.ToggleSoftInput(ShowFlags.Forced, 0);
-                        //TODO: Keyboard doesn't work in floating windows. :/
-                    }
-                    //inlineresponse.Hint = openAction.PlaceholderTextForInlineResponse;
-                    sendinlineresponse.SetTag(DefaultActionIdentificator, openAction);
-                    sendinlineresponse.Click += Sendinlineresponse_Click;
+                //if (new ConfigurationManager(AppPreferences.Default).RetrieveAValue(ConfigurationParameters.EnableQuickReply))
+                //{
+                //    notificationActions.Visibility = ViewStates.Invisible;
+                //    inlineNotificationContainer.Visibility = ViewStates.Visible;
+                //    if (notificationViewType == NotificationViewType.Floating)
+                //    {                       
+                //        sendinlineresponse.RequestFocus(); //The Floating view doesn't have focus, so the keyboard can't spawn.
+                //        var imm = Application.Context.GetSystemService(Context.InputMethodService) as InputMethodManager;
+                //        imm.ToggleSoftInput(ShowFlags.Forced, 0);
+                //        //TODO: Keyboard doesn't work in floating windows. :/
+                //    }
+                //    //inlineresponse.Hint = openAction.PlaceholderTextForInlineResponse;
+                //    sendinlineresponse.SetTag(DefaultActionIdentificator, openAction);
+                //    sendinlineresponse.Click += Sendinlineresponse_Click;
 
-                    SendInlineResponseAvailabityChanged?.Invoke(null, true); //Is currently showing.
-                }
+                //    SendInlineResponseAvailabityChanged?.Invoke(null, true); //Is currently showing.
+                //}
             }
             else
             {

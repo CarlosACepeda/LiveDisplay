@@ -43,7 +43,7 @@
         private readonly float threshold = 1000; //1 second of threshold.(used to implement the double tap.)
         private System.Timers.Timer watchDog; //the watchdog simply will start counting down until it gets resetted by OnUserInteraction() override.
         private TextView welcome;
-        private ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
+        private ConfigurationManager configurationManager = new ConfigurationManager();
 
         protected override void OnNewIntent(Intent intent)
         {

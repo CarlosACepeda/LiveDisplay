@@ -18,7 +18,7 @@ namespace LiveDisplay.Services
     [Service(Label = "MotionListener")]
     internal class AwakeService : Service, ISensorEventListener
     {
-        private static ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
+        //private static ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
         private SensorManager sensorManager;
         private Sensor accelerometerSensor;
         private Sensor proximitySensor;
@@ -109,10 +109,10 @@ namespace LiveDisplay.Services
                                 if (ScreenOnOffReceiver.IsScreenOn == false)
                                 {
                                     Log.Info("SENSOR", "Should turn on screen");
-                                    if (configurationManager.RetrieveAValue(ConfigurationParameters.TurnOnUserMovement))
-                                    {
-                                        AwakeHelper.TurnOnScreen();
-                                    }
+                                    //if (configurationManager.RetrieveAValue(ConfigurationParameters.TurnOnUserMovement))
+                                    //{
+                                    //    AwakeHelper.TurnOnScreen();
+                                    //}
                                 }
                                 isLaidDown = false;
                                 layDownTime = 0;

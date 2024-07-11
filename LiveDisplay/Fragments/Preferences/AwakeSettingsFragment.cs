@@ -77,21 +77,21 @@ namespace LiveDisplay.Fragments.Preferences
             inactivehourssettingspreference.PreferenceClick += Inactivehourssettingspreference_PreferenceClick;
 
 
-            if (new ConfigurationManager(AppPreferences.Default).RetrieveAValue(ConfigurationParameters.ListenForDeviceMotion) == false)
-            {
-                turnonusermovement.Enabled = false;
-                turnonusermovement.Selectable = false;
-            }
-            else
-            {
-                turnonusermovement.Enabled = enableItems;
-                turnonusermovement.Selectable = enableItems;
-                if (enableItems == false)
-                {
-                    //User disabled Device Motion, so the service should be stopped as well.
-                    AwakeHelper.ToggleStartStopAwakeService(false);
-                }
-            }
+            //if (new ConfigurationManager(AppPreferences.Default).RetrieveAValue(ConfigurationParameters.ListenForDeviceMotion) == false)
+            //{
+            //    turnonusermovement.Enabled = false;
+            //    turnonusermovement.Selectable = false;
+            //}
+            //else
+            //{
+            //    turnonusermovement.Enabled = enableItems;
+            //    turnonusermovement.Selectable = enableItems;
+            //    if (enableItems == false)
+            //    {
+            //        //User disabled Device Motion, so the service should be stopped as well.
+            //        AwakeHelper.ToggleStartStopAwakeService(false);
+            //    }
+            //}
             doubletapontopactionbehavior.Enabled = enableItems;
             doubletapontopactionbehavior.Selectable = enableItems;
 
@@ -112,52 +112,51 @@ namespace LiveDisplay.Fragments.Preferences
 
         private void Inactivehourssettingspreference_PreferenceClick(object sender, Preference.PreferenceClickEventArgs e)
         {
-            if (isSleepstarttimesetted == false)
-            {
-                startTimeDialog = new TimePickerDialog(Activity, PreferencesFragmentCompat_starttimepicked, DateTime.Now.Hour, DateTime.Now.Minute, false);
-                if (AwakeHelper.UserHasSetAwakeHours())
-                {
-                    int start = int.Parse(new ConfigurationManager(AppPreferences.Default).RetrieveAValue(ConfigurationParameters.StartSleepTime, "-1"));
-                    startTimeDialog.SetMessage("Start hour: "); //here it goes the set start hour, (but in a user readable way)
-
-                }
-                else {
-                    startTimeDialog.SetMessage("Start hour:");
-                }
-                startTimeDialog.Show();
-            }
+            //if (isSleepstarttimesetted == false)
+            //{
+            //    startTimeDialog = new TimePickerDialog(Activity, PreferencesFragmentCompat_starttimepicked, DateTime.Now.Hour, DateTime.Now.Minute, false);
+            //    if (AwakeHelper.UserHasSetAwakeHours())
+            //    {
+            //        //int start = int.Parse(new ConfigurationManager(AppPreferences.Default).RetrieveAValue(ConfigurationParameters.StartSleepTime, "-1"));
+            //        //startTimeDialog.SetMessage("Start hour: "); //here it goes the set start hour, (but in a user readable way)
+            //    }
+            //    else {
+            //        startTimeDialog.SetMessage("Start hour:");
+            //    }
+            //    startTimeDialog.Show();
+            //}
         }
 
         private void PreferencesFragmentCompat_starttimepicked(object sender, TimePickerDialog.TimeSetEventArgs e)
         {
-            startTimeDialog.Dismiss();
-            isSleepstarttimesetted = true;
-            ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
-            configurationManager.SaveAValue(ConfigurationParameters.StartSleepTime, string.Concat(e.HourOfDay.ToString() + e.Minute.ToString()));
+            //startTimeDialog.Dismiss();
+            //isSleepstarttimesetted = true;
+            //ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
+            //configurationManager.SaveAValue(ConfigurationParameters.StartSleepTime, string.Concat(e.HourOfDay.ToString() + e.Minute.ToString()));
 
-            int end = int.Parse(new ConfigurationManager(AppPreferences.Default).RetrieveAValue(ConfigurationParameters.FinishSleepTime, "-1"));
-            if (AwakeHelper.UserHasSetAwakeHours())
-            {
-                finishTimeDialog = new TimePickerDialog(Activity, PreferencesFragmentCompat_finishtimepicked, DateTime.Now.Hour, DateTime.Now.Minute, false);
-                finishTimeDialog.SetMessage("Finish hour: "); //here it goes the set finish hour, (but in a user readable way)
+            //int end = int.Parse(new ConfigurationManager(AppPreferences.Default).RetrieveAValue(ConfigurationParameters.FinishSleepTime, "-1"));
+            //if (AwakeHelper.UserHasSetAwakeHours())
+            //{
+            //    finishTimeDialog = new TimePickerDialog(Activity, PreferencesFragmentCompat_finishtimepicked, DateTime.Now.Hour, DateTime.Now.Minute, false);
+            //    finishTimeDialog.SetMessage("Finish hour: "); //here it goes the set finish hour, (but in a user readable way)
 
-            }
-            else
-            {
-                finishTimeDialog.SetMessage("Finish hour:" + end);
-            }
-            finishTimeDialog.Show();
+            //}
+            //else
+            //{
+            //    finishTimeDialog.SetMessage("Finish hour:" + end);
+            //}
+            //finishTimeDialog.Show();
 
         }
 
         private void PreferencesFragmentCompat_finishtimepicked(object sender, TimePickerDialog.TimeSetEventArgs e)
         {
-            ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
-            if (isSleepstarttimesetted)
-            {
-                configurationManager.SaveAValue(ConfigurationParameters.FinishSleepTime, string.Concat(e.HourOfDay.ToString() + e.Minute.ToString()));
-                isSleepstarttimesetted = true;
-            }
+            //ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
+            //if (isSleepstarttimesetted)
+            //{
+            //    configurationManager.SaveAValue(ConfigurationParameters.FinishSleepTime, string.Concat(e.HourOfDay.ToString() + e.Minute.ToString()));
+            //    isSleepstarttimesetted = true;
+            //}
         }
 
 
@@ -182,14 +181,14 @@ namespace LiveDisplay.Fragments.Preferences
                     switch (sharedPreferences.GetBoolean(ConfigurationParameters.EnableAwakeService, false))
                     {
                         case true:
-                            if (AwakeHelper.GetAwakeStatus() == AwakeStatus.CompletelyDisabled)
-                            {
-                                //What should go here
-                            }
-                            else
-                            {
-                                ToggleAwakeSettingsItems(true);
-                            }
+                            //if (AwakeHelper.GetAwakeStatus() == AwakeStatus.CompletelyDisabled)
+                            //{
+                            //    //What should go here
+                            //}
+                            //else
+                            //{
+                            //    ToggleAwakeSettingsItems(true);
+                            //}
                             break;
 
                         case false:

@@ -17,7 +17,7 @@ namespace LiveDisplay.Services.Weather
 {
     internal class OpenWeatherMapClient
     {
-        private readonly static ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Weather);
+        private readonly static ConfigurationManager configurationManager = new ConfigurationManager();
         private static string imageURL = "http://openweathermap.org/img/wn/{0}@2x.png";
 
         //This class will be the one that connects to the api and provide Lockscreen with Weather information.

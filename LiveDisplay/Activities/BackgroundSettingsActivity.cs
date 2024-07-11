@@ -44,7 +44,7 @@
             base.OnCreate(savedInstanceState);
             wallpaperManager = WallpaperManager.GetInstance(Application.Context);
 
-            configurationManager = new ConfigurationManager(AppPreferences.Default);
+            //configurationManager = new ConfigurationManager();
 
             // Create your application here
             SetContentView(Resource.Layout.BackgroundSettings);

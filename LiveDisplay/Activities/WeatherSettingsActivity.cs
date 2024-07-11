@@ -161,13 +161,13 @@
 
         private void LoadConfiguration()
         {
-            using (configurationManager = new ConfigurationManager(AppPreferences.Weather))
-            {
-                city.Text = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherCity, "");
-                useimperialsystem.Checked = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherUseImperialSystem);
-                weatherupdatefrequency.SetSelection(configurationManager.RetrieveAValue(ConfigurationParameters.WeatherUpdateFrequency, 0));
-                allowchangingthewallpaper.Checked = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherUpdateChangesWallpaper);
-            }
+            //using (configurationManager = new ConfigurationManager())
+            //{
+            //    city.Text = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherCity, "");
+            //    useimperialsystem.Checked = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherUseImperialSystem);
+            //    weatherupdatefrequency.SetSelection(configurationManager.RetrieveAValue(ConfigurationParameters.WeatherUpdateFrequency, 0));
+            //    allowchangingthewallpaper.Checked = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherUpdateChangesWallpaper);
+            //}
         }
 
         protected override void OnDestroy()
@@ -178,7 +178,7 @@
             useimperialsystem.CheckedChange -= Useimperialsystem_CheckedChange;
             city.Dispose();
             useimperialsystem.Dispose();
-            configurationManager.Dispose();
+            //configurationManager.Dispose();
         }
     }
 }

@@ -37,7 +37,7 @@ namespace LiveDisplay.Services.FloatingNotification
         private OpenNotification openNotification; //Represents the openNotification instance corresponding with this floating notification.
         private ActivityStates currentActivityState;
 
-        private ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
+        //private ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Default);
 
         public override IBinder OnBind(Intent intent)
         {
@@ -163,14 +163,14 @@ namespace LiveDisplay.Services.FloatingNotification
                 //floatingNotificationView.SetTag(Resource.String.defaulttag, openNotification.GetCustomId());
             }
 
-            if (configurationManager.RetrieveAValue(ConfigurationParameters.TestEnabled))
-            {
-                //Toast.MakeText(floatingNotificationView.Context, "Progress Indeterminate?: " + openNotification.IsProgressIndeterminate().ToString() + "\n"
-                //    + "Current Progress: " + openNotification.GetProgress().ToString() + "\n"
-                //    + "Max Progress: " + openNotification.GetProgressMax().ToString() + "\n"
-                //    + openNotification.GetGroupInfo()
-                //    , ToastLength.Short).Show();
-            }
+            //if (configurationManager.RetrieveAValue(ConfigurationParameters.TestEnabled))
+            //{
+            //    //Toast.MakeText(floatingNotificationView.Context, "Progress Indeterminate?: " + openNotification.IsProgressIndeterminate().ToString() + "\n"
+            //    //    + "Current Progress: " + openNotification.GetProgress().ToString() + "\n"
+            //    //    + "Max Progress: " + openNotification.GetProgressMax().ToString() + "\n"
+            //    //    + openNotification.GetGroupInfo()
+            //    //    , ToastLength.Short).Show();
+            //}
 
             if (e.UpdatesPreviousNotification)
             {
@@ -215,14 +215,14 @@ namespace LiveDisplay.Services.FloatingNotification
         {
             openNotification = e.OpenNotification;
 
-            if (configurationManager.RetrieveAValue(ConfigurationParameters.TestEnabled))
-            {
-                //Toast.MakeText(floatingNotificationView.Context, "Progress Indeterminate?: " + openNotification.IsProgressIndeterminate().ToString() + "\n"
-                //    + "Current Progress: " + openNotification.GetProgress().ToString() + "\n"
-                //    + "Max Progress: " + openNotification.GetProgressMax().ToString() + "\n"
-                //    + openNotification.GetGroupInfo()
-                //    , ToastLength.Short).Show();
-            }
+            //if (configurationManager.RetrieveAValue(ConfigurationParameters.TestEnabled))
+            //{
+            //    //Toast.MakeText(floatingNotificationView.Context, "Progress Indeterminate?: " + openNotification.IsProgressIndeterminate().ToString() + "\n"
+            //    //    + "Current Progress: " + openNotification.GetProgress().ToString() + "\n"
+            //    //    + "Max Progress: " + openNotification.GetProgressMax().ToString() + "\n"
+            //    //    + openNotification.GetGroupInfo()
+            //    //    , ToastLength.Short).Show();
+            //}
             //Only do this process if the notification that I want to show is different than the one that
             //the Floating Notification Widget has.
             //If it's the same then simply show it.
