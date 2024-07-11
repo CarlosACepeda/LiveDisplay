@@ -87,6 +87,16 @@ namespace LiveDisplay.Misc
             }
             return false;
         }
+
+        public static bool ThisAppCanReadLocation()
+        {
+            if(Build.VERSION.SdkInt>= BuildVersionCodes.Q)
+            {
+                return Application.Context.CheckSelfPermission(Manifest.Permission.AccessCoarseLocation) == Android.Content.PM.Permission.Granted;
+            }
+            return true;
+        }
+
         public static bool AreMandatoryPermissionsEnabled()
         {
             return IsNotificationListenerEnabled() && ThisAppCanPostNotifications();

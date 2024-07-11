@@ -7,4 +7,5 @@
     public const int EnableAccessibilityService = 2;
     public const int ReadNotifications = 3;
     public const int DeviceAdmin = 4;
+    public const int Location = 5;
 }

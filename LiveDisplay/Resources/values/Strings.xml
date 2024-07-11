@@ -13,6 +13,7 @@
   <string name="albumartappearancesetting">Album Artwork</string>
   <string name="alertnopermissions">You must allow the required permission!</string>
   <string name="allowweatherchangewallpaper">Change wallpaper briefly after a update</string>
+  <string name="always_repeating">Always repeating</string>
   <string name="app_name">LiveDisplay</string>
   <string name="appearance">Appearance</string>
   <string name="askfortranslations">Want to help with translations?</string>
@@ -66,6 +67,7 @@
   <string name="eng">English</string>
   <string name="entercityplaceholder">Enter a city here</string>
   <string name="esp">Spanish</string>
+  <string name="extended_controls_for">Extended Controls for </string>
   <string name="fifteenminutes">15 Minutes</string>
   <string name="fifteenseconds">15 seconds</string>
   <string name="fit_xy">Fit Height and Width to screen</string>
@@ -100,8 +102,9 @@
   <string name="no_activity_found_to_handle_email">Couldn\'t find an app to send me an e-mail, try it from your PC</string>
   <string name="nomediaplaying">There\'s no media playing currently!  \n Let\'s play something!</string>
   <string name="nonallowedtoturnonscreen">Non allowed to turn on screen</string>
-  <string name="notavailableyet">Not available... yet.</string>
   <string name="not_enough_permissions">You don\'t have the required permissions!</string>
+  <string name="not_repeating">Not repeating</string>
+  <string name="notavailableyet">Not available... yet.</string>
   <string name="notificationsettings">Notifications</string>
   <string name="notificationviewvisibilitytime">After clicking the notification hide it after...</string>
   <string name="now_playing">Now Playing:</string>
@@ -116,6 +119,7 @@
   <string name="post_notifications_title">Send you notifications</string>
   <string name="read_notifications_explanation">In order to display and control your media we need to read the notifications that represent Media playing</string>
   <string name="read_notifications_title">Read Notifications</string>
+  <string name="repeating_once">Repeating once</string>
   <string name="rus">Russian</string>
   <string name="saveweathersettings">Save</string>
   <string name="searchappedittexthint">App name...</string>
@@ -127,6 +131,7 @@
   <string name="show_lyrics">Show lyrics</string>
   <string name="show_lyrics_summary">Enrich your experience in Media Control! Show lyrics whenever possible!</string>
   <string name="sixhours">6 Hours</string>
+  <string name="stop">Stop</string>
   <string name="sync_with_weather">Sync with Weather Changes</string>
   <string name="sync_with_weather_summary">Changes color scheme</string>
   <string name="sync_with_zen_mode">Sync with Do Not Disturb Mode</string>
@@ -160,9 +165,9 @@
   <string name="weatherwidgetenabled">Enable Weather Widget</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
-  <string name="not_repeating">Not repeating</string>
-  <string name="repeating_once">Repeating once</string>
-  <string name="always_repeating">Always repeating</string>
-  <string name="stop">Stop</string>
-  <string name="extended_controls_for">Extended Controls for </string>
+  <string name="access_location_title">Your Approximate Location</string>
+  <string name="access_location_explanation">To get the weather forecast, depending on the time, this app will change its behavior based on that</string>
+  <string name="enable_location_access">Location access</string>
+  <string name="close">Close</string>
+  <string name="you_already_have_permission">You have the permission!</string>
 </resources>

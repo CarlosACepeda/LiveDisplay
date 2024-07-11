@@ -24,6 +24,8 @@ public class PermissionExplanationActivity: AppCompatActivity, IActivityResultCa
 
     Button accept_permission, deny_permission;
     TextView permission_title, permission_explanation;
+
+    bool permissionAlreadyGranted = false;
     protected override void OnCreate(Bundle savedInstanceState)
     {
         SetContentView(Resource.Layout.permission_explanation);
@@ -41,14 +43,17 @@ public class PermissionExplanationActivity: AppCompatActivity, IActivityResultCa
 
         _permissionToSetRequestCode = Intent.Extras.GetInt(Permissions.PermissionKey);
 
-        SetExplanation();
+        SetExplanationAndStatus();
 
         base.OnCreate(savedInstanceState);
     }
 
     private void Deny_permission_Click(object sender, System.EventArgs e)
     {
-        SetPermissionResult(false);
+        if (permissionAlreadyGranted)
+            SetPermissionResult(true);
+        else
+            SetPermissionResult(false);
     }
 
     private void Accept_permission_Click(object sender, System.EventArgs e)
@@ -61,7 +66,10 @@ public class PermissionExplanationActivity: AppCompatActivity, IActivityResultCa
                 activityResultLauncher.Launch(Android.Manifest.Permission.PostNotifications); //Asking for a runtime permission
                 permissionBeingSetForResult = _permissionToSetRequestCode;
                 break;
-
+            case Permissions.Location:
+                activityResultLauncher.Launch(Android.Manifest.Permission.AccessCoarseLocation); //Asking for a runtime permission
+                permissionBeingSetForResult = _permissionToSetRequestCode;
+                break;
             case Permissions.ReadNotifications:
                 ComponentName readNotifications = new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(Catcher)));
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.R)
@@ -112,6 +120,9 @@ public class PermissionExplanationActivity: AppCompatActivity, IActivityResultCa
             case Permissions.PostNotifications:
                 SetPermissionResult(Checkers.ThisAppCanPostNotifications());
                 break;
+            case Permissions.Location:
+                SetPermissionResult(Checkers.ThisAppCanReadLocation());
+                break;
         }
     }
 
@@ -126,7 +137,7 @@ public class PermissionExplanationActivity: AppCompatActivity, IActivityResultCa
         Finish();
     }
 
-    public void SetExplanation()
+    public void SetExplanationAndStatus()
     {
         string title= string.Empty;
         string explanation= string.Empty;
@@ -135,21 +146,37 @@ public class PermissionExplanationActivity: AppCompatActivity, IActivityResultCa
             case Permissions.ReadNotifications:
                 title = GetString(Resource.String.read_notifications_title);
                 explanation = GetString(Resource.String.read_notifications_explanation);
+                permissionAlreadyGranted = Checkers.IsNotificationListenerEnabled();
                 break;
             case Permissions.PostNotifications:
                 title = GetString(Resource.String.post_notifications_title);
                 explanation = GetString(Resource.String.post_notifications_explanation);
+                permissionAlreadyGranted = Checkers.ThisAppCanPostNotifications();
                 break;
             case Permissions.EnableAccessibilityService:
                 title = GetString(Resource.String.enable_accessibility_title);
                 explanation = GetString(Resource.String.enable_accessibility_explanation);
+                permissionAlreadyGranted = Checkers.IsAccessibilityEnabled();
                 break;
             case Permissions.DeviceAdmin:
                 title = GetString(Resource.String.device_admin_title);
                 explanation = GetString(Resource.String.device_admin_explanation);
+                permissionAlreadyGranted = Checkers.IsThisAppADeviceAdministrator();
+                break;
+            case Permissions.Location:
+                title = GetString(Resource.String.access_location_title);
+                explanation = GetString(Resource.String.access_location_explanation);
+                permissionAlreadyGranted = Checkers.ThisAppCanReadLocation();
                 break;
         }
         permission_title.Text= title;
         permission_explanation.Text= explanation;
+
+        if (permissionAlreadyGranted)
+        {
+            accept_permission.Enabled = false;
+            accept_permission.Text = GetString(Resource.String.you_already_have_permission);
+            deny_permission.Text = GetString(Resource.String.close);
+        }
     }
 }

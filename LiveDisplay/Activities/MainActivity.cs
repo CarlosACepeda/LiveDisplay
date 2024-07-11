@@ -9,8 +9,6 @@
     using AndroidX.AppCompat.App;
     using AndroidX.AppCompat.Widget;
     using LiveDisplay.Misc;
-    using LiveDisplay.Services;
-    using LiveDisplay.Services.Awake;
 
     //for CI.
     using Microsoft.AppCenter;
@@ -23,7 +21,7 @@
     internal class MainActivity : AppCompatActivity
     {
         private Toolbar toolbar;
-        private RelativeLayout enableNotificationAccess, enableDeviceAdmin, enablePostingNotifications, enableAccessibilityAccess;
+        private RelativeLayout enableNotificationAccess, enableDeviceAdmin, enablePostingNotifications, enableAccessibilityAccess, enableLocationAccess;
         public static int StartCount = 0;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -47,6 +45,7 @@
             SetPermissionStatus(Checkers.IsNotificationListenerEnabled(), Resource.Id.read_notifications_permission_checkbox);
             SetPermissionStatus(Checkers.IsAccessibilityEnabled(), Resource.Id.accessibility_access_permission_checkbox);
             SetPermissionStatus(Checkers.IsThisAppADeviceAdministrator(), Resource.Id.device_access_permission_checkbox);
+            SetPermissionStatus(Checkers.ThisAppCanReadLocation(), Resource.Id.location_access_permission_checkbox);
         }
 
         private void SetPermissionStatus(bool isPermissionAllowed, int resourceRepresentingPermissionStatus)
@@ -156,6 +155,9 @@
                 case Permissions.EnableAccessibilityService:
                     SetPermissionStatus(result, Resource.Id.accessibility_access_permission_checkbox);
                     break;
+                case Permissions.Location:
+                    SetPermissionStatus(result, Resource.Id.location_access_permission_checkbox);
+                    break;
             }
 
             base.OnActivityResult(requestCode, resultCode, data);
@@ -171,6 +173,7 @@
             enableAccessibilityAccess = FindViewById<RelativeLayout>(Resource.Id.accessibility_access_permission);
             enableNotificationAccess = FindViewById<RelativeLayout>(Resource.Id.read_notifications_permission);
             enablePostingNotifications = FindViewById<RelativeLayout>(Resource.Id.post_notifications_permission);
+            enableLocationAccess = FindViewById<RelativeLayout>(Resource.Id.location_access_permission);
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
             {
                 enablePostingNotifications.Visibility = ViewStates.Visible;
@@ -180,7 +183,18 @@
             enableNotificationAccess.Click += EnableNotificationAccess_Click;
             enableDeviceAdmin.Click += EnableDeviceAdmin_Click;
             enableAccessibilityAccess.Click += EnableAccessibilityAccess_Click;
+            enableLocationAccess.Click += EnableLocationAccess_Click; ;
 
+        }
+
+        private void EnableLocationAccess_Click(object sender, EventArgs e)
+        {
+            var intent = new Intent(this, Java.Lang.Class.FromType(typeof(PermissionExplanationActivity)));
+            var extras = new Bundle();
+            extras.PutInt(Permissions.PermissionKey, Permissions.Location);
+            intent.PutExtras(extras);
+
+            StartActivityForResult(intent, Permissions.Location);
         }
 
         private void EnablePostingNotifications_Click(object sender, EventArgs e)
