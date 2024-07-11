@@ -136,6 +136,7 @@
     <Compile Include="Services\ConfigurationManager.cs" />
     <Compile Include="Services\Configuration\ConfigurationChangedEventArgs.cs" />
     <Compile Include="Services\FloatingNotification\FloatingNotification.cs" />
+    <Compile Include="Services\KeyguardPendingIntentMediator.cs" />
     <Compile Include="Services\Keyguard\KeyguardHelper.cs" />
     <Compile Include="Services\MediaControlsProviderService.cs" />
     <Compile Include="Services\Music\Enums\AvailableControls.cs" />

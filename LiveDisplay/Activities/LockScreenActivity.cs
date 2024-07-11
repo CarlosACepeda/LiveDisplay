@@ -45,6 +45,8 @@
         private TextView welcome;
         private ConfigurationManager configurationManager = new ConfigurationManager();
 
+        private KeyguardPendingIntentMediator pendingIntentMediator;
+
         protected override void OnNewIntent(Intent intent)
         {
             Console.WriteLine($"(Single Instance)new intent from {(Build.VERSION.SdkInt>= BuildVersionCodes.Q? intent.Identifier: "No identifier")} {intent.Component}");
@@ -82,10 +84,17 @@
             WallpaperPublisher.NewWallpaperIssued += Wallpaper_NewWallpaperIssued;
             WallpaperPublisher.OnZeroPublishersAvailable += WallpaperPublisher_OnZeroPublishersAvailable;
             SharedPreferenceListenerService.ConfigurationChanged += SharedPreferenceListenerService_ConfigurationChanged;
+            pendingIntentMediator = KeyguardPendingIntentMediator.GetInstance();
+            pendingIntentMediator.RequiredSetActivityToBeCalled += LockScreenActivity_RequiredSetActivityToBeCalled;
 
             LoadAllFragments();
             LoadConfiguration();
             Window.DecorView.SetOnApplyWindowInsetsListener(this);
+        }
+
+        private void LockScreenActivity_RequiredSetActivityToBeCalled(object sender, KeyguardPendingIntentMediator e)
+        {
+            e.SetActivity(this);
         }
 
         private void SharedPreferenceListenerService_ConfigurationChanged(object sender, Services.Configuration.ConfigurationChangedEventArgs e)
@@ -220,6 +229,9 @@
             transaction.Remove(mediaFragment);
             transaction.Remove(quickGlanceFragment);
             transaction.CommitNowAllowingStateLoss();
+
+            pendingIntentMediator.RequiredSetActivityToBeCalled -= LockScreenActivity_RequiredSetActivityToBeCalled;
+
 
             base.OnDestroy();
 

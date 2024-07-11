@@ -279,7 +279,12 @@ namespace LiveDisplay.Services.Media
         {
             try
             {
-                _activityIntent?.Send();
+                if (new KeyguardHelper().IsDeviceCurrentlyLocked())
+                {
+                    KeyguardPendingIntentMediator.GetInstance().SendPendingIntent(_activityIntent);
+                }
+                else
+                    _activityIntent.Send();
             }
             catch (Exception ex)
             {
