@@ -42,8 +42,16 @@ namespace LiveDisplay.Services
         {
             if (e)
             {
-                pendingIntent.Send(); //TODO: Doesn't Send due to Background Activity Launch restrictions (Android Q+), try to find a workaround.
-                activityRequestingKeyguardDismissal.MoveTaskToBack(true);
+                try
+                {
+                    pendingIntent.Send(); //TODO: Doesn't Send due to Background Activity Launch restrictions (Android Q+), try to find a workaround.
+                    activityRequestingKeyguardDismissal.MoveTaskToBack(true);
+                }
+                catch (PendingIntent.CanceledException pice)
+                {
+                    Console.WriteLine(pice);
+                }
+                
             }
             else
             {
