@@ -7,6 +7,7 @@
     using Android.Widget;
     using Java.Util;
     using LiveDisplay.BroadcastReceivers;
+    using LiveDisplay.Services;
     using LiveDisplay.Services.Notifications;
     using LiveDisplay.Services.Notifications.NotificationEventArgs;
     using System;
@@ -41,7 +42,6 @@
             batteryIcon = v.FindViewById<ImageView>(Resource.Id.batteryIcon);
             messages_counter = v.FindViewById<TextView>(Resource.Id.messages_counter);
             message_indicator = v.FindViewById<ImageButton>(Resource.Id.message_indicator);
-            LoadDate();
             RegisterBatteryReceiver();
 
             message_indicator.Click += Message_indicator_Click;
@@ -52,7 +52,11 @@
 
             return v;
         }
-
+        public override void OnResume()
+        {
+            LoadDate();
+            base.OnResume();
+        }
         private void Message_indicator_Click(object sender, EventArgs e)
         {
             //Send a beacon lol, asking the notification fragment to show.
