@@ -7,6 +7,7 @@ using Android.OS;
 using Android.Views;
 using Android.Views.Animations;
 using Android.Widget;
+using AndroidX.Core.Content.Resources;
 using LiveDisplay.Factories;
 using LiveDisplay.Misc;
 using LiveDisplay.Services;
@@ -506,12 +507,14 @@ namespace LiveDisplay.Fragments
             Console.WriteLine($"{e.CustomActions.Count}");
             Console.WriteLine(e.AvailableControls);
 
-            playPause.Visibility = e.AvailableControls.HasFlag(AvailableControls.PlayPause) ? ViewStates.Visible : ViewStates.Gone;
-            buffering.Visibility = e.AvailableControls.HasFlag(AvailableControls.Buffering) ? ViewStates.Visible : ViewStates.Gone;
-            skipToNext.Visibility = e.AvailableControls.HasFlag(AvailableControls.SkipToNext) ? ViewStates.Visible : ViewStates.Gone;
-            skipToPrevious.Visibility = e.AvailableControls.HasFlag(AvailableControls.SkipToPrevious) ? ViewStates.Visible : ViewStates.Gone;
-            stop.Visibility = e.AvailableControls.HasFlag(AvailableControls.Stop) ? ViewStates.Visible : ViewStates.Gone;
-            repeat.Visibility = e.AvailableControls.HasFlag(AvailableControls.Repeat) ? ViewStates.Visible : ViewStates.Gone;
+
+            SetImageButtonEnabledStatus(e.AvailableControls.HasFlag(AvailableControls.PlayPause), playPause);
+            buffering.Enabled = e.AvailableControls.HasFlag(AvailableControls.Buffering);
+            SetImageButtonEnabledStatus(e.AvailableControls.HasFlag(AvailableControls.SkipToNext), skipToNext);
+            SetImageButtonEnabledStatus(e.AvailableControls.HasFlag(AvailableControls.SkipToPrevious), skipToPrevious);
+            SetImageButtonEnabledStatus(e.AvailableControls.HasFlag(AvailableControls.Stop), stop);
+            SetImageButtonEnabledStatus(e.AvailableControls.HasFlag(AvailableControls.Repeat), repeat);
+
             if(e.TakeCustomActionsFromNotification)
             {
                 FillWithCompactedActions(e.OpenNotification);
@@ -523,6 +526,12 @@ namespace LiveDisplay.Fragments
             }
         }
 
+        void SetImageButtonEnabledStatus(bool enabled, ImageButton button)
+        {
+            button.Enabled = enabled;
+            button.Alpha = enabled ? ResourcesCompat.GetFloat(Resources, Resource.Dimension.alpha_totally_visible) 
+                : ResourcesCompat.GetFloat(Resources, Resource.Dimension.alpha_half_visibility);
+        }
         private void UnbindMediaControllerEvents()
         {
             if (Build.VERSION.SdkInt <= BuildVersionCodes.KitkatWatch)
