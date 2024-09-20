@@ -92,7 +92,7 @@ namespace LiveDisplay.Services
 
 
             var builder = isOreo ? new Notification.Builder(BaseContext, MediaControlsProviderServiceNotificationChannelId) : new Notification.Builder(BaseContext);
-            builder.SetContentTitle($"{ GetString(Resource.String.extended_controls_for)}{mediaOwningApp}");
+            builder.SetContentTitle($"{ GetString(Resource.String.extended_controls_for)} {mediaOwningApp}");
             builder.SetSubText(mediaTitle + " | " + mediaArtist);
             builder.SetSmallIcon(Resource.Drawable.ic_stat_default_appicon);
             builder.SetOnlyAlertOnce(true);
