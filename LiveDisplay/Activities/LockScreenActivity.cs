@@ -59,7 +59,7 @@
             SetContentView(Resource.Layout.LockScreen2);
             ThreadPool.QueueUserWorkItem(isApphealthy =>
             {
-                if (Checkers.IsNotificationListenerEnabled() == false || Checkers.ThisAppCanPostNotifications() == false)
+                if (!Checkers.AreMandatoryPermissionsEnabled())
                 {
                     RunOnUiThread(() =>
                     {
