@@ -3,6 +3,7 @@ using Android.Content;
 using Android.OS;
 using LiveDisplay.Misc;
 using LiveDisplay.Services;
+using LiveDisplay.Services.Media;
 using System;
 using System.Threading;
 
@@ -16,6 +17,7 @@ namespace LiveDisplay.BroadcastReceivers
         public static bool IsScreenOn { get; set; } = true;
         public static bool ScreenTurnedOffWhileInVertical { get; set; } = true; //most of the times when one turns off the phone the same is vertical.
         private NotificationManager notificationManager = null;
+        private ConfigurationManager configurationManager = new ConfigurationManager();
         public static int ReceiverCount = 0;
 
         public override void OnReceive(Context context, Intent intent)
@@ -27,7 +29,10 @@ namespace LiveDisplay.BroadcastReceivers
                 //Nice easter eggs here, lol.
                 IsScreenOn = true;
             }
-            else if (intent.Action == Intent.ActionScreenOff)
+            else if (intent.Action == Intent.ActionScreenOff
+                && (MediaEventsPublisherLollipop.IsInitialized() ||
+                configurationManager.RetrieveAValue(ConfigurationParameters.UseWhenNoMediaPresent)
+                ))
             {
                 //Start hidden in Darkness. :$
                 IsScreenOn = false;
