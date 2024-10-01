@@ -71,6 +71,7 @@
   <string name="fit_xy">Ajustar alto y ancho a la pantalla</string>
   <string name="fiveseconds">5 segundos</string>
   <string name="githubproject">Quieres ayudar?</string>
+  <string name="go_to_full_settings">Todos los ajustes</string>
   <string name="halfbottom">mitad inferior</string>
   <string name="halftop">mitad superior</string>
   <string name="help">Ayuda</string>
@@ -126,6 +127,7 @@
   <string name="show_lock_screen_preview">Muestrame como luce!</string>
   <string name="show_lyrics">Mostrar letra</string>
   <string name="show_lyrics_summary">Enriquece tu experiencia, muestra la letra de la cancion cuando esté disponible</string>
+  <string name="show_on_lock_screen">Mostrar en pantalla de bloqueo</string>
   <string name="sixhours">6 Horas</string>
   <string name="stop">Detener</string>
   <string name="sync_with_weather">Sincronizar con el estado del clima</string>
@@ -135,6 +137,7 @@
   <string name="tenseconds">10 segundos</string>
   <string name="testnotificationtext">Manten presionado una notificación de la lista o presiona X para quitarla</string>
   <string name="thirtyminutes">30 Minutos</string>
+  <string name="toggle_wallpaper_appearance">Cambiar apariencia del fondo de pantalla</string>
   <string name="translations">Traducciones</string>
   <string name="turnoffdelay">Apagar pantalla automaticamente</string>
   <string name="turnoffdelay_desc">Si la pantalla se enciende(p.e.j. una nueva notificación llega) y no hay interaccion por parte del usuario, apagar la pantalla en...</string>

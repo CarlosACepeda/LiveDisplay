@@ -15,6 +15,9 @@
 
     public class QuickGlanceFragment : Fragment
     {
+
+        public static event EventHandler ShowMessagesButtonClicked;
+
         private TextView date, battery, messages_counter;
         private ImageView batteryIcon;
         private ImageButton message_indicator;
@@ -60,6 +63,8 @@
         private void Message_indicator_Click(object sender, EventArgs e)
         {
             //Send a beacon lol, asking the notification fragment to show.
+            if(messages_counter_i>0)
+                ShowMessagesButtonClicked?.Invoke(null, null);
         }
 
         private void CatcherHelper_NotificationRemoved(object sender, NotificationRemovedEventArgs e)

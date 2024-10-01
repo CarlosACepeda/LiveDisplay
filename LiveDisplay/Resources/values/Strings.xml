@@ -73,6 +73,7 @@
   <string name="fit_xy">Fit Height and Width to screen</string>
   <string name="fiveseconds">5 seconds</string>
   <string name="githubproject">Want to help?</string>
+  <string name="go_to_full_settings">All settings</string>
   <string name="halfbottom">half bottom</string>
   <string name="halftop">half top</string>
   <string name="help">Help</string>
@@ -130,6 +131,7 @@
   <string name="show_lock_screen_preview">Show me how it looks!</string>
   <string name="show_lyrics">Show lyrics</string>
   <string name="show_lyrics_summary">Enrich your experience in Media Control! Show lyrics whenever possible!</string>
+  <string name="show_on_lock_screen">Show on lockscreen!</string>
   <string name="sixhours">6 Hours</string>
   <string name="stop">Stop</string>
   <string name="sync_with_weather">Sync with Weather Changes</string>
@@ -139,6 +141,7 @@
   <string name="tenseconds">10 seconds</string>
   <string name="testnotificationtext">Long press a notification from the list or press the X button to clear it</string>
   <string name="thirtyminutes">30 Minutes</string>
+  <string name="toggle_wallpaper_appearance">Toggle wallpaper appearance</string>
   <string name="translations">Translations</string>
   <string name="turnoffdelay">Automatically turn screen off</string>
   <string name="turnoffdelay_desc">If the screen turns on(e.g.: A new notification is posted) and there is not user interaction, turn off the screen in...</string>

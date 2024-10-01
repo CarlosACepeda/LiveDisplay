@@ -26,4 +26,5 @@
   <dimen name="explanation_screen_content_padding">10dp</dimen>
   <dimen name="notification_widget_content_padding">10dp</dimen>
   <dimen name="current_messages_counter_text_size">9dp</dimen>
+  <dimen name="lock_screen_fab_margin">16dp</dimen>
 </resources>
