@@ -2,6 +2,8 @@
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
+using Java.Lang;
+using LiveDisplay.Misc;
 using LiveDisplay.Services.Keyguard;
 using System;
 
@@ -13,8 +15,8 @@ namespace LiveDisplay.Services
         readonly KeyguardHelper keyguardHelper;
         PendingIntent pendingIntent;
 
-        readonly int ModeBackgroundActivityStartAllowed, 
-            ModeBackgroundActivityStartAllowedByPermission,
+        const bool ModeBackgroundActivityStartAllowed = true;
+        readonly int ModeBackgroundActivityStartAllowedByPermission,
             PendingIntentCreatorBackgroundActivityStartMode = 1;
 
         Bundle BALSkipOptions;
@@ -55,7 +57,7 @@ namespace LiveDisplay.Services
                         //Background Activity Launch restrictions.
                         //because this call will always fail if API level is +34
 
-                        pendingIntent.Send(Application.Context, Result.FirstUser, null, this, null, string.Empty, null);
+                        pendingIntent.Send(Application.Context, Result.FirstUser, null, this, null, string.Empty, BALSkipOptions);
                     }
                     else
                     {
@@ -78,7 +80,7 @@ namespace LiveDisplay.Services
         public void SendPendingIntent(PendingIntent pendingIntent)
         {
             this.pendingIntent = pendingIntent;
-            this.BALSkipOptions = SetRequiredBALPermissionsBundle();
+            BALSkipOptions = SetRequiredBALPermissionsBundle();
 
             RequiredSetActivityToBeCalled?.Invoke(this, this);
         }
@@ -88,7 +90,7 @@ namespace LiveDisplay.Services
             var activityOptions = ActivityOptions.MakeBasic();
             var bundle = activityOptions.ToBundle();
             bundle.PutInt("android.activity.pendingIntentCreatorBackgroundActivityStartMode", PendingIntentCreatorBackgroundActivityStartMode);
-            bundle.PutInt("android.pendingIntent.backgroundActivityAllowed", ModeBackgroundActivityStartAllowed);
+            bundle.PutBoolean("android.pendingIntent.backgroundActivityAllowed", ModeBackgroundActivityStartAllowed);
             bundle.PutInt("android.pendingIntent.backgroundActivityAllowedByPermission", ModeBackgroundActivityStartAllowedByPermission);
 
             return bundle;
@@ -103,12 +105,32 @@ namespace LiveDisplay.Services
         {
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
             {
-                //From here simply we get the intent that was part of the PendingIntent that failed due to BAL restrictions
-                //and attach the BAL skip options to it
-                //as final step, start the activity as if we created this intent.
-                //really cool workaround.
-                activityRequestingKeyguardDismissal.StartActivity(intent, BALSkipOptions);
-                activityRequestingKeyguardDismissal.MoveTaskToBack(true);
+                try
+                {
+                    //From here simply we get the intent that was part of the PendingIntent that failed due to BAL restrictions
+                    //and attach the BAL skip options to it
+                    //as final step, start the activity as if we created this intent.
+                    //really cool workaround.
+                    activityRequestingKeyguardDismissal.StartActivity(intent, BALSkipOptions);
+
+                }
+                catch (Java.Lang.Exception ex)
+                {
+                    //if the activity we are trying to start doesn't allow other components to start it from clicking the notification
+                    //namely, this app, then we are gonna resort to creating a "good intent" which will take us to the Main Activity of the application
+                    try
+                    {
+                        activityRequestingKeyguardDismissal.StartActivity(PackageUtils.GetAppIntent(intent.Package), BALSkipOptions);
+                    }
+                    catch
+                    {
+                        Console.WriteLine($"No way to start this application: {ex}");
+                    }
+                }
+                finally
+                {
+                    activityRequestingKeyguardDismissal.MoveTaskToBack(true);
+                }
             }
         }
     }
