@@ -608,6 +608,7 @@ namespace LiveDisplay.Services.Media
             {
                 //Slot 1.
                 if (_playbackState.State == PlaybackStateCode.Stopped
+                    || _playbackState.State == PlaybackStateCode.Playing
                      || _playbackState.State == PlaybackStateCode.Paused)
                 {
                     availableControls |= AvailableControls.PlayPause;
