@@ -19,7 +19,7 @@ namespace LiveDisplay.Services.Notifications
 
         public static event EventHandler<bool> EnteredZenMode;
 
-        public static event EventHandler<OpenNotification> RequestedOpenNotificationResultGenerated;
+        public static event EventHandler<RequestedOpenNotificationGeneratedEventArgs> RequestedOpenNotificationResultGenerated;
 
         const string LiveDisplayAlertWindowNotificationTag= "com.android.server.wm.AlertWindowNotification - com.underground.livedisplay";
         const string AndroidPackageName = "android";
@@ -55,7 +55,7 @@ namespace LiveDisplay.Services.Notifications
             //3. This notification HAS to be set with High Importance, I tried setting up less importance and after clicking the notification on behalf of the user doesn't work,
             //4. Clicking this notification as soon as it arrives apparently cancels the notification sound,
             //but I haven't confirmed this to be true on all android devices.
-            //5. If media is playing, the media will lower its volume to make this notification to sound, but let's remember that the notification doesn't emit a sound.
+            //5. If media is playing, the media will lower its volume to allow this notification to make a sound, but let's remember that the notification doesn't emit a sound.
 
             
             //To see how it works please go to ScreenOnOffReceiver, this broadcast works as the one starting this whole workaround
@@ -126,7 +126,7 @@ namespace LiveDisplay.Services.Notifications
         public void OnOpenNotificationRequested(Func<OpenNotification, bool> predicate, int requestCode)
         {
             RequestedOpenNotificationResultGenerated?.Invoke(this, new RequestedOpenNotificationGeneratedEventArgs
-        {
+            {
                 OpenNotifications = OpenNotifications.Where(predicate).ToList(),
                 RequestCode = requestCode
             });
