@@ -23,6 +23,7 @@
         private ImageButton message_indicator;
         private BatteryReceiver batteryReceiver;
         private int messages_counter_i = 0;
+        private const int QuickGlanceRequestCode = 256;
         
         public override void OnCreate(Bundle savedInstanceState)
         {
@@ -52,19 +53,44 @@
             BatteryReceiver.BatteryInfoChanged += BatteryReceiver_BatteryInfoChanged;
             CatcherHelper.NotificationPosted += CatcherHelper_NotificationPosted;
             CatcherHelper.NotificationRemoved += CatcherHelper_NotificationRemoved;
+            CatcherHelper.RequestedOpenNotificationResultGenerated += CatcherHelper_RequestedOpenNotificationResultGenerated;
 
             return v;
         }
+
+        private void CatcherHelper_RequestedOpenNotificationResultGenerated(object sender, RequestedOpenNotificationGeneratedEventArgs e)
+        {
+            if (e.RequestCode== QuickGlanceRequestCode)
+            {
+                messages_counter_i = e.OpenNotifications.Count;
+                messages_counter.Text = messages_counter_i.ToString();
+            }
+        }
+
         public override void OnResume()
         {
             LoadDate();
+            GetOldMessaggingStyleNotifications();
             base.OnResume();
         }
+
+        private void GetOldMessaggingStyleNotifications()
+        {
+            NotificationSlave.GetInstance().RequestOpenNotification(
+        on => on.Style == OpenNotification.MessagingStyle || (
+        Build.VERSION.SdkInt <= BuildVersionCodes.M && on.Style == OpenNotification.InboxStyle), QuickGlanceRequestCode);
+
+        }
+
         private void Message_indicator_Click(object sender, EventArgs e)
         {
             //Send a beacon lol, asking the notification fragment to show.
             if(messages_counter_i>0)
                 ShowMessagesButtonClicked?.Invoke(null, null);
+
+            messages_counter.SetBackgroundColor(Android.Graphics.Color.Black);
+
+
         }
 
         private void CatcherHelper_NotificationRemoved(object sender, NotificationRemovedEventArgs e)
@@ -79,6 +105,7 @@
                 if (e.OpenNotification.Style == OpenNotification.MessagingStyle || (Build.VERSION.SdkInt <= BuildVersionCodes.M && e.OpenNotification.Style == OpenNotification.InboxStyle))
                 {
                     messages_counter.Text = (++messages_counter_i).ToString();
+                    messages_counter.SetBackgroundColor(Android.Graphics.Color.Red);
                 }
         }
 
@@ -89,6 +116,7 @@
         {
             Application.Context.UnregisterReceiver(batteryReceiver);
             BatteryReceiver.BatteryInfoChanged -= BatteryReceiver_BatteryInfoChanged;
+            CatcherHelper.RequestedOpenNotificationResultGenerated -= CatcherHelper_RequestedOpenNotificationResultGenerated;
             base.OnDestroyView();
         }
 
