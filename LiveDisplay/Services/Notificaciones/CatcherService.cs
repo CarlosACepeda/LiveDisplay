@@ -229,7 +229,7 @@ namespace LiveDisplay.Services
 
         private void NotificationSlave_RequestedOpenNotification(object sender, OpenNotificationRequestedEventArgs e)
         {
-            catcherHelper.OnOpenNotificationRequested(e.Predicate);
+            catcherHelper.OnOpenNotificationRequested(e.Predicate, e.RequestCode);
         }
 
         private void ToggleListeningForConfigurationChanges(bool listening)

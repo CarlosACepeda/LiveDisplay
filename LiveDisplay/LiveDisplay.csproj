@@ -156,6 +156,7 @@
     <Compile Include="Services\Notificaciones\NotificationEventArgs\NotificationListSizeChangedEventArgs.cs" />
     <Compile Include="Services\Notificaciones\NotificationEventArgs\NotificationRemovedEventArgs.cs" />
     <Compile Include="Services\Notificaciones\NotificationEventArgs\OpenNotificationRequestedEventArgs.cs" />
+    <Compile Include="Services\Notificaciones\NotificationEventArgs\RequestedOpenNotificationGeneratedEventArgs.cs" />
     <Compile Include="Services\Notificaciones\NotificationStyle\NotificationStyleApplier.cs" />
     <Compile Include="Services\Notificaciones\OpenAction.cs" />
     <Compile Include="Services\Notificaciones\OpenNotification.cs" />

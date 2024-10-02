@@ -31,10 +31,7 @@ namespace LiveDisplay.Services
         }
         public static NotificationSlave GetInstance()
         {
-            if(instance== null)
-            {
-                instance = new NotificationSlave();
-            }
+            instance ??= new NotificationSlave();
             return instance;
         }
         public void CancelNotification(string notiPack, string notiTag, int notiId)
@@ -79,59 +76,13 @@ namespace LiveDisplay.Services
             notificationManager.Notify(notificationId, builtNotification.Build());
         }
 
-        public void PostNotification(int notifid,string title, string text, bool autoCancellable, NotificationImportance notificationImportance)
-        {
-            NotificationChannel notificationChannel = new NotificationChannel("livedisplaynotificationchannel", "LiveDisplay", notificationImportance);
-            notificationManager.CreateNotificationChannel(notificationChannel);
-            Notification.Builder builder = new Notification.Builder(Application.Context, "livedisplaynotificationchannel");
-            builder.SetContentTitle(title);
-            builder.SetContentText(text);
-            builder.SetAutoCancel(autoCancellable);
-            builder.SetSmallIcon(Resource.Drawable.ic_stat_default_appicon);
-            builder.SetAutoCancel(true);
-            builder.SetStyle(new Notification.MessagingStyle("CULO"));
 
-            RemoteInput remoteInput = new RemoteInput.Builder("test1").SetLabel("This is the place where you write").Build();
-
-            Intent intent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(SettingsActivity)));
-
-            PendingIntent pendingIntent = PendingIntent.GetActivity(Application.Context, 35, intent, PendingIntentFlags.UpdateCurrent | PendingIntentFlags.Mutable );
-
-            Notification.Action.Builder action = new Notification.Action.Builder(Resource.Drawable.ic_stat_default_appicon, "Answer", pendingIntent).AddRemoteInput(remoteInput);
-
-            builder.AddAction(action.Build());
-
-            notificationManager.Notify(notifid, builder.Build());
-        }
-
-        public void SendDumbNotification()
-        {
-            Notification.Builder builder;
-            if (Build.VERSION.SdkInt < BuildVersionCodes.NMr1)
+        public void RequestOpenNotification(Func<OpenNotification, bool> predicate,int requestCode)
             {
-
-                builder = new Notification.Builder(Application.Context);
-                builder.SetPriority(Convert.ToInt32(NotificationPriority.Max));
-            }
-            else
-            {
-                NotificationChannel notificationChannel = new NotificationChannel("livedisplaynotificationchannel", "LiveDisplay", NotificationImportance.Max);
-                notificationManager.CreateNotificationChannel(notificationChannel);
-                builder = new Notification.Builder(Application.Context, "livedisplaynotificationchannel");
-            }
-            builder.SetContentTitle("");
-            builder.SetContentText("");
-            builder.SetAutoCancel(true);
-
-            builder.SetSmallIcon(Resource.Drawable.ic_stat_default_appicon);
-            notificationManager.Notify(2, builder.Build());
-        }
-
-        public void GetOpenNotification(Func<OpenNotification, bool> predicate)
-        {
             RequestedOpenNotification?.Invoke(null,new OpenNotificationRequestedEventArgs
             {
-                Predicate= predicate
+                Predicate= predicate,
+                RequestCode= requestCode
             });
         }
         public void RetrieveLastNotification() //ask Catcher to resend the last notification posted, (In case it was missed)

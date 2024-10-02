@@ -123,9 +123,13 @@ namespace LiveDisplay.Services.Notifications
             }
         }
 
-        public void OnOpenNotificationRequested(Func<OpenNotification, bool> predicate)
+        public void OnOpenNotificationRequested(Func<OpenNotification, bool> predicate, int requestCode)
         {
-            RequestedOpenNotificationResultGenerated?.Invoke(this,OpenNotifications.Where(predicate).FirstOrDefault());
+            RequestedOpenNotificationResultGenerated?.Invoke(this, new RequestedOpenNotificationGeneratedEventArgs
+        {
+                OpenNotifications = OpenNotifications.Where(predicate).ToList(),
+                RequestCode = requestCode
+            });
         }
 
         public void CancelAllNotifications()
