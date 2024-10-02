@@ -9,6 +9,7 @@ using LiveDisplay.Misc;
 using LiveDisplay.Services.Media.Enums;
 using LiveDisplay.Services.Media.MediaEventArgs;
 using LiveDisplay.Services.Notifications;
+using LiveDisplay.Services.Notifications.NotificationEventArgs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,6 +42,7 @@ namespace LiveDisplay.Services.Media
 
         const string ExtrasKeySlotReservationSeekToPrev = "android.media.playback.ALWAYS_RESERVE_SPACE_FOR.ACTION_SKIP_TO_PREVIOUS";
         const string ExtrasKeySlotReservationSeekToNext = "android.media.playback.ALWAYS_RESERVE_SPACE_FOR.ACTION_SKIP_TO_NEXT";
+        const int MediaEventsOpenNotificationRequestCode = 1;
 
 
         bool resendingPlaybackState, resendingMediaMetadata, resendingRepeatOptionSet, resendingAvailableControls = false;
@@ -142,7 +144,7 @@ namespace LiveDisplay.Services.Media
             _controls.MediaEvent += MediaEvent;
             CatcherHelper.RequestedOpenNotificationResultGenerated += CatcherHelper_RequestedOpenNotificationResultGenerated;
             CatcherHelper.NotificationPosted += CatcherHelper_NotificationPosted;
-            NotificationSlave.GetInstance().GetOpenNotification(o => o.MediaSessionToken?.ToString() == _token.ToString());
+            NotificationSlave.GetInstance().RequestOpenNotification(o => o.MediaSessionToken?.ToString() == _token.ToString(), MediaEventsOpenNotificationRequestCode);
             //Initialize the Media Notification.
 
             progressTimer.Interval = OneSecondInMillis;
@@ -160,9 +162,12 @@ namespace LiveDisplay.Services.Media
             }
         }
 
-        private void CatcherHelper_RequestedOpenNotificationResultGenerated(object sender, OpenNotification e)
+        private void CatcherHelper_RequestedOpenNotificationResultGenerated(object sender, RequestedOpenNotificationGeneratedEventArgs e)
         {
-            openNotification = e;
+            if (e.RequestCode == MediaEventsOpenNotificationRequestCode)
+            {
+                openNotification = e.OpenNotifications.FirstOrDefault(); 
+            }
         }
 
         public static MediaEventsPublisherLollipop GetInstance()
@@ -277,20 +282,10 @@ namespace LiveDisplay.Services.Media
 
         private void OpenRelatedActivity()
         {
-            try
-            {
-                if (new KeyguardHelper().IsDeviceCurrentlyLocked())
-                {
-                    KeyguardPendingIntentMediator.GetInstance().SendPendingIntent(_activityIntent);
-                }
-                else
-                    _activityIntent.Send();
-            }
-            catch (Exception ex)
-            {
-                NotificationSlave.GetInstance().ClickNotification(openNotification);
-                Console.WriteLine($"Couldn't launch related activity: {ex}");
-            }
+            //The _activityIntent we get apparently sometimes causes a "CancelledException" when being sent
+            //for that case we resort to send the Notification Pending Intent also
+            KeyguardPendingIntentMediator.GetInstance().SendPendingIntent(_activityIntent,openNotification.ContentIntent);
+
         }
 
         public override void OnPlaybackStateChanged(PlaybackState state)
@@ -428,7 +423,7 @@ namespace LiveDisplay.Services.Media
             {
                 _mediaMetadata = metadata;
                 totalProgress = incomingDuration;
-                _activityIntent = _mediaController.SessionActivity ?? PendingIntent.GetActivity(Application.Context, (int)Result.Ok, PackageUtils.GetAppIntent(_mediaController.PackageName), PendingIntentFlags.Immutable | PendingIntentFlags.UpdateCurrent);
+                _activityIntent = _mediaController.SessionActivity;
 
                 OnMediaMetadataChanged(new MediaMetadataChangedEventArgs
                 {
@@ -481,7 +476,7 @@ namespace LiveDisplay.Services.Media
                 //anyway, this publisher gets unloaded, and for any subscribers the Media Session is discarded (but for android is still going on)
                 //This can give us the opportunity to restart the session listening from here, if we haven't removed the notification lol.
 
-                NotificationSlave.GetInstance().CancelNotification(openNotification.Key);
+                NotificationSlave.GetInstance().CancelNotification(openNotification?.Key);
                 progressTimer.Elapsed -= OnProgressTimerElapsed;
                 PublisherFinished?.Invoke(null, true);
                 

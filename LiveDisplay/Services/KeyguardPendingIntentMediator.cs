@@ -3,6 +3,7 @@ using Android.Content;
 using Android.OS;
 using Android.Runtime;
 using Java.Lang;
+using Java.Nio.Channels;
 using LiveDisplay.Misc;
 using LiveDisplay.Services.Keyguard;
 using System;
@@ -14,10 +15,10 @@ namespace LiveDisplay.Services
         Activity activityRequestingKeyguardDismissal;
         readonly KeyguardHelper keyguardHelper;
         PendingIntent pendingIntent;
-
-        const bool ModeBackgroundActivityStartAllowed = true;
-        readonly int ModeBackgroundActivityStartAllowedByPermission,
-            PendingIntentCreatorBackgroundActivityStartMode = 1;
+        PendingIntent alternatePendingIntent;
+        readonly bool ModeBackgroundActivityStartAllowed, ModeBackgroundActivityStartAllowedByPermission = true;
+        readonly int  PendingIntentCreatorBackgroundActivityStartMode = 1;
+        int requestCode = -1;
 
         Bundle BALSkipOptions;
 
@@ -51,25 +52,41 @@ namespace LiveDisplay.Services
             {
                 try
                 {
-                    if (Build.VERSION.SdkInt >= BuildVersionCodes.Q) //BAL is applied since Android Q(API 29) but really enforced as of Android 14 (API 34)
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
                     {
-                        //We pass this Data, but the only thing we really require is the IOnFinished interface, to skip the
-                        //Background Activity Launch restrictions.
-                        //because this call will always fail if API level is +34
-
-                        pendingIntent.Send(Application.Context, Result.FirstUser, null, this, null, string.Empty, BALSkipOptions);
+                        try
+                        {
+                            //BAL is applied since Android Q(API 29) but really enforced as of Android 14 (API 34)
+                            //We pass this Data, but the only thing we really require is the IOnFinished interface, to skip the
+                            //Background Activity Launch restrictions.
+                            //because this call will always fail (but doesn't throw any exception) if API level is +34 
+                            pendingIntent.Send(Application.Context, Result.FirstUser, null, this, null, string.Empty, BALSkipOptions);
+                        }
+                        catch (PendingIntent.CanceledException pice)
+                        {
+                            Console.WriteLine($"Main PendingIntent failed,sending alternate if provided: ({alternatePendingIntent != null}) {pice}");
+                            alternatePendingIntent?.Send(Application.Context, Result.FirstUser, null, this, null, string.Empty, BALSkipOptions);
+                        }
                     }
                     else
                     {
-                        pendingIntent.Send(); //sweet and nice expected behavior when Android is not Q and up (opens the Activity this PendingIntent represents)
-                        activityRequestingKeyguardDismissal.MoveTaskToBack(true);
+                        try
+                        {
+                            pendingIntent.Send(); //sweet and nice expected behavior when Android is not Q and up (opens the Activity this PendingIntent represents)
+                        }
+                        catch (PendingIntent.CanceledException pice)
+                        {
+                            Console.WriteLine($"Main PendingIntent failed,sending alternate if provided: ({alternatePendingIntent!=null}) {pice}");
+                            alternatePendingIntent?.Send();
+                        }
+
                     }
+
                 }
-                catch (PendingIntent.CanceledException pice)
+                catch (Java.Lang.Exception ex)
                 {
-                    Console.WriteLine(pice);
+                    Console.WriteLine($"All PendingIntent send tries failed, {ex}");
                 }
-                
             }
             else
             {
@@ -77,9 +94,10 @@ namespace LiveDisplay.Services
             }
         }
 
-        public void SendPendingIntent(PendingIntent pendingIntent)
+        public void SendPendingIntent(PendingIntent pendingIntent, PendingIntent alternatePendingIntent= null)
         {
             this.pendingIntent = pendingIntent;
+            this.alternatePendingIntent = alternatePendingIntent;
             BALSkipOptions = SetRequiredBALPermissionsBundle();
 
             RequiredSetActivityToBeCalled?.Invoke(this, this);
@@ -91,7 +109,7 @@ namespace LiveDisplay.Services
             var bundle = activityOptions.ToBundle();
             bundle.PutInt("android.activity.pendingIntentCreatorBackgroundActivityStartMode", PendingIntentCreatorBackgroundActivityStartMode);
             bundle.PutBoolean("android.pendingIntent.backgroundActivityAllowed", ModeBackgroundActivityStartAllowed);
-            bundle.PutInt("android.pendingIntent.backgroundActivityAllowedByPermission", ModeBackgroundActivityStartAllowedByPermission);
+            bundle.PutBoolean("android.pendingIntent.backgroundActivityAllowedByPermission", ModeBackgroundActivityStartAllowedByPermission);
 
             return bundle;
         }
@@ -103,7 +121,7 @@ namespace LiveDisplay.Services
 
         public void OnSendFinished(PendingIntent pendingIntent, Intent intent, [GeneratedEnum] Result resultCode, string resultData, Bundle resultExtras)
         {
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Q && resultCode== Result.Canceled)
             {
                 try
                 {
