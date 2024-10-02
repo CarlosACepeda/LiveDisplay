@@ -6,7 +6,7 @@ namespace LiveDisplay.Misc
     internal sealed class ConfigurationParameters
     {
         public static readonly string WallpaperScaleType = Application.Context.GetString(Resource.String.wallpaper_scale_type_k);
-
+        public static readonly string UseWhenNoMediaPresent = Application.Context.GetString(Resource.String.use_as_permanent_lock_screen_k);
 
 
 
