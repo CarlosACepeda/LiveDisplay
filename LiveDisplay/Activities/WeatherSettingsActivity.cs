@@ -142,17 +142,17 @@
 
             ThreadPool.QueueUserWorkItem(async m =>
             {
-                var weather = await OpenWeatherMapClient.GetWeather(city.Text, countryCode, units);
+                //var weather = await OpenWeatherMapClient.GetWeather(city.Text, countryCode, units);
 
-                RunOnUiThread(() =>
-                {
-                    temperature.Text = weather?.MainWeather.Temperature.ToString();
-                    minimumTemperature.Text = weather?.MainWeather.MinTemperature.ToString();
-                    maximumTemperature.Text = weather?.MainWeather.MaxTemperature.ToString();
-                    citytext.Text = weather?.Name + ": " + weather?.Weather[0].Description;
-                    humidity.Text = Resources.GetString(Resource.String.humidity) + ": " + weather?.MainWeather.Humidity.ToString();
+                //RunOnUiThread(() =>
+                //{
+                //    temperature.Text = weather?.MainWeather.Temperature.ToString();
+                //    minimumTemperature.Text = weather?.MainWeather.MinTemperature.ToString();
+                //    maximumTemperature.Text = weather?.MainWeather.MaxTemperature.ToString();
+                //    citytext.Text = weather?.Name + ": " + weather?.Weather[0].Description;
+                //    humidity.Text = Resources.GetString(Resource.String.humidity) + ": " + weather?.MainWeather.Humidity.ToString();
 
-                });
+                //});
             });
             saveWeatherPrefs.Enabled = true;
         }

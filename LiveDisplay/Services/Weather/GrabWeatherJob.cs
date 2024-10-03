@@ -1,48 +1,41 @@
-﻿using Android.Content;
+﻿using Android.App;
+using Android.Content;
+using Android.Locations;
 using Android.Util;
 using AndroidX.Work;
+using Java.Util;
 using LiveDisplay.Misc;
 using LiveDisplay.Services.Awake;
 using System;
+using System.Threading;
 
 namespace LiveDisplay.Services.Weather
 {
     public class GrabWeatherJob : Worker
     {
-        public static event EventHandler<bool> WeatherUpdated; 
-
         public GrabWeatherJob(Context context, WorkerParameters workerParameters) : base(context, workerParameters)
         {
 
         }
         public override Result DoWork()
         {
-            if (AwakeHelper.GetAwakeStatus() == AwakeStatus.Sleeping || AwakeHelper.GetAwakeStatus() == AwakeStatus.SleepingWithDeviceMotionEnabled)
+            if (Checkers.ThisAppCanReadLocation())
             {
-                return Result.InvokeSuccess(); //We want to keep the job running but don't do the job itself while Awake is sleeping.
+                LocationManager locationManager = (LocationManager)Application.Context.GetSystemService(Context.LocationService);
+                var loc = locationManager.GetLastKnownLocation(LocationManager.GpsProvider);
+                Console.WriteLine($"LOCATION IS {loc?.Latitude},{loc?.Longitude}");
+
+                var result = OpenWeatherMapClient.GetWeather(loc.Latitude.ToString(), loc.Longitude.ToString(), MeasurementUnits.Celsius, Locale.Default.Language)?.Result;
+                if (result != null)
+                {
+                    return Result.InvokeSuccess();
+                }
+                else
+                {
+                    return Result.InvokeRetry();
+                }
             }
-
-            ConfigurationManager configurationManager = new ConfigurationManager(AppPreferences.Weather);
-
-            string city = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherCity, "New York");
-            string country = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherCountryCode, "us");
-            string unit = configurationManager.RetrieveAValue(ConfigurationParameters.WeatherTemperatureMeasureUnit, "metric");
-
-            var result = OpenWeatherMapClient.GetWeather(city, country, unit);
-            if (result != null)
-            {
-                Log.Info("LiveDisplay", "Job Result Sucess");
-                WeatherUpdated?.Invoke(null, true);
-                return Result.InvokeSuccess();
-            }
-            else
-            {
-                Log.Info("LiveDisplay", "Job Result Not Sucess");
-                WeatherUpdated?.Invoke(null, false);
-                return Result.InvokeRetry();
-            }
-            
-
+            return Result.InvokeFailure();
         }
     }
 }

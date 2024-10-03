@@ -171,7 +171,7 @@
     <Compile Include="Services\Wallpaper\WallpaperPosters.cs" />
     <Compile Include="Services\Wallpaper\WallpaperPublisher.cs" />
     <Compile Include="Services\Weather\GrabWeatherJob.cs" />
-    <Compile Include="Services\Weather\IconsForWeatherConditions.cs" />
+    <Compile Include="Services\Weather\WeatherConditions.cs" />
     <Compile Include="Services\Weather\MeasurementUnits.cs" />
     <Compile Include="Services\Weather\OpenWeatherMapClient.cs" />
     <Compile Include="Services\Widget\WidgetStatusPublisher.cs" />

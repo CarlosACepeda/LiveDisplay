@@ -52,6 +52,12 @@ namespace LiveDisplay.Services
             sharedPreferencesEditor.Commit();
         }
 
+        public void SaveAValue(string key, float value)
+        {
+            sharedPreferencesEditor.PutFloat(key, value);
+            sharedPreferencesEditor.Commit();
+        }
+
         public bool RetrieveAValue(string key)
         {
             return sharedPreferences.GetBoolean(key, false);
@@ -76,11 +82,9 @@ namespace LiveDisplay.Services
             Drawable drawable = Drawable.CreateFromStream(memoryStream, string.Empty);
             return drawable;
         }
-    }
-
-    public enum AppPreferences
-    {
-        Default = 1,
-        Weather = 2
+        public float RetrieveAValue(string key, float defaultIfNotFound=0)
+        {
+            return sharedPreferences.GetFloat(key, defaultIfNotFound);
+        }
     }
 }

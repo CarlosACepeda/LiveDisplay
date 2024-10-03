@@ -3,12 +3,10 @@
     /// <summary>
     /// This class holds constant values for image resources on the OpenWeatherMap website, it might change over time.
     /// </summary>
-    internal class IconsForWeatherConditions
+    internal class WeatherConditions
     {
         /*I don't want magical strings, so, each one of these identifies a image that represents a Weather condition, cloudy, sunny, etc.
         for example see: https://openweathermap.org/weather-conditions
-        When making the request to the API I use that Icon Id(that comes with the Response)
-        to Identify a Local resource that I will use (a hd image of that Weather condition) and send it to the LockScreen as a wallpaper.
         */
         public const string ClearSky = "01d";
         public const string ClearSkyNight = "01n";

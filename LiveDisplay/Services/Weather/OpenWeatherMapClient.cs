@@ -1,14 +1,9 @@
 ﻿using Android.App;
 using Android.Graphics.Drawables;
-using Android.OS.Storage;
-using Android.Util;
 using Android.Widget;
-using Javax.Security.Auth;
 using LiveDisplay.DataRepository;
 using LiveDisplay.Misc;
-using LiveDisplay.Services.Wallpaper;
 using System;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using static Newtonsoft.Json.JsonConvert;
@@ -18,12 +13,13 @@ namespace LiveDisplay.Services.Weather
     internal class OpenWeatherMapClient
     {
         private readonly static ConfigurationManager configurationManager = new ConfigurationManager();
-        private static string imageURL = "http://openweathermap.org/img/wn/{0}@2x.png";
-
-        //This class will be the one that connects to the api and provide Lockscreen with Weather information.
-        public static async Task<WeatherRoot> GetWeather(string city, string country, string measurementunit)
+        private const string ImageURL = "http://openweathermap.org/img/wn/{0}@2x.png";
+        const string StreamSourceName = "image";
+        const string ApiKey = "9ca11a6f4426446b991ff390d4f7430f"; //Why are you leaving API keys in the plain? TODO: Delete API Key and use a Vault to administer Api values, fortunately this is a Free API key.
+        const string OpenWeatherMapForecastUrl = "http://api.openweathermap.org/data/2.5/weather?lat={0}&lon={1}&units={2}&appid={3}&lang={4}";
+        public static async Task<WeatherRoot> GetWeather(string lat, string lon, string measurementunit, string language)
         {
-            string url = string.Format("http://api.openweathermap.org/data/2.5/weather?q={0},{1}&units={2}&appid=9ca11a6f4426446b991ff390d4f7430f", city, country, measurementunit);
+            string url = string.Format(OpenWeatherMapForecastUrl, lat, lon, measurementunit, ApiKey, language);
             using (var client = new HttpClient())
             {
                 try
@@ -34,53 +30,29 @@ namespace LiveDisplay.Services.Weather
 
                     WeatherRoot weatherRoot =
                     DeserializeObject<WeatherRoot>(json);
-
-                    configurationManager.SaveAValue(ConfigurationParameters.WeatherCity, weatherRoot.Name);
+                    configurationManager.SaveAValue(ConfigurationParameters.CurrentTemperature, (float)weatherRoot.MainWeather.Temperature);
+                    configurationManager.SaveAValue(ConfigurationParameters.CityForCurrentWeatherForecast, weatherRoot.Name);
                     configurationManager.SaveAValue(ConfigurationParameters.WeatherDescription, weatherRoot.Weather[0].Description);
-                    configurationManager.SaveAValue(ConfigurationParameters.WeatherHumidity, weatherRoot.MainWeather.Humidity.ToString() + "%");
-                    configurationManager.SaveAValue(ConfigurationParameters.WeatherLastUpdated, DateTime.Now.ToString("ddd" + "," + "hh:mm"));
-                    configurationManager.SaveAValue(ConfigurationParameters.WeatherMaximum, weatherRoot.MainWeather.MaxTemperature.ToString());
-                    configurationManager.SaveAValue(ConfigurationParameters.WeatherMaximum, weatherRoot.MainWeather.MinTemperature.ToString());
-                    configurationManager.SaveAValue(ConfigurationParameters.WeatherCountryCode, country);
-                    configurationManager.SaveAValue(ConfigurationParameters.WeatherCurrent, weatherRoot.MainWeather.Temperature.ToString());
-                    string unitsuffix = "°K";
-                    switch (measurementunit)
-                    {
-                        case MeasurementUnits.Fahrenheit:
-                            unitsuffix = "°F";
-                            break;
-
-                        case MeasurementUnits.Celsius:
-                            unitsuffix = "°C";
-                            break;
-                        case MeasurementUnits.Kelvin:
-                            unitsuffix = "°K";
-                            break;
-                    }
-                    configurationManager.SaveAValue(ConfigurationParameters.WeatherTemperatureUnit, unitsuffix);
+                    configurationManager.SaveAValue(ConfigurationParameters.WeatherLastUpdatedAt, DateTime.Now.ToString("ddd" + "," + "hh:mm"));
 
                     using (var imageGrabClient = new HttpClient())
                     {
                         try
                         {
-                            var stream = await imageGrabClient.GetStreamAsync(string.Format(imageURL, weatherRoot.Weather[0].Icon));
-                            Drawable drawable = Drawable.CreateFromStream(stream, "image");
-
-                            if (configurationManager.RetrieveAValue(ConfigurationParameters.WeatherUpdateChangesWallpaper))
+                            if (weatherRoot.Weather?.Count > 0)
                             {
-                                WallpaperPublisher.ChangeWallpaper(new WallpaperChangedEventArgs
-                                {
-                                    BlurLevel = 5,
-                                    OpacityLevel = 100,
-                                    SecondsOfAttention = 5,
-                                    WallpaperPoster = WallpaperPoster.Weather,
-                                    Wallpaper = (BitmapDrawable)drawable
-                                });
+                                var stream = await imageGrabClient.GetStreamAsync(string.Format(ImageURL, weatherRoot.Weather[0].Icon));
+                                Drawable drawable = Drawable.CreateFromStream(stream, StreamSourceName);
+                                configurationManager.SaveAValue(ConfigurationParameters.CurrentWeatherIcon, drawable);
+                            }
+                            else
+                            {
+                                Console.WriteLine("List of Weather Forecasts is 0 or List is null, won't download any picture.");
                             }
                         }
-                        catch
-                        {                            
-                            Toast.MakeText(Application.Context, "FAILED TO DOWNLOAD IMAGE", ToastLength.Long).Show();
+                        catch (Exception ex)
+                        {
+                            Toast.MakeText(Application.Context, $"FAILED TO DOWNLOAD IMAGE {ex}", ToastLength.Long).Show();
                         }
 
                     }

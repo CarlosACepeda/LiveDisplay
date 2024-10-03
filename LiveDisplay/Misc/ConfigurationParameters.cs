@@ -7,6 +7,11 @@ namespace LiveDisplay.Misc
     {
         public static readonly string WallpaperScaleType = Application.Context.GetString(Resource.String.wallpaper_scale_type_k);
         public static readonly string UseWhenNoMediaPresent = Application.Context.GetString(Resource.String.use_as_permanent_lock_screen_k);
+        public static readonly string CurrentWeatherIcon = Application.Context.GetString(Resource.String.current_weather_icon_k);
+        public static readonly string CityForCurrentWeatherForecast = Application.Context.GetString(Resource.String.city_for_current_weather_forecast_k);
+        public static readonly string WeatherDescription = Application.Context.GetString(Resource.String.weather_description_k);
+        public static readonly string CurrentTemperature = Application.Context.GetString(Resource.String.current_temperature_k);
+        public static readonly string WeatherLastUpdatedAt = Application.Context.GetString(Resource.String.weather_last_updated_at_k);
 
 
 
