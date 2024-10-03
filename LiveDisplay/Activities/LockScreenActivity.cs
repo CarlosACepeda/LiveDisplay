@@ -13,6 +13,7 @@
     using AndroidX.AppCompat.Widget;
     using AndroidX.Core.View;
     using Google.Android.Material.FloatingActionButton;
+    using Google.Android.Material.Snackbar;
     using LiveDisplay.Activities;
     using LiveDisplay.Fragments;
     using LiveDisplay.Misc;
@@ -188,11 +189,15 @@
             {
                 if((bool)e.Value)
                 {
-                    Toast.MakeText(ApplicationContext,Resource.String.using_when_no_media_present, ToastLength.Long).Show();
+                    var snackbar= Snackbar.Make(lockscreen, Resource.String.using_when_no_media_present, Snackbar.LengthLong);
+                    snackbar.SetAnchorView(quickSettings);
+                    snackbar.Show();
                 }
                 else
                 {
-                    Toast.MakeText(ApplicationContext, Resource.String.using_only_when_media_present, ToastLength.Long).Show();
+                   var snackbar= Snackbar.Make(lockscreen, Resource.String.using_only_when_media_present, Snackbar.LengthLong);
+                    snackbar.SetAnchorView(quickSettings);
+                    snackbar.Show();
                 }
             }
         }
@@ -270,7 +275,7 @@
             transaction.CommitNowAllowingStateLoss();
 
             pendingIntentMediator.RequiredSetActivityToBeCalled -= LockScreenActivity_RequiredSetActivityToBeCalled;
-
+            SharedPreferenceListenerService.ConfigurationChanged -= SharedPreferenceListenerService_ConfigurationChanged;
 
             base.OnDestroy();
 
