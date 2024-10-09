@@ -20,7 +20,7 @@ namespace LiveDisplay.Services.Notifications
         public const string MessagingStyle = "android.app.Notification$MessagingStyle"; //Only available on API Level 24 and up.
         public const string BigTextStyle = "android.app.Notification$BigTextStyle";
         public const string DecoratedCustomViewStyle = "android.app.Notification$DecoratedCustomViewStyle";
-        private readonly StatusBarNotification statusbarnotification;
+        protected readonly StatusBarNotification statusbarnotification;
 
         public OpenNotification(StatusBarNotification sbn)
         {
@@ -32,9 +32,10 @@ namespace LiveDisplay.Services.Notifications
         {
             get
             {
-                if (Build.VERSION.SdkInt > BuildVersionCodes.KitkatWatch)
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.KitkatWatch)
                     return statusbarnotification.Key;
-                return string.Empty;
+                else
+                    return Id + Tag + PackageName;
             }
         }
         public int Id => statusbarnotification.Id;
@@ -118,13 +119,7 @@ namespace LiveDisplay.Services.Notifications
         }
         public PendingIntent ContentIntent => statusbarnotification.Notification.ContentIntent;
         public PendingIntent FullScreenIntent => statusbarnotification.Notification.FullScreenIntent;
-        
-        //internal Bitmap GetPersonAvatar()
-        //{
-        //    if (Style() != "android.app.Notification$MessagingStyle" || Build.VERSION.SdkInt < BuildVersionCodes.P)
-        //        return null;
 
-        //}
         public NotificationPriority NotificationPriority=>(NotificationPriority)statusbarnotification.Notification.Priority;
 
         public NotificationImportance NotificationImportance

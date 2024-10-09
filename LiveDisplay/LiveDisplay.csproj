@@ -159,6 +159,7 @@
     <Compile Include="Services\Notificaciones\NotificationEventArgs\RequestedOpenNotificationGeneratedEventArgs.cs" />
     <Compile Include="Services\Notificaciones\NotificationStyle\NotificationStyleApplier.cs" />
     <Compile Include="Services\Notificaciones\OpenAction.cs" />
+    <Compile Include="Services\Notificaciones\OpenMessagingStyleNotification.cs" />
     <Compile Include="Services\Notificaciones\OpenNotification.cs" />
     <Compile Include="Services\Notificaciones\NotificationEventArgs\NotificationCancelledEventArgsKitkat.cs" />
     <Compile Include="Services\Notificaciones\NotificationEventArgs\NotificationCancelledEventArgsLollipop.cs" />
