@@ -437,7 +437,7 @@
                 case Resource.Id.go_to_full_settings:
                     using (Intent intent = new Intent(this, typeof(SettingsActivity)))
                     {
-                        StartActivity(intent);
+                        KeyguardPendingIntentMediator.GetInstance().SendIntent(intent);
                     }
                     break;
             }
