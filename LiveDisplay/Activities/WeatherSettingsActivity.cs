@@ -72,7 +72,7 @@
 
         private void Allowchangingthewallpaper_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
         {
-            configurationManager.SaveAValue(ConfigurationParameters.WeatherUpdateChangesWallpaper, e.IsChecked);
+            //configurationManager.SaveAValue(ConfigurationParameters.WeatherUpdateChangesWallpaper, e.IsChecked);
         }
 
         protected override void OnResume()
@@ -90,19 +90,19 @@
         private void Weatherupdatefrequency_ItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
         {
             interval_minutes = int.Parse(Resources.GetStringArray(Resource.Array.listvaluesweatherupdatefrequency)[e.Position]);
-            configurationManager.SaveAValue(ConfigurationParameters.WeatherUpdateFrequency, e.Position);
+            //configurationManager.SaveAValue(ConfigurationParameters.WeatherUpdateFrequency, e.Position);
         }
 
         private void Useimperialsystem_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
         {
-            if (e.IsChecked){
-                configurationManager.SaveAValue(ConfigurationParameters.WeatherUseImperialSystem, true);
-                units = "imperial";
-            }
-            else { 
-                configurationManager.SaveAValue(ConfigurationParameters.WeatherUseImperialSystem, false);
-                units = "metric";
-            }
+            //if (e.IsChecked){
+            //    configurationManager.SaveAValue(ConfigurationParameters.WeatherUseImperialSystem, true);
+            //    units = "imperial";
+            //}
+            //else { 
+            //    configurationManager.SaveAValue(ConfigurationParameters.WeatherUseImperialSystem, false);
+            //    units = "metric";
+            //}
         }
         private void Trytogetweather_Click(object sender, System.EventArgs e)
         {
@@ -173,7 +173,7 @@
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            configurationManager.SaveAValue(ConfigurationParameters.WeatherCity, city.Text); //Save before exit, because it might be possible that the EditText never loses focus.
+            //configurationManager.SaveAValue(ConfigurationParameters.WeatherCity, city.Text); //Save before exit, because it might be possible that the EditText never loses focus.
 
             useimperialsystem.CheckedChange -= Useimperialsystem_CheckedChange;
             city.Dispose();
