@@ -107,6 +107,7 @@
   <string name="not_repeating">Not repeating</string>
   <string name="notavailableyet">Not available... yet.</string>
   <string name="notificationsettings">Notifications</string>
+  <string name="media_controls_provider_service">Extended Controls Notification</string>
   <string name="notificationviewvisibilitytime">After clicking the notification hide it after...</string>
   <string name="now_playing">Now Playing:</string>
   <string name="ok">Ok</string>

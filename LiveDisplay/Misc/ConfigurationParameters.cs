@@ -12,6 +12,7 @@ namespace LiveDisplay.Misc
         public static readonly string WeatherDescription = Application.Context.GetString(Resource.String.weather_description_k);
         public static readonly string CurrentTemperature = Application.Context.GetString(Resource.String.current_temperature_k);
         public static readonly string WeatherLastUpdatedAt = Application.Context.GetString(Resource.String.weather_last_updated_at_k);
+        public static readonly string MediaControlsProviderServiceNotificationActionIsExtAppPlayer= Application.Context.GetString(Resource.String.media_controls_provider_service_notification_action_is_ext_app_player_k);
 
 
 

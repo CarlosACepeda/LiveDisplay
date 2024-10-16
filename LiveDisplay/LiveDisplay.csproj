@@ -118,7 +118,7 @@
     <Compile Include="Fragments\Preferences\AwakeSettingsFragment.cs" />
     <Compile Include="Fragments\Preferences\LockScreenSettingsFragment.cs" />
     <Compile Include="Fragments\Preferences\MediaWidgetSettingsFragment.cs" />
-    <Compile Include="Fragments\Preferences\NotificationSettingsFragment.cs" />
+    <Compile Include="Fragments\Preferences\MediaControlsProviderServiceSettingsFragment.cs" />
     <Compile Include="Fragments\WeatherFragment.cs" />
     <Compile Include="Misc\ConfigurationParameters.cs" />
     <Compile Include="Misc\MediaActionFlags.cs" />
@@ -570,7 +570,7 @@
     <AndroidResource Include="Resources\xml\appearance_prefs.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\xml\notification_prefs.xml" />
+    <AndroidResource Include="Resources\xml\media_controls_provider_service_prefs.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\xml\media_widget_prefs.xml" />

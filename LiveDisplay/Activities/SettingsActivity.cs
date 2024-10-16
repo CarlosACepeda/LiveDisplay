@@ -67,6 +67,9 @@
                     case "AppearanceSettingsFragment":
                         fragmentQualifiedName = Java.Lang.Class.FromType(typeof(LockScreenSettingsFragment)).Name;
                         break;
+                    case "MediaControlsProviderServiceSettingsFragment":
+                        fragmentQualifiedName= Java.Lang.Class.FromType(typeof(MediaControlsProviderServiceSettingsFragment)).Name;
+                        break;
                     default:
                         break;
                 }

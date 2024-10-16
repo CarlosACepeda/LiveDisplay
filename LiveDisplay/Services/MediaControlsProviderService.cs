@@ -3,6 +3,7 @@ using Android.Content;
 using Android.OS;
 using Android.Runtime;
 using LiveDisplay.BroadcastReceivers;
+using LiveDisplay.Misc;
 using LiveDisplay.Services.Media;
 using LiveDisplay.Services.Media.MediaEventArgs;
 using System;
@@ -22,9 +23,12 @@ namespace LiveDisplay.Services
         public const string ActionCycleRepeatOptionCommand = "CYCLE_REPEAT_OPTION_COMMAND";
 
         string mediaTitle, mediaOwningApp, mediaArtist;
+        PendingIntent mediaSessionPendingIntent;
         int repeatOptionSet;
 
         bool showStopControl, showRepeatControl = false;
+        PendingIntent pendingIntentToStartOnClick;
+        bool startLiveDisplayPlayer;
 
         public override IBinder OnBind(Intent intent)
         {
@@ -33,10 +37,6 @@ namespace LiveDisplay.Services
         [return: GeneratedEnum]
         public override StartCommandResult OnStartCommand(Intent intent, [GeneratedEnum] StartCommandFlags flags, int startId)
         {
-            //NotificationSlave.GetInstance().PostNotification
-            //(MediaControlsProviderServiceNotificationId,
-
-            //);
             if (Build.VERSION.SdkInt <= BuildVersionCodes.KitkatWatch)
             {
                 MediaEventsPublisherKitkat.MediaMetadataChanged += MediaController_MediaMetadataChanged;
@@ -50,9 +50,30 @@ namespace LiveDisplay.Services
                 MediaEventsPublisherLollipop.ControlsAvailabilityChanged += MediaEventsPublisher_ControlsAvailabilityChanged;
                 MediaEventsPublisherLollipop.PublisherFinished += MediaEventsPublisherLollipop_PublisherFinished;
             }
+            
+            SharedPreferenceListenerService.ConfigurationChanged += SharedPreferenceListenerService_ConfigurationChanged;
+            ConfigurationManager configurationManager = new ConfigurationManager();
+            SetPendingIntentActionForNotification(configurationManager.RetrieveAValue(ConfigurationParameters.MediaControlsProviderServiceNotificationActionIsExtAppPlayer));
 
-            using IntentFilter intentFilter = new IntentFilter();
             return base.OnStartCommand(intent, flags, startId);
+        }
+
+        private void SharedPreferenceListenerService_ConfigurationChanged(object sender, Configuration.ConfigurationChangedEventArgs e)
+        {
+            if(e.Key== ConfigurationParameters.MediaControlsProviderServiceNotificationActionIsExtAppPlayer)
+            {
+                SetPendingIntentActionForNotification((bool)e.Value);
+            }
+        }
+
+        void SetPendingIntentActionForNotification(bool startsExternalPlayer)
+        {
+            if(startsExternalPlayer && mediaSessionPendingIntent!= null)
+            {
+                pendingIntentToStartOnClick = PendingIntent.GetActivity(Application.Context, 0, PackageUtils.GetAppIntent(mediaSessionPendingIntent.CreatorPackage), PendingIntentFlags.Immutable);
+            }
+            else pendingIntentToStartOnClick = PendingIntent.GetActivity(Application.Context, 0, new Intent(Application.Context, Java.Lang.Class.FromType(typeof(LockScreenActivity))), PendingIntentFlags.Immutable);
+            UpdateNotification();
         }
 
         private void MediaEventsPublisher_ControlsAvailabilityChanged(object sender, ControlsAvailabilityChangedEventArgs e)
@@ -77,6 +98,8 @@ namespace LiveDisplay.Services
             mediaOwningApp = e.AppName;
             mediaTitle = e.MediaTitle;
             mediaArtist = e.MediaArtist;
+            mediaSessionPendingIntent = e.ActivityIntent;
+
             UpdateNotification();
         }
 
@@ -115,8 +138,8 @@ namespace LiveDisplay.Services
             }
 
             builder.SetActions(actions);
-
-
+            builder.SetContentIntent(pendingIntentToStartOnClick);
+            builder.SetAutoCancel(false);
             NotificationSlave.GetInstance().PostNotification(
                 MediaControlsProviderServiceNotificationId, builder);
         }
