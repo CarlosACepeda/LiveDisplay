@@ -1,4 +1,5 @@
 ﻿using Android.Media.Session;
+using LiveDisplay.BroadcastReceivers;
 using LiveDisplay.Services.Notifications.NotificationEventArgs;
 using System;
 using System.Collections.Generic;
@@ -167,7 +168,8 @@ namespace LiveDisplay.Services.Notifications
             {
                 ShouldCauseWakeUp = false,
                 OpenNotification = sbn,
-                UpdatesPreviousNotification = updatesPreviousNotification
+                UpdatesPreviousNotification = updatesPreviousNotification,
+                ReceivedWhileScreenOff= !ScreenOnOffReceiver.IsScreenOn
             });
         }
         public void OnZenModeChanged(bool active)

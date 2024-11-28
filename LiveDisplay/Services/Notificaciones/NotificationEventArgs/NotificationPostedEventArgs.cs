@@ -12,5 +12,7 @@ namespace LiveDisplay.Services.Notifications.NotificationEventArgs
 
         //This notification updates a existent notification?
         public bool UpdatesPreviousNotification { get; set; }
+
+        public bool ReceivedWhileScreenOff { get; set; }
     }
 }
