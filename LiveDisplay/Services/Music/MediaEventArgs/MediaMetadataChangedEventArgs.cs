@@ -18,5 +18,6 @@ namespace LiveDisplay.Services.Media.MediaEventArgs
 
         public PendingIntent ActivityIntent { get; set; }
         public string AppName { get; set; }
+        public string PackageName { get; set; }
     }
 }

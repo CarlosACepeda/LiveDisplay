@@ -309,7 +309,7 @@ namespace LiveDisplay.Services.Media
             //Only track progress when this call wasn't made by the Notification Posted event.
             //On when we arent re-sending media info, cuz this interferes with current progress management.
             if (!resendingPlaybackState)
-                TrackProgress(state.Position);
+                TrackProgress(state.Position, state.PlaybackSpeed);
             else resendingPlaybackState = false;
 
 
@@ -428,12 +428,13 @@ namespace LiveDisplay.Services.Media
                 OnMediaMetadataChanged(new MediaMetadataChangedEventArgs
                 {
                     ActivityIntent = _activityIntent,
-                    MediaTitle= GetStringValue(MediaMetadata.MetadataKeyTitle),
-                    MediaArtist= GetStringValue(MediaMetadata.MetadataKeyArtist),
-                    MediaAlbum= GetStringValue(MediaMetadata.MetadataKeyAlbum),
-                    MediaDuration= GetLongValue(MediaMetadata.MetadataKeyDuration),
-                    MediaArtwork= GetBitmap(MediaMetadata.MetadataKeyAlbumArt),
+                    MediaTitle = GetStringValue(MediaMetadata.MetadataKeyTitle),
+                    MediaArtist = GetStringValue(MediaMetadata.MetadataKeyArtist),
+                    MediaAlbum = GetStringValue(MediaMetadata.MetadataKeyAlbum),
+                    MediaDuration = GetLongValue(MediaMetadata.MetadataKeyDuration),
+                    MediaArtwork = GetBitmap(MediaMetadata.MetadataKeyAlbumArt),
                     AppName = _appname,
+                    PackageName = _mediaController.PackageName
                 });
                 resendingMediaMetadata = false;
             }
@@ -498,9 +499,15 @@ namespace LiveDisplay.Services.Media
             base.OnSessionDestroyed();
         }
 
-        void TrackProgress(long currentPos)
+        void TrackProgress(long currentPos, float playbackSpeed)
         {
             currentProgress = currentPos;
+
+            if(playbackSpeed!= 1 && playbackSpeed!=0)
+            {
+                progressTimer.Interval = OneSecondInMillis / playbackSpeed;
+            }
+
             switch (_playbackState.State)
             {
                 case PlaybackStateCode.Playing:
@@ -513,7 +520,7 @@ namespace LiveDisplay.Services.Media
         }
         public void OnProgressTimerElapsed(object sender, EventArgs e)
         {
-            currentProgress += 1000;
+            currentProgress += OneSecondInMillis;
             OnMediaProgressChanged(new MediaProgressChangedEventArgs
             {
                 CurrentProgress = currentProgress,
