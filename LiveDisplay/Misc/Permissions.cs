@@ -8,4 +8,6 @@
     public const int ReadNotifications = 3;
     public const int DeviceAdmin = 4;
     public const int Location = 5;
+    public const int ShowOnLockScreenXiaomi = 6;
+    public const int RecordAudio = 7;
 }

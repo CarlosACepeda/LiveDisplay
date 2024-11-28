@@ -21,7 +21,8 @@
     internal class MainActivity : AppCompatActivity
     {
         private Toolbar toolbar;
-        private RelativeLayout enableNotificationAccess, enableDeviceAdmin, enablePostingNotifications, enableAccessibilityAccess, enableLocationAccess;
+        private RelativeLayout enableNotificationAccess, enableDeviceAdmin, enablePostingNotifications, 
+            enableAccessibilityAccess, enableLocationAccess, enableShowOnLockScreen, enableRecordAudioAccess;
         public static int StartCount = 0;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -46,9 +47,10 @@
             SetPermissionStatus(Checkers.IsAccessibilityEnabled(), Resource.Id.accessibility_access_permission_checkbox);
             SetPermissionStatus(Checkers.IsThisAppADeviceAdministrator(), Resource.Id.device_access_permission_checkbox);
             SetPermissionStatus(Checkers.ThisAppCanReadLocation(), Resource.Id.location_access_permission_checkbox);
+            SetPermissionStatus(Checkers.ThisAppCanBeShownOnXiaomiDeviceLockScreen(), Resource.Id.show_on_lock_screen_xiaomi_permission_checkbox, true);
+            SetPermissionStatus(Checkers.ThisAppCanRecordAudio(), Resource.Id.record_audio_access_checkbox);
         }
-
-        private void SetPermissionStatus(bool isPermissionAllowed, int resourceRepresentingPermissionStatus)
+        private void SetPermissionStatus(bool isPermissionAllowed, int resourceRepresentingPermissionStatus, bool unknownStatusPermission = false)
         {
             using var permissionImageView = FindViewById<AppCompatImageView>(resourceRepresentingPermissionStatus);
             switch (isPermissionAllowed)
@@ -59,6 +61,10 @@
                 case false:
                     permissionImageView.SetBackgroundResource(Resource.Drawable.outline_close_white_24);
                     break;
+            }
+            if(unknownStatusPermission)
+            {
+                permissionImageView.SetBackgroundResource(Resource.Drawable.ic_warning_white_24dp);
             }
         }
 
@@ -158,6 +164,12 @@
                 case Permissions.Location:
                     SetPermissionStatus(result, Resource.Id.location_access_permission_checkbox);
                     break;
+                case Permissions.ShowOnLockScreenXiaomi:
+                    SetPermissionStatus(result, Resource.Id.show_on_lock_screen_xiaomi_permission_checkbox, true);
+                    break;
+                case Permissions.RecordAudio:
+                    SetPermissionStatus(result, Resource.Id.show_on_lock_screen_xiaomi_permission_checkbox);
+                    break;
             }
 
             base.OnActivityResult(requestCode, resultCode, data);
@@ -172,10 +184,10 @@
             enableDeviceAdmin = FindViewById<RelativeLayout>(Resource.Id.device_access_permission);
             enableAccessibilityAccess = FindViewById<RelativeLayout>(Resource.Id.accessibility_access_permission);
             enableNotificationAccess = FindViewById<RelativeLayout>(Resource.Id.read_notifications_permission);
-            enablePostingNotifications = FindViewById<RelativeLayout>(Resource.Id.post_notifications_permission);
             enableLocationAccess = FindViewById<RelativeLayout>(Resource.Id.location_access_permission);
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
             {
+                enablePostingNotifications = FindViewById<RelativeLayout>(Resource.Id.post_notifications_permission);
                 enablePostingNotifications.Visibility = ViewStates.Visible;
                 enablePostingNotifications.Click += EnablePostingNotifications_Click;
             }
@@ -183,8 +195,30 @@
             enableNotificationAccess.Click += EnableNotificationAccess_Click;
             enableDeviceAdmin.Click += EnableDeviceAdmin_Click;
             enableAccessibilityAccess.Click += EnableAccessibilityAccess_Click;
-            enableLocationAccess.Click += EnableLocationAccess_Click; ;
+            enableLocationAccess.Click += EnableLocationAccess_Click;
+            enableRecordAudioAccess = FindViewById<RelativeLayout>(Resource.Id.record_audio_access);
+            enableRecordAudioAccess.Click += EnableRecordAudioAccess_Click;
 
+        }
+
+        private void EnableRecordAudioAccess_Click(object sender, EventArgs e)
+        {
+            var intent = new Intent(this, Java.Lang.Class.FromType(typeof(PermissionExplanationActivity)));
+            var extras = new Bundle();
+            extras.PutInt(Permissions.PermissionKey, Permissions.RecordAudio);
+            intent.PutExtras(extras);
+
+            StartActivityForResult(intent, Permissions.RecordAudio);
+        }
+
+        private void EnableShowOnLockScreen_Click(object sender, EventArgs e)
+        {
+            var intent = new Intent(this, Java.Lang.Class.FromType(typeof(PermissionExplanationActivity)));
+            var extras = new Bundle();
+            extras.PutInt(Permissions.PermissionKey, Permissions.ShowOnLockScreenXiaomi);
+            intent.PutExtras(extras);
+
+            StartActivityForResult(intent, Permissions.ShowOnLockScreenXiaomi);
         }
 
         private void EnableLocationAccess_Click(object sender, EventArgs e)
@@ -234,14 +268,6 @@
             intent.PutExtras(extras);
 
             StartActivityForResult(intent, Permissions.EnableAccessibilityService);
-        }
-
-
-        private void OnDialogPositiveButtonEventArgs(object sender, DialogClickEventArgs e)
-        {
-            //ComponentName admin = new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(AdminReceiver)));
-            //using Intent intent = new Intent(DevicePolicyManager.ActionAddDeviceAdmin).PutExtra(DevicePolicyManager.ExtraDeviceAdmin, admin);
-            //StartActivity(intent);
         }
 
         private void EnableNotificationAccess_Click(object sender, EventArgs e)

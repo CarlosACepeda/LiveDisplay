@@ -26,6 +26,11 @@ public class PermissionExplanationActivity: AppCompatActivity, IActivityResultCa
     TextView permission_title, permission_explanation;
 
     bool permissionAlreadyGranted = false;
+
+    const string XiaomiSecurityCenterPackage = "com.miui.securitycenter";
+    const string XiaomiSecurityCenterActivityToStart ="com.miui.permcenter.permissions.PermissionsEditorActivity";
+    const string XiaomiSecurityCenterIntentAction = "miui.intent.action.APP_PERM_EDITOR";
+    const string XiaomiSecurityCenterIntentExtraTargetPackageKey = "extra_pkgname";
     protected override void OnCreate(Bundle savedInstanceState)
     {
         SetContentView(Resource.Layout.permission_explanation);
@@ -90,6 +95,15 @@ public class PermissionExplanationActivity: AppCompatActivity, IActivityResultCa
                 ComponentName admin = new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(AdminReceiver)));
                 intent = new Intent(DevicePolicyManager.ActionAddDeviceAdmin).PutExtra(DevicePolicyManager.ExtraDeviceAdmin, admin);
                 break;
+            case Permissions.ShowOnLockScreenXiaomi:
+                    intent = new Intent(XiaomiSecurityCenterIntentAction);
+                    intent.SetClassName(XiaomiSecurityCenterPackage,XiaomiSecurityCenterActivityToStart);
+                    intent.PutExtra(XiaomiSecurityCenterIntentExtraTargetPackageKey, this.PackageName);
+                break;
+            case Permissions.RecordAudio:
+                activityResultLauncher.Launch(Android.Manifest.Permission.RecordAudio); //Asking for a runtime permission
+                permissionBeingSetForResult = _permissionToSetRequestCode;
+                break;
         }
         //To prevent launching activity twice, as asking for Runtime permissions is made by Activity Result Launcher
         if (permissionBeingSetForResult == Permissions.None)
@@ -109,6 +123,9 @@ public class PermissionExplanationActivity: AppCompatActivity, IActivityResultCa
             case Permissions.EnableAccessibilityService:
                 SetPermissionResult(Checkers.IsAccessibilityEnabled());
                 break;
+            case Permissions.ShowOnLockScreenXiaomi:
+                SetPermissionResult(Checkers.ThisAppCanBeShownOnXiaomiDeviceLockScreen());
+                break;
         }
 
         base.OnActivityResult(requestCode, resultCode, data);
@@ -122,6 +139,9 @@ public class PermissionExplanationActivity: AppCompatActivity, IActivityResultCa
                 break;
             case Permissions.Location:
                 SetPermissionResult(Checkers.ThisAppCanReadLocation());
+                break;
+            case Permissions.RecordAudio:
+                SetPermissionResult(Checkers.ThisAppCanRecordAudio());
                 break;
         }
     }
@@ -168,6 +188,17 @@ public class PermissionExplanationActivity: AppCompatActivity, IActivityResultCa
                 explanation = GetString(Resource.String.access_location_explanation);
                 permissionAlreadyGranted = Checkers.ThisAppCanReadLocation();
                 break;
+            case Permissions.ShowOnLockScreenXiaomi:
+                title = GetString(Resource.String.show_on_lock_screen_xiaomi_title);
+                explanation = GetString(Resource.String.show_on_lock_screen_xiaomi_explanation);
+                permissionAlreadyGranted = Checkers.ThisAppCanBeShownOnXiaomiDeviceLockScreen();
+                break;
+            case Permissions.RecordAudio:
+                title = GetString(Resource.String.record_audio_access_title);
+                explanation = GetString(Resource.String.record_audio_access_explanation);
+                permissionAlreadyGranted = Checkers.ThisAppCanRecordAudio();
+                break;
+
         }
         permission_title.Text= title;
         permission_explanation.Text= explanation;

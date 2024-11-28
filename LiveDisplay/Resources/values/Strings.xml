@@ -133,6 +133,8 @@
   <string name="show_lyrics">Show lyrics</string>
   <string name="show_lyrics_summary">Enrich your experience in Media Control! Show lyrics whenever possible!</string>
   <string name="show_on_lock_screen">Show on lockscreen!</string>
+  <string name="show_on_lock_screen_xiaomi_explanation">Some Xiaomi devices have this permission, however, as this is a permission made up by Xiaomi and not recognized by the Android system I can\'t actually check if this permission has been given or not. So I trust you, the user to make sure this permission is given to this app, if not, it won\'t work correctly.</string>
+  <string name="show_on_lock_screen_xiaomi_title">Show the Player on your Lock Screen</string>
   <string name="sixhours">6 Hours</string>
   <string name="stop">Stop</string>
   <string name="sync_with_weather">Sync with Weather Changes</string>
@@ -174,4 +176,7 @@
   <string name="enable_location_access">Location access</string>
   <string name="close">Close</string>
   <string name="you_already_have_permission">You have the permission!</string>
+  <string name="record_audio_access">Music Visualization: Record audio</string>
+  <string name="record_audio_access_title">Record Audio</string>
+  <string name="record_audio_access_explanation">To display music visualizations on the player\'s screen we need to register the media output when it occurs</string>
 </resources>

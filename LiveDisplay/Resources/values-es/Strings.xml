@@ -54,6 +54,7 @@
   <string name="enable_accessibility_explanation">Usa los controles enriquecidos de LiveDisplay cuando la pantalla esta apagada, este servicio los detecta cuando apagas la pantalla</string>
   <string name="enable_accessibility_title">Detectar presiones de boton</string>
   <string name="enable_posting_notifications_permission">Activa las notificaciones de esta app</string>
+  <string name="enable_show_on_lock_screen_xiaomi_permission">Mostrar en pantalla de bloqueo</string>
   <string name="enableaccessibilityaccess">Acceso a la accesibilidad</string>
   <string name="enableawake">Activar servicio Awake</string>
   <string name="enabledeviceaccess">Acceso al Dispositivo</string>
@@ -129,6 +130,8 @@
   <string name="show_lyrics">Mostrar letra</string>
   <string name="show_lyrics_summary">Enriquece tu experiencia, muestra la letra de la cancion cuando esté disponible</string>
   <string name="show_on_lock_screen">Mostrar en pantalla de bloqueo</string>
+  <string name="show_on_lock_screen_xiaomi_explanation">Algunos dispositivos Xiaomi tienen este permiso, este permiso, es uno inventado por Xiaomi y no es parte del sistema Android, debido a esto no puedo saber si el permiso ha sido concedido o no, así que confío en ti, el usuario, en asegurarse que el permiso de mostrar sobre la pantalla de bloqueo haya sido permitido para mi app, de lo contrario no funcionará.</string>
+  <string name="show_on_lock_screen_xiaomi_title">Reproductor sobre Pantalla de bloqueo</string>
   <string name="sixhours">6 Horas</string>
   <string name="stop">Detener</string>
   <string name="sync_with_weather">Sincronizar con el estado del clima</string>
@@ -168,4 +171,7 @@
   <string name="enable_location_access">Acceso a tu ubicación</string>
   <string name="close">Cerrar</string>
   <string name="you_already_have_permission">Ya tienes este permiso</string>
+  <string name="record_audio_access">Visualizaciones: Registrar audio</string>
+  <string name="record_audio_access_title">Registrar audio</string>
+  <string name="record_audio_access_explanation">Para mostrarte visualizaciones de música en el reproductor, necesitamos este permiso para detectar la salida de audio cuando ocurra</string>
 </resources>

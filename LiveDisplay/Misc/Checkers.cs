@@ -6,6 +6,7 @@ using Android.OS;
 using Android.Provider;
 using LiveDisplay.BroadcastReceivers;
 using LiveDisplay.Services;
+using System;
 
 namespace LiveDisplay.Misc
 {
@@ -100,6 +101,24 @@ namespace LiveDisplay.Misc
         public static bool AreMandatoryPermissionsEnabled()
         {
             return IsNotificationListenerEnabled() && ThisAppCanPostNotifications();
+        }
+        public static bool ThisAppCanBeShownOnXiaomiDeviceLockScreen()
+        {
+            return false;
+        }
+
+        internal static bool ThisAppCanRecordAudio()
+        {
+            if (Build.VERSION.SdkInt > BuildVersionCodes.LollipopMr1)
+                if (Application.Context.CheckSelfPermission(Manifest.Permission.RecordAudio) == Android.Content.PM.Permission.Granted)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            return true;
         }
     }
 }

@@ -22,6 +22,7 @@
   <string name="doubletaptosleep">Dublă apăsare pentru închidere</string>
   <string name="email_subject">Traducere pentru LiveDisplay</string>
   <string name="enable_posting_notifications_permission">Activează notificarile din acesta app</string>
+  <string name="enable_show_on_lock_screen_xiaomi_permission">Afiseaza pe ecranul de blocare</string>
   <string name="enableaccessibilityaccess">Accează acesibilitatea</string>
   <string name="enablenotificationlistener">Accează notificarile</string>
   <string name="enabletestsetting">Activează \&lt;test\&gt; opțiuni</string>
