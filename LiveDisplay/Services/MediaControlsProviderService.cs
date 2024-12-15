@@ -1,5 +1,6 @@
 ﻿using Android.App;
 using Android.Content;
+using Android.Graphics;
 using Android.OS;
 using Android.Runtime;
 using LiveDisplay.BroadcastReceivers;
@@ -24,6 +25,7 @@ namespace LiveDisplay.Services
 
         string mediaTitle, mediaOwningApp, mediaArtist;
         PendingIntent mediaSessionPendingIntent;
+        private Bitmap mediaArtwork;
         int repeatOptionSet;
 
         bool showStopControl, showRepeatControl = false;
@@ -99,6 +101,7 @@ namespace LiveDisplay.Services
             mediaTitle = e.MediaTitle;
             mediaArtist = e.MediaArtist;
             mediaSessionPendingIntent = e.ActivityIntent;
+            mediaArtwork = e.MediaArtwork;
 
             UpdateNotification();
         }
@@ -108,9 +111,8 @@ namespace LiveDisplay.Services
             bool isOreo = Build.VERSION.SdkInt >= BuildVersionCodes.O;
 
             NotificationChannel notificationChannel = new NotificationChannel(MediaControlsProviderServiceNotificationChannelId, "LiveDisplay", NotificationImportance.High);
-
+            notificationChannel.SetBypassDnd(true);
             NotificationManager notificationManager = GetSystemService(Service.NotificationService) as NotificationManager;
-
             notificationManager.CreateNotificationChannel(notificationChannel);
 
 
@@ -118,9 +120,11 @@ namespace LiveDisplay.Services
             builder.SetContentTitle($"{ GetString(Resource.String.extended_controls_for)} {mediaOwningApp}");
             builder.SetSubText(mediaTitle + " | " + mediaArtist);
             builder.SetSmallIcon(Resource.Drawable.ic_stat_default_appicon);
-            builder.SetOnlyAlertOnce(true);
+            builder.SetStyle(new Notification.MediaStyle());
+            builder.SetLargeIcon(mediaArtwork);
+            builder.SetColorized(true);
 
-            Notification.Action[] actions= new Notification.Action[2];
+            Notification.Action[] actions= new Notification.Action[4];
             if(showRepeatControl)
             {
                 var repeatIntent = new Intent(BaseContext, typeof(MediaControlsProviderBroadcastReceiver));
@@ -140,6 +144,8 @@ namespace LiveDisplay.Services
             builder.SetActions(actions);
             builder.SetContentIntent(pendingIntentToStartOnClick);
             builder.SetAutoCancel(false);
+            builder.SetOnlyAlertOnce(true);
+            builder.SetOngoing(true);
             NotificationSlave.GetInstance().PostNotification(
                 MediaControlsProviderServiceNotificationId, builder);
         }
