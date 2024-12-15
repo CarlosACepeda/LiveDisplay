@@ -149,6 +149,7 @@
     <Compile Include="Services\Music\MediaEventArgs\ControlsAvailabilityChangedEventArgs.cs" />
     <Compile Include="Services\Music\MediaEventsPublisherKitkat.cs" />
     <Compile Include="Services\Music\ActiveMediaSessionsListener.cs" />
+    <Compile Include="Services\Music\RecentSessionsProvider.cs" />
     <Compile Include="Services\Notificaciones\CatcherHelper.cs" />
     <Compile Include="Services\Notificaciones\CatcherService.cs" />
     <Compile Include="Services\Music\MediaEventsPublisherLollipop.cs" />

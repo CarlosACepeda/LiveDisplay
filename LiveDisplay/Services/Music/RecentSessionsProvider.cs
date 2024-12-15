@@ -1,0 +1,67 @@
+﻿using LiveDisplay.Misc;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace LiveDisplay.Services.Media
+{
+    public class RecentSessionsProvider
+    {
+        const char mediaSessionsSeparator = ',';
+        static RecentSessionsProvider instance;
+        readonly ConfigurationManager configurationManager;
+        const int maximumNumberOfSessions = 3;
+
+        public static RecentSessionsProvider GetInstance()
+        {
+            instance??= new RecentSessionsProvider();
+
+            
+            return instance;
+        }
+        private RecentSessionsProvider()
+        {
+           configurationManager= new ConfigurationManager();
+        }
+
+        public void SaveSession(string sessionProviderPackageName)
+        {
+            var currentSessions = GetSavedSessions();
+
+            if(currentSessions.Any(s=> s== sessionProviderPackageName))
+            {
+                currentSessions.Remove(sessionProviderPackageName);
+            }
+
+            
+            if (currentSessions.Count >= maximumNumberOfSessions) currentSessions.Remove(currentSessions.Last());
+
+            currentSessions.Add(sessionProviderPackageName);
+            SaveSessions(currentSessions);
+        }
+
+
+        public void OpenApplication(string sessionProviderPackageName)
+        {
+            var intent= PackageUtils.GetAppIntent(sessionProviderPackageName);
+            if (intent != null)
+            {
+                KeyguardPendingIntentMediator.GetInstance().SendIntent(intent);
+            }
+        }
+
+       public List<string> GetSavedSessions()
+        {
+            string result= configurationManager.RetrieveAValue(ConfigurationParameters.RecentMediaSessions, string.Empty);
+            List<string> sessions = result.Split(mediaSessionsSeparator).ToList();
+
+            if (sessions.Any(s => s == string.Empty)) sessions.Remove(string.Empty);
+            SaveSessions(sessions);
+
+            return sessions;
+        }
+        void SaveSessions(List<string> sessions)
+        {
+            configurationManager.SaveAValue(ConfigurationParameters.RecentMediaSessions, string.Join(mediaSessionsSeparator, sessions.ToArray()));
+        }
+    }
+}
