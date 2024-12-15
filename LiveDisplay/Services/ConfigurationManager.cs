@@ -74,7 +74,7 @@ namespace LiveDisplay.Services
         }
         public Drawable RetrieveAValue(string key, bool dummyValue=true) 
         {
-            var encodedValue= sharedPreferences.GetString(key, string.Empty);
+            var encodedValue= sharedPreferences.GetString(key, dummyValue.ToString());
             byte[] actualValue = Android.Util.Base64.Decode(encodedValue, Base64Flags.Default);
 
             MemoryStream memoryStream = new MemoryStream(actualValue);
