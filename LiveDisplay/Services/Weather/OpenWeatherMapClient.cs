@@ -28,9 +28,24 @@ namespace LiveDisplay.Services.Weather
 
                     if (string.IsNullOrWhiteSpace(json)) return null;
 
+                    string measurementUnitRepresentation = string.Empty;
+                    switch(measurementunit)
+                    {
+                        case MeasurementUnits.Kelvin:
+                            measurementUnitRepresentation = MeasurementUnits.KelvinRepresentation;
+                            break;
+                        case MeasurementUnits.Celsius:
+                            measurementUnitRepresentation = MeasurementUnits.CelsiusRepresentation;
+                            break;
+                        case MeasurementUnits.Fahrenheit:
+                            measurementUnitRepresentation = MeasurementUnits.FahrenheitRepresentation;
+                            break;
+
+                    }
+
                     WeatherRoot weatherRoot =
                     DeserializeObject<WeatherRoot>(json);
-                    configurationManager.SaveAValue(ConfigurationParameters.CurrentTemperature, (float)weatherRoot.MainWeather.Temperature);
+                    configurationManager.SaveAValue(ConfigurationParameters.CurrentTemperature, weatherRoot.MainWeather.Temperature+ measurementUnitRepresentation);
                     configurationManager.SaveAValue(ConfigurationParameters.CityForCurrentWeatherForecast, weatherRoot.Name);
                     configurationManager.SaveAValue(ConfigurationParameters.WeatherDescription, weatherRoot.Weather[0].Description);
                     configurationManager.SaveAValue(ConfigurationParameters.WeatherLastUpdatedAt, DateTime.Now.ToString("ddd" + "," + "hh:mm"));
