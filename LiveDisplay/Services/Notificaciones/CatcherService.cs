@@ -10,6 +10,7 @@ using LiveDisplay.BroadcastReceivers;
 using LiveDisplay.Services.Media;
 using LiveDisplay.Services.Notifications;
 using LiveDisplay.Services.Notifications.NotificationEventArgs;
+using LiveDisplay.Visualizers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +33,7 @@ namespace LiveDisplay.Services
         private OpenNotification lastPostedNotification;
         private NotificationSlave notificationSlave;
         private const int MillisUntilSafeCallsKitkat= 2000;
+        private bool everythingIsInitialized = false; //Android calls the Listener Connected/OnBind callbacks twice, this is to prevent double subscription.
 
         public override void OnInterruptionFilterChanged([GeneratedEnum] InterruptionFilterType interruptionFilter)
         {
@@ -50,37 +52,46 @@ namespace LiveDisplay.Services
 
         public void OnListenerConnectedKitkat()
         {
-            Console.WriteLine("ONBIND!");
-
-            ThreadPool.QueueUserWorkItem(o =>
+            if (!everythingIsInitialized)
             {
-                Thread.Sleep(MillisUntilSafeCallsKitkat);
-                InitializeCatcherHelper(); //Must come first, subsequent calls depend on this initialization.
+                Console.WriteLine("ONBIND!");
 
-                audioManager = (AudioManager)Application.Context.GetSystemService(AudioService);
-                remoteController = new RemoteController(Application.Context, this, MainLooper); //Could leak.
-                remoteController.SetArtworkConfiguration(Resources.DisplayMetrics.WidthPixels, Resources.DisplayMetrics.HeightPixels);
-                RemoteControlClient client = new RemoteControlClient(null, MainLooper);
-                var session = client.MediaSession;
-                audioManager.RegisterRemoteController(remoteController);
-                mediaControllerKitkat = MediaEventsPublisherKitkat.Initialize(remoteController);
-                ToggleNotificationSlaveSubscription(true);
-                RegisterScreenOnOffReceiver();
-                ToggleListeningForConfigurationChanges(true);
-                TryToInitializeMediaEventsListener();
-            });
+                ThreadPool.QueueUserWorkItem(o =>
+                {
+                    Thread.Sleep(MillisUntilSafeCallsKitkat);
+                    InitializeCatcherHelper(); //Must come first, subsequent calls depend on this initialization.
+
+                    audioManager = (AudioManager)Application.Context.GetSystemService(AudioService);
+                    remoteController = new RemoteController(Application.Context, this, MainLooper); //Could leak.
+                    remoteController.SetArtworkConfiguration(Resources.DisplayMetrics.WidthPixels, Resources.DisplayMetrics.HeightPixels);
+                    RemoteControlClient client = new RemoteControlClient(null, MainLooper);
+                    audioManager.RegisterRemoteController(remoteController);
+                    mediaControllerKitkat = MediaEventsPublisherKitkat.Initialize(remoteController);
+                    ToggleNotificationSlaveSubscription(true);
+                    RegisterScreenOnOffReceiver();
+                    ToggleListeningForConfigurationChanges(true);
+                    TryToInitializeMediaEventsListener();
+                    ToggleInitializeVisualizerService(true);
+                });
+                everythingIsInitialized = true;
+            }
         }
 
 
         public override void OnListenerConnected()
         {
-            InitializeCatcherHelper(); //Must come first, subsequent calls depend on this initialization.
-            ScreenOnOffReceiver.ReceiverCount++;
-            //RemoteController Lollipop and Beyond Implementation
-            ToggleNotificationSlaveSubscription(true);
-            RegisterScreenOnOffReceiver();
-            ToggleListeningForConfigurationChanges(true);
-            TryToInitializeMediaEventsListener();
+            if (!everythingIsInitialized)
+            {
+                InitializeCatcherHelper(); //Must come first, subsequent calls depend on this initialization.
+                ScreenOnOffReceiver.ReceiverCount++;
+                //RemoteController Lollipop and Beyond Implementation
+                ToggleNotificationSlaveSubscription(true);
+                RegisterScreenOnOffReceiver();
+                ToggleListeningForConfigurationChanges(true);
+                TryToInitializeMediaEventsListener();
+                ToggleInitializeVisualizerService(true);
+                everythingIsInitialized = true;
+            }
         }
 
         public override void OnNotificationPosted(StatusBarNotification sbn)
@@ -104,8 +115,11 @@ namespace LiveDisplay.Services
             ToggleListeningForConfigurationChanges(false);
             UnregisterReceiver(screenOnOffReceiver);
             FinalizeMediaEventsListener();
+            ToggleInitializeVisualizerService(false);
             catcherHelper.Dispose();
             ScreenOnOffReceiver.ReceiverCount--;
+            everythingIsInitialized = false;
+
             base.OnListenerDisconnected();
         }
         public void OnListenerDisconnectedMarshmallow()
@@ -114,8 +128,10 @@ namespace LiveDisplay.Services
             ToggleListeningForConfigurationChanges(false);
             UnregisterReceiver(screenOnOffReceiver);
             FinalizeMediaEventsListener();
+            ToggleInitializeVisualizerService(false);
             catcherHelper.Dispose();
             ScreenOnOffReceiver.ReceiverCount--;
+            everythingIsInitialized = false;
         }
         public void OnListenerDisconnectedKitkat()
         {
@@ -125,6 +141,8 @@ namespace LiveDisplay.Services
             UnregisterReceiver(screenOnOffReceiver);
             ToggleNotificationSlaveSubscription(false);
             ToggleListeningForConfigurationChanges(false);
+            ToggleInitializeVisualizerService(false);
+            everythingIsInitialized = false;
         }
 
         public override bool OnUnbind(Intent intent)
@@ -183,46 +201,47 @@ namespace LiveDisplay.Services
                 notificationSlave.NotificationCancelledLollipop += NotificationSlave_NotificationCancelledLollipop;
                 notificationSlave.ResendLastNotificationRequested += NotificationSlave_ResendLastNotificationRequested;
                 notificationSlave.RequestedOpenNotification += NotificationSlave_RequestedOpenNotification;
-
             }
             else
             {
                 notificationSlave.AllNotificationsCancelled -= NotificationSlave_AllNotificationsCancelled;
                 notificationSlave.NotificationCancelled -= NotificationSlave_NotificationCancelled;
                 notificationSlave.NotificationCancelledLollipop -= NotificationSlave_NotificationCancelledLollipop;
-                notificationSlave.ResendLastNotificationRequested -= NotificationSlave_ResendLastNotificationRequested; 
-                notificationSlave.RequestedOpenNotification -= NotificationSlave_RequestedOpenNotification; 
-
+                notificationSlave.ResendLastNotificationRequested -= NotificationSlave_ResendLastNotificationRequested;
+                notificationSlave.RequestedOpenNotification -= NotificationSlave_RequestedOpenNotification;
             }
 
         }
 
         private void ToggleMediaEventsPublisherAvailability(OpenNotification openNotification, bool setAvailable)
         {
-            if (setAvailable)
+            var mediaSessionToken= openNotification.MediaSessionToken;
+            if (mediaSessionToken != null)
             {
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+                if (setAvailable)
                 {
-                    if (openNotification.Style == OpenNotification.MediaStyle)
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
                     {
-                        var mediaSessionToken = openNotification.MediaSessionToken;
-                        if (openNotification.IsOngoing || !openNotification.IsAutoCancellable)
+                        if (openNotification.Style == OpenNotification.MediaStyle)
                         {
-                            if (!MediaEventsPublisherLollipop.IsInitialized() || !MediaEventsPublisherLollipop.GetInstance().IsMediaSessionUsingToken(mediaSessionToken))
+                            if (openNotification.IsOngoing || !openNotification.IsAutoCancellable)
                             {
-                                Console.WriteLine($"CATCHER: Trying initializing Media for: {openNotification.AppName}");
-                                MediaEventsPublisherLollipop.Initialize(mediaSessionToken);
+                                if (!MediaEventsPublisherLollipop.IsInitialized() || !MediaEventsPublisherLollipop.GetInstance().IsMediaSessionUsingToken(mediaSessionToken))
+                                {
+                                    Console.WriteLine($"CATCHER: Trying initializing Media for: {openNotification.AppName}");
+                                    MediaEventsPublisherLollipop.Initialize(mediaSessionToken);
+                                }
                             }
                         }
                     }
                 }
-            }
-            else
-            {
-                if(MediaEventsPublisherLollipop.IsInitialized() && 
-                    MediaEventsPublisherLollipop.GetInstance().IsMediaSessionUsingToken(openNotification.MediaSessionToken))
+                else
                 {
-                    MediaEventsPublisherLollipop.GetInstance().Finish();
+                    if (MediaEventsPublisherLollipop.IsInitialized() &&
+                        MediaEventsPublisherLollipop.GetInstance().IsMediaSessionUsingToken(mediaSessionToken))
+                    {
+                        MediaEventsPublisherLollipop.GetInstance().Finish();
+                    }
                 }
             }
         }
@@ -256,6 +275,14 @@ namespace LiveDisplay.Services
 
             var serviceIntent = new Intent(Application.Context, Java.Lang.Class.FromType(typeof(MediaControlsProviderService)));
             StartService(serviceIntent);
+        }
+        private void ToggleInitializeVisualizerService(bool start)
+        {
+            if (start)
+            {
+                VisualizerService.GetInstance().Start();
+            }
+            else VisualizerService.GetInstance().Stop();
         }
 
         //Events:
