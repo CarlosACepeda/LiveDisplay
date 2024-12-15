@@ -1,8 +1,8 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.Content.PM;
+using Android.Graphics.Drawables;
 using Android.OS;
-using System;
 
 namespace LiveDisplay.Misc
 {
@@ -34,6 +34,10 @@ namespace LiveDisplay.Misc
         public static Intent GetAppIntent(string packageName)
         {
             return packageManager.GetLaunchIntentForPackage(packageName);
+        }
+        public static Drawable GetAppIcon(string packageName)
+        {
+            return packageManager.GetApplicationIcon(packageName);
         }
     }
 }
