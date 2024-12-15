@@ -2,7 +2,10 @@
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
+using AndroidX.Core.App;
 using LiveDisplay.Activities;
+using LiveDisplay.Misc;
+using LiveDisplay.Services.Keyguard;
 using LiveDisplay.Services.Notifications;
 using LiveDisplay.Services.Notifications.NotificationEventArgs;
 using System;
@@ -78,7 +81,7 @@ namespace LiveDisplay.Services
 
 
         public void RequestOpenNotification(Func<OpenNotification, bool> predicate,int requestCode)
-            {
+        {
             RequestedOpenNotification?.Invoke(null,new OpenNotificationRequestedEventArgs
             {
                 Predicate= predicate,
@@ -110,8 +113,8 @@ namespace LiveDisplay.Services
         {
             try
             {
-                var intent = notification.ContentIntent;
-                intent ??= notification.FullScreenIntent;
+                var pendingIntent = notification.ContentIntent;
+                pendingIntent ??= notification.FullScreenIntent;
 
                 //This is part of a Workaround to make LockScreen show on Android Q devices and above:
                 //Please check CatcherHelper#OnNotificationPosted() to get an idea of how it works.
@@ -121,7 +124,7 @@ namespace LiveDisplay.Services
                     //Workaround behavior.
                     //Causes a FullScreenIntent that's contained within a Notification matchig the if statement to be sent correctly.
                     //For some unknown reason the usual "Send()" method doesn't work if the screen is locked.
-                    intent.Send(Result.Ok, this, new Handler());
+                    pendingIntent.Send(Result.Ok, this, new Handler());
                     CancelNotification(notification.Key); //ignoring documentation: if we leave this notification alive after performing the previous line intent.Send(...),
                                                           //then after if the same notification gets posted without the previous one being removed then the intent.Send(...) won't succeed.
                                                           //and the lockscreen won't show.
@@ -132,13 +135,7 @@ namespace LiveDisplay.Services
                 {
                     //Usual behavior.
 
-                    //TODO: if device is locked: Suggest the user to unlock it,
-                    //Declare an event for the case the user unlocks the device, then proceed with the following code.
-                    //This is because this code by itself can't promt the user to unlock the device.
-                    //Iit only sends the pending intent.
-
-
-                    intent.Send();
+                    KeyguardPendingIntentMediator.GetInstance().SendPendingIntent(pendingIntent);
                     //Android Docs: For NotificationListeners: When implementing a custom click for notification
                     //Cancel the notification after it was clicked when this notification is autocancellable.
                     if (notification.IsAutoCancellable)
@@ -166,7 +163,8 @@ namespace LiveDisplay.Services
             }
             else
             {
-                action.ActionIntent.Send();
+                KeyguardPendingIntentMediator.GetInstance().SendPendingIntent(
+                action.ActionIntent);
             }
         }
 
