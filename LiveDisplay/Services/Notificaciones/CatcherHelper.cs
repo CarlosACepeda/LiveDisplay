@@ -40,10 +40,9 @@ namespace LiveDisplay.Services.Notifications
 
         public void OnNotificationPosted(OpenNotification sbn)
         {
-            if (sbn == null) { return; }
             //This is the notification of 'LiveDisplay is showing above other apps' when using floating windows.
             //Simply let's ignore it, because it's annoying. (Anyway, the user couldn't care less about this notification tbh)
-            if (sbn.PackageName == AndroidPackageName && sbn.Tag == LiveDisplayAlertWindowNotificationTag)
+            if (sbn!= null && sbn.PackageName == AndroidPackageName && sbn.Tag == LiveDisplayAlertWindowNotificationTag)
                 return;
 
 
