@@ -4,6 +4,7 @@
     using Android.Content;
     using Android.Graphics;
     using Android.Graphics.Drawables;
+    using Android.Util;
 
     internal class IconFactory
     {
@@ -20,6 +21,11 @@
             remotePackageContext = Application.Context.CreatePackageContext(package, 0);
             currentDrawable = icon.LoadDrawable(remotePackageContext);
         }
+        public IconFactory(Drawable icon)
+        {
+            remotePackageContext = Application.Context; //this time we are working with a drawable we own. not from an external package
+            currentDrawable= icon;
+        }
 
         public IconFactory ApplyColorFilter(Color color)
         {
@@ -32,6 +38,16 @@
             Drawable d = new BitmapDrawable(remotePackageContext.Resources, Bitmap.CreateScaledBitmap(bitmap, widthInPixels, heigthInPixels, true));
             currentDrawable = d;
             return this;
+        }
+        public IconFactory ResizeDrawableDp(int widthInDp, int heightInDp)
+        {
+            int heightInPx = (int)TypedValue.ApplyDimension(
+             ComplexUnitType.Dip, heightInDp, Application.Context.Resources.DisplayMetrics);
+
+            int widthInPx = (int)TypedValue.ApplyDimension(
+            ComplexUnitType.Dip, widthInDp, Application.Context.Resources.DisplayMetrics);
+            return ResizeDrawable(widthInPx, heightInPx);
+
         }
         Bitmap DrawableToBitmap(Drawable drawable)
         {
