@@ -18,7 +18,6 @@ namespace LiveDisplay.Services
         PendingIntent alternatePendingIntent;
         readonly bool ModeBackgroundActivityStartAllowed, ModeBackgroundActivityStartAllowedByPermission = true;
         readonly int  PendingIntentCreatorBackgroundActivityStartMode = 1;
-        int requestCode = -1;
 
         Bundle BALSkipOptions;
 
@@ -56,11 +55,22 @@ namespace LiveDisplay.Services
                     {
                         try
                         {
-                            //BAL is applied since Android Q(API 29) but really enforced as of Android 14 (API 34)
-                            //We pass this Data, but the only thing we really require is the IOnFinished interface, to skip the
-                            //Background Activity Launch restrictions.
-                            //because this call will always fail (but doesn't throw any exception) if API level is +34 
-                            pendingIntent.Send(Application.Context, Result.FirstUser, null, this, null, string.Empty, BALSkipOptions);
+                            if ((pendingIntent != null && pendingIntent.IsActivity) || (alternatePendingIntent != null && alternatePendingIntent.IsActivity))
+                            {
+                                //BAL is applied since Android Q(API 29) but really enforced as of Android 14 (API 34)
+                                //We pass this Data, but the only thing we really require is the IOnFinished interface, to skip the
+                                //Background Activity Launch restrictions.
+                                //because this call will always fail (but doesn't throw any exception) if API level is +34 
+                                if (pendingIntent != null)
+                                    pendingIntent.Send(Application.Context, Result.FirstUser, null, this, null, string.Empty, BALSkipOptions);
+                                else
+                                    alternatePendingIntent?.Send(Application.Context, Result.FirstUser, null, this, null, string.Empty, BALSkipOptions);
+                            }
+                            else
+                            {
+                                if (pendingIntent != null) pendingIntent.Send();
+                                else alternatePendingIntent?.Send();
+                            }
                         }
                         catch (PendingIntent.CanceledException pice)
                         {
@@ -72,7 +82,9 @@ namespace LiveDisplay.Services
                     {
                         try
                         {
-                            pendingIntent.Send(); //sweet and nice expected behavior when Android is not Q and up (opens the Activity this PendingIntent represents)
+                            if (pendingIntent != null)
+                                pendingIntent.Send(); //sweet and nice expected behavior when Android is not Q and up (opens the Activity this PendingIntent represents)
+                            else alternatePendingIntent?.Send();
                         }
                         catch (PendingIntent.CanceledException pice)
                         {
@@ -98,9 +110,16 @@ namespace LiveDisplay.Services
         {
             this.pendingIntent = pendingIntent;
             this.alternatePendingIntent = alternatePendingIntent;
-            BALSkipOptions = SetRequiredBALPermissionsBundle();
+            if ((pendingIntent != null && pendingIntent.IsActivity) || (alternatePendingIntent != null && alternatePendingIntent.IsActivity))
+            { 
+                BALSkipOptions = SetRequiredBALPermissionsBundle();
+            }
 
             RequiredSetActivityToBeCalled?.Invoke(this, this);
+        }
+        public void SendIntent(Intent intent)
+        {
+            SendPendingIntent(PendingIntent.GetActivity(Application.Context, 0, intent, PendingIntentFlags.Mutable));
         }
 
         private Bundle SetRequiredBALPermissionsBundle()
@@ -138,7 +157,7 @@ namespace LiveDisplay.Services
                     //namely, this app, then we are gonna resort to creating a "good intent" which will take us to the Main Activity of the application
                     try
                     {
-                        activityRequestingKeyguardDismissal.StartActivity(PackageUtils.GetAppIntent(intent.Package), BALSkipOptions);
+                        activityRequestingKeyguardDismissal.StartActivity(PackageUtils.GetAppIntent(intent.Component.PackageName), BALSkipOptions);
                     }
                     catch
                     {
@@ -147,7 +166,7 @@ namespace LiveDisplay.Services
                 }
                 finally
                 {
-                    activityRequestingKeyguardDismissal.MoveTaskToBack(true);
+                    //activityRequestingKeyguardDismissal.MoveTaskToBack(true);
                 }
             }
         }
