@@ -65,9 +65,9 @@
             humidity = FindViewById<TextView>(Resource.Id.humidity);
             weatherupdatefrequency = FindViewById<Spinner>(Resource.Id.weatherupdatefrequency);
 
-            var spinnerAdapter = ArrayAdapter<string>.CreateFromResource(this, Resource.Array.listentriesweatherupdatefrequency, Android.Resource.Layout.SimpleSpinnerDropDownItem);
+            //var spinnerAdapter = ArrayAdapter<string>.CreateFromResource(this, Resource.Array.listentriesweatherupdatefrequency, Android.Resource.Layout.SimpleSpinnerDropDownItem);
 
-            weatherupdatefrequency.Adapter = spinnerAdapter;
+            //weatherupdatefrequency.Adapter = spinnerAdapter;
         }
 
         private void Allowchangingthewallpaper_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
@@ -89,7 +89,7 @@
 
         private void Weatherupdatefrequency_ItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
         {
-            interval_minutes = int.Parse(Resources.GetStringArray(Resource.Array.listvaluesweatherupdatefrequency)[e.Position]);
+            //interval_minutes = int.Parse(Resources.GetStringArray(Resource.Array.listvaluesweatherupdatefrequency)[e.Position]);
             //configurationManager.SaveAValue(ConfigurationParameters.WeatherUpdateFrequency, e.Position);
         }
 

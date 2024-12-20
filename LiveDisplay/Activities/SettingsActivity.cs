@@ -13,6 +13,8 @@
     public class SettingsActivity : AppCompatActivity, PreferenceFragmentCompat.IOnPreferenceStartFragmentCallback
     {
         private AndroidX.AppCompat.Widget.Toolbar toolbar;
+        AndroidX.Fragment.App.Fragment fragment = null;
+        AndroidX.Fragment.App.Fragment preferencesFragment = null;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -25,27 +27,25 @@
                 SetSupportActionBar(toolbar);
                 SupportActionBar.SetDefaultDisplayHomeAsUpEnabled(true);
             }
-            if (Build.VERSION.SdkInt > BuildVersionCodes.Kitkat)
-            {
-                Bundle remoteInput = RemoteInput.GetResultsFromIntent(Intent);
-                if (remoteInput != null)
-                {
-                    string response = remoteInput.GetCharSequence("test1");
-
-                    Toast.MakeText(this, "The response is: " + response, ToastLength.Long).Show();
-                }
-            }
+            preferencesFragment = new PreferencesFragment();
+        }
+        protected override void OnDestroy()
+        {
+            fragment = null;
+            preferencesFragment = null;
+            base.OnDestroy();
         }
 
         protected override void OnPostCreate(Bundle savedInstanceState)
         {
             base.OnPostCreate(savedInstanceState);
-            SupportFragmentManager.BeginTransaction().Replace(Resource.Id.content, new PreferencesFragment()).Commit();
+            SupportFragmentManager.BeginTransaction().Add
+                (Resource.Id.content, preferencesFragment).Commit();
         }
 
         public bool OnPreferenceStartFragment(PreferenceFragmentCompat caller, Preference pref)
         {
-            string fragmentQualifiedName = string.Empty;
+            int fragmentId = -1;
             string activityQualifiedName = string.Empty;
             //Switch: a Workaround, there's not possible way to get the Qualified name of the Fragment to Start
             //in Xamarin Android.
@@ -59,32 +59,36 @@
                 switch (pref.Fragment)
                 {
                     case "MediaWidgetSettingsFragment":
-                        fragmentQualifiedName = Java.Lang.Class.FromType(typeof(MediaWidgetSettingsFragment)).Name;
+                        fragment = new MediaWidgetSettingsFragment();
+                        fragmentId = 0;
                         break;
                     case "AboutFragment":
-                        fragmentQualifiedName = Java.Lang.Class.FromType(typeof(AboutFragment)).Name;
+                        fragment = new AboutFragment();
+
+                        fragmentId = 1;
                         break;
                     case "AppearanceSettingsFragment":
-                        fragmentQualifiedName = Java.Lang.Class.FromType(typeof(LockScreenSettingsFragment)).Name;
+                        fragment = new LockScreenSettingsFragment();
+                        fragmentId = 2;
                         break;
                     case "MediaControlsProviderServiceSettingsFragment":
-                        fragmentQualifiedName= Java.Lang.Class.FromType(typeof(MediaControlsProviderServiceSettingsFragment)).Name;
+                        fragment = new MediaControlsProviderServiceSettingsFragment();
+                        fragmentId = 3;
+                        break;
+                    case "WeatherSettingsFragment":
+                        fragment = new WeatherSettingsFragment();
+                        fragmentId = 4;
                         break;
                     default:
                         break;
                 }
-                // Instantiate the new Fragment
-                var args = pref.Extras;
-                var fragment = SupportFragmentManager.FragmentFactory.Instantiate(
-                    ClassLoader,
-                    fragmentQualifiedName); //Normally it should be 'pref.Fragment'
-                fragment.Arguments = args;
-                fragment.SetTargetFragment(caller, 0);
-                // Replace the existing Fragment with the new Fragment
+
                 SupportFragmentManager.BeginTransaction()
-                        .Replace(Resource.Id.content, fragment)
+                        .Replace(Resource.Id.content, fragment, fragmentId.ToString())
                         .AddToBackStack(null)
+                        .SetTransition(AndroidX.Fragment.App.FragmentTransaction.TransitFragmentMatchActivityOpen)
                         .Commit();
+
             }
             else if (pref.Fragment.Contains("Activity"))
             {

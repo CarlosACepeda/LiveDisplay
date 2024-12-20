@@ -6,4 +6,15 @@
   <integer name="slot3">3</integer>
   <integer name="slot4">4</integer>
   <integer name="slot5">5</integer>
+  <integer name="notification_text_max_lines">12</integer>
+  <integer name="notification_response_linear_layout_weight_sum">10</integer>
+  <integer name="notification_response_text_weight">9</integer>
+  <integer name="notification_response_button_weight">1</integer>
+  <integer name="zero_minutes">0</integer>
+  <integer name="fifteen_minutes">15</integer>
+  <integer name="thirty_minutes">30</integer>
+  <integer name="one_hour_minutes">60</integer>
+  <integer name="two_hours_minutes">120</integer>
+  <integer name="four_hours_minutes">240</integer>
+  <integer name="six_hours_minutes">360</integer>
 </resources>

@@ -90,10 +90,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Activities\PermissionExplanationActivity.cs" />
+    <Compile Include="Adapters\RecentMediaSessionsAdapter.cs" />
     <Compile Include="BroadcastReceivers\MediaControlsProviderBroadcastReceiver.cs" />
+    <Compile Include="Fragments\FragmentEventArgs\NotificationReadEventArgs.cs" />
+    <Compile Include="Fragments\HideableFragment.cs" />
+    <Compile Include="Fragments\Preferences\WeatherSettingsFragment.cs" />
     <Compile Include="Misc\IntegerListPreference.cs" />
     <Compile Include="Misc\MediaSessionSupportedActionsFlags.cs" />
     <Compile Include="Misc\Permissions.cs" />
+    <AndroidResource Include="Resources\layout\recent_sessions_item.xml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
     <Compile Include="Services\ActivityEvents\ActivityLifecycleHelper.cs" />
     <Compile Include="Activities\BackgroundSettingsActivity.cs" />
     <Compile Include="Activities\BlacklistActivity.cs" />
@@ -177,6 +184,7 @@
     <Compile Include="Services\Weather\MeasurementUnits.cs" />
     <Compile Include="Services\Weather\OpenWeatherMapClient.cs" />
     <Compile Include="Services\Widget\WidgetStatusPublisher.cs" />
+    <Compile Include="Visualizers\CircleVisualizer.cs" />
     <Compile Include="Services\VisualizerService.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -784,6 +792,43 @@
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
     <AndroidResource Include="Resources\drawable-xxxhdpi\baseline_settings_white_18.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\outline_keyboard_arrow_down_white_18.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\drawable-hdpi\outline_keyboard_arrow_up_white_18.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\drawable-mdpi\outline_keyboard_arrow_down_white_18.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\drawable-mdpi\outline_keyboard_arrow_up_white_18.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\drawable-xhdpi\outline_keyboard_arrow_down_white_18.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\drawable-xhdpi\outline_keyboard_arrow_up_white_18.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\drawable-xxhdpi\outline_keyboard_arrow_down_white_18.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\drawable-xxhdpi\outline_keyboard_arrow_up_white_18.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\outline_keyboard_arrow_down_white_18.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\drawable-xxxhdpi\outline_keyboard_arrow_up_white_18.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\xml\weather_prefs.xml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
   </ItemGroup>

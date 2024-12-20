@@ -1,12 +1,15 @@
 ﻿using Android.App;
-using Android.Content.Res;
 
 namespace LiveDisplay.Misc
 {
     internal sealed class ConfigurationParameters
     {
+        //Keys:
         public static readonly string WallpaperScaleType = Application.Context.GetString(Resource.String.wallpaper_scale_type_k);
         public static readonly string UseWhenNoMediaPresent = Application.Context.GetString(Resource.String.use_as_permanent_lock_screen_k);
+        public static readonly string SyncingWithZenMode = Application.Context.GetString(Resource.String.sync_with_zen_mode_k);
+        public static readonly string SyncingWithWeatherConditions = Application.Context.GetString(Resource.String.sync_with_weather_k);
+        public static readonly string ShowLyrics = Application.Context.GetString(Resource.String.show_lyrics_k);
         public static readonly string CurrentWeatherIcon = Application.Context.GetString(Resource.String.current_weather_icon_k);
         public static readonly string CityForCurrentWeatherForecast = Application.Context.GetString(Resource.String.city_for_current_weather_forecast_k);
         public static readonly string WeatherDescription = Application.Context.GetString(Resource.String.weather_description_k);
@@ -14,8 +17,7 @@ namespace LiveDisplay.Misc
         public static readonly string WeatherLastUpdatedAt = Application.Context.GetString(Resource.String.weather_last_updated_at_k);
         public static readonly string MediaControlsProviderServiceNotificationActionIsExtAppPlayer= Application.Context.GetString(Resource.String.media_controls_provider_service_notification_action_is_ext_app_player_k);
         public static readonly string RecentMediaSessions= Application.Context.GetString(Resource.String.recent_media_sessions_k);
-
-
+        public static readonly string WeatherUpdateInterval= Application.Context.GetString(Resource.String.weather_update_interval_k);
         public const string ImagePath = "imagePath";
         public const string ChangeWallpaper = "changewallpaper";
         public const string BlurLevel = "blurlevel";
@@ -33,20 +35,6 @@ namespace LiveDisplay.Misc
         public const string MusicWidgetEnabled = "musicwidgetenabled?";
         public const string ShowAlbumArt = "showalbumart?";
 
-        public const string WeatherCurrent = "weathercurrent";
-        public const string WeatherMinimum = "weatherminimum";
-        public const string WeatherMaximum = "weathermaximum";
-        public const string WeatherLastUpdated = "weatherlastupdated";
-        public const string WeatherHumidity = "weatherhumidity";
-        public const string WeatherDescription = "weatherdescription";
-        public const string WeatherCity = "weathercity";
-        public const string WeatherUseImperialSystem = "useimperialsystem?";
-        public const string WeatherTemperatureUnit = "weathertemperatureunit";
-        public const string WeatherCountryCode = "weathercountrycode";
-        public const string WeatherTemperatureMeasureUnit = "weathertemperaturemeasureunit";
-        public const string WeatherUpdateRequiresUnlimitedNetwork = "weatherupdaterequiresunlimitednetwork?";
-        public const string WeatherUpdateFrequency = "weatherupdatefrequency";
-        public const string WeatherUpdateChangesWallpaper = "weatherupdatechangeswallpaper?";
         public const string EnableQuickReply = "enablequickreply?";
         public const string EnableAwakeService = "enableawake?";
         public const string ListenForDeviceMotion = "listenfordevicemotion?";

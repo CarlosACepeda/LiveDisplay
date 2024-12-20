@@ -17,7 +17,7 @@
   <dimen name="media_album_text_size">17dp</dimen>
   <dimen name="date_text_size">10dp</dimen>
   <dimen name="battery_level_text_size">10dp</dimen>
-  <dimen name="clock_text_size">10dp</dimen>
+  <dimen name="clock_text_size">12dp</dimen>
   <dimen name="permissions_default_text_vertical_margin">10dp</dimen>
   <dimen name="mini_widget_items_padding">5dp</dimen>
   <dimen name="main_scroll_view_margin">10dp</dimen>
@@ -26,5 +26,19 @@
   <dimen name="explanation_screen_content_padding">10dp</dimen>
   <dimen name="notification_widget_content_padding">10dp</dimen>
   <dimen name="current_messages_counter_text_size">9dp</dimen>
+  <dimen name="quick_settings_button_margin">20dp</dimen>
   <dimen name="lock_screen_fab_margin">16dp</dimen>
+  <dimen name="notification_app_name_padding">5dp</dimen>
+  <dimen name="notification_app_name_text_size">20dp</dimen>
+  <dimen name="notification_title_padding">5dp</dimen>
+  <dimen name="notification_text_padding">5dp</dimen>
+  <dimen name="notification_response_text_size">14dp</dimen>
+  <dimen name="notification_other_actions_text_horizontal_padding">5dp</dimen>
+  <dimen name="notification_other_actions_text_size">10dp</dimen>
+  <dimen name="notification_action_buttons_container_horizontal_padding">5dp</dimen>
+  <dimen name="notification_card_elevation">5dp</dimen>
+  <dimen name="notification_card_corner_radius">10dp</dimen>
+  <dimen name="notification_card_width">275dp</dimen>
+  <dimen name="recent_sessions_item_padding">7dp</dimen>
+  <dimen name="current_weather_text_size">9dp</dimen>
 </resources>

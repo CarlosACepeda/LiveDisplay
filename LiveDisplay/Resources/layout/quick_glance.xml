@@ -6,6 +6,17 @@
 	a:id="@+id/container"
 	a:orientation="horizontal"
     a:gravity="center">
+    <androidx.appcompat.widget.AppCompatImageButton
+        a:background="?android:attr/selectableItemBackgroundBorderless"
+        a:id="@+id/weather_indicator"
+        a:layout_width="wrap_content"
+        a:layout_height="wrap_content"/>
+    <TextView
+        a:id="@+id/weather_current_degrees"
+        a:textSize="@dimen/current_weather_text_size"
+        a:alpha="@dimen/alpha_half_visibility"
+        a:layout_width="wrap_content"
+        a:layout_height="wrap_content"/>
 	<TextView
 		tools:text="3/11 "
         a:layout_width="wrap_content"
@@ -22,7 +33,6 @@
         a:layout_width="wrap_content"
         a:layout_height="wrap_content"
         a:textSize="@dimen/clock_text_size"
-        a:alpha="@dimen/alpha_half_visibility"
         a:fontFamily="sans-serif-condensed-light"
         a:paddingHorizontal="@dimen/mini_widget_items_padding"
         />

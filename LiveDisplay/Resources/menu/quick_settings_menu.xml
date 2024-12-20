@@ -11,8 +11,13 @@
     android:title="@string/show_on_lock_screen"
     app:showAsAction="never" />
   <item
-    android:id="@+id/go_to_full_settings"
+    android:id="@+id/cycle_visualization"
     android:orderInCategory="3"
+    android:title="@string/cycle_visualization"
+    app:showAsAction="never" />
+  <item
+    android:id="@+id/go_to_full_settings"
+    android:orderInCategory="4"
     android:title="@string/go_to_full_settings"
     app:showAsAction="never" />
 </menu>

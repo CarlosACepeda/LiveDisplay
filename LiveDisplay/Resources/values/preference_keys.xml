@@ -2,14 +2,16 @@
 <resources>
   <!--the following strings are meant to be consumed by ConfigurationParameters class, so they can be retrieved at runtime-->
   <string name="wallpaper_scale_type_k">wallpaper_scale_type</string>
-  
-  <item type="id" name="use_as_permanent_lock_screen_k"></item>
-  <item type="id" name="sync_with_zen_mode"></item>
-  <item type="id" name="sync_with_weather"></item>
+  <string name="use_as_permanent_lock_screen_k">use_as_permanent_lock_screen</string>
+  <string name="sync_with_zen_mode_k">sync_with_zen_mode</string>
+  <string name="sync_with_weather_k">sync_with_weather</string>
+  <string name="show_lyrics_k">show_lyrics</string>
   <string name="current_weather_icon_k">current_weather_icon</string>
   <string name="city_for_current_weather_forecast_k">city_for_current_weather_forecast</string>
   <string name="weather_description_k">weather_description</string>
   <string name="current_temperature_k">current_temperature</string>
   <string name="weather_last_updated_at_k">weather_last_updated_at</string>
   <string name="media_controls_provider_service_notification_action_is_ext_app_player_k">media_controls_provider_service_notification_action_is_ext_app_player</string>
+  <string name="recent_media_sessions_k">recent_media_sessions</string>
+  <string name="weather_update_interval_k">weather_update_interval</string>
 </resources>

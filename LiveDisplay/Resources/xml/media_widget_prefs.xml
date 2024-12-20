@@ -8,21 +8,21 @@
     <SwitchPreference
       android:enabled="false"
      android:defaultValue="false"
-     android:key="sync_with_zen_mode"
+     android:key="@string/sync_with_zen_mode_k"
      android:title="@string/sync_with_zen_mode"
      android:summary="@string/sync_with_zen_mode_summary"
      app:iconSpaceReserved="false"/>
     <SwitchPreference
       android:enabled="false"
      android:defaultValue="false"
-     android:key="sync_with_weather"
+     android:key="@string/sync_with_weather_k"
      android:title="@string/sync_with_weather"
      android:summary="@string/sync_with_weather_summary"
      app:iconSpaceReserved="false"/>
     <SwitchPreference
       android:enabled="false"
      android:defaultValue="false"
-     android:key="show_lyrics"
+     android:key="@string/show_lyrics_k"
      android:title="@string/show_lyrics"
      android:summary="@string/show_lyrics_summary"
      app:iconSpaceReserved="false"/>
@@ -31,8 +31,7 @@
       android:title="@string/advanced"
       app:iconSpaceReserved="false">
     <SwitchPreference
-      android:enabled="false"
-     android:key="use_as_permanent_lock_screen"
+     android:key="@string/use_as_permanent_lock_screen_k"
      android:title="@string/use_as_permanent_lock_screen"
      android:summary="@string/use_as_permanent_lock_screen_summary"
      app:iconSpaceReserved="false"/>

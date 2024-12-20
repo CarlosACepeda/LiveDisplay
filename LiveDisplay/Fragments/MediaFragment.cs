@@ -8,6 +8,8 @@ using Android.Views;
 using Android.Views.Animations;
 using Android.Widget;
 using AndroidX.Core.Content.Resources;
+using AndroidX.RecyclerView.Widget;
+using LiveDisplay.Adapters;
 using LiveDisplay.Factories;
 using LiveDisplay.Misc;
 using LiveDisplay.Services;
@@ -33,9 +35,10 @@ namespace LiveDisplay.Fragments
             playPause, skipToNext, discardMediaSession, repeat, toggleAdditionalControls, stop,
             customAction1, customAction2;
         ProgressBar buffering;
-        LinearLayout maincontainer, additionalMediaControls;
-        TextView noMediaPlaying;
+        LinearLayout maincontainer, additionalMediaControls, noMediaPlaying;
         SeekBar skbSeekSongTime;
+        RecyclerView recentMediaSessions;
+        RecyclerView.Adapter recentMediaSessionsListAdapter;
         Timer fastForwardTimer;
         Timer rewindTimer;
         bool longPressStarted = false;
@@ -610,6 +613,9 @@ namespace LiveDisplay.Fragments
                         SecondsOfAttention = (skbSeekSongTime.Max / 1000) - (skbSeekSongTime.Progress / 1000)
                     });
                 });
+
+                RecentSessionsProvider.GetInstance().SaveSession(e.PackageName);
+                recentMediaSessionsListAdapter.NotifyDataSetChanged();
             });
         }
 
@@ -715,7 +721,7 @@ namespace LiveDisplay.Fragments
                 Console.WriteLine($"(CUSTOM ACTIOn IS NULL )FILL WITH CUSTOM ACTION: TAG IS NULL? {(view.Tag == null? "true": "false")} ");
             }
         }
-        
+
 
         private void BindViews(View view)
         {
@@ -727,21 +733,28 @@ namespace LiveDisplay.Fragments
             skipToPrevious = view.FindViewById<ImageButton>(Resource.Id.skip_to_previous);
             playPause = view.FindViewById<ImageButton>(Resource.Id.play_pause);
             skipToNext = view.FindViewById<ImageButton>(Resource.Id.skip_to_next);
-            buffering= view.FindViewById<ProgressBar>(Resource.Id.buffering);
+            buffering = view.FindViewById<ProgressBar>(Resource.Id.buffering);
             customAction1 = view.FindViewById<ImageButton>(Resource.Id.custom_action_1);
             customAction2 = view.FindViewById<ImageButton>(Resource.Id.custom_action_2);
 
-            repeat= view.FindViewById<ImageButton>(Resource.Id.repeat);
-            stop= view.FindViewById<ImageButton>(Resource.Id.stop);
+            repeat = view.FindViewById<ImageButton>(Resource.Id.repeat);
+            stop = view.FindViewById<ImageButton>(Resource.Id.stop);
 
             skbSeekSongTime = view.FindViewById<SeekBar>(Resource.Id.seeksongTime);
 
 
             maincontainer = view.FindViewById<LinearLayout>(Resource.Id.container);
             additionalMediaControls = view.FindViewById<LinearLayout>(Resource.Id.additional_media_controls);
-            noMediaPlaying = view.FindViewById<TextView>(Resource.Id.no_media_playing);
+            noMediaPlaying = view.FindViewById <LinearLayout>(Resource.Id.no_media_playing);
             discardMediaSession = view.FindViewById<ImageButton>(Resource.Id.discard_media_session);
             toggleAdditionalControls = view.FindViewById<ImageButton>(Resource.Id.toggle_additional_controls);
+            recentMediaSessions = view.FindViewById<RecyclerView>(Resource.Id.recent_sessions_list);
+
+            var manager = new LinearLayoutManager(Application.Context, LinearLayoutManager.Horizontal, false);
+
+            recentMediaSessions.SetLayoutManager(manager);
+            recentMediaSessionsListAdapter = new RecentMediaSessionsAdapter(RecentSessionsProvider.GetInstance().GetSavedSessions());
+            recentMediaSessions.SetAdapter(recentMediaSessionsListAdapter);
 
         }
 

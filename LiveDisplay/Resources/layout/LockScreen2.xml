@@ -10,6 +10,15 @@
         a:layout_height="match_parent"
         a:layout_width="match_parent"
         />
+   <!-- <livedisplay.BarVisualizerView
+    a:id="@+id/bar_visualizer"
+        a:layout_gravity="bottom"
+    a:layout_width="match_parent"
+    a:layout_height="200dp"/>-->
+     <livedisplay.visualizers.CircleVisualizerView
+    a:id="@+id/xddd"
+    a:layout_width="match_parent"
+    a:layout_height="match_parent"/>
     <RelativeLayout
         a:id="@+id/main_container" 
         a:background="?android:attr/selectableItemBackground"

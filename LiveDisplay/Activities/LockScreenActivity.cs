@@ -1,14 +1,15 @@
 ﻿namespace LiveDisplay
 {
-    using Android.Animation;
     using Android.App;
     using Android.Content;
     using Android.Content.PM;
     using Android.Content.Res;
+    using Android.Graphics;
     using Android.OS;
     using Android.Runtime;
     using Android.Views;
     using Android.Widget;
+    using AndroidX.Activity.Result;
     using AndroidX.AppCompat.App;
     using AndroidX.AppCompat.Widget;
     using AndroidX.Core.View;
@@ -18,40 +19,44 @@
     using LiveDisplay.Fragments;
     using LiveDisplay.Misc;
     using LiveDisplay.Services;
-    using LiveDisplay.Services.Awake;
     using LiveDisplay.Services.Wallpaper;
+    using LiveDisplay.Visualizers;
     using System;
     using System.Threading;
     using PopupMenu = AndroidX.AppCompat.Widget.PopupMenu;
 
     [Activity(Label = "LockScreen",
-        Theme = "@style/LockScreenTheme", 
-        ScreenOrientation = ScreenOrientation.Portrait, 
-        ConfigurationChanges = 
-        ConfigChanges.Navigation 
+        Theme = "@style/LockScreenTheme",
+        ScreenOrientation = ScreenOrientation.Sensor,
+        ConfigurationChanges =
+        ConfigChanges.Navigation
         | ConfigChanges.KeyboardHidden
-        | ConfigChanges.UiMode,
-        LaunchMode = LaunchMode.SingleInstance)]
-    public class LockScreenActivity : AppCompatActivity, View.IOnApplyWindowInsetsListener, PopupMenu.IOnMenuItemClickListener
+        | ConfigChanges.UiMode
+        | ConfigChanges.Orientation
+        | ConfigChanges.ScreenSize,
+        LaunchMode = LaunchMode.SingleInstance,
+        WindowSoftInputMode = SoftInput.AdjustResize)]
+    public class LockScreenActivity : AppCompatActivity, View.IOnApplyWindowInsetsListener, PopupMenu.IOnMenuItemClickListener, IActivityResultCallback
     {
 
-        private AndroidX.Fragment.App.Fragment quickGlanceFragment, mediaFragment, notificationFragment;
+        private AndroidX.Fragment.App.Fragment quickGlanceFragment, mediaFragment;
+        private HideableFragment notificationFragment;
 
         private RelativeLayout lockscreen; //The root linear layout, used to implement double tap to sleep.
         private AppCompatImageView lockscreen_wallpaper;
         private long firstTouchTime = -1;
         private long finalTouchTime;
-        private readonly long threshold = 1000; //1 second of threshold.(used to implement the double tap.)
-        private System.Timers.Timer watchDog; //the watchdog simply will start counting down until it gets resetted by OnUserInteraction() override.
+        private const long DoubleTapThreshold = 1000; //1 second of threshold.(used to implement the double tap.)
         private TextView welcome;
         private FloatingActionButton quickSettings;
         private ConfigurationManager configurationManager = new ConfigurationManager();
 
         private KeyguardPendingIntentMediator pendingIntentMediator;
+        private CircleVisualizer circleVisualizer;
 
         protected override void OnNewIntent(Intent intent)
         {
-            Console.WriteLine($"(Single Instance)new intent from {(Build.VERSION.SdkInt>= BuildVersionCodes.Q? intent.Identifier: "No identifier")} {intent.Component}");
+            Console.WriteLine($"(Single Instance)new intent from {(Build.VERSION.SdkInt >= BuildVersionCodes.Q ? intent.Identifier : "No identifier")} {intent.Component}");
             base.OnNewIntent(intent);
         }
         protected override void OnCreate(Bundle savedInstanceState)
@@ -73,18 +78,14 @@
             });
 
             Console.WriteLine($"THE COUNT IS {MainActivity.StartCount}");
-            
+
             lockscreen = FindViewById<RelativeLayout>(Resource.Id.main_container);
             lockscreen_wallpaper = FindViewById<AppCompatImageView>(Resource.Id.wallpaper);
             quickSettings = FindViewById<FloatingActionButton>(Resource.Id.quick_settings);
+
             lockscreen.Click += Lockscreen_Click;
+            lockscreen.Touch += Lockscreen_Touch;
             quickSettings.Click += QuickSettings_Click;
-
-            watchDog = new System.Timers.Timer
-            {
-                AutoReset = false
-            };
-
             WallpaperPublisher.NewWallpaperIssued += Wallpaper_NewWallpaperIssued;
             WallpaperPublisher.OnZeroPublishersAvailable += WallpaperPublisher_OnZeroPublishersAvailable;
             SharedPreferenceListenerService.ConfigurationChanged += SharedPreferenceListenerService_ConfigurationChanged;
@@ -98,28 +99,45 @@
             Window.DecorView.SetOnApplyWindowInsetsListener(this);
         }
 
+        private void Lockscreen_Touch(object sender, View.TouchEventArgs e)
+        {
+            //Click outside fragment implementation, used to dismiss fragments.
+            if (e.Event.Action == MotionEventActions.Up)
+            {
+                if (notificationFragment?.IsHidden == false)
+                {
+                    // create a rect for storing the fragment window rect
+                    Rect r = new Rect(0, 0, 0, 0);
+                    // retrieve the fragment's windows rect
+                    notificationFragment.View.GetHitRect(r);
+                    // check if the event position is inside the window rect
+                    bool intersects = r.Contains((int)e.Event.GetX(), (int)e.Event.GetY());
+                    // if the event is not inside then we can close the fragment
+                    if (!intersects)
+                    {
+                        SupportFragmentManager.BeginTransaction()
+                            .Hide(notificationFragment)
+                            .SetTransition(AndroidX.Fragment.App.FragmentTransaction.TransitFragmentFade)
+                            .CommitNow();
+                    }
+                }
+            }
+            e.Handled = false;
+        }
+
         private void QuickGlanceFragment_ShowMessagesButtonClicked(object sender, EventArgs e)
         {
-            //todo: perform animations.
             AndroidX.Fragment.App.FragmentTransaction transaction = SupportFragmentManager.BeginTransaction();
 
-            notificationFragment = CreateFragment("notification_fragment");
+            notificationFragment ??= new NotificationFragment();
 
             if (!SupportFragmentManager.IsDestroyed)
             {
-
                 if (!notificationFragment.IsAdded)
                 {
-                    transaction.Add(Resource.Id.WidgetPlaceholder, notificationFragment, "notification_fragment");
+                    transaction.Add(Resource.Id.WidgetPlaceholder, notificationFragment, "notification_fragment")
+                        .CommitNow();
                 }
-                else if (notificationFragment.IsAdded)
-                {
-                    transaction.Remove(notificationFragment);
-                }
-                else
-                    Console.WriteLine("Fragment Manager DESTROYED/ ADDED!!!!");
-
-                transaction.CommitNow();
             }
         }
 
@@ -140,12 +158,12 @@
             else if (firstTouchTime != -1)
             {
                 finalTouchTime = Java.Lang.JavaSystem.CurrentTimeMillis();
-                if (firstTouchTime + threshold < finalTouchTime)
+                if (firstTouchTime + DoubleTapThreshold < finalTouchTime)
                 {
                     firstTouchTime = finalTouchTime; //Let's set the last tap as the first, so the user doesnt have to press twice again
                     return;
                 }
-                else if (firstTouchTime + threshold > finalTouchTime)
+                else if (firstTouchTime + DoubleTapThreshold > finalTouchTime)
                 {
                     //ValueAnimator v = ValueAnimator.OfFloat(0, 300);
                     //v.SetInterpolator(new OvershootInterpolator());
@@ -156,7 +174,7 @@
                     //    widgetContainer.SetY((float)e.Animation.AnimatedValue);
                     //};
 
-                    OnBackPressed();
+                    MoveTaskToBack(false);
                 }
                 //Reset the values of touch
                 firstTouchTime = -1;
@@ -172,57 +190,43 @@
 
         private void SharedPreferenceListenerService_ConfigurationChanged(object sender, Services.Configuration.ConfigurationChangedEventArgs e)
         {
-            if(e.Key== ConfigurationParameters.WallpaperScaleType)
+            if (e.Key == ConfigurationParameters.WallpaperScaleType)
             {
-                int centerCrop= Resources.GetInteger(Resource.Integer.center_crop);
-                int fitXy= Resources.GetInteger(Resource.Integer.fit_xy);
-                if((int)e.Value == centerCrop)
+                int centerCrop = Resources.GetInteger(Resource.Integer.center_crop);
+                int fitXy = Resources.GetInteger(Resource.Integer.fit_xy);
+                if ((int)e.Value == centerCrop)
                 {
                     lockscreen_wallpaper.SetScaleType(ImageView.ScaleType.CenterCrop);
                 }
-                else if((int)e.Value == fitXy)
+                else if ((int)e.Value == fitXy)
                 {
                     lockscreen_wallpaper.SetScaleType(ImageView.ScaleType.FitXy);
                 }
             }
-            if(e.Key== ConfigurationParameters.UseWhenNoMediaPresent)
+            if (e.Key == ConfigurationParameters.UseWhenNoMediaPresent)
             {
-                if((bool)e.Value)
+                if ((bool)e.Value)
                 {
-                    var snackbar= Snackbar.Make(lockscreen, Resource.String.using_when_no_media_present, Snackbar.LengthLong);
+                    var snackbar = Snackbar.Make(lockscreen, Resource.String.using_when_no_media_present, Snackbar.LengthLong);
                     snackbar.SetAnchorView(quickSettings);
                     snackbar.Show();
                 }
                 else
                 {
-                   var snackbar= Snackbar.Make(lockscreen, Resource.String.using_only_when_media_present, Snackbar.LengthLong);
+                    var snackbar = Snackbar.Make(lockscreen, Resource.String.using_only_when_media_present, Snackbar.LengthLong);
                     snackbar.SetAnchorView(quickSettings);
                     snackbar.Show();
                 }
             }
         }
-
         private void WallpaperPublisher_OnZeroPublishersAvailable(object sender, EventArgs e)
         {
             //lockscreen_wallpaper.SetBackgroundColor(Color.Black);
-        }
-
-        private void WatchdogInterval_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-        {
-            //it works correctly, but I want to refactor this. (Regression)
-            if (ActivityLifecycleHelper.GetInstance().GetActivityState(typeof(LockScreenActivity)) == ActivityStates.Resumed)
-                AwakeHelper.TurnOffScreen();
         }
         private void Wallpaper_NewWallpaperIssued(object sender, WallpaperChangedEventArgs e)
         {
             RunOnUiThread(() =>
             {
-                if (configurationManager.RetrieveAValue(ConfigurationParameters.DisableWallpaperChangeAnim) == false) //If the animation is not disabled.
-                {
-                    //Animate only when the activity is visible to the user.
-                    //Window.DecorView.Animate().SetDuration(100).Alpha(0.5f);
-                }
-
                 if (e.Wallpaper != null)
                 {
                     int fitXy = Resources.GetInteger(Resource.Integer.fit_xy);
@@ -240,10 +244,9 @@
         }
         protected override void OnResume()
         {
-            
+            var visualizerView = FindViewById<CircleVisualizerView>(Resource.Id.xddd);
+            circleVisualizer = new CircleVisualizer(visualizerView, Color.Azure);
             AddFlags();
-            watchDog.Stop();
-            watchDog.Start();
             base.OnResume();
         }
         private void Welcome_Touch(object sender, View.TouchEventArgs e)
@@ -256,18 +259,10 @@
             }
         }
 
-        protected override void OnPause()
-        {
-            base.OnPause();
-            watchDog.Stop();
-            watchDog.Elapsed -= WatchdogInterval_Elapsed;
-        }
-
         protected override void OnDestroy()
         {
             WallpaperPublisher.NewWallpaperIssued -= Wallpaper_NewWallpaperIssued;
             WallpaperPublisher.OnZeroPublishersAvailable -= WallpaperPublisher_OnZeroPublishersAvailable;
-            watchDog.Dispose();
             MainActivity.StartCount--;
             AndroidX.Fragment.App.FragmentTransaction transaction = SupportFragmentManager.BeginTransaction();
             transaction.Remove(mediaFragment);
@@ -294,18 +289,9 @@
             base.OnWindowFocusChanged(hasFocus);
         }
 
-        //It simply means that a Touch has been registered, no matter where, it was on the lockscreen.
-        //used to detect if the user is interacting with the lockscreen.
-        public override void OnUserInteraction()
-        {
-            base.OnUserInteraction();
-            watchDog.Stop();
-            watchDog.Start();
-        }
-
         public override bool OnKeyLongPress([GeneratedEnum] Keycode keyCode, KeyEvent e)
         {
-             Console.WriteLine("PRESSED" + e.KeyCode);
+            Console.WriteLine("PRESSED" + e.KeyCode);
 
             return base.OnKeyLongPress(keyCode, e);
         }
@@ -320,9 +306,6 @@
         {
             //Load configurations based on User configuration.
             LoadWallpaper(configurationManager);
-
-            int interval = int.Parse(configurationManager.RetrieveAValue(ConfigurationParameters.TurnOffScreenDelayTime, "5000"));
-            watchDog.Interval = interval;
         }
 
         private void LoadWallpaper(ConfigurationManager configurationManager)
@@ -360,7 +343,7 @@
             AndroidX.Fragment.App.FragmentTransaction transaction = SupportFragmentManager.BeginTransaction();
             transaction.Add(Resource.Id.WidgetPlaceholder, CreateFragment("media_fragment"), "media_fragment");
             transaction.Add(Resource.Id.mini_widget_container, CreateFragment("quick_glance"), "quick_glance");
-            
+
             transaction.CommitNow();
 
         }
@@ -398,8 +381,8 @@
             {
                 Window.AddFlags(WindowManagerFlags.ShowWhenLocked);
             }
-            else 
-            { 
+            else
+            {
                 SetShowWhenLocked(true);
             }
         }
@@ -443,6 +426,10 @@
             }
 
             return base.OnOptionsItemSelected(item);
+        }
+        public void OnActivityResult(Java.Lang.Object result)
+        {
+            Console.WriteLine("result");
         }
     }
 }
