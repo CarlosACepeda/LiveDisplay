@@ -76,6 +76,7 @@
   <string name="fifteenseconds">15 segundos</string>
   <string name="fit_xy">Ajustar alto y ancho a la pantalla</string>
   <string name="fiveseconds">5 segundos</string>
+  <string name="four_hours">4 Horas</string>
   <string name="githubproject">Quieres ayudar?</string>
   <string name="go_to_full_settings">Todos los ajustes</string>
   <string name="halfbottom">mitad inferior</string>
@@ -159,7 +160,7 @@
   <string name="turnonnewnotification">Encender pantalla</string>
   <string name="turnonnewnotification_desc">Prender la pantalla si una nueva notificacion llega</string>
   <string name="turnonusermovement">Prender la pantalla al levantar el dispositivo</string>
-  <string name="four_hours">4 Horas</string>
+  <string name="two_hours">2 Horas</string>
   <string name="updateweathereach">Actualizar clima cada</string>
   <string name="use_as_permanent_lock_screen">Muestra el widget de multimedia</string>
   <string name="use_as_permanent_lock_screen_summary">Si no hay multimedia reproduciendose, mostrar el widget sobre la pantalla de bloqueo siempre</string>
@@ -174,11 +175,12 @@
   <string name="wallpapersettingappliestoalbumart">La configuración actual también afecta las carátulas de album</string>
   <string name="wallpapersettings">Configuracion del Papel Tapiz</string>
   <string name="weather">Clima</string>
+  <string name="weather_update_interval_title">Intervalo de Actualización</string>
   <string name="weatherwidget">Widget del Clima</string>
   <string name="weatherwidgetenabled">Activar el Widget del Clima</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">Diseño del icono de esta app!</string>
   <string name="you_already_have_permission">Ya tienes este permiso</string>
-  <string name="weather_update_interval_title">Intervalo de Actualización</string>
-  <string name="two_hours">2 Horas</string>
+  <string name="blocked_media_sessions">Sesiones de Multimedia bloqueadas</string>
+  <string name="blocked_media_sessions_summary">Controla las sesiones de multimedia que LiveDisplay puede controlar</string>
 </resources>

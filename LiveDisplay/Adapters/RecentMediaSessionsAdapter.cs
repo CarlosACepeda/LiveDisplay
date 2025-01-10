@@ -7,6 +7,7 @@ using LiveDisplay.Misc;
 using LiveDisplay.Factories;
 using AndroidX.AppCompat.Widget;
 using LiveDisplay.Services;
+using System.Linq;
 
 namespace LiveDisplay.Adapters
 {
@@ -14,9 +15,9 @@ namespace LiveDisplay.Adapters
     {
         public event EventHandler<RecentMediaSessionsAdapterClickEventArgs> ItemClick;
         public event EventHandler<RecentMediaSessionsAdapterClickEventArgs> ItemLongClick;
-        List<string> recentMediaSessions;
+        ICollection<string> recentMediaSessions;
 
-        public RecentMediaSessionsAdapter(List<string> recentMediaSessions)
+        public RecentMediaSessionsAdapter(ICollection<string> recentMediaSessions)
         {
             this.recentMediaSessions = recentMediaSessions;
         }
@@ -37,7 +38,7 @@ namespace LiveDisplay.Adapters
         // Replace the contents of a view (invoked by the layout manager)
         public override void OnBindViewHolder(RecyclerView.ViewHolder viewHolder, int position)
         {
-            var item = recentMediaSessions[position];
+            var item = recentMediaSessions.ElementAt(position);
 
             // Replace the contents of the view with that element
             var holder = viewHolder as RecentMediaSessionsAdapterViewHolder;
@@ -53,7 +54,7 @@ namespace LiveDisplay.Adapters
         public override int ItemCount => recentMediaSessions.Count;
 
         void OnClick(RecentMediaSessionsAdapterClickEventArgs args) {
-            KeyguardPendingIntentMediator.GetInstance().SendIntent(PackageUtils.GetAppIntent(recentMediaSessions[args.Position]));
+            KeyguardPendingIntentMediator.GetInstance().SendIntent(PackageUtils.GetAppIntent(recentMediaSessions.ElementAt(args.Position)));
         }
         void OnLongClick(RecentMediaSessionsAdapterClickEventArgs args) => ItemLongClick?.Invoke(this, args);
 

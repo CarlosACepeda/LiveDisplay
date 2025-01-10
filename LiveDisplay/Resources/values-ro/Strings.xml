@@ -33,6 +33,7 @@
   <string name="fifteen_minutes">15 Minute</string>
   <string name="fifteenseconds">15 secunde</string>
   <string name="fiveseconds">5 secunde</string>
+  <string name="four_hours">4 ore</string>
   <string name="githubproject">Vrei să ne ajuți?</string>
   <string name="halfbottom">jumatateă inferioară</string>
   <string name="halftop">jumatateă superioară</string>
@@ -71,13 +72,12 @@
   <string name="translations">Traducere</string>
   <string name="turnoffdelay">Oprire ecranul automat</string>
   <string name="turnonnewnotification">Aprinde ecranul</string>
-  <string name="four_hours">4 ore</string>
+  <string name="two_hours">2 ore</string>
   <string name="updateweathereach">Actualizare climă fiecare</string>
   <string name="wallpaperblur">Blurare</string>
   <string name="wallpaperopacity">Opacitate</string>
   <string name="weather">Climă</string>
+  <string name="weather_update_interval_title">Interval de actualizație</string>
   <string name="weatherwidget">Widget de Climă</string>
   <string name="weatherwidgetenabled">Activează Widget de Climă</string>
-  <string name="weather_update_interval_title">Interval de actualizație</string>
-  <string name="two_hours">2 ore</string>
 </resources>

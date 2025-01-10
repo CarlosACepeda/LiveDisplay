@@ -614,7 +614,6 @@ namespace LiveDisplay.Fragments
                     });
                 });
 
-                RecentSessionsProvider.GetInstance().SaveSession(e.PackageName);
                 recentMediaSessionsListAdapter.NotifyDataSetChanged();
             });
         }

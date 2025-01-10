@@ -216,21 +216,21 @@ namespace LiveDisplay.Services
         private void ToggleMediaEventsPublisherAvailability(OpenNotification openNotification, bool setAvailable)
         {
             var mediaSessionToken= openNotification.MediaSessionToken;
-            if (mediaSessionToken != null)
+            if (mediaSessionToken != null 
+                && (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+                && !RecentSessionsProvider.GetInstance().
+                GetBlockedSessions().Contains(openNotification.PackageName))
             {
                 if (setAvailable)
                 {
-                    if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+                    if (openNotification.Style == OpenNotification.MediaStyle)
                     {
-                        if (openNotification.Style == OpenNotification.MediaStyle)
+                        if (openNotification.IsOngoing || !openNotification.IsAutoCancellable)
                         {
-                            if (openNotification.IsOngoing || !openNotification.IsAutoCancellable)
+                            if (!MediaEventsPublisherLollipop.IsInitialized() || !MediaEventsPublisherLollipop.GetInstance().IsMediaSessionUsingToken(mediaSessionToken))
                             {
-                                if (!MediaEventsPublisherLollipop.IsInitialized() || !MediaEventsPublisherLollipop.GetInstance().IsMediaSessionUsingToken(mediaSessionToken))
-                                {
-                                    Console.WriteLine($"CATCHER: Trying initializing Media for: {openNotification.AppName}");
-                                    MediaEventsPublisherLollipop.Initialize(mediaSessionToken);
-                                }
+                                Console.WriteLine($"CATCHER: Trying initializing Media for: {openNotification.AppName}");
+                                MediaEventsPublisherLollipop.Initialize(mediaSessionToken);
                             }
                         }
                     }

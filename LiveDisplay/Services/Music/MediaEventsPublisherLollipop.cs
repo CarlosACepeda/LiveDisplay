@@ -149,6 +149,7 @@ namespace LiveDisplay.Services.Media
 
             progressTimer.Interval = OneSecondInMillis;
             progressTimer.Elapsed += OnProgressTimerElapsed;
+            RecentSessionsProvider.GetInstance().SaveSession(_mediaController.PackageName);
             Log.Warn("LiveDisplay", "CTOR SUCCESS");
         }
 

@@ -320,11 +320,7 @@ namespace LiveDisplay.Fragments
                         if (currentOpenNotification.Key == e.OpenNotification.Key)
                         {
                             SetNotificationContent(e.OpenNotification);
-                            if (!e.ReceivedWhileScreenOff) //If it's a notification update maybe the user want's to see it immediately(?) to keep the user engaged into 
-                                                           //a convo??
-                            {
-                                Show();
-                            }
+                            Show();
                         }
                     }
                 }

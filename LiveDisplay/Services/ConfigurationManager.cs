@@ -4,7 +4,11 @@ using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.Util;
 using AndroidX.Preference;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 
 namespace LiveDisplay.Services
 {
@@ -57,6 +61,11 @@ namespace LiveDisplay.Services
             sharedPreferencesEditor.PutFloat(key, value);
             sharedPreferencesEditor.Commit();
         }
+        public void SaveValues(string key, ICollection<string> values)
+        {
+            sharedPreferencesEditor.PutStringSet(key, values);
+            sharedPreferencesEditor.Commit();
+        }
 
         public bool RetrieveAValue(string key)
         {
@@ -85,6 +94,24 @@ namespace LiveDisplay.Services
         public float RetrieveAValue(string key, float defaultIfNotFound=0)
         {
             return sharedPreferences.GetFloat(key, defaultIfNotFound);
+        }
+        public ICollection<string> RetrieveValues(string key)
+        {
+            ICollection<string> values= new Collection<string>();
+            try
+            {
+                //GetStringSet doesn't work, apparently a Xamarin.Android bug.
+                values = sharedPreferences.GetStringSet(key, null);
+            }
+            catch
+            {
+                var javaCollectionValues= (Android.Runtime.JavaCollection)sharedPreferences.All.Where(x=> x.Key == key).FirstOrDefault().Value;
+                foreach (string item in javaCollectionValues)
+                {
+                    values.Add(item);
+                }
+            }
+           return values;
         }
     }
 }

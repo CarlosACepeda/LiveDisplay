@@ -23,7 +23,6 @@ namespace LiveDisplay.Services
 
         public bool IsActive { get; set; }
         public virtual void OnFftDataCapture(Visualizer visualizer, byte[] fft, int samplingRate){
-            //this.OnWaveformChanged?.Invoke(null, fft);
         }
 
         public virtual void OnWaveFormDataCapture(Visualizer visualizer, byte[] waveform, int samplingRate) 
@@ -50,23 +49,20 @@ namespace LiveDisplay.Services
 
         private void MediaEventsPublisherLollipop_MediaPlaybackChanged(object sender, Services.Media.MediaEventArgs.MediaPlaybackStateChangedEventArgs e)
         {
-            if (visualizer != null)
-            {
-                bool isMediaPlaying = e.PlaybackState == Android.Media.Session.PlaybackStateCode.Playing;
-                ToggleListeningDataCapture(isMediaPlaying);
-            }
+            bool isMediaPlaying = e.PlaybackState == Android.Media.Session.PlaybackStateCode.Playing;
+            ToggleListeningDataCapture(isMediaPlaying);
         }
 
         public void Stop()
         {
             ToggleListeningDataCapture(true);
             MediaEventsPublisherLollipop.MediaPlaybackChanged -= MediaEventsPublisherLollipop_MediaPlaybackChanged;
-            visualizer.Release();
+            visualizer?.Release();
             IsActive = false;
         }
         void ToggleListeningDataCapture(bool listening)
         {
-            visualizer.SetEnabled(listening);
+            visualizer?.SetEnabled(listening);
         }
 
     }

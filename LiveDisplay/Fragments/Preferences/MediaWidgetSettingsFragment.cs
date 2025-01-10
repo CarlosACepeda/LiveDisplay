@@ -1,15 +1,16 @@
 ﻿using Android.App;
-using Android.Content;
 using Android.OS;
 using Android.Views;
 using AndroidX.Preference;
 using LiveDisplay.Misc;
+using LiveDisplay.Services.Media;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace LiveDisplay.Fragments.Preferences
 {
     public class MediaWidgetSettingsFragment : PreferenceFragmentCompat
     {
-        private ISharedPreferences sharedPreferences = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -19,6 +20,25 @@ namespace LiveDisplay.Fragments.Preferences
         {
             AddPreferencesFromResource(Resource.Xml.media_widget_prefs);
             PreferenceManager.SetDefaultValues(Application.Context, Resource.Xml.media_widget_prefs, true);
+
+            List<string> entries = new List<string>();
+            var sessions = RecentSessionsProvider.GetInstance().GetSavedSessions();
+            foreach (var session in sessions)
+            {
+                entries.Add(PackageUtils.GetTheAppName(session));
+            }
+
+            MultiSelectListPreference multiSelectPref = new MultiSelectListPreference(Application.Context)
+            {
+                Key = ConfigurationParameters.BlockedMediaSessions,
+                Title = Resources.GetString(Resource.String.blocked_media_sessions),
+                Summary= Resources.GetString(Resource.String.blocked_media_sessions_summary),
+                DialogTitle= Resources.GetString(Resource.String.blocked_media_sessions)
+            };
+            multiSelectPref.SetEntries(entries.ToArray());
+            multiSelectPref.SetEntryValues(sessions.ToArray());
+            PreferenceScreen.AddPreference(multiSelectPref);
+
         }
         public override void OnResume()
         {

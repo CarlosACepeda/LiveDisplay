@@ -78,6 +78,7 @@
   <string name="fifteenseconds">15 seconds</string>
   <string name="fit_xy">Fit Height and Width to screen</string>
   <string name="fiveseconds">5 seconds</string>
+  <string name="four_hours">4 Hours</string>
   <string name="githubproject">Want to help?</string>
   <string name="go_to_full_settings">All settings</string>
   <string name="halfbottom">half bottom</string>
@@ -164,7 +165,7 @@
   <string name="turnonnewnotification_desc">Turn on screen if a new notification is received</string>
   <string name="turnonusermovement">Turn on screen on device pick up</string>
   <string name="tutorialtext">Hi there! \n Double tap in the half bottom to unlock!, tap the half top to turn off the device \n Press anywhere to continue</string>
-  <string name="four_hours">4 Hours</string>
+  <string name="two_hours">2 Hours</string>
   <string name="updateweathereach">Update weather each:</string>
   <string name="use_as_permanent_lock_screen">Show Media Widget permanently</string>
   <string name="use_as_permanent_lock_screen_summary">Even if media isn\'t playing show the widget over lock screen</string>
@@ -180,11 +181,12 @@
   <string name="wallpapersettingappliestoalbumart">Current setting also affects album artwork</string>
   <string name="wallpapersettings">Wallpaper Settings</string>
   <string name="weather">Weather</string>
+  <string name="weather_update_interval_title">Update Interval</string>
   <string name="weatherwidget">Weather Widget</string>
   <string name="weatherwidgetenabled">Enable Weather Widget</string>
   <string name="yasujizr">Yasujizr</string>
   <string name="yasujizr_ty">App icon design!</string>
   <string name="you_already_have_permission">You have the permission!</string>
-  <string name="weather_update_interval_title">Update Interval</string>
-  <string name="two_hours">2 Hours</string>
+  <string name="blocked_media_sessions">Blocked Media Sessions</string>
+  <string name="blocked_media_sessions_summary">Control which Media Sessions can LiveDisplay control</string>
 </resources>

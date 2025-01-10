@@ -1,5 +1,6 @@
 ﻿using LiveDisplay.Misc;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace LiveDisplay.Services.Media
@@ -49,19 +50,32 @@ namespace LiveDisplay.Services.Media
             }
         }
 
-       public List<string> GetSavedSessions()
+       public ICollection<string> GetSavedSessions()
         {
-            string result= configurationManager.RetrieveAValue(ConfigurationParameters.RecentMediaSessions, string.Empty);
-            List<string> sessions = result.Split(mediaSessionsSeparator).ToList();
+            var sessions= configurationManager.RetrieveValues(ConfigurationParameters.RecentMediaSessions);
 
-            if (sessions.Any(s => s == string.Empty)) sessions.Remove(string.Empty);
-            SaveSessions(sessions);
+            if (sessions.Any(s => s == string.Empty))
+            {
+                sessions.Remove(string.Empty);
+                SaveSessions(sessions);
+            }
 
             return sessions;
         }
-        void SaveSessions(List<string> sessions)
+        void SaveSessions(ICollection<string> sessions)
         {
-            configurationManager.SaveAValue(ConfigurationParameters.RecentMediaSessions, string.Join(mediaSessionsSeparator, sessions.ToArray()));
+            configurationManager.SaveValues(ConfigurationParameters.RecentMediaSessions, sessions);
+        }
+        public ICollection<string> GetBlockedSessions()
+        {
+            ICollection<string> blockedSessions = configurationManager.RetrieveValues(ConfigurationParameters.BlockedMediaSessions);
+
+            if (blockedSessions.Any(s => s == string.Empty))
+            {
+                blockedSessions.Remove(string.Empty);
+                SaveSessions(blockedSessions);
+            }
+            return blockedSessions;
         }
     }
 }

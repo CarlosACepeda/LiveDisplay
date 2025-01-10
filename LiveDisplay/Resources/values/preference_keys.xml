@@ -13,5 +13,6 @@
   <string name="weather_last_updated_at_k">weather_last_updated_at</string>
   <string name="media_controls_provider_service_notification_action_is_ext_app_player_k">media_controls_provider_service_notification_action_is_ext_app_player</string>
   <string name="recent_media_sessions_k">recent_media_sessions</string>
+  <string name="blocked_media_sessions_k">blocked_media_sessions</string>
   <string name="weather_update_interval_k">weather_update_interval</string>
 </resources>

@@ -17,6 +17,7 @@ namespace LiveDisplay.Misc
         public static readonly string WeatherLastUpdatedAt = Application.Context.GetString(Resource.String.weather_last_updated_at_k);
         public static readonly string MediaControlsProviderServiceNotificationActionIsExtAppPlayer= Application.Context.GetString(Resource.String.media_controls_provider_service_notification_action_is_ext_app_player_k);
         public static readonly string RecentMediaSessions= Application.Context.GetString(Resource.String.recent_media_sessions_k);
+        public static readonly string BlockedMediaSessions = Application.Context.GetString(Resource.String.blocked_media_sessions_k);
         public static readonly string WeatherUpdateInterval= Application.Context.GetString(Resource.String.weather_update_interval_k);
         public const string ImagePath = "imagePath";
         public const string ChangeWallpaper = "changewallpaper";
