@@ -15,12 +15,17 @@ namespace LiveDisplay.Misc
         public static bool IsNotificationListenerEnabled()
         {
             ComponentName cn = new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(Catcher)).Name);
-            string flat = Settings.Secure.GetString(Application.Context.ContentResolver, "enabled_notification_listeners");
-            if (flat != null && flat.Contains(cn.FlattenToString()))
+
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.R)
             {
-                return true;
+                var notificationManager = (NotificationManager)Application.Context.GetSystemService(Context.NotificationService);
+                return notificationManager.IsNotificationListenerAccessGranted(cn);
             }
-            return false;
+            else
+            {
+                string flat = Settings.Secure.GetString(Application.Context.ContentResolver, "enabled_notification_listeners");
+                return flat != null && flat.Contains(cn.FlattenToString());
+            }
         }
 
         public static bool IsThisAppADeviceAdministrator()

@@ -77,7 +77,7 @@ public class PermissionExplanationActivity: AppCompatActivity, IActivityResultCa
                 break;
             case Permissions.ReadNotifications:
                 ComponentName readNotifications = new ComponentName(Application.Context, Java.Lang.Class.FromType(typeof(Catcher)));
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.R)
+                if (Build.VERSION.SdkInt <= BuildVersionCodes.R)
                 {
                     intent = new Intent(Settings.ActionNotificationListenerSettings);
                 }
