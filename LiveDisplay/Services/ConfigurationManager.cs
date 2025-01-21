@@ -102,6 +102,7 @@ namespace LiveDisplay.Services
             {
                 //GetStringSet doesn't work, apparently a Xamarin.Android bug.
                 values = sharedPreferences.GetStringSet(key, null);
+                values ??= new Collection<string>();
             }
             catch
             {
@@ -111,7 +112,7 @@ namespace LiveDisplay.Services
                     values.Add(item);
                 }
             }
-           return values;
+            return values;
         }
     }
 }

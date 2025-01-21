@@ -10,7 +10,6 @@ using LiveDisplay.BroadcastReceivers;
 using LiveDisplay.Services.Media;
 using LiveDisplay.Services.Notifications;
 using LiveDisplay.Services.Notifications.NotificationEventArgs;
-using LiveDisplay.Visualizers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -216,10 +215,12 @@ namespace LiveDisplay.Services
         private void ToggleMediaEventsPublisherAvailability(OpenNotification openNotification, bool setAvailable)
         {
             var mediaSessionToken= openNotification.MediaSessionToken;
-            if (mediaSessionToken != null 
+            var blockedSessions = RecentSessionsProvider.GetInstance().
+                GetBlockedSessions();
+
+            if (mediaSessionToken != null
                 && (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
-                && !RecentSessionsProvider.GetInstance().
-                GetBlockedSessions().Contains(openNotification.PackageName))
+                && !blockedSessions.Contains(openNotification.PackageName))
             {
                 if (setAvailable)
                 {
