@@ -19,6 +19,8 @@ namespace LiveDisplay.Misc
         public static readonly string RecentMediaSessions= Application.Context.GetString(Resource.String.recent_media_sessions_k);
         public static readonly string BlockedMediaSessions = Application.Context.GetString(Resource.String.blocked_media_sessions_k);
         public static readonly string WeatherUpdateInterval= Application.Context.GetString(Resource.String.weather_update_interval_k);
+        public static readonly string CurrentVisualizerStyle = Application.Context.GetString(Resource.String.current_visualizer_style_k);
+
         public const string ImagePath = "imagePath";
         public const string ChangeWallpaper = "changewallpaper";
         public const string BlurLevel = "blurlevel";
@@ -56,11 +58,6 @@ namespace LiveDisplay.Misc
 
         //toggles where to show a minitutorial to the user when it launches the lockscreen for the first time.
         public const string TutorialRead = "tutorialread?";
-
-        //Never used by the user: Which widget should be shown first when starting the lockscreen.
-        //By default it is the clock. (possible values: "clock", "music", "notification")
-        //When there's not an active widget.
-        public const string StartingWidget = "clock";
 
     }
 }

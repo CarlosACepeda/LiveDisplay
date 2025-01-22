@@ -22,6 +22,7 @@
     {
 
         public static event EventHandler ShowMessagesButtonClicked;
+        public static event EventHandler WeatherIndicatorClicked;
 
         private TextView date, battery, messages_counter;
         private ImageView batteryIcon;
@@ -34,7 +35,7 @@
 
         //first item indicates if the messaging notification was read
         //second item indicates the notification key to identify which notification was/wasn't read
-        private List<Tuple<bool, string>> messagingNotifications = new List<Tuple<bool, string>>();
+        private readonly List<Tuple<bool, string>> messagingNotifications = new List<Tuple<bool, string>>();
         
         public override void OnCreate(Bundle savedInstanceState)
         {
@@ -85,13 +86,13 @@
 
         private void Weather_indicator_Click(object sender, EventArgs e)
         {
-            
+            WeatherIndicatorClicked?.Invoke(null, null);
         }
 
         private void NotificationFragment_NotificationRead(object sender, FragmentEventArgs.NotificationReadEventArgs e)
         {
             //Was read by the user
-            var item = messagingNotifications.Where(t => t.Item1 == false && t.Item2 == e.Key).FirstOrDefault();
+            var item = messagingNotifications.FirstOrDefault(t=> t.Item2 == e.Key);
             if (item != null)
             {
                 messagingNotifications?.Remove(item);
@@ -139,8 +140,8 @@
         private void GetOldMessaggingStyleNotifications()
         {
             NotificationSlave.GetInstance().RequestOpenNotification(
-        on => on.Style == OpenNotification.MessagingStyle && !on.IsSummary, QuickGlanceRequestCode);
-
+        on => on.Style == OpenNotification.MessagingStyle && 
+        !on.IsSummary, QuickGlanceRequestCode);
         }
 
         private void Message_indicator_Click(object sender, EventArgs e)
@@ -166,12 +167,14 @@
 
         private void CatcherHelper_NotificationPosted(object sender, NotificationPostedEventArgs e)
         {
-            if (!e.UpdatesPreviousNotification)
-                if (e.OpenNotification.Style == OpenNotification.MessagingStyle && !e.OpenNotification.IsSummary)
-                {
-                    messagingNotifications.Add(new Tuple<bool, string>(false, e.OpenNotification.Key));
-                    MessagesCounterUpdate();
-                }
+            var item = messagingNotifications.FirstOrDefault(n => n.Item2 == e.OpenNotification.Key);
+            if (item!= null)
+            {
+                messagingNotifications.Remove(item);
+            }
+
+            messagingNotifications.Add(new Tuple<bool, string>(false, e.OpenNotification.Key));
+            MessagesCounterUpdate();
             CheckMessagesReadStatusAndDisplayAlert();
         }
 

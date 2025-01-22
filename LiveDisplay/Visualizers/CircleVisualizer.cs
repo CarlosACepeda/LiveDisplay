@@ -4,39 +4,16 @@ using Android.Graphics;
 using System;
 using System.Linq;
 using LiveDisplay.Services;
+using Android.Widget;
+using AndroidX.AppCompat.Widget;
 
 namespace LiveDisplay.Visualizers
 {
-    public class CircleVisualizer: Java.Lang.Object
+    public class CircleVisualizerView : BaseVisualizerView
     {
-        readonly CircleVisualizerView view;
-        Color visualizerColor;
-        public CircleVisualizer(CircleVisualizerView view, Color visualizerColor)
-        {
-            this.view = view;
-            this.visualizerColor= visualizerColor;
-            VisualizerService.GetInstance().OnWaveformChanged += CircleVisualizer_OnWaveformChanged;
-        }
+        public const string Name = "Circle";
 
-        private void CircleVisualizer_OnWaveformChanged(object sender, byte[] waveform)
-        {
-            view.Update(waveform, visualizerColor);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            VisualizerService.GetInstance().OnWaveformChanged -= CircleVisualizer_OnWaveformChanged; 
-
-            base.Dispose(disposing);
-        }
-    }
-    public class CircleVisualizerView : View
-    {
-        byte[] waveform;
-        readonly Paint paint = new Paint();
-        double barWidth;
         double barHeight;
-        int barCount = 0;
         double subtendedAngleRad = 0;
         double circumferenceSize = 0;
         double[] barStartCoordinate = new double[2];
@@ -44,10 +21,10 @@ namespace LiveDisplay.Visualizers
         readonly Circle innerCircle = new Circle();
         double maxBarHeightCurrentBarHeightRatio=0;
 
-        public CircleVisualizerView(Context context, Android.Util.IAttributeSet attrs) : base(context, attrs)
+        public CircleVisualizerView(Context context, Color visualizerColor) : base(context, visualizerColor)
         {
-
         }
+
         protected override void OnDraw(Canvas canvas)
         {
             //each item in waveform ranges from -127 to 128, representing the lowest point of the wave and the highest point of the wave.
@@ -56,19 +33,16 @@ namespace LiveDisplay.Visualizers
             innerCircle.Radius = canvas.Width / 3;
 
 
-            if (waveform != null)
+            if (WaveForm != null)
             {
-                barCount = waveform.Count();
-
-
                 circumferenceSize = (2 * Math.PI) * innerCircle.Radius;
-                barWidth = circumferenceSize / barCount;
-                subtendedAngleRad = (2 * Math.PI) / barCount;
+                barWidth = circumferenceSize / BarCount;
+                subtendedAngleRad = (2 * Math.PI) / BarCount;
 
-                for (int bar = 0; bar < barCount; bar++)
+                for (int bar = 0; bar < BarCount; bar++)
                 {
                     double subtendedAngleForBar = bar * subtendedAngleRad;
-                    barHeight = waveform[bar] - 128; //Offsetting, so the minimum value is 0.
+                    barHeight = WaveForm[bar] - WaveFormSilenceValue; //Offsetting, so the minimum value is 0.
                     maxBarHeightCurrentBarHeightRatio = barHeight / 128;
                     barHeight = barHeight * maxBarHeightCurrentBarHeightRatio;
 
@@ -88,17 +62,10 @@ namespace LiveDisplay.Visualizers
                      (float)barStartCoordinate[0],
                      (float)barStartCoordinate[1],
                      (float)barEndCoordinate[0],
-                     (float)barEndCoordinate[1], paint);
+                     (float)barEndCoordinate[1], Paint);
                 }
-
             }
             base.OnDraw(canvas);
-        }
-        public void Update(byte[] waveform, Color visualizerColor)
-        {
-            this.waveform = waveform;
-            this.paint.SetARGB(visualizerColor.A, visualizerColor.R, visualizerColor.G, visualizerColor.B);
-            Invalidate();
         }
     }
     class Circle

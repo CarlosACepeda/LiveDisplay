@@ -180,8 +180,10 @@
     <Compile Include="Services\Weather\MeasurementUnits.cs" />
     <Compile Include="Services\Weather\OpenWeatherMapClient.cs" />
     <Compile Include="Services\Widget\WidgetStatusPublisher.cs" />
+    <Compile Include="Visualizers\BarVisualizer.cs" />
     <Compile Include="Visualizers\CircleVisualizer.cs" />
     <Compile Include="Services\VisualizerService.cs" />
+    <Compile Include="Visualizers\BaseVisualizer.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-hdpi\ic_awake_24dp.png">

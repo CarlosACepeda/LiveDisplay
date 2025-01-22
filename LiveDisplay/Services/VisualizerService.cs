@@ -1,24 +1,60 @@
-﻿using Android.Media.Audiofx;
+﻿using Android.App;
+using Android.Media.Audiofx;
 using Android.Util;
+using Android.Views;
+using Android.Widget;
+using Java.Util;
 using LiveDisplay.Misc;
 using LiveDisplay.Services.Media;
+using LiveDisplay.Visualizers;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace LiveDisplay.Services
 {
     public class VisualizerService: Java.Lang.Object, Visualizer.IOnDataCaptureListener
     {
+        public string CurrentVisualizerStyle { get; set; } = string.Empty;
+
         private Visualizer visualizer;
         private static VisualizerService instance;
         public event EventHandler<byte[]> OnWaveformChanged;
+        public event EventHandler OnVisualizerStyleChanged;
+
+        private readonly List<string> visualizers = new List<string> 
+        { BarVisualizerView.Name, CircleVisualizerView.Name };
+        private ConfigurationManager _configurationManager;
+
         private VisualizerService()
         {
+            _configurationManager = new ConfigurationManager();
+            CurrentVisualizerStyle = _configurationManager.RetrieveAValue(ConfigurationParameters.CurrentVisualizerStyle, string.Empty);
             Console.WriteLine("Visualizer Service Initialization!");
         }
         public static VisualizerService GetInstance()
         {
             instance ??= new VisualizerService();
             return instance;
+        }
+        public void CycleVisualizerStyle()
+        {
+            if (CurrentVisualizerStyle == string.Empty)
+            {
+                CurrentVisualizerStyle = visualizers.First();
+            }
+            else
+            {
+                int currentIndex = visualizers.IndexOf(CurrentVisualizerStyle);
+                if (currentIndex == visualizers.Count - 1) currentIndex = 0; //Let's go back to the start.
+                else currentIndex++; //if not let's move to the next
+
+                CurrentVisualizerStyle = visualizers.ElementAt(currentIndex);
+                _configurationManager.SaveAValue
+                (ConfigurationParameters.CurrentVisualizerStyle,
+                CurrentVisualizerStyle);
+            }
+            
         }
 
         public bool IsActive { get; set; }

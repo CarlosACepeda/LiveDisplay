@@ -15,4 +15,5 @@
   <string name="recent_media_sessions_k">recent_media_sessions</string>
   <string name="blocked_media_sessions_k">blocked_media_sessions</string>
   <string name="weather_update_interval_k">weather_update_interval</string>
+  <string name="current_visualizer_style_k">current_visualizer_style</string>
 </resources>

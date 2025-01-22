@@ -19,6 +19,7 @@
     using LiveDisplay.Fragments;
     using LiveDisplay.Misc;
     using LiveDisplay.Services;
+    using LiveDisplay.Services.Configuration;
     using LiveDisplay.Services.Wallpaper;
     using LiveDisplay.Visualizers;
     using System;
@@ -49,10 +50,10 @@
         private const long DoubleTapThreshold = 1000; //1 second of threshold.(used to implement the double tap.)
         private TextView welcome;
         private FloatingActionButton quickSettings;
-        private ConfigurationManager configurationManager = new ConfigurationManager();
+        private LinearLayout visualizerContainer;
+        private readonly ConfigurationManager configurationManager = new ConfigurationManager();
 
         private KeyguardPendingIntentMediator pendingIntentMediator;
-        private CircleVisualizer circleVisualizer;
 
         protected override void OnNewIntent(Intent intent)
         {
@@ -82,6 +83,7 @@
             lockscreen = FindViewById<RelativeLayout>(Resource.Id.main_container);
             lockscreen_wallpaper = FindViewById<AppCompatImageView>(Resource.Id.wallpaper);
             quickSettings = FindViewById<FloatingActionButton>(Resource.Id.quick_settings);
+            visualizerContainer = FindViewById<LinearLayout>(Resource.Id.visualizer_container);
 
             lockscreen.Click += Lockscreen_Click;
             lockscreen.Touch += Lockscreen_Touch;
@@ -218,7 +220,35 @@
                     snackbar.Show();
                 }
             }
+            if(e.Key== ConfigurationParameters.CurrentVisualizerStyle)
+            {
+                SetVisualizer((string)e.Value);
+            }
         }
+
+        private void SetVisualizer(string visualizer)
+        {
+            visualizerContainer.RemoveAllViews();
+            switch (visualizer)
+            {
+
+                case CircleVisualizerView.Name:
+                    {
+                        var v = new CircleVisualizerView(this, Color.White);
+                        Console.WriteLine("Cicled to Circle");
+                        visualizerContainer.AddView(v);
+                    }
+                    break;
+                case BarVisualizerView.Name:
+                    {
+                        var v = new BarVisualizerView(this, Color.White);
+                        visualizerContainer.AddView(v);
+                        Console.WriteLine("Cicled to Bar");
+                    }
+                    break;
+            }
+        }
+
         private void WallpaperPublisher_OnZeroPublishersAvailable(object sender, EventArgs e)
         {
             //lockscreen_wallpaper.SetBackgroundColor(Color.Black);
@@ -244,8 +274,7 @@
         }
         protected override void OnResume()
         {
-            var visualizerView = FindViewById<CircleVisualizerView>(Resource.Id.xddd);
-            circleVisualizer = new CircleVisualizer(visualizerView, Color.Azure);
+            LoadVisualizer();
             AddFlags();
             base.OnResume();
         }
@@ -306,6 +335,15 @@
         {
             //Load configurations based on User configuration.
             LoadWallpaper(configurationManager);
+        }
+
+        private void LoadVisualizer()
+        {
+            string currentVisualizer = VisualizerService.GetInstance().CurrentVisualizerStyle;
+            if (currentVisualizer != string.Empty)
+            {
+                SetVisualizer(currentVisualizer);
+            }
         }
 
         private void LoadWallpaper(ConfigurationManager configurationManager)
@@ -416,7 +454,9 @@
                     else
                         configurationManager.SaveAValue(ConfigurationParameters.UseWhenNoMediaPresent, false);
                     break;
-
+                case Resource.Id.cycle_visualization:
+                    VisualizerService.GetInstance().CycleVisualizerStyle();
+                    break;
                 case Resource.Id.go_to_full_settings:
                     using (Intent intent = new Intent(this, typeof(SettingsActivity)))
                     {
