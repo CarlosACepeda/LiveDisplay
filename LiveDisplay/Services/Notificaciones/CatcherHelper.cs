@@ -151,9 +151,8 @@ namespace LiveDisplay.Services.Notifications
 
         private int GetNotificationPosition(OpenNotification sbn)
         {
-            return OpenNotifications.IndexOf(OpenNotifications.FirstOrDefault
-                (o => o.Id == sbn.Id && 
-                o.PackageName == sbn.PackageName));
+            return OpenNotifications.IndexOf(OpenNotifications.SingleOrDefault
+                (o => o.Key == sbn.Key));
         }
 
         private void OnNotificationListSizeChanged(NotificationListSizeChangedEventArgs e)

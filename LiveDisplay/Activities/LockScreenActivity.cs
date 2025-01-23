@@ -36,7 +36,7 @@
         | ConfigChanges.Orientation
         | ConfigChanges.ScreenSize,
         LaunchMode = LaunchMode.SingleInstance,
-        WindowSoftInputMode = SoftInput.AdjustResize)]
+        WindowSoftInputMode = SoftInput.AdjustPan)]
     public class LockScreenActivity : AppCompatActivity, View.IOnApplyWindowInsetsListener, PopupMenu.IOnMenuItemClickListener, IActivityResultCallback
     {
 

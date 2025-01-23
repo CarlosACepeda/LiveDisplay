@@ -376,13 +376,13 @@ namespace LiveDisplay.Fragments
             {
                 int notificationToBeRemovedIndex = GetOpenNotificationIndex(currentOpenNotification);
                 int lastNotificationIndex = openNotifications.Count-1;
-                openNotifications.Remove(currentOpenNotification);
+                openNotifications.RemoveAt(notificationToBeRemovedIndex);
 
                 if (openNotifications.Count > 0)
                 {
                     if (notificationToBeRemovedIndex == lastNotificationIndex)
                     {
-                        Console.WriteLine("the notification removed was the last one, the next notification to be shown is the previous to the one that was removed.");
+                        Console.WriteLine("the notification removed was first to last, the next notification last one.");
                         SetNotificationContent(openNotifications.LastOrDefault());
                     }
                     else

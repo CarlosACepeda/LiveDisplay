@@ -92,10 +92,10 @@
         private void NotificationFragment_NotificationRead(object sender, FragmentEventArgs.NotificationReadEventArgs e)
         {
             //Was read by the user
-            var item = messagingNotifications.FirstOrDefault(t=> t.Item2 == e.Key);
-            if (item != null)
+            int index = messagingNotifications.FindIndex(t=> t.Item2 == e.Key);
+            if (index != -1)
             {
-                messagingNotifications?.Remove(item);
+                messagingNotifications?.RemoveAt(index);
                 messagingNotifications?.Add(new Tuple<bool, string>(true, e.Key));
             }
             CheckMessagesReadStatusAndDisplayAlert();
@@ -154,11 +154,11 @@
 
         private void CatcherHelper_NotificationRemoved(object sender, NotificationRemovedEventArgs e)
         {
-            var item = messagingNotifications.Where(t => t.Item2 == e.OpenNotification.Key).FirstOrDefault();
+            var index = messagingNotifications.FindIndex(t => t.Item2 == e.OpenNotification.Key);
 
-            if (messagingNotifications.Contains(item))
+            if (index!=-1)
             {
-                messagingNotifications.Remove(item);
+                messagingNotifications.RemoveAt(index);
                 MessagesCounterUpdate();
             }
 
@@ -166,16 +166,19 @@
         }
 
         private void CatcherHelper_NotificationPosted(object sender, NotificationPostedEventArgs e)
-        {
-            var item = messagingNotifications.FirstOrDefault(n => n.Item2 == e.OpenNotification.Key);
-            if (item!= null)
+        {  if (e.OpenNotification.Style == OpenNotification.MessagingStyle &&
+                !e.OpenNotification.IsSummary)
             {
-                messagingNotifications.Remove(item);
-            }
+                var index = messagingNotifications.FindIndex(n => n.Item2 == e.OpenNotification.Key);
+                if (index != -1)
+                {
+                    messagingNotifications.RemoveAt(index);
+                }
 
-            messagingNotifications.Add(new Tuple<bool, string>(false, e.OpenNotification.Key));
-            MessagesCounterUpdate();
-            CheckMessagesReadStatusAndDisplayAlert();
+                messagingNotifications.Add(new Tuple<bool, string>(false, e.OpenNotification.Key));
+                MessagesCounterUpdate();
+                CheckMessagesReadStatusAndDisplayAlert();
+            }
         }
 
         public override void OnDestroyView()
