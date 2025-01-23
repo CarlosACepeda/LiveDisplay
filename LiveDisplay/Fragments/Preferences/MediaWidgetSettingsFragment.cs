@@ -22,8 +22,12 @@ namespace LiveDisplay.Fragments.Preferences
             PreferenceManager.SetDefaultValues(Application.Context, Resource.Xml.media_widget_prefs, true);
 
             List<string> entries = new List<string>();
-            var sessions = RecentSessionsProvider.GetInstance().GetSavedSessions();
-            foreach (var session in sessions)
+            var blockedSessions = RecentSessionsProvider.GetInstance().GetBlockedSessions();
+            var allowedSessions = RecentSessionsProvider.GetInstance().GetSavedSessions();
+
+            var allSessions = allowedSessions.Except(blockedSessions).Concat(blockedSessions.Except(allowedSessions));
+
+            foreach (var session in allSessions)
             {
                 entries.Add(PackageUtils.GetTheAppName(session));
             }
@@ -36,7 +40,7 @@ namespace LiveDisplay.Fragments.Preferences
                 DialogTitle= Resources.GetString(Resource.String.blocked_media_sessions)
             };
             multiSelectPref.SetEntries(entries.ToArray());
-            multiSelectPref.SetEntryValues(sessions.ToArray());
+            multiSelectPref.SetEntryValues(allSessions.ToArray());
             PreferenceScreen.AddPreference(multiSelectPref);
 
         }

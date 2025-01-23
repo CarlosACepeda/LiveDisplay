@@ -36,7 +36,6 @@ namespace LiveDisplay.Visualizers
             if (WaveForm != null)
             {
                 circumferenceSize = (2 * Math.PI) * innerCircle.Radius;
-                barWidth = circumferenceSize / BarCount;
                 subtendedAngleRad = (2 * Math.PI) / BarCount;
 
                 for (int bar = 0; bar < BarCount; bar++)

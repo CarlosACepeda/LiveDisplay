@@ -7,7 +7,6 @@ namespace LiveDisplay.Services.Media
 {
     public class RecentSessionsProvider
     {
-        const char mediaSessionsSeparator = ',';
         static RecentSessionsProvider instance;
         readonly ConfigurationManager configurationManager;
         const int maximumNumberOfSessions = 3;
@@ -66,6 +65,10 @@ namespace LiveDisplay.Services.Media
         {
             configurationManager.SaveValues(ConfigurationParameters.RecentMediaSessions, sessions);
         }
+        void BlockSessions(ICollection<string> sessions)
+        {
+            configurationManager.SaveValues(ConfigurationParameters.BlockedMediaSessions, sessions);
+        }
         public ICollection<string> GetBlockedSessions()
         {
             ICollection<string> blockedSessions = configurationManager.RetrieveValues(ConfigurationParameters.BlockedMediaSessions);
@@ -73,7 +76,7 @@ namespace LiveDisplay.Services.Media
             if (blockedSessions.Any(s => s == string.Empty))
             {
                 blockedSessions.Remove(string.Empty);
-                SaveSessions(blockedSessions);
+                BlockSessions(blockedSessions);
             }
             return blockedSessions;
         }
