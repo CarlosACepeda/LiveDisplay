@@ -40,5 +40,6 @@
   <dimen name="notification_card_corner_radius">10dp</dimen>
   <dimen name="notification_card_width">275dp</dimen>
   <dimen name="recent_sessions_item_padding">7dp</dimen>
+  <dimen name="recent_sessions_item_width">75dp</dimen>
   <dimen name="current_weather_text_size">9dp</dimen>
 </resources>
