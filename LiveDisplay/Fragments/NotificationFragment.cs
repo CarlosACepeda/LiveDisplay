@@ -390,6 +390,10 @@ namespace LiveDisplay.Fragments
                         SetNotificationContent(openNotifications[notificationToBeRemovedIndex]); //Because after removal another one will take it's position.
                     }
                 }
+                else 
+                {
+                    currentOpenNotification = null;
+                }
 
                 Hide();
             }
