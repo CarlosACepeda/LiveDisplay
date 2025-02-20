@@ -9268,34 +9268,37 @@ namespace LiveDisplay
 			public const int quick_settings_button_margin = 2131166037;
 			
 			// aapt resource value: 0x7F070356
-			public const int recent_sessions_item_padding = 2131166038;
+			public const int recent_sessions_item_height = 2131166038;
 			
 			// aapt resource value: 0x7F070357
-			public const int recent_sessions_item_width = 2131166039;
+			public const int recent_sessions_item_padding = 2131166039;
 			
 			// aapt resource value: 0x7F070358
-			public const int tooltip_corner_radius = 2131166040;
+			public const int recent_sessions_item_width = 2131166040;
 			
 			// aapt resource value: 0x7F070359
-			public const int tooltip_horizontal_padding = 2131166041;
+			public const int tooltip_corner_radius = 2131166041;
 			
 			// aapt resource value: 0x7F07035A
-			public const int tooltip_margin = 2131166042;
+			public const int tooltip_horizontal_padding = 2131166042;
 			
 			// aapt resource value: 0x7F07035B
-			public const int tooltip_precise_anchor_extra_offset = 2131166043;
+			public const int tooltip_margin = 2131166043;
 			
 			// aapt resource value: 0x7F07035C
-			public const int tooltip_precise_anchor_threshold = 2131166044;
+			public const int tooltip_precise_anchor_extra_offset = 2131166044;
 			
 			// aapt resource value: 0x7F07035D
-			public const int tooltip_vertical_padding = 2131166045;
+			public const int tooltip_precise_anchor_threshold = 2131166045;
 			
 			// aapt resource value: 0x7F07035E
-			public const int tooltip_y_offset_non_touch = 2131166046;
+			public const int tooltip_vertical_padding = 2131166046;
 			
 			// aapt resource value: 0x7F07035F
-			public const int tooltip_y_offset_touch = 2131166047;
+			public const int tooltip_y_offset_non_touch = 2131166047;
+			
+			// aapt resource value: 0x7F070360
+			public const int tooltip_y_offset_touch = 2131166048;
 			
 			static Dimension()
 			{

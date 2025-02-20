@@ -3,7 +3,7 @@
     android:orientation="vertical"
     android:padding="@dimen/recent_sessions_item_padding"
     android:layout_width="@dimen/recent_sessions_item_width"
-    android:layout_height="wrap_content">
+    android:layout_height="@dimen/recent_sessions_item_height">
         <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/app_icon"
         android:layout_width="wrap_content"
